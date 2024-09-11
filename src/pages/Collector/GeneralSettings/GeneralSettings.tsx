@@ -101,6 +101,7 @@ const GeneralSettings: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [tenantCurrency, setTenantCurrency] = useState<string>('')
+  const [monetaryVersion, setMonetaryVersion] = useState<number>(0)
   const { dateFormat } = useContainer(CommonTypeContainer)
   const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
@@ -161,6 +162,7 @@ const GeneralSettings: FunctionComponent = () => {
       const result = await getTenantById(parseInt(token.tenantId))
       const data = result?.data
       setTenantCurrency(data?.monetaryValue || '')
+      setMonetaryVersion(data?.version || 0)
     } catch (error: any) {
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
@@ -479,6 +481,7 @@ const GeneralSettings: FunctionComponent = () => {
           action="edit"
           onSubmitData={onSubmitData}
           tenantCurrency={tenantCurrency}
+          monetaryVersion={monetaryVersion}
         />
       </Box>
     </>

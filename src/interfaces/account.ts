@@ -77,4 +77,5 @@ export type UpdateTenantForm = {
   createdAt: string
   updatedAt: string
   updatedBy: string
+  version: number
 }

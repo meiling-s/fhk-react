@@ -53,7 +53,7 @@ export const UPDATE_TENANT_REGISTER = (
 
 export const UPDATE_TENANT_INFO = (tenantId: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/account/t/${tenantId}`
+  url: `api/v1/account/t/V2/${tenantId}`
 })
 
 export const GET_TENANT_BY_TENANT_ID = (
@@ -76,10 +76,11 @@ export const GET_CURRENCY_LIST: AxiosRequestConfig = {
 export const UPDATE_TENANT_CURRENCY = (
   tenantId: string,
   monetaryValue: string,
-  updatedBy: string
+  updatedBy: string,
+  version: number,
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/account/t/monetary/${tenantId}?tenantId=${tenantId}&monetaryValue=${monetaryValue}&updatedBy=${updatedBy}`
+  url: `api/v1/account/t/V2/monetary/${tenantId}?tenantId=${tenantId}&monetaryValue=${monetaryValue}&updatedBy=${updatedBy}&version=${version}`
 })
 
 //collection point
@@ -167,7 +168,7 @@ export const UPDATE_CHECK_IN_STATUS = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/${realmApiRoute}/checkin${realmApiRoute !== 'manufacturer' ? '/V2/' : '/'}${table}/status/${chkInId}`
+  url: `api/v1/${realmApiRoute}/checkin/V2/${table}/status/${chkInId}`
 })
 
 //get checkin reason list
@@ -462,7 +463,7 @@ export const UPDATE_WAREHOUSE_BY_ID = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/warehouse/${table}/${warehouseId}`
+  url: `api/v1/${realmApiRoute}/warehouse/V2/${table}/${warehouseId}`
 })
 
 export const ADD_WAREHOUSE_V2 = (
@@ -479,7 +480,7 @@ export const UPDATE_WAREHOUSE_BY_ID_V2 = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/warehouse${realmApiRoute === 'collectors' ? `/V3/` : `/v2/`}${table}/${warehouseId}`
+  url: `api/v1/${realmApiRoute}/warehouse${realmApiRoute === 'collectors' ? `/V3/` : `/V2/`}${table}/${warehouseId}`
 })
 
 export const MANUFACTURER_GET_ALL_WAREHOUSE = (
@@ -501,7 +502,7 @@ export const UPDATE_WAREHOUSE_STATUS_BY_ID = (
   warehouseId: number,
   table: string
 ): AxiosRequestConfig => ({
-  method: 'put',
+  method: 'patch',
   url: `api/v1/collectors/warehouse/V2/${table}/${warehouseId}/status`
 })
 
@@ -554,7 +555,7 @@ export const UPDATE_CHECKOUT_REQUEST_STATUS = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/${realmApiRoute}/checkout${realmApiRoute !== 'manufacturer' ? '/V2/' : '/'}${table}/status/${chkOutId}`
+  url: `api/v1/${realmApiRoute}/checkout/V2/${table}/status/${chkOutId}`
 })
 
 //get checkout reason list
@@ -618,6 +619,11 @@ export const GET_LOGISTIC_VEHICLE_BY_ID = (
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/logistic/vehicle/${table}/${vehicleId}`
+})
+
+export const GET_VEHICLE_PHOTO =  (table: string, vehicleId: number): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/vehicle/${table}/photo/${vehicleId}`
 })
 
 export const SEARCH_LOGISTIC_VEHICLE = (
@@ -741,7 +747,7 @@ export const EDIT_PROCESS_OUT_DETAIL_ITEM = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `${realmApiRoute === 'manufacturer' ? `api/v1/${realmApiRoute}/processout/${table}/processout/${processOutId}/proecessoutDtl/${processOutDtlId}`: `api/v1/${realmApiRoute}/processout/V2/${table}/${processOutId}/proecessoutDtl/${processOutDtlId}`}`
+  url: `api/v1/${realmApiRoute}/processout/V2/${table}${realmApiRoute === 'manufacturer' ? `/processout/${processOutId}/` : `/${processOutId}/`}proecessoutDtl/${processOutDtlId}`
 })
 
 export const DELETE_PROCESS_OUT_RECORD = (
@@ -759,7 +765,7 @@ export const DELETE_PROCESS_OUT_DETAIL_ITEM = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/${realmApiRoute}/processoutDetail/${table}/${processOutDtlId}/status`
+  url: `api/v1/${realmApiRoute}/processoutDetail/V2/${table}/${processOutDtlId}/status`
 })
 
 // WAREHOUSE DASHBOARD
@@ -883,7 +889,7 @@ export const EDIT_STAFF = (
   realmApi: string
 ): AxiosRequestConfig => ({
   method: realmApi === 'logistic' ? 'put' : realmApi === 'customer' ? 'put' : realmApi === 'collectors' ? 'put' : 'patch',
-  url: `api/v1/${realmApi}/staff${realmApi === 'logistic' ? `/V2/` : realmApi === 'customer' ? `/V2/` : realmApi === 'collectors' ? `/V2/` : '/'}${tenantId}/${staffId}`
+  url: `api/v1/${realmApi}/staff/V2/${tenantId}/${staffId}`
 })
 
 export const GET_LOGINID_LIST = (tenantId: string): AxiosRequestConfig => ({
@@ -1164,7 +1170,7 @@ export const UPDATE_DENIAL_REASON = (
   reasonId: number
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/reason${realmApiRoute === 'logistic' ? `/V2/` : realmApiRoute === 'account' ? '/V2/' : `/`}${tenantId}/${reasonId}`
+  url: `/api/v1/${realmApiRoute}/reason/V2/${tenantId}/${reasonId}`
 })
 
 //get staff title
@@ -1201,7 +1207,7 @@ export const UPDATE_STAFF_TITLE = (
   titleId: string
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/stafftitle${realmApiRoute !== 'account' && realmApiRoute !== 'manufacturer' ? '/V2/' : '/'}${table}/${titleId}`
+  url: `/api/v1/${realmApiRoute}/stafftitle${realmApiRoute !== 'account' ? '/V2/' : '/'}${table}/${titleId}`
 })
 
 //get disposal location
@@ -1229,7 +1235,7 @@ export const UPDATE_DISPOSAL_LOCATION = (
   disposalLocId: string
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/disposallocation${realmApiRoute === 'logistic' ? '/V2/' : realmApiRoute === 'collectors' ? '/V2/' : '/'}${table}/${disposalLocId}`
+  url: `/api/v1/${realmApiRoute}/disposallocation/V2/${table}/${disposalLocId}`
 })
 
 //get company (collectorlist || logisticlist || manulist || customerlist)
@@ -1260,7 +1266,7 @@ export const UPDATE_COMPANY = (
   companyId: string
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/${companyType}${realmApiRoute !== 'manufacturer' ? '/V2/' : '/'}${table}/${companyId}`
+  url: `/api/v1/${realmApiRoute}/${companyType}/V2/${table}/${companyId}`
 })
 
 export const GET_CONTRACT_LIST = (
@@ -1282,7 +1288,7 @@ export const EDIT_CONTRACT = (
   contractNo: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/contract${realmApiRoute === 'logistic' ? '/V2/' : realmApiRoute === 'collectors' ? '/V2/' : '/'}${tenantId}/${contractNo}`
+  url: `api/v1/${realmApiRoute}/contract/V2/${tenantId}/${contractNo}`
 })
 
 export const DELETE_CONTRACT = (
@@ -1291,7 +1297,7 @@ export const DELETE_CONTRACT = (
   contractNo: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/${realmApiRoute}/contract${realmApiRoute === 'logistic' ? '/V2/' : realmApiRoute === 'collectors' ? '/V2/' : '/'}${tenantId}/${contractNo}/status`
+  url: `api/v1/${realmApiRoute}/contract/V2/${tenantId}/${contractNo}/status`
 })
 
 export const GET_PACKAGING_LIST = (
@@ -1315,7 +1321,7 @@ export const EDIT_PACKAGING = (
   packagingTypeId: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/packaginglist${realmApiRoute === 'manufacturer' ? '/' : '/V2/'}${tenantId}/${packagingTypeId}`
+  url: `api/v1/${realmApiRoute}/packaginglist/V2/${tenantId}/${packagingTypeId}`
 })
 
 export const GET_DETAIL_NOTIF_TEMPLATE = (
@@ -1333,7 +1339,7 @@ export const UPDATE_NOTIF_TEMPLATE = (
   path: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${path}/notiTemplate${path !== 'manufacturer' ? '/V2/' : '/'}${tenantId}/${templateId}`
+  url: `api/v1/${path}/notiTemplate/V2/${tenantId}/${templateId}`
 })
 
 //logistics driver
@@ -1369,7 +1375,7 @@ export const UPDATE_NOTIF_TEMPLATE_BROADCAST = (
   path: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${path}/notiTemplate${path === 'logistic' ? '/V2/' : path === 'customer' ? '/V2/' : path === 'collectors' ? '/V2/' : '/'}${tenantId}/${templateId}`
+  url: `api/v1/${path}/notiTemplate/V2/${tenantId}/${templateId}`
 })
 
 // STAFF ENQUIRY
@@ -1417,14 +1423,14 @@ export const UPDATE_USER_MANUFACTURER = (
   loginId: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/manufacturer/staff/${tenantId}/${loginId}`
+  url: `api/v1/manufacturer/staff/V2/${tenantId}/${loginId}`
 })
 
 export const DELETE_USER_MANUFACTURER = (
   loginId: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/manufacturer/staff/${loginId}`
+  url: `api/v1/manufacturer/staff/V2/${loginId}`
 })
 
 //PURCHASE ORDER MANUFACTURER

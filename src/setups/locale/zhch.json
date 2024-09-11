@@ -204,7 +204,10 @@
     "shouldNotEmpty": "不应为空",
     "shouldNotDuplicate": "不应重复",
     "shouldNotDuplicated": " 货仓地址已经被使用",
-    "workshopFlag": "是否工厂"
+    "workshopFlag": "是否工厂",
+    "warningCloseWarehouse": "仓库里还有库存, 确定要关闭仓库吗?",
+    "warningDeleteExistingRecy": "仓库里还有库存, 确定要刪除仓库吗?",
+    "warningDeleteWarehouse": "你确定要删除吗?"
   },
   "check_in": {
     "transport_information": "运输资料",

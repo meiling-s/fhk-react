@@ -21,7 +21,8 @@ import { formErr } from '../../../constants/constant'
 import {
   returnErrorMsg,
   validateEmail,
-  extractError
+  extractError,
+  showErrorToast
 } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { Staff, CreateStaff, EditStaff } from '../../../interfaces/staff'
@@ -348,62 +349,80 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
   }
 
   const handleEditStaff = async () => {
-    const editData: EditStaff = {
-      staffNameTchi: formData.staffNameTchi,
-      staffNameSchi: formData.staffNameSchi,
-      staffNameEng: formData.staffNameEng,
-      titleId: formData.titleId,
-      contactNo: formData.contactNo,
-      loginId: formData.loginId,
-      status: 'ACTIVE',
-      gender: 'M',
-      email: formData.email,
-      salutation: 'salutation',
-      updatedBy: loginName,
-      version: version,
+    try {
+      const editData: EditStaff = {
+        staffNameTchi: formData.staffNameTchi,
+        staffNameSchi: formData.staffNameSchi,
+        staffNameEng: formData.staffNameEng,
+        titleId: formData.titleId,
+        contactNo: formData.contactNo,
+        loginId: formData.loginId,
+        status: 'ACTIVE',
+        gender: 'M',
+        email: formData.email,
+        salutation: 'salutation',
+        updatedBy: loginName,
+        version: version,
+      }
+      if (validation.length == 0) {
+        if (selectedItem != null) {
+          const result = await updateUserManufacturer(
+            selectedItem.staffId,
+            editData
+          )
+          if (result) {
+            onSubmitData('success', 'Edit data success')
+            resetFormData()
+            handleDrawerClose()
+          }
+        }
+      } else {
+        setTrySubmited(true)
+      }
+    } catch (error: any) {
+      const {state} = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
+        }
     }
-    if (validation.length == 0) {
+  }
+
+  const handleDelete = async () => {
+    try {
+      const editData: EditStaff = {
+        staffNameTchi: formData.staffNameTchi,
+        staffNameSchi: formData.staffNameSchi,
+        staffNameEng: formData.staffNameEng,
+        titleId: formData.titleId,
+        contactNo: formData.contactNo,
+        loginId: formData.loginId,
+        status: 'DELETED',
+        gender: 'M',
+        email: formData.email,
+        salutation: 'salutation',
+        updatedBy: loginName,
+        version: version,
+      }
       if (selectedItem != null) {
         const result = await updateUserManufacturer(
           selectedItem.staffId,
           editData
         )
         if (result) {
-          onSubmitData('success', 'Edit data success')
+          onSubmitData('success', 'Deleted data success')
           resetFormData()
           handleDrawerClose()
         }
       }
-    } else {
-      setTrySubmited(true)
-    }
-  }
-
-  const handleDelete = async () => {
-    const editData: EditStaff = {
-      staffNameTchi: formData.staffNameTchi,
-      staffNameSchi: formData.staffNameSchi,
-      staffNameEng: formData.staffNameEng,
-      titleId: formData.titleId,
-      contactNo: formData.contactNo,
-      loginId: formData.loginId,
-      status: 'DELETED',
-      gender: 'M',
-      email: formData.email,
-      salutation: 'salutation',
-      updatedBy: loginName,
-      version: version,
-    }
-    if (selectedItem != null) {
-      const result = await updateUserManufacturer(
-        selectedItem.staffId,
-        editData
-      )
-      if (result) {
-        onSubmitData('success', 'Deleted data success')
-        resetFormData()
-        handleDrawerClose()
-      }
+    } catch (error: any) {
+      const {state} = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
+        }
     }
   }
 

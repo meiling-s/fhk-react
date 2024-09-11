@@ -114,25 +114,8 @@ export const editProcessRecordItem = async (
   }
 }
 
-export const deleteProcessOutRecord = async (
-  processOutId: number,
-) => {
-  try {
-    const token = returnApiToken()
-
-    const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
-      ...DELETE_PROCESS_OUT_RECORD(token.decodeKeycloack, processOutId, token.realmApiRoute)
-    })
-
-    return response
-  } catch (e) {
-    return e
-  }
-}
-
 export const deleteProcessOutItem = async (
-  data: string,
+  data: {status: string, version: number},
   processOutDtlId: number,
 ) => {
   try {
@@ -150,7 +133,7 @@ export const deleteProcessOutItem = async (
     return response
   } catch (e) {
     console.error('Get all vehicle failed:', e)
-    return null
+    throw (e)
   }
 }
 

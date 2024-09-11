@@ -25,7 +25,7 @@ import CustomField from '../../components/FormComponents/CustomField'
 import CustomItemList, {
   il_item
 } from '../../components/FormComponents/CustomItemList'
-import { showSuccessToast, showErrorToast } from '../../utils/utils'
+import { showSuccessToast, showErrorToast, extractError } from '../../utils/utils'
 import { styles } from '../../constants/styles'
 import { ImageToBase64 } from '../../utils/utils'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
@@ -37,12 +37,13 @@ import {
 import { Tenant, UpdateTenantForm } from '../../interfaces/account'
 import { getReasonTenant } from '../../APICalls/Collector/denialReason'
 import { useContainer } from 'unstated-next'
-import { localStorgeKeyName } from '../../constants/constant'
+import { STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
 import { ToastContainer, toast } from 'react-toastify'
 
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import { useNavigate } from 'react-router-dom'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -153,10 +154,12 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   const [defaultLang, setDefaultLang] = useState<string>('ZH-HK')
   const [selectedStatus, setSelectedStatus] = useState<string>('')
   const [modalClosedStatus, setModalClosed] = useState<boolean>(false)
+  const [version, setVersion] = useState<number>(0)
   const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
   const [reasons, setReasons] = useState<il_item[]>([])
   const { i18n } = useTranslation()
   const [translatedTenantType, setTranslatedTenantType] = useState('...')
+  const navigate = useNavigate()
 
   const footerTenant = `[${tenantDetail?.tenantId}] ${t(
     `status.${tenantDetail?.status.toLocaleLowerCase()}`
@@ -197,6 +200,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     setMaxUploadSize(data?.allowImgSize.toString())
     setDefaultLang(data?.lang || 'ZH-HK')
     setSelectedStatus(data?.status || '')
+    setVersion(data?.version || 0)
   }
 
   useEffect(() => {
@@ -292,49 +296,57 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
       setModalClosed(true)
     } else {
       if (tenantDetail) {
-        const dataForm: UpdateTenantForm = {
-          companyNameTchi: tenantDetail.companyNameTchi,
-          companyNameSchi: tenantDetail.companyNameSchi,
-          companyNameEng: tenantDetail.companyNameEng,
-          tenantType: tenantDetail.tenantType,
-          lang: defaultLang,
-          status: selectedStatus,
-          brNo: tenantDetail.brNo,
-          remark: tenantDetail.remark,
-          contactNo: tenantDetail.contactNo,
-          email: tenantDetail.email,
-          contactName: tenantDetail.contactName,
-          brPhoto: tenantDetail.brPhoto,
-          epdPhoto: tenantDetail.epdPhoto,
-          companyLogo: companyLogoImg,
-          decimalPlace: numOfAccount,
-          monetaryValue: tenantDetail.monetaryValue,
-          inventoryMethod: inventoryMethod,
-          allowImgSize: parseInt(maxUploadSize),
-          allowImgNum: numOfUplodedPhoto,
-          effFrmDate: tenantDetail.effFrmDate,
-          effToDate: tenantDetail.effToDate,
-          approvedAt: tenantDetail?.approvedAt,
-          approvedBy: tenantDetail?.approvedBy,
-          rejectedAt: tenantDetail?.rejectedAt,
-          rejectedBy: tenantDetail?.rejectedBy,
-          createdBy: tenantDetail.createdBy,
-          createdAt: tenantDetail.createdAt,
-          updatedAt: tenantDetail.updatedAt,
-          updatedBy: loginName
-        }
-
-        const result = await updateTenantDetail(
-          dataForm,
-          tenantDetail.tenantId.toString()
-        )
-        if (result) {
-          showSuccessToast(t('common.editSuccessfully'))
-          getCompanyDetail()
-          handleDrawerClose()
-          onChangeStatus()
-        } else {
-          showErrorToast(t('common.editFailed'))
+        try {
+          const dataForm: UpdateTenantForm = {
+            companyNameTchi: tenantDetail.companyNameTchi,
+            companyNameSchi: tenantDetail.companyNameSchi,
+            companyNameEng: tenantDetail.companyNameEng,
+            tenantType: tenantDetail.tenantType,
+            lang: defaultLang,
+            status: selectedStatus,
+            brNo: tenantDetail.brNo,
+            remark: tenantDetail.remark,
+            contactNo: tenantDetail.contactNo,
+            email: tenantDetail.email,
+            contactName: tenantDetail.contactName,
+            brPhoto: tenantDetail.brPhoto,
+            epdPhoto: tenantDetail.epdPhoto,
+            companyLogo: companyLogoImg,
+            decimalPlace: numOfAccount,
+            monetaryValue: tenantDetail.monetaryValue,
+            inventoryMethod: inventoryMethod,
+            allowImgSize: parseInt(maxUploadSize),
+            allowImgNum: numOfUplodedPhoto,
+            effFrmDate: tenantDetail.effFrmDate,
+            effToDate: tenantDetail.effToDate,
+            approvedAt: tenantDetail?.approvedAt,
+            approvedBy: tenantDetail?.approvedBy,
+            rejectedAt: tenantDetail?.rejectedAt,
+            rejectedBy: tenantDetail?.rejectedBy,
+            createdBy: tenantDetail.createdBy,
+            createdAt: tenantDetail.createdAt,
+            updatedAt: tenantDetail.updatedAt,
+            updatedBy: loginName,
+            version: version
+          }
+  
+          const result = await updateTenantDetail(
+            dataForm,
+            tenantDetail.tenantId.toString()
+          )
+          if (result) {
+            showSuccessToast(t('common.editSuccessfully'))
+            getCompanyDetail()
+            handleDrawerClose()
+            onChangeStatus()
+          }
+        } catch (error: any) {
+          const { state, realm } = extractError(error)
+          if (state.code === STATUS_CODE[503]) {
+            navigate('/maintenance')
+          } else if (state.code === STATUS_CODE[409]){
+            showErrorToast(error.response.data.message);
+          }
         }
       }
     }

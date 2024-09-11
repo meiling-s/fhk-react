@@ -6,16 +6,16 @@ import {
   Stack,
   Typography,
   Modal
-} from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+} from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type DeleteModalProps = {
   open: boolean
   selectedRow?: number | null
   onClose: () => void
-  onDelete: () => void,
-  deleteText?:string
+  onDelete: () => void
+  deleteText?: string
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
@@ -26,6 +26,8 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   deleteText
 }) => {
   const { t } = useTranslation()
+
+
   return (
     <Modal
       open={open}
@@ -42,7 +44,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               component="h2"
               sx={{ fontWeight: 'bold' }}
             >
-              {deleteText ? deleteText : t('pick_up_order.delete_msg')}
+              {deleteText || t('pick_up_order.delete_msg')}
             </Typography>
           </Box>
           <Divider />

@@ -176,6 +176,12 @@ const JobOrder = () => {
       labelTchi: '已逾期'
     },
     {
+      value: 'DENY',
+      labelEng: 'DENY',
+      labelSchi: '不接受',
+      labelTchi: '不接受'
+    },
+    {
       value: '',
       labelEng: 'any',
       labelSchi: '任何',
