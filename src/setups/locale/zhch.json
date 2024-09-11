@@ -655,9 +655,9 @@
   "inventory": {
     "inventory": "存货",
     "recyclingInformation": "存货",
-    "date": "日期",
-    "recyleType": "主类别",
-    "recyleSubType": "次类别",
+    "date": " 回收日期及时间",
+    "recyleType": "回收物主类别",
+    "recyleSubType": "回收物次类别",
     "package": "包装",
     "recyclingNumber": "回收编号",
     "inventoryLocation": "库存地点",
