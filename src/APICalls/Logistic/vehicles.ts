@@ -8,7 +8,8 @@ import {
   EDIT_VEHICLE,
   GET_LOGISTIC_VEHICLE,
   SEARCH_LOGISTIC_VEHICLE,
-  GET_LOGISTIC_VEHICLE_BY_ID
+  GET_LOGISTIC_VEHICLE_BY_ID,
+  GET_VEHICLE_PHOTO
 } from '../../constants/requests'
 import { returnApiToken } from '../../utils/utils'
 import axiosInstance from '../../constants/axiosInstance'
@@ -132,6 +133,21 @@ export const getVehicleLogistic = async (vehicleId: number, table: string) => {
     return response
   } catch (e) {
     console.error('get a vehicle failed:', e)
+    return null
+  }
+}
+
+
+export const getVehicleImages = async (table: string, vehicleId: number) => {
+  try {
+    const response = await axiosInstance({
+      baseURL: window.baseURL.logistic,
+      ...GET_VEHICLE_PHOTO(table, vehicleId)
+    })
+
+    return response
+  } catch (error) {
+    console.error('get a vehicle failed:', error)
     return null
   }
 }
