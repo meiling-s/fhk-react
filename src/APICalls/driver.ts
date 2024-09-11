@@ -42,7 +42,7 @@ export const editDriver = async (data: any,driverId: string) => {
             data
         })
     } catch (error) {
-        console.error(error)
+        throw (error)
     }
 }
 

@@ -12,13 +12,14 @@ import { il_item } from "../../../components/FormComponents/CustomItemList"
 import CustomTextField from "../../../components/FormComponents/CustomTextField"
 import { FormErrorMsg } from "../../../components/FormComponents/FormErrorMsg"
 import RightOverlayForm from "../../../components/RightOverlayForm"
-import { formErr } from "../../../constants/constant"
+import { STATUS_CODE, formErr } from "../../../constants/constant"
 import { styles } from '../../../constants/styles'
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer"
 import { formValidate } from "../../../interfaces/common"
 import { Driver } from "../../../interfaces/driver"
 import { CAMERA_OUTLINE_ICON } from "../../../themes/icons"
-import { ImageToBase64, returnErrorMsg } from "../../../utils/utils"
+import { ImageToBase64, extractError, returnErrorMsg, showErrorToast } from "../../../utils/utils"
+import { useNavigate } from "react-router-dom"
 
 interface FormValues {
     [key: string]: string | string[]
@@ -69,6 +70,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
     const [maxImageSize, setMaxImageSize] = useState(0)
     const [validation, setValidation] = useState<formValidate[]>([])
     const [version, setVersion] = useState<number>(0)
+    const navigate = useNavigate()
 
     const driverField = useMemo(() => (
         [
@@ -326,29 +328,38 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
             version: version,
         }
 
-        console.log(formValues, 'formValues')
         const user = localStorage.getItem('username')
         if (action === 'add' || action === 'edit') {
-            setTrySubmited(true)
-            if (validation.length === 0) {
-                if (action === 'add') {
-                    const res = await createDriver({ ...formValues, createdBy: user, updatedBy: user })
-                    if (res) {
-                        onSubmitData('success', t('driver.DriverMenu.popUp.field.createSuccessMsg'))
-                        resetData()
-                        onClose()
-                    } else {
-                        onSubmitData('error', t('driver.DriverMenu.popUp.field.createFailMsg'))
+            try {
+                setTrySubmited(true)
+                if (validation.length === 0) {
+                    if (action === 'add') {
+                        const res = await createDriver({ ...formValues, createdBy: user, updatedBy: user })
+                        if (res) {
+                            onSubmitData('success', t('driver.DriverMenu.popUp.field.createSuccessMsg'))
+                            resetData()
+                            onClose()
+                            setTrySubmited(false)
+                        } else {
+                            onSubmitData('error', t('driver.DriverMenu.popUp.field.createFailMsg'))
+                            setTrySubmited(false)
+                        }
+                    }
+                    if (action === 'edit') {
+                        const res = await editDriver({ ...formValues, updatedBy: user }, driver?.driverId.toString()!)
+                        if (res) {
+                            onSubmitData('success', t('driver.DriverMenu.popUp.field.editSuccessMsg'))
+                            onClose()
+                            setTrySubmited(false)
+                        }
                     }
                 }
-                if (action === 'edit') {
-                    const res = await editDriver({ ...formValues, updatedBy: user }, driver?.driverId.toString()!)
-                    if (res) {
-                        onSubmitData('success', t('driver.DriverMenu.popUp.field.editSuccessMsg'))
-                        onClose()
-                    } else {
-                        onSubmitData('error', t('driver.DriverMenu.popUp.field.editFailMsg'))
-                    }
+            } catch (error: any) {
+                const {state} = extractError(error);
+                if (state.code === STATUS_CODE[503]) {
+                    navigate('/maintenance')
+                } else if (state.code === STATUS_CODE[409]){
+                    showErrorToast(error.response.data.message);
                 }
             }
         }

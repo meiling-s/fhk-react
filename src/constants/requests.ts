@@ -76,10 +76,11 @@ export const GET_CURRENCY_LIST: AxiosRequestConfig = {
 export const UPDATE_TENANT_CURRENCY = (
   tenantId: string,
   monetaryValue: string,
-  updatedBy: string
+  updatedBy: string,
+  version: number,
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/account/t/monetary/${tenantId}?tenantId=${tenantId}&monetaryValue=${monetaryValue}&updatedBy=${updatedBy}`
+  url: `api/v1/account/t/V2/monetary/${tenantId}?tenantId=${tenantId}&monetaryValue=${monetaryValue}&updatedBy=${updatedBy}&version=${version}`
 })
 
 //collection point

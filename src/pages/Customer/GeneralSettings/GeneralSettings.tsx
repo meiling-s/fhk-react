@@ -76,6 +76,7 @@ const GeneralSettings: FunctionComponent = () => {
   const [engNameList, setEngNameList] = useState<string[]>([])
   const [schiNameList, setSchiNameList] = useState<string[]>([])
   const [tchiNameList, setTchiNameList] = useState<string[]>([])
+  const [monetaryVersion, setMonetaryVersion] = useState<number>(0)
   const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -414,6 +415,7 @@ const GeneralSettings: FunctionComponent = () => {
           action="edit"
           onSubmitData={onSubmitData}
           tenantCurrency={tenantCurrency}
+          monetaryVersion={monetaryVersion}
         />
       </Box>
     </>
