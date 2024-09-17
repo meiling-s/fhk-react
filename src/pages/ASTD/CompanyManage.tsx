@@ -644,6 +644,8 @@ function InviteForm({
         return t('tenant.invite_modal.err_duplicated_company_name')
       case 'companyNumber' || 'tenantId':
         return t('tenant.invite_modal.err_duplicated_company_number')
+      case 'illegalTenantId':
+        return t('tenant.invite_modal.err_illegal_tenant_id')
       default:
         return t('tenant.invite_modal.err_duplicated_company_number')
     }
@@ -1235,10 +1237,14 @@ function CompanyManage() {
   }
 
   const getDuplicatedErrType = (state: errorState) => {
+    const match = state.message.match(/\[(.*?)\]/)
+    const errField = match ? match[1] : ''
+
     switch (state.code) {
       case 409:
-        const match = state.message.match(/\[(.*?)\]/)
-        const errField = match ? match[1] : ''
+        setDuplicatedType(errField)
+        break
+      case 403:
         setDuplicatedType(errField)
         break
       case 500:
@@ -1312,8 +1318,14 @@ function CompanyManage() {
         }
       } catch (error: any) {
         const { state, realm } = extractError(error)
+        console.log('state.code', state.code)
         if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[403]) {
+          //showErrorToast(t('common.saveFailed'))
+          getDuplicatedErrType(state)
+          setDuplicatedData(true)
+          setIsLoadingInvite(false)
         } else {
           showErrorToast(`${t('common.saveFailed')}`)
           getDuplicatedErrType(state)
