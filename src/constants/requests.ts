@@ -696,7 +696,7 @@ export const GET_ITEM_TRACK_INVENTORY = (
   itemId: number
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/inventory/tracking/${table}/${itemId}`
+  url: `api/v1/${realmApiRoute}/inventory/trackingV2/${table}/${itemId}`
 })
 
 //process records

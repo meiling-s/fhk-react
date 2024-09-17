@@ -79,6 +79,7 @@ type recycItem = {
 
 function createInventory(
   itemId: number,
+  labelId: string,
   warehouseId: number,
   recyclingNumber: string,
   recycTypeId: string,
@@ -99,6 +100,7 @@ function createInventory(
 ): InventoryItem {
   return {
     itemId,
+    labelId,
     warehouseId,
     recyclingNumber,
     recycTypeId,
@@ -140,7 +142,7 @@ const Inventory: FunctionComponent = () => {
   const debouncedSearchValue: string = useDebounce(searchText, 1000)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
   const [query, setQuery] = useState<InventoryQuery>({
-    itemId: null,
+    labelId: null,
     warehouseId: null,
     recycTypeId: '',
     recycSubTypeId: ''
@@ -336,6 +338,7 @@ const Inventory: FunctionComponent = () => {
         inventoryMapping.push(
           createInventory(
             item?.itemId,
+            item?.labelId,
             item?.warehouseId,
             item?.recycTypeId,
             item?.recycTypeId,
@@ -389,7 +392,7 @@ const Inventory: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'itemId',
+      field: 'labelId',
       headerName: t('inventory.recyclingNumber'),
       width: 200,
       type: 'string'
@@ -464,10 +467,9 @@ const Inventory: FunctionComponent = () => {
   const searchfield = [
     {
       label: t('inventory.recyclingNumber'),
-      field: 'itemId',
+      field: 'labelId',
       placeholder: t('placeHolder.enterRecyclingNumber'),
-      width: '280px',
-      numberOnly: true
+      width: '280px'
     },
     {
       label: t('placeHolder.classification'),
@@ -579,7 +581,7 @@ const Inventory: FunctionComponent = () => {
   // }
 
   const handleSearch = debounce((keyName, value) => {
-    if (value.trim() === '' && query.itemId == null) {
+    if (value.trim() === '' && query.labelId == null) {
       return
     }
     updateQuery({ [keyName]: value })
@@ -634,11 +636,11 @@ const Inventory: FunctionComponent = () => {
             sx={styles.inputStyle}
             label={t('tenant.invite_form.company_number')}
             placeholder={t('tenant.enter_company_number')}
-            inputProps={{
-              inputMode: 'numeric',
-              pattern: '[0-9]*',
-              maxLength: 6
-            }}
+            // inputProps={{
+            //   inputMode: 'numeric',
+            //   pattern: '[0-9]*',
+            //   maxLength: 6
+            // }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -668,7 +670,6 @@ const Inventory: FunctionComponent = () => {
               key={index}
               label={s.label}
               width={s?.width}
-              numberOnly={s.numberOnly || false}
               placeholder={s.placeholder}
               field={s.field}
               options={s.options || []}

@@ -1,35 +1,18 @@
-import {
-  Box,
-  Grid,
-  Divider,
-  IconButton,
-  Stack,
-  Typography
-} from '@mui/material'
+import { Box, Grid, Divider, Typography } from '@mui/material'
 import React, { FunctionComponent, useEffect, useState } from 'react'
 import { styles } from '../../../constants/styles'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
-import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined'
-import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined'
+import CircularLoading from '../../../components/CircularLoading'
 import {
   InventoryItem,
   InventoryDetail as InvDetails
 } from '../../../interfaces/inventory'
-import { format } from '../../../constants/constant'
-import dayjs from 'dayjs'
-import {
-  dateToLocalDate,
-  dayjsToLocalDate
-} from '../../../components/Formatter'
-
 import { useTranslation } from 'react-i18next'
 import { PickupOrder } from '../../../interfaces/pickupOrder'
-import { returnApiToken } from '../../../utils/utils'
+import { returnApiToken, formatWeight } from '../../../utils/utils'
 import { getItemTrackInventory } from '../../../APICalls/Collector/inventory'
 import InventoryShippingCard from '../../../components/InventoryShippingCard'
-import { formatWeight } from '../../../utils/utils'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
@@ -49,6 +32,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   const { t } = useTranslation()
   const [shippingData, setShippingData] = useState<any[]>([])
   const { decimalVal } = useContainer(CommonTypeContainer)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const getPicoDtl = (picoId: string, dtlId: number) => {
     if (selectedPico) {
       const pico = selectedPico.find((pico) => pico.picoId == picoId)
@@ -61,6 +45,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
     }
     return null
   }
+
   const fieldItem = [
     {
       label: t('inventory.date'),
@@ -93,11 +78,13 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   }, [selectedRow])
 
   const initItemTrackInventory = async () => {
+    setIsLoading(true)
     const token = returnApiToken()
     setShippingData([])
     if (selectedRow !== null && selectedRow !== undefined) {
       let result
       if (token.realmApiRoute === 'account') {
+        // TODO document why this block is empty
       } else {
         result = await getItemTrackInventory(
           token.realmApiRoute,
@@ -111,67 +98,73 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
         }
       }
     }
+    setIsLoading(false)
   }
 
   return (
-    <>
-      <div className="detail-inventory">
-        <RightOverlayForm
-          open={drawerOpen}
-          onClose={handleDrawerClose}
-          anchor={'right'}
-          action={'none'}
-          headerProps={{
-            title: t('recyclables'),
-            subTitle: selectedRow?.recyName,
-            onCloseHeader: handleDrawerClose
-          }}
-        >
-          <Divider />
-          <Box sx={{ PaddingX: 2 }}>
-            <Grid
-              container
-              direction={'column'}
-              spacing={4}
-              sx={{
-                width: { xs: '100%' },
-                marginTop: { sm: 2, xs: 6 },
-                marginLeft: {
-                  xs: 0
-                },
-                paddingRight: 2
-              }}
-              className="sm:ml-0 mt-o w-full"
-            >
-              <Grid item>
-                <Box>
-                  <Typography sx={styles.header2}>
-                    {t('warehouseDashboard.recyclingInformation')}
-                  </Typography>
-                </Box>
-              </Grid>
-              {fieldItem.map((item, index) => (
-                <Grid item key={index}>
-                  <CustomField label={item.label}>
-                    <Typography sx={localStyle.textField}>
-                      {item.value}
-                    </Typography>
-                  </CustomField>
-                </Grid>
-              ))}
-              {shippingData.length > 0 && (
-                <Grid item>
-                  <Typography sx={styles.header2}>
-                    {t('pick_up_order.item.shipping_info')}
-                  </Typography>
-                  <InventoryShippingCard shippingData={shippingData} />
-                </Grid>
-              )}
+    <div className="detail-inventory">
+      <RightOverlayForm
+        open={drawerOpen}
+        onClose={handleDrawerClose}
+        anchor={'right'}
+        action={'none'}
+        useConfirmModal={false}
+        headerProps={{
+          title: t('inventory.recyclingNumber'),
+          subTitle: `${selectedRow?.labelId}`,
+          onCloseHeader: handleDrawerClose
+        }}
+      >
+        <Divider />
+        <Box sx={{ PaddingX: 2 }}>
+          <Grid
+            container
+            direction={'column'}
+            spacing={4}
+            sx={{
+              width: { xs: '100%' },
+              marginTop: { sm: 2, xs: 6 },
+              marginLeft: {
+                xs: 0
+              },
+              paddingRight: 2
+            }}
+            className="sm:ml-0 mt-o w-full"
+          >
+            <Grid item>
+              <Box>
+                <Typography sx={styles.header2}>
+                  {t('warehouseDashboard.recyclingInformation')}
+                </Typography>
+              </Box>
             </Grid>
-          </Box>
-        </RightOverlayForm>
-      </div>
-    </>
+            {fieldItem.map((item, index) => (
+              <Grid item key={index}>
+                <CustomField label={item.label}>
+                  <Typography sx={localStyle.textField}>
+                    {item.value}
+                  </Typography>
+                </CustomField>
+              </Grid>
+            ))}
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Grid item>
+                {shippingData.length > 0 && (
+                  <Grid>
+                    <Typography sx={styles.header2}>
+                      {t('pick_up_order.item.shipping_info')}
+                    </Typography>
+                    <InventoryShippingCard shippingData={shippingData} />
+                  </Grid>
+                )}
+             </Grid>
+            )}
+          </Grid>
+        </Box>
+      </RightOverlayForm>
+    </div>
   )
 }
 

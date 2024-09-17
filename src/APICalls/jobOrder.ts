@@ -38,11 +38,11 @@ try{
 
 }
 
-export const getDriverDetailById = async (driverId: string) => {
+export const getDriverDetailById = async (driverId: string, company?: string) => {
 const auth = returnApiToken()
 try{
     const response = await axiosInstance({
-        ...GET_DRIVER_DETAIL_BY_ID(auth.decodeKeycloack, driverId),
+        ...GET_DRIVER_DETAIL_BY_ID(company? company : auth.decodeKeycloack, driverId),
         baseURL: window.baseURL.administrator,
     });
     return response
