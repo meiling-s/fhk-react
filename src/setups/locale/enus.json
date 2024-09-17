@@ -567,7 +567,8 @@
       "err_duplicated_br_no": "Business Reg. No. already exist",
       "err_duplicated_company_number": "Company number already exist",
       "err_duplicated_company_name": "Company name already exist",
-      "err_companyIdLength": "Company ID must be a 6 digital code"
+      "err_companyIdLength": "Company ID must be a 6 digital code",
+      "err_illegal_tenant_id": "Illegal Company number -Tenant 0 ,company number 0 is not allowed"
     },
     "detail": {
       "company_category": "Company Category",

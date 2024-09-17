@@ -171,7 +171,8 @@ axiosInstance?.interceptors.response.use(
     //     window.location.href = '/';
     // }
 
-    const exipredTokenStatus = [STATUS_CODE[401], STATUS_CODE[403]]
+    // const exipredTokenStatus = [STATUS_CODE[401], STATUS_CODE[403]]
+    const exipredTokenStatus = [STATUS_CODE[401]]
     if (
       error?.response &&
       exipredTokenStatus.includes(error?.response?.status)

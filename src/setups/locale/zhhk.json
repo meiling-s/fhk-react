@@ -565,7 +565,8 @@
       "err_duplicated_br_no": "商業註冊。編號已存在",
       "err_duplicated_company_number": "公司號碼已存在",
       "err_duplicated_company_name": "公司名稱已存在",
-      "err_duplicated": "公司號碼/公司名稱/商業註冊。編號已存在"
+      "err_duplicated": "公司號碼/公司名稱/商業註冊。編號已存在",
+      "err_illegal_tenant_id": "非法公司編號 - 租戶 0 ，不允許使用公司編號 0"
     },
     "detail": {
       "company_category": "公司類別",
