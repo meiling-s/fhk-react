@@ -324,7 +324,12 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
       const result = await postUserAccount(formData)
 
       setValidation([])
-      if (result == 409) {
+      if (result && result?.status === 200) {
+        onSubmitData()
+        showSuccessToast(t('userAccount.successCreatedUser'))
+        resetData()
+        handleDrawerClose()
+      } else if (result === 409) {
         //SET VALIDATION FOR USER WITH SAME EMAIL
         setTrySubmited(true)
         let tempV = []
@@ -336,14 +341,10 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           type: 'error'
         })
         setValidation(tempV)
-      } else if (result == 500) {
+      } else {
+        // handle err response 500, 404, undifiend etc
         setTrySubmited(true)
         showErrorToast(t('userAccount.failedCreatedUser'))
-      } else {
-        onSubmitData()
-        showSuccessToast(t('userAccount.successCreatedUser'))
-        resetData()
-        handleDrawerClose()
       }
     } else {
       setTrySubmited(true)
