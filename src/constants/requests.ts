@@ -1444,7 +1444,7 @@ export const SEARCH_PURCHASE_ORDER = (
 
 export const GET_PURCHASE_ORDER_BY_ID = (poId: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/administrator/po/${poId}`
+  url: `api/v1/administrator/po/withoutDeletedDtl/${poId}`
 })
 
 export const UPDATE_PURCHASE_ORDER_STATUS = (

@@ -284,13 +284,6 @@ const PurchaseOrder = () => {
       editable: true
     },
     {
-      field: 'receiverAddr',
-      headerName: t('purchase_order.table.place_receipt'),
-      type: 'string',
-      width: 200,
-      editable: true
-    },
-    {
       field: 'pickupAt',
       headerName: t('purchase_order.table.receipt_date_time'),
       type: 'sring',
@@ -352,13 +345,6 @@ const PurchaseOrder = () => {
         headerName: t('purchase_order.table.pico_id'),
         type: 'string',
         width: 220,
-        editable: true
-      },
-      {
-        field: 'receiverAddr',
-        headerName: t('purchase_order.table.place_receipt'),
-        type: 'string',
-        width: 200,
         editable: true
       },
       {
@@ -610,7 +596,6 @@ const PurchaseOrder = () => {
           .format(`${dateFormat} HH:mm`),
         poId: item.poId,
         picoId: item.picoId,
-        receiverAddr: item.receiverAddr,
         approvedAt: dayjs
           .utc(item.approvedAt)
           .tz('Asia/Hong_Kong')

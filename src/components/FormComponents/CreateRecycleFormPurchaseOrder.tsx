@@ -85,8 +85,10 @@ const initValue = {
   weight: '0',
   pickupAt: dayjs.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
   receiverAddr: '',
+  receiverAddrGps: [0],
   createdBy: loginId,
-  updatedBy: loginId
+  updatedBy: loginId,
+  status: 'CREATED',
 }
 
 const ErrorMessages: React.FC<{ message: string }> = ({ message }) => {
@@ -190,7 +192,7 @@ const CreateRecycleForm = ({
     if (editRowId == null) {
       formik.setValues(initValue)
     } else {
-      const editR = data.at(editRowId)
+      const editR = data.find(value => value.id === editRowId)
       if (editR) {
         setDefRecyc(editR)
         setEditRow(editR)
@@ -237,7 +239,9 @@ const CreateRecycleForm = ({
         pickupAt: editRow?.pickupAt || '',
         createdBy: editRow.createdBy,
         updatedBy: editRow.updatedBy,
-        receiverAddr: editRow.receiverAddr || ''
+        receiverAddr: editRow.receiverAddr || '',
+        receiverAddrGps: editRow.receiverAddrGps || [0],
+        status: editRow.status === null ? 'CREATED' : editRow.status ?? 'CREATED'
       })
     }
   }, [editRow])
