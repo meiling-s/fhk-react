@@ -316,13 +316,21 @@ const PurchaseOrderCreateForm = ({
   }
 
   const handleDeleteRow = (id: any) => {
-    var updateDeleteRow = state.filter((row, index) => index != id)
-    updateDeleteRow = updateDeleteRow.map((picoDtl, index) => {
-      picoDtl.poDtlId = index
-      return picoDtl
-    })
-
-    setState(updateDeleteRow)
+    if (editMode) {
+      //let updateDeleteRow = state.filter((row, index) => row.id == id)
+      // let updateDeleteRow: CreatePicoDetail[] = []
+      // debugger
+      const updateDeleteRow = state
+        .filter((picoDtl) => picoDtl.id) // Only include items with picoDtlId
+        .map((picoDtl) => ({
+          ...picoDtl,
+          status: picoDtl.id === id ? 'DELETED' : picoDtl.status
+        }))
+      setState(updateDeleteRow)
+    } else {
+      let updateDeleteRow = state.filter((row) => row.id !== id)
+      setState(updateDeleteRow)
+    }
   }
 
   const createdDate = selectedPo
@@ -613,6 +621,16 @@ const PurchaseOrderCreateForm = ({
   }
 
   useEffect(() => {
+    const paymentType = paymentTypes.find(item => item.value === selectedPo?.paymentType);
+    if (paymentType) {
+      setCurrentPayment({
+        value: paymentType.value,
+        description: i18n.language === 'enus' ? paymentType.paymentNameEng : i18n.language === 'zhch' ? paymentType.paymentNameSchi : paymentType.paymentNameTchi
+      })
+    }
+  }, [selectedPo])
+
+  useEffect(() => {
     if (!manuList) return
     if (formik.values.receiverName && i18n.language !== prevLang) {
       getCurrentValueManufacturer('receiverName')
@@ -640,6 +658,7 @@ const PurchaseOrderCreateForm = ({
 
   const validateData = () => {
     let isValid = true
+    const filteredRecycData = state.filter(value => value.status !== 'DELETED')
     if (formik.values.receiverName === '') {
       setErrorsField((prev) => {
         return {
@@ -727,6 +746,31 @@ const PurchaseOrderCreateForm = ({
       })
     }
 
+    if (filteredRecycData.length < 1) {
+      setErrorsField(prev => {
+        return{
+          ...prev,
+          'details': {
+            ...prev.details,
+            status: true
+          }
+        }
+      })
+      isValid = false
+    } else {
+      setErrorsField(prev => {
+        return{
+          ...prev,
+          'details': {
+            ...prev.details,
+            status: false
+          }
+        }
+      })
+      isValid = true
+    }
+
+
     return isValid
   }
 
@@ -737,11 +781,12 @@ const PurchaseOrderCreateForm = ({
   }
 
   useEffect(() => {
-    if (state.length >= 1) {
+    const filteredRecycData = state.filter(value => value.status !== 'DELETED')
+    if (filteredRecycData.length > 0) {
       setErrors((prev) => {
         return {
           ...prev,
-          details: {
+          'details': {
             ...prev.details,
             status: false
           }
@@ -1035,7 +1080,7 @@ const PurchaseOrderCreateForm = ({
                 <DataGrid
                   rows={
                     editMode
-                      ? state.map((row, index) => ({ ...row, id: index }))
+                      ? state.map((row, index) => ({ ...row, })).filter(value => value.status !== 'DELETED')
                       : state
                   }
                   hideFooter

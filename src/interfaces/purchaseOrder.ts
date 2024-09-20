@@ -18,14 +18,14 @@ export type PurchaseOrderDetail = {
   updatedBy: string
   pickupAt?: string
   receiverAddr?: string
+  receiverAddrGps?: number[]
+  status?: string
 }
 
 export type PurChaseOrder = {
   poId: string
   picoId: string
   cusTenantId?: string
-  receiverAddr: string
-  receiverAddrGps: [0]
   sellerTenantId: string
   senderAddr: string
   senderAddrGps: [0]

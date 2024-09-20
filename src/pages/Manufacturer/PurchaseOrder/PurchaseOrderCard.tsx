@@ -219,7 +219,7 @@ const PurchaseOrderCard = ({
               sx={{ overflowWrap: 'break-word' }}
             >
               <Typography style={localstyles.mini_value}>
-                {selectedPurchaseOrder?.receiverAddr}
+                {podetail?.receiverAddr}
               </Typography>
             </Box>
           </Box>

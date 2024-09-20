@@ -100,8 +100,6 @@ const EditPurchaseOrder = () => {
     initialValues: {
       poId: '',
       picoId: '',
-      receiverAddr: '',
-      receiverAddrGps: [0],
       sellerTenantId: '',
       senderAddr: '',
       senderAddrGps: [0],
@@ -137,7 +135,7 @@ const EditPurchaseOrder = () => {
   const setPickupOrderDetail = () => {
     const picoDetails: PurchaseOrderDetail[] =
       poInfo?.purchaseOrderDetail?.map((item) => ({
-        id: item.id,
+        id: item.poDtlId,
         poDtlId: item.poDtlId,
         recycTypeId: item.recycTypeId,
         recyclableNameTchi: item.recyclableNameTchi,
@@ -155,8 +153,11 @@ const EditPurchaseOrder = () => {
         createdBy: item.createdBy,
         updatedBy: loginId,
         pickupAt: item.pickupAt,
-        receiverAddr: poInfo.receiverAddr,
-        version: poInfo.version
+        receiverAddr: item.receiverAddr,
+        receiverAddrGps: item.receiverAddrGps,
+        version: poInfo.version,
+        status: item.status,
+
       })) || []
 
     setAddRow(picoDetails)
@@ -171,8 +172,6 @@ const EditPurchaseOrder = () => {
         poId: poInfo.poId,
         picoId: poInfo.picoId,
         cusTenantId: poInfo.cusTenantId,
-        receiverAddr: poInfo.receiverAddr,
-        receiverAddrGps: poInfo.receiverAddrGps,
         sellerTenantId: poInfo.sellerTenantId,
         senderAddr: poInfo.senderAddr,
         senderAddrGps: poInfo.senderAddrGps,

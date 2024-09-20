@@ -87,8 +87,6 @@ const CreatePurchaseOrder = () => {
       poId: '',
       picoId: '',
       cusTenantId: getTenantId(),
-      receiverAddr: '',
-      receiverAddrGps: [0],
       sellerTenantId: '',
       senderAddr: '',
       senderAddrGps: [0],

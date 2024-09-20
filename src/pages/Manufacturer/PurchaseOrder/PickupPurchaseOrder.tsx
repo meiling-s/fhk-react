@@ -195,7 +195,7 @@ const CreatePickupOrder = () => {
         senderAddrGps: [0],
         receiverId: '',
         receiverName: poInfo.receiverName,
-        receiverAddr: poInfo?.receiverAddr ?? '',
+        receiverAddr: item?.receiverAddr ?? '',
         receiverAddrGps: [0],
         status: Status.CREATED,
         createdBy: item?.createdBy ?? '',
