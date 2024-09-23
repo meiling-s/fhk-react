@@ -225,7 +225,7 @@ const CreateRecycleForm = ({
 
       formik.setValues({
         id: index,
-        poDtlId: editRow.poDtlId,
+        poDtlId: editRow.poDtlId ?? 0,
         recycTypeId: editRow.recycTypeId,
         recyclableNameTchi: editRow.recyclableNameTchi,
         recyclableNameSchi: editRow.recyclableNameSchi,
@@ -410,10 +410,16 @@ const CreateRecycleForm = ({
         })
         setState(updatedData)
       } else {
-        //creating row
-        var updatedValues: PurchaseOrderDetail = values
-        updatedValues.id = data.length
-        setState([...data, updatedValues])
+        let updatedValues: PurchaseOrderDetail = values;
+
+        if (updatedValues.poDtlId === 0) {
+          const { poDtlId, ...rest } = updatedValues;
+          updatedValues = rest;
+        }
+
+        updatedValues.id = data.length;
+        
+        setState([...data, updatedValues]);
       }
       resetForm()
       onClose && onClose()
