@@ -757,19 +757,7 @@ const PurchaseOrderCreateForm = ({
         }
       })
       isValid = false
-    } else {
-      setErrorsField(prev => {
-        return{
-          ...prev,
-          'details': {
-            ...prev.details,
-            status: false
-          }
-        }
-      })
-      isValid = true
     }
-
 
     return isValid
   }
@@ -1221,6 +1209,12 @@ const PurchaseOrderCreateForm = ({
                   t('purchase_order.create.order_information_details') +
                   t('form.error.shouldNotBeEmpty')
                 }
+              />
+            )}
+            {formik.values.senderName !== '' && formik.values.receiverName !== '' && formik.values.senderName === formik.values.receiverName && (
+              <ErrorMessage
+                message={
+                  t('purchase_order.create.senderNameEqualToReceiverName')}
               />
             )}
           </Stack>

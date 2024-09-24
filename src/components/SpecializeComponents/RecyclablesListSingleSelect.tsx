@@ -59,8 +59,8 @@ export default function RecyclablesListSingleSelect({
   }, [defaultRecycL])
   
   useEffect(() => {
-    //console.log(toSingleRecyclable());
     setState(toSingleRecyclable())
+    // console.log(toSingleRecyclable());
   }, [recycType, subType])
 
   const returnRecycTypes = () => {

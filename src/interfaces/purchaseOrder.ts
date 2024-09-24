@@ -1,6 +1,6 @@
 export type PurchaseOrderDetail = {
   id?: any;
-  poDtlId: number
+  poDtlId?: number
   recycTypeId: string
   recyclableNameTchi: string
   recyclableNameSchi: string

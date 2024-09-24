@@ -191,6 +191,8 @@ const CreateRecycleForm = ({
   useEffect(() => {
     if (editRowId == null) {
       formik.setValues(initValue)
+      onHandleError('recycTypeId', 'succeed')
+      onHandleError('recycSubTypeId', 'succeed')
     } else {
       const editR = data.find(value => value.id === editRowId)
       if (editR) {
@@ -217,12 +219,13 @@ const CreateRecycleForm = ({
 
   useEffect(() => {
     if (editRow) {
-      // Set the form field values based on the editRow data
+      onHandleError('recycTypeId', 'succeed')
+      onHandleError('recycSubTypeId', 'succeed')
       const index = data.indexOf(editRow)
 
       formik.setValues({
         id: index,
-        poDtlId: editRow.poDtlId,
+        poDtlId: editRow.poDtlId ?? 0,
         recycTypeId: editRow.recycTypeId,
         recyclableNameTchi: editRow.recyclableNameTchi,
         recyclableNameSchi: editRow.recyclableNameSchi,
@@ -292,7 +295,6 @@ const CreateRecycleForm = ({
       )
     })
   })
-
   const validateData = () => {
     let isValid = true
     // debugger
@@ -335,27 +337,27 @@ const CreateRecycleForm = ({
       })
       isValid = false
     }
-    if (formik.values.recycSubTypeId === '') {
-      const filteredRecyc = recycType?.filter(
-        (value) => value.recycTypeId === formik.values.recycTypeId
-      ) as recycType[]
-      if (
-        filteredRecyc !== undefined &&
-        filteredRecyc.length > 0 &&
-        filteredRecyc[0].recycSubType.length > 0
-      ) {
-        setErrorsField((prev) => {
-          return {
-            ...prev,
-            recycSubTypeId: {
-              ...prev.recycSubTypeId,
-              status: true
-            }
-          }
-        })
-        isValid = false
-      }
-    }
+    // if (formik.values.recycSubTypeId === '') {
+    //   const filteredRecyc = recycType?.filter(
+    //     (value) => value.recycTypeId === formik.values.recycTypeId
+    //   ) as recycType[]
+    //   if (
+    //     filteredRecyc !== undefined &&
+    //     filteredRecyc.length > 0 &&
+    //     filteredRecyc[0].recycSubType.length > 0
+    //   ) {
+    //     setErrorsField((prev) => {
+    //       return {
+    //         ...prev,
+    //         recycSubTypeId: {
+    //           ...prev.recycSubTypeId,
+    //           status: true
+    //         }
+    //       }
+    //     })
+    //     isValid = false
+    //   }
+    // }
     if (Number(formik.values.weight) <= 0) {
       setErrorsField((prev) => {
         return {
@@ -408,10 +410,16 @@ const CreateRecycleForm = ({
         })
         setState(updatedData)
       } else {
-        //creating row
-        var updatedValues: PurchaseOrderDetail = values
-        updatedValues.id = data.length
-        setState([...data, updatedValues])
+        let updatedValues: PurchaseOrderDetail = values;
+
+        if (updatedValues.poDtlId === 0) {
+          const { poDtlId, ...rest } = updatedValues;
+          updatedValues = rest;
+        }
+
+        updatedValues.id = data.length;
+        
+        setState([...data, updatedValues]);
       }
       resetForm()
       onClose && onClose()
@@ -630,13 +638,12 @@ const CreateRecycleForm = ({
                     }
                     recycL={recycType ?? []}
                     setState={(values) => {
-                      if (values.recycTypeId)
-                        onChangeContent('recycTypeId', values?.recycTypeId)
-                      if (values.recycSubTypeId)
-                        onChangeContent(
-                          'recycSubTypeId',
-                          values?.recycSubTypeId
-                        )
+                      if (values.recycTypeId !== undefined) {
+                        onChangeContent('recycTypeId', values.recycTypeId)
+                      }
+                      if (values.recycSubTypeId !== undefined) {
+                        onChangeContent('recycSubTypeId', values.recycSubTypeId)
+                      }
                     }}
                     itemColor={{
                       bgColor: customListTheme
@@ -784,8 +791,7 @@ const CreateRecycleForm = ({
                     }
                   />
                 )}
-                {errorsField.recycTypeId &&
-                  errorsField.recycSubTypeId.required && (
+                {errorsField.recycTypeId.status && (
                     <ErrorMessages
                       message={
                         t('pick_up_order.card_detail.main_category') +
