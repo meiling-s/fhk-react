@@ -866,6 +866,7 @@ const PickupOrderCreateForm = ({
                       }
                       onChange={(event, value) => {
                         formik.setFieldValue('contractNo', value)
+                        addSkipValidation('contractNo')
                       }}
                       renderInput={(params) => (
                         <TextField
