@@ -22,6 +22,7 @@ type fieldName =
   | 'AD_HOC'
   | 'weeklyDate'
   | 'contactNo'
+  | 'contractNo'
 
 const initialErrors = {
   effFrmDate: {
@@ -111,7 +112,15 @@ const initialErrors = {
     message: '',
     messages: {},
     touch: false
-  }
+  },
+  contractNo: {
+    type: 'string',
+    status: false,
+    required: false,
+    message: '',
+    messages: {},
+    touch: false
+  },
 }
 
 type ErrorsField = Record<
@@ -132,6 +141,7 @@ const useValidationPickupOrder = (
 ) => {
   const { i18n } = useTranslation()
   const [errorsField, setErrorsField] = useState<ErrorsField>(initialErrors)
+  const [skipContractNo, setSkipContractNo] = useState<boolean>(false)
   const { dateFormat } = useContainer(CommonTypeContainer)
 
   const errorMessages: any = {
@@ -210,6 +220,11 @@ const useValidationPickupOrder = (
         'Contact number The content you entered contains invalid characters.',
       messageTc: '聯絡人號碼 您輸入的內容包含無效字元',
       messageSc: '联络人号码 您输入的内容包含无效字元'
+    },
+    contractNo: {
+      messageEn: 'should not be empty',
+      messageTc: '不應留白',
+      messageSc: '不应留白'
     }
   }
 
@@ -257,8 +272,12 @@ const useValidationPickupOrder = (
     setErrorsField(cache)
   }, [i18n.language])
 
-  const validateData = (): boolean => {
+  const validateData = (value?: string): boolean => {
     let isValid = true
+
+    if (value) {
+      setSkipContractNo(true)
+    }
 
     if (pico.effToDate && pico.effFrmDate) {
       const fromDate = dayjs(pico.effFrmDate).startOf('day')
@@ -687,6 +706,45 @@ const useValidationPickupOrder = (
           }
         }
       })
+    }
+
+    if (pico.contractNo === '' || pico.contractNo === null) {
+      if (skipContractNo) {
+        setErrorsField((prev) => {
+          return {
+            ...prev,
+            contractNo: {
+              ...prev.contractNo,
+              status: false
+            }
+          }
+        })
+      } else {
+        if (value !== undefined) {
+          setErrorsField((prev) => {
+            return {
+              ...prev,
+              contractNo: {
+                ...prev.contractNo,
+                status: false
+              }
+            }
+          })
+        } else {
+          isValid = false
+          setErrorsField((prev) => {
+            return {
+              ...prev,
+              contractNo: {
+                ...prev.contractNo,
+                status: true,
+                messages: errorMessages['contractNo'],
+                message: getTranslationMessage('contractNo')
+              }
+            }
+          })
+        }
+      }
     }
 
     return isValid
@@ -1120,6 +1178,10 @@ const useValidationPickupOrder = (
           }
         }
       })
+    }
+
+    if (pico.contractNo !== '' || pico.contractNo === null) {
+      setSkipContractNo(false)
     }
   }
 
