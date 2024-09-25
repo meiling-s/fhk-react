@@ -51,6 +51,7 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
 import useValidationPickupOrder from '../../pages/Collector/PickupOrder/useValidationPickupOrder'
+import { t } from 'i18next'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -74,6 +75,26 @@ const ErrorMessage: React.FC<{ message: string }> = ({ message }) => {
       >
         {message}
       </Typography>
+    </div>
+  )
+}
+
+const WarningMessage: React.FC<{ message: string, setContinue: () => void }> = ({ message, setContinue }) => {
+  return (
+    <div className="bg-[#F6F4B7] p-3 rounded-xl w-1/4">
+      <Box sx={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+        <Typography
+          style={{
+            color: '#ec942c',
+            fontWeight: '400'
+          }}
+        >
+          {t('col.contractNo')} {message}
+        </Typography>
+        <Button sx={{...styles.buttonFilledGreen, marginLeft: 'auto'}} onClick={() => setContinue && setContinue()}>
+            {t("continue")}
+        </Button>
+      </Box>
     </div>
   )
 }
@@ -157,6 +178,7 @@ const PickupOrderCreateForm = ({
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [skipValidation, setSkipValidation] = useState<string[]>([])
   const {t, i18n} = useTranslation()
   const {
     logisticList,
@@ -304,6 +326,11 @@ const PickupOrderCreateForm = ({
     }
   }, [])
 
+  const addSkipValidation = (skip: string) => {
+    if (skip === 'contractNo') {
+      validateData(skip)
+    }
+  }
   const getvehicleType = () => {
     if (vehicleType) {
       const carType: il_item[] = []
@@ -839,6 +866,7 @@ const PickupOrderCreateForm = ({
                       }
                       onChange={(event, value) => {
                         formik.setFieldValue('contractNo', value)
+                        addSkipValidation('contractNo')
                       }}
                       renderInput={(params) => (
                         <TextField
@@ -890,36 +918,34 @@ const PickupOrderCreateForm = ({
               </Grid>
             )}
             {formik.values.picoType === 'AD_HOC' && (
-              <>
-                <Grid item>
-                  <Typography sx={[styles.header3, { marginBottom: 1 }]}>
-                    {t('pick_up_order.adhoc.po_number')}
-                  </Typography>
-                  {formik.values.refPicoId !== '' && formik.values.refPicoId ? (
-                    <div className="flex items-center justify-between w-[390px]">
-                      <div className="font-bold text-mini">
-                        {formik.values.refPicoId}
-                      </div>
-                      <div
-                        className={`text-mini cursor-pointer text-[${colorTheme}]`}
-                        onClick={resetPicoId}
-                      >
-                        {t('pick_up_order.change')}
-                      </div>
+              <Grid item>
+                <Typography sx={[styles.header3, { marginBottom: 1 }]}>
+                  {t('pick_up_order.adhoc.po_number')}
+                </Typography>
+                {formik.values.refPicoId !== '' && formik.values.refPicoId ? (
+                  <div className="flex items-center justify-between w-[390px]">
+                    <div className="font-bold text-mini">
+                      {formik.values.refPicoId}
                     </div>
-                  ) : (
-                    <div>
-                      <Button
-                        sx={[picoIdButton]}
-                        onClick={() => setOpenPico(true)}
-                      >
-                        <AddCircleIcon sx={{ ...endAdornmentIcon, pr: 1 }} />
-                        {t('pick_up_order.choose')}
-                      </Button>
+                    <div
+                      className={`text-mini cursor-pointer text-[${colorTheme}]`}
+                      onClick={resetPicoId}
+                    >
+                      {t('pick_up_order.change')}
                     </div>
-                  )}
-                </Grid>
-              </>
+                  </div>
+                ) : (
+                  <div>
+                    <Button
+                      sx={[picoIdButton]}
+                      onClick={() => setOpenPico(true)}
+                    >
+                      <AddCircleIcon sx={{ ...endAdornmentIcon, pr: 1 }} />
+                      {t('pick_up_order.choose')}
+                    </Button>
+                  </div>
+                )}
+              </Grid>
             )}
             <Grid item>
               <Typography sx={styles.header2}>
@@ -1085,6 +1111,9 @@ const PickupOrderCreateForm = ({
               )}
             {errorsField.createPicoDetail.status && (
               <ErrorMessage message={errorsField.createPicoDetail.message} />
+            )}
+            {errorsField.contractNo.status && (
+              <WarningMessage message={errorsField.contractNo.message} setContinue={() => addSkipValidation('contractNo')}/>
             )}
           </Stack>
           <DeleteModal
