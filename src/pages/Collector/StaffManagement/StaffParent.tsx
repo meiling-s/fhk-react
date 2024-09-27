@@ -8,6 +8,7 @@ import Rosters from '../Rosters/Rosters'
 // import UserGroup from '../UserGroup/UserGroup'
 import StaffManufacturer from '../StaffManufacturer/StaffManufacturer'
 import { returnApiToken } from '../../../utils/utils'
+import { localStorgeKeyName } from '../../../constants/constant'
 
 const Settings: FunctionComponent = () => {
   const token = returnApiToken()
@@ -16,13 +17,26 @@ const Settings: FunctionComponent = () => {
   const handleTabChange = (value: number, label: string) => {
     setSelectedTab(value)
   }
+  const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
+  // const tabSettings = [
+  //   t('staffManagement.list'),
+  //   t('staffManagement.schedule'),
+  //   t('staffManagement.manufacturer')
+  // ]
 
-  const titlePage = t('settings_page.title')
-  const tabSettings = [
+  const tabSettingsCollectors = [
     t('staffManagement.list'),
     t('staffManagement.schedule'),
     t('staffManagement.manufacturer')
   ]
+
+  const tabSettingsNonCollectors = [
+    t('staffManagement.list'),
+    t('staffManagement.manufacturer')
+  ]
+
+  const tabSettings =
+    role === 'collector' ? tabSettingsCollectors : tabSettingsNonCollectors
 
   return (
     <Box className="container-wrapper w-max">
@@ -40,11 +54,19 @@ const Settings: FunctionComponent = () => {
             className="lg:px-10 sm:px-4 bg-bg-primary"
           />
         ) : null}
-        {selectedTab === 0 ? (
+        {role === 'collector' ? (
+          selectedTab === 0 ? (
+            <StaffManagement />
+          ) : selectedTab === 1 ? (
+            <Rosters />
+          ) : selectedTab === 2 ? (
+            <StaffManufacturer />
+          ) : (
+            <div></div>
+          )
+        ) : selectedTab === 0 ? (
           <StaffManagement />
         ) : selectedTab === 1 ? (
-          <Rosters />
-        ) : selectedTab === 2 ? (
           <StaffManufacturer />
         ) : (
           <div></div>
