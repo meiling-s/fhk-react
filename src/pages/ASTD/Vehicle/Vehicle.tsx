@@ -7,12 +7,7 @@ import React, {
 import {
   Box,
   Button,
-  Checkbox,
   Typography,
-  Pagination,
-  Container,
-  IconButton,
-  Switch
 } from '@mui/material'
 import {
   DataGrid,
@@ -26,31 +21,12 @@ import {
   EDIT_OUTLINED_ICON,
   DELETE_OUTLINED_ICON
 } from '../../../themes/icons'
-import EditIcon from '@mui/icons-material/Edit'
 
 import { styles } from '../../../constants/styles'
-// import CreateVehicle from './CreateVehicle'
-import {
-  Vehicle as VehicleItem,
-  CreateVehicle as VehiclesForm
-} from '../../../interfaces/vehicles'
-import { Contract as ContractItem } from '../../../interfaces/contract'
-import { getAllContract } from '../../../APICalls/Collector/contracts'
 import { ToastContainer, toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
-import { extractError, returnApiToken } from '../../../utils/utils'
-import { getTenantById } from '../../../APICalls/tenantManage'
-import StatusLabel from '../../../components/StatusLabel'
-import {
-  GET_ALL_RECYCLE_TYPE,
-  GET_RECYC_TYPE
-} from '../../../constants/requests'
-import { useContainer } from 'unstated-next'
-import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import axiosInstance from '../../../constants/axiosInstance'
-import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
-import { t } from 'i18next'
+import { extractError } from '../../../utils/utils'
 import CircularLoading from '../../../components/CircularLoading'
 import { getVehicleData } from '../../../APICalls/ASTD/recycling'
 import CreateVehicle from './CreateVehicle'
@@ -242,102 +218,100 @@ const Vehicle: FunctionComponent = () => {
   }, [])
 
   return (
-    <>
+    <Box
+      sx={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        pr: 4
+      }}
+    >
+      <ToastContainer></ToastContainer>
       <Box
         sx={{
-          width: '100%',
-          height: '100%',
           display: 'flex',
-          flexDirection: 'column',
-          pr: 4
+          alignItems: 'center',
+          gap: '16px',
+          marginY: 4
         }}
       >
-        <ToastContainer></ToastContainer>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            marginY: 4
+        <Typography fontSize={16} color="black" fontWeight="bold">
+          {t(`top_menu.vehicles`)}
+        </Typography>
+        <Button
+          sx={[
+            styles.buttonOutlinedGreen,
+            {
+              width: 'max-content',
+              height: '40px'
+            }
+          ]}
+          variant="outlined"
+          onClick={() => {
+            setDrawerOpen(true)
+            setAction('add')
           }}
         >
-          <Typography fontSize={16} color="black" fontWeight="bold">
-            {t(`top_menu.vehicles`)}
-          </Typography>
-          <Button
-            sx={[
-              styles.buttonOutlinedGreen,
-              {
-                width: 'max-content',
-                height: '40px'
-              }
-            ]}
-            variant="outlined"
-            onClick={() => {
-              setDrawerOpen(true)
-              setAction('add')
-            }}
-          >
-            <ADD_ICON /> {t('top_menu.add_new')}
-          </Button>
-        </Box>
-        <div className="table-vehicle">
-          <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
-            {isLoading ? (
-              <CircularLoading />
-            ) : (
-              <DataGrid
-                rows={vehicleData}
-                getRowId={(row) => row.vehicleTypeId}
-                hideFooter
-                columns={columns}
-                onRowClick={handleSelectRow}
-                getRowSpacing={getRowSpacing}
-                localeText={localeTextDataGrid}
-                getRowClassName={(params) =>
-                  selectedRow && params.id === selectedRow.vehicleTypeId
-                    ? 'selected-row'
-                    : ''
-                }
-                sx={{
-                  border: 'none',
-                  '& .MuiDataGrid-cell': {
-                    border: 'none'
-                  },
-                  '& .MuiDataGrid-row': {
-                    bgcolor: 'white',
-                    borderRadius: '10px'
-                  },
-                  '&>.MuiDataGrid-main': {
-                    '&>.MuiDataGrid-columnHeaders': {
-                      borderBottom: 'none'
-                    }
-                  },
-                  '.MuiDataGrid-columnHeaderTitle': {
-                    fontWeight: 'bold !important',
-                    overflow: 'visible !important'
-                  },
-                  '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
-                }}
-              />
-            )}
-          </Box>
-        </div>
-        <CreateVehicle
-          drawerOpen={drawerOpen}
-          handleDrawerClose={() => {
-            setDrawerOpen(false)
-            setSelectedRow(null)
-          }}
-          action={action}
-          selectedItem={selectedRow}
-          onSubmit={onSubmitData}
-        />
+          <ADD_ICON /> {t('top_menu.add_new')}
+        </Button>
       </Box>
-    </>
+      <div className="table-vehicle">
+        <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
+          {isLoading ? (
+            <CircularLoading />
+          ) : (
+            <DataGrid
+              rows={vehicleData}
+              getRowId={(row) => row.vehicleTypeId}
+              hideFooter
+              columns={columns}
+              onRowClick={handleSelectRow}
+              getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
+              getRowClassName={(params) =>
+                selectedRow && params.id === selectedRow.vehicleTypeId
+                  ? 'selected-row'
+                  : ''
+              }
+              sx={{
+                border: 'none',
+                '& .MuiDataGrid-cell': {
+                  border: 'none'
+                },
+                '& .MuiDataGrid-row': {
+                  bgcolor: 'white',
+                  borderRadius: '10px'
+                },
+                '&>.MuiDataGrid-main': {
+                  '&>.MuiDataGrid-columnHeaders': {
+                    borderBottom: 'none'
+                  }
+                },
+                '.MuiDataGrid-columnHeaderTitle': {
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                  backgroundColor: '#F6FDF2 !important',
+                  border: '1px solid #79CA25'
+                }
+              }}
+            />
+          )}
+        </Box>
+      </div>
+      <CreateVehicle
+        drawerOpen={drawerOpen}
+        handleDrawerClose={() => {
+          setDrawerOpen(false)
+          setSelectedRow(null)
+        }}
+        action={action}
+        selectedItem={selectedRow}
+        onSubmit={onSubmitData}
+      />
+    </Box>
   )
 }
 
