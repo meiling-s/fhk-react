@@ -399,7 +399,7 @@ const CheckoutRequest: FunctionComponent = () => {
     receiverAddr: ''
   })
   const [reasonList, setReasonList] = useState<any>([])
-  const { dateFormat, manuList, collectorList, logisticList, companies } =
+  const { dateFormat, manuList, collectorList, logisticList, companies, currentTenant } =
     useContainer(CommonTypeContainer)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
 
@@ -539,7 +539,7 @@ const CheckoutRequest: FunctionComponent = () => {
       width: 200
     },
     {
-      field: 'senderName',
+      field: 'senderCompany',
       headerName: t('check_out.shipping_company'),
       width: 150,
       type: 'string'
@@ -650,6 +650,17 @@ const CheckoutRequest: FunctionComponent = () => {
     return companyName
   }
 
+  const getSenderCompany = (): string => {
+    let senderCompany: string = ''
+    if (i18n.language === Languages.ENUS)
+      senderCompany = currentTenant?.nameEng ?? ''
+    if (i18n.language === Languages.ZHCH)
+      senderCompany = currentTenant?.nameSchi ?? ''
+    if (i18n.language === Languages.ZHHK)
+      senderCompany = currentTenant?.nameTchi ?? ''
+    return senderCompany
+  }
+
   const getCheckoutRequest = async () => {
     setIsLoading(true)
     try {
@@ -680,10 +691,8 @@ const CheckoutRequest: FunctionComponent = () => {
             item.receiverName =
               item.receiverId !== '' ? companyName : item.receiverName
           }
-          if (item.senderName) {
-            const companyName = getTranslationCompany(item.senderName)
-            item.senderName = companyName !== '' ? companyName : item.senderName
-          }
+          
+          item.senderCompany = getSenderCompany()
 
           checkoutData.push(item)
         }
@@ -821,6 +830,7 @@ const CheckoutRequest: FunctionComponent = () => {
   const getTranslationCompany = (name: string): string => {
     let companyName: string = ''
     const company = companyReceiverSender.find((item) => {
+      console.log(item, 'itemmm')
       const { labelEnglish, labelSimpflifed, labelTraditional } = item
       if (
         name === labelEnglish ||
