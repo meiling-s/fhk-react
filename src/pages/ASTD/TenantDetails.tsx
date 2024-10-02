@@ -184,9 +184,15 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
 
     //mapping data
     if (data?.companyLogo != '' && data?.companyLogo != 'null') {
+      const isBase64 = data?.companyLogo.startsWith('data:image/png')
+      const format = data?.companyLogo.startsWith('data:image/png')
+        ? 'png'
+        : 'jpeg'
+      const imgdata = `data:image/${format};base64,${data?.companyLogo}`
+
       const tempLogo: any = []
       tempLogo.push({
-        data_url: data?.companyLogo,
+        data_url: isBase64 ? data?.companyLogo : imgdata,
         file: {
           name: `image_logo${data?.tenantId}`,
           size: 0,
