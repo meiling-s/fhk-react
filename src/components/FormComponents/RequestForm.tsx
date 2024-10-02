@@ -196,112 +196,110 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
 
 
   return (
-    <>
-      <Box sx={{...localstyles.modal, marginTop}} onClick={handleOverlayClick}>
-        <Box sx={localstyles.container} className="md:w-[500px] w-[100vw]">
-          <Box sx={localstyles.header}>
-            <Box>
-              <Typography sx={styles.header4}>{t('check_in.request_check_in')}</Typography>
-              <Typography sx={styles.header3}>
-                {selectedItem?.picoId}
+    <Box sx={{ ...localstyles.modal, marginTop }} onClick={handleOverlayClick}>
+      <Box sx={localstyles.container} className="md:w-[500px] w-[100vw]">
+        <Box sx={localstyles.header}>
+          <Box>
+            <Typography sx={styles.header4}>{t('check_in.request_check_in')}</Typography>
+            <Typography sx={styles.header3}>
+              {selectedItem?.picoId}
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex", alignSelf: "center" }}>
+            <IconButton onClick={onClose}>
+              <KeyboardTabIcon sx={{ fontSize: "30px" }} />
+            </IconButton>
+          </Box>
+        </Box>
+        <Divider />
+        <Stack spacing={2} sx={localstyles.content}>
+          {selectedItem?.adjustmentFlg && (
+            <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
+              {t('check_in.stock_adjustment')}
+            </Alert>
+          )}
+
+          <Box>
+            <Typography sx={localstyles.typo_header}>{t('check_in.transport_information')}</Typography>
+          </Box>
+
+          <Box>
+            <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.logistic_company')}</Typography>
+            <Typography sx={localstyles.typo_fieldContent}>
+              {selectedItem?.logisticName}
+            </Typography>
+          </Box>
+
+          <Box>
+            <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.sender_company')}</Typography>
+            <Typography sx={localstyles.typo_fieldContent}>
+              {selectedItem?.senderName}
+            </Typography>
+          </Box>
+
+          <Box>
+            <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.receiver_company')}</Typography>
+            <Typography sx={localstyles.typo_fieldContent}>{selectedItem?.recipientCompany ?? '-'}</Typography>
+          </Box>
+
+          <Typography sx={localstyles.typo_header}>{t('check_in.recyc_loc_info')}</Typography>
+          <Box display="flex" flexDirection="row">
+            <Box sx={{ flex: 1 }}>
+              <Typography sx={localstyles.typo_fieldTitle}>
+                {t('check_in.sender_addr')}
+              </Typography>
+              <Typography sx={localstyles.typo_fieldContent}>
+                {selectedItem?.senderAddr}
               </Typography>
             </Box>
-            <Box sx={{ display: "flex", alignSelf: "center" }}>
-              <IconButton onClick={onClose}>
-                <KeyboardTabIcon sx={{ fontSize: "30px" }} />
-              </IconButton>
+
+            <Box sx={{ flex: 1, display: "flex", flexDirection: "row" }}>
+              <Box alignSelf="left" sx={{ mr: "35px" }}>
+                <ArrowForwardIcon
+                  style={{ color: "#9f9f9f", fontSize: "30px" }}
+                />
+              </Box>
+              <Box>
+                <Typography sx={localstyles.typo_fieldTitle}>
+                  {t('check_in.receiver_addr')}
+                </Typography>
+                <Typography sx={localstyles.typo_fieldContent}>{selectedItem?.deliveryAddress ?? '-'}</Typography>
+              </Box>
             </Box>
           </Box>
-          <Divider />
-          <Stack spacing={2} sx={localstyles.content}>
-            {selectedItem?.adjustmentFlg && (
-              <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-                {t('check_in.stock_adjustment')}
-              </Alert>
-            )}
-            
-            <Box>
-              <Typography sx={localstyles.typo_header}>{t('check_in.transport_information')}</Typography>
-            </Box>
 
-            <Box>
-              <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.logistic_company')}</Typography>
-              <Typography sx={localstyles.typo_fieldContent}>
-                {selectedItem?.logisticName}
-              </Typography>
-            </Box>
+          <Typography sx={localstyles.typo_fieldTitle}>
+            {t('check_in.recyclable_type_weight')}
+          </Typography>
+          {recycItem.map((item, index) => (
+            <RecycleCard
+              key={item.recycType.id}
+              name={item.recycType.name}
+              bgcolor="#e1f4ff"
+              fontcolor="#66bff6"
+              weight={formatWeight(item.weight, decimalVal)}
+              showImage={true}
+              packageTypeId={item.packageTypeId}
+              recycleName={item.recycSubType.name}
+              recycleType={item.recycType.name}
+              images={item.checkinDetailPhoto}
+            />
+          ))}
+          {selectedItem?.status !== 'CREATED' && <Box>
+            <div className="message">
+              <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
+                {t('check_out.message')}
+              </div>
+              <div className=" text-sm text-[#717171] font-medium tracking-widest">
+                {messageCheckin}
+              </div>
+            </div>
+          </Box>
+          }
+        </Stack>
 
-            <Box>
-              <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.sender_company')}</Typography>
-              <Typography sx={localstyles.typo_fieldContent}>
-                {selectedItem?.senderName}
-              </Typography>
-            </Box>
-
-            <Box>
-              <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.receiver_company')}</Typography>
-              <Typography sx={localstyles.typo_fieldContent}>{selectedItem?.recipientCompany ?? '-'}</Typography>
-            </Box>
-
-            <Typography sx={localstyles.typo_header}>{t('check_in.recyc_loc_info')}</Typography>
-            <Box display="flex" flexDirection="row">
-              <Box sx={{ flex: 1 }}>
-                <Typography sx={localstyles.typo_fieldTitle}>
-                  {t('check_in.sender_addr')}
-                </Typography>
-                <Typography sx={localstyles.typo_fieldContent}>
-                  {selectedItem?.senderAddr}
-                </Typography>
-              </Box>
-
-              <Box sx={{ flex: 1, display: "flex", flexDirection: "row" }}>
-                <Box alignSelf="left" sx={{ mr: "35px" }}>
-                  <ArrowForwardIcon
-                    style={{ color: "#9f9f9f", fontSize: "30px" }}
-                  />
-                </Box>
-                <Box>
-                  <Typography sx={localstyles.typo_fieldTitle}>
-                    {t('check_in.receiver_addr')}
-                  </Typography>
-                  <Typography sx={localstyles.typo_fieldContent}>{selectedItem?.deliveryAddress ?? '-'}</Typography>
-                </Box>
-              </Box>
-            </Box>
-
-            <Typography sx={localstyles.typo_fieldTitle}>
-              {t('check_in.recyclable_type_weight')}
-            </Typography>
-            {recycItem.map((item, index) => (
-              <RecycleCard
-                key={item.recycType.id}
-                name={item.recycType.name}
-                bgcolor="#e1f4ff"
-                fontcolor="#66bff6"
-                weight={formatWeight(item.weight, decimalVal)}
-                showImage={true}
-                packageTypeId={item.packageTypeId}
-                recycleName={item.recycSubType.name}
-                recycleType={item.recycType.name}
-                images={item.checkinDetailPhoto}
-              />
-            ))}
-            { selectedItem?.status !== 'CREATED' &&  <Box>
-                <div className="message">
-                  <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                    {t('check_out.message')}
-                  </div>
-                  <div className=" text-sm text-[#717171] font-medium tracking-widest">
-                    {messageCheckin}
-                  </div>
-                </div>
-              </Box>
-            }
-          </Stack>
-
-        </Box>
       </Box>
-    </>
+    </Box>
   );
 };
 

@@ -63,7 +63,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
     },
     {
       label: t('check_out.shipping_company'),
-      value: selectedCheckOut?.senderName
+      value: selectedCheckOut?.senderCompany
     },
     {
       label: t('check_out.receiver_company'),
