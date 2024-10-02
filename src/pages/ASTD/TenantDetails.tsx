@@ -25,7 +25,11 @@ import CustomField from '../../components/FormComponents/CustomField'
 import CustomItemList, {
   il_item
 } from '../../components/FormComponents/CustomItemList'
-import { showSuccessToast, showErrorToast, extractError } from '../../utils/utils'
+import {
+  showSuccessToast,
+  showErrorToast,
+  extractError
+} from '../../utils/utils'
 import { styles } from '../../constants/styles'
 import { ImageToBase64 } from '../../utils/utils'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
@@ -178,14 +182,11 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     const data = result?.data
     setTenantDetails(data)
 
-    ///mapping data
-    if (data?.companyLogo != '') {
-      const format = 'jpeg'
-      const imgdata = `data:image/${format};base64,${data?.companyLogo}`
-
+    //mapping data
+    if (data?.companyLogo != '' && data?.companyLogo != 'null') {
       const tempLogo: any = []
       tempLogo.push({
-        data_url: imgdata,
+        data_url: data?.companyLogo,
         file: {
           name: `image_logo${data?.tenantId}`,
           size: 0,
@@ -329,7 +330,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
             updatedBy: loginName,
             version: version
           }
-  
+
           const result = await updateTenantDetail(
             dataForm,
             tenantDetail.tenantId.toString()
@@ -344,8 +345,8 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
           const { state, realm } = extractError(error)
           if (state.code === STATUS_CODE[503]) {
             navigate('/maintenance')
-          } else if (state.code === STATUS_CODE[409]){
-            showErrorToast(error.response.data.message);
+          } else if (state.code === STATUS_CODE[409]) {
+            showErrorToast(error.response.data.message)
           }
         }
       }
@@ -369,6 +370,12 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     showSuccessToast(t('tenant.closes_success'))
     handleDrawerClose()
     onChangeStatus()
+  }
+
+  const convertImg = (item: string) => {
+    const format = item.startsWith('data:image/png') ? 'png' : 'jpeg'
+    const imgdata = `data:image/${format};base64,${item}`
+    return imgdata
   }
 
   return (
@@ -415,9 +422,14 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {tenantDetail?.brPhoto.map((item, index) => (
                     <img
                       key={index}
-                      src={item}
+                      src={convertImg(item)}
                       alt="business_reg_number_picture"
-                      style={{ width: '70px' }}
+                      style={{
+                        width: '100px',
+                        objectFit: 'cover',
+                        aspectRatio: '1/1',
+                        borderRadius: '8px'
+                      }}
                     />
                   ))}
                 </div>
@@ -452,9 +464,14 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {tenantDetail?.epdPhoto.map((item, index) => (
                     <img
                       key={index}
-                      src={item}
-                      alt="logo_company"
-                      style={{ width: '70px' }}
+                      src={convertImg(item)}
+                      alt="edp_img"
+                      style={{
+                        width: '100px',
+                        objectFit: 'cover',
+                        aspectRatio: '1/1',
+                        borderRadius: '8px'
+                      }}
                     />
                   ))}
                 </div>
@@ -487,7 +504,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                 </div>
                 <ImageUploading
                   multiple
-                  value={companyLogo}
+                  value={companyLogo || []}
                   onChange={(imageList, addUpdateIndex) =>
                     onImageChange(imageList, addUpdateIndex)
                   }
@@ -514,35 +531,37 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                           </Typography>
                         </ButtonBase>
                       </Card>
-                      <ImageList sx={localstyles.imagesContainer} cols={4}>
-                        {imageList.map((image, index) => (
-                          <ImageListItem
-                            key={image['file']?.name}
-                            style={{ position: 'relative', width: '100px' }}
-                          >
-                            <img
-                              style={localstyles.image}
-                              src={image['data_url']}
-                              alt={image['file']?.name}
-                              loading="lazy"
-                            />
-                            <ButtonBase
-                              onClick={(event) => {
-                                onImageRemove(index)
-                                removeImage(index)
-                              }}
-                              style={{
-                                position: 'absolute',
-                                top: '2px',
-                                right: '2px',
-                                padding: '4px'
-                              }}
+                      {imageList.length > 0 && (
+                        <ImageList sx={localstyles.imagesContainer} cols={4}>
+                          {imageList?.map((image, index) => (
+                            <ImageListItem
+                              key={image['file']?.name}
+                              style={{ position: 'relative', width: '100px' }}
                             >
-                              <CancelRoundedIcon className="text-white" />
-                            </ButtonBase>
-                          </ImageListItem>
-                        ))}
-                      </ImageList>
+                              <img
+                                style={localstyles.image}
+                                src={image['data_url']}
+                                alt={image['file']?.name}
+                                loading="lazy"
+                              />
+                              <ButtonBase
+                                onClick={(event) => {
+                                  onImageRemove(index)
+                                  removeImage(index)
+                                }}
+                                style={{
+                                  position: 'absolute',
+                                  top: '2px',
+                                  right: '2px',
+                                  padding: '4px'
+                                }}
+                              >
+                                <CancelRoundedIcon className="text-white" />
+                              </ButtonBase>
+                            </ImageListItem>
+                          ))}
+                        </ImageList>
+                      )}
                     </Box>
                   )}
                 </ImageUploading>
