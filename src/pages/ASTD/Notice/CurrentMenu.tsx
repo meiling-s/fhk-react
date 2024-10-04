@@ -1,5 +1,5 @@
 import { useEffect, useState, FunctionComponent, useCallback } from 'react'
-import { Box, Grid } from '@mui/material'
+import { Box, Grid, Stack, debounce } from '@mui/material'
 import {
   DataGrid,
   GridColDef,
@@ -22,10 +22,11 @@ import {
   localStorgeKeyName
 } from '../../../constants/constant'
 import { extractError, returnApiToken } from '../../../utils/utils'
-import { LanguagesNotif, Option } from '../../../interfaces/notif'
+import { LanguagesNotif } from '../../../interfaces/notif'
 import i18n from '../../../setups/i18n'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import CircularLoading from '../../../components/CircularLoading'
+import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 
 function createNotifTemplate(
   templateId: string,
@@ -38,7 +39,7 @@ function createNotifTemplate(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
 ): NotifTemplate {
   return {
     templateId,
@@ -51,12 +52,17 @@ function createNotifTemplate(
     createdBy,
     updatedBy,
     createdAt,
-    updatedAt
+    updatedAt,
   }
 }
 
 interface CurrentMenuProps {
   selectedTab: number
+}
+
+interface Option {
+  value: string
+  label: string
 }
 
 const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
@@ -72,6 +78,12 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
   const { realmApiRoute } = returnApiToken()
   const realm = localStorage.getItem(localStorgeKeyName.realm)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [query, setQuery] = useState<any>({
+    name: '',
+    type: '',
+    title: '',
+    lang: '',
+  })
   const languages: readonly LanguagesNotif[] = [
     {
       value: 'ZH-CH',
@@ -92,6 +104,47 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
       langEng: 'English'
     }
   ]
+
+  const searchfield = [
+    {
+      label: t('notification.menu_staff.name'),
+      field: 'templateId',
+      inputType: 'string'
+    },
+    {
+      label: t('notification.menu_staff.type'),
+      options: getUniqueOptions('notiType'),
+      field: 'type',
+    },
+    {
+      label: t('notification.menu_staff.title'),
+      options: getUniqueOptions('title'),
+      field: 'title',
+    },
+    {
+      label: t('notification.menu_staff.language'),
+      options: getUniqueOptions('lang'),
+      field: 'lang',
+    },
+  ]
+
+  function getUniqueOptions(propertyName: keyof NotifTemplate) {
+    const optionMap = new Map()
+
+    filteredTemplate.forEach((row) => {
+      optionMap.set(row[propertyName], row[propertyName])
+    })
+
+    let options: Option[] = Array.from(optionMap.values()).map((option) => ({
+      value: option,
+      label: option
+    }))
+    options.push({
+      value: '',
+      label: t('check_in.any')
+    })
+    return options
+  }
 
   useEffect(() => {
     if (selectedTab === 0) {
@@ -248,7 +301,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
     } else if (lang === 'EN-US' && i18n.language === Languages.ZHCH) {
       return (language = '英语')
     } else if (lang === 'EN-US' && i18n.language === Languages.ZHHK) {
-      return (language = '英语')
+      return (language = '英語')
     } else if (lang === 'EN-US' && i18n.language === Languages.ENUS) {
       return (language = 'English')
     }
@@ -271,12 +324,34 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
     }
   }, [])
 
+  const updateQuery = (newQuery: any) => {
+    setQuery({ ...query, ...newQuery })
+    // initJobOrderRequest()
+  }
+
+  const handleSearch = debounce((keyName: string, value: string) => {
+    updateQuery({ [keyName]: value })
+  }, 1000)
+
+
   return (
       <Box
         sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', pr: 4}}
       >
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, maxWidth: '1460px' }}>
+          <Stack direction="row" mt={3}>
+            {searchfield.map((s) => (
+              <CustomSearchField
+                key={s.field}
+                label={s.label}
+                inputType={s.inputType}
+                field={s.field}
+                options={s.options || []}
+                onChange={(labelField, value) => handleSearch(labelField as keyof NotifTemplate, value)}
+                />
+            ))}
+          </Stack>
           {isLoading ? (
             <CircularLoading />
           ) : ( <DataGrid
