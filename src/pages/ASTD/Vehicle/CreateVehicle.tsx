@@ -267,8 +267,12 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         navigate('/maintenance')
       } else if (state.code === STATUS_CODE[409]) {
         const errorMessage = error.response.data.message
-        setErrorMessage(errorMessage)
-        showErrorToast(handleDuplicateErrorMessage(errorMessage))
+        if (errorMessage.includes('typeNameDuplicate')) {
+          setErrorMessage(errorMessage)
+          showErrorToast(handleDuplicateErrorMessage(errorMessage))
+        } else {
+          showErrorToast(error.response.data.message);
+        }
       } else {
         showErrorToast(t('notify.errorCreated'))
       }
@@ -287,7 +291,13 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else if (state.code === STATUS_CODE[409]) {
-        showErrorToast(error.response.data.message);
+        const errorMessage = error.response.data.message
+        if (errorMessage.includes('[typeNameDuplicate]')) {
+          setErrorMessage(errorMessage)
+          showErrorToast(handleDuplicateErrorMessage(errorMessage))
+        } else {
+          showErrorToast(error.response.data.message);
+        }
       }
     }
   }
