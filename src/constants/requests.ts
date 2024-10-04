@@ -1170,7 +1170,7 @@ export const UPDATE_DENIAL_REASON = (
   reasonId: number
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/reason/V2/${tenantId}/${reasonId}`
+  url: `/api/v1/${realmApiRoute}/reason/V3/${tenantId}/${reasonId}`
 })
 
 //get staff title
