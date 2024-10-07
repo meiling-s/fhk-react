@@ -523,7 +523,19 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         version: version
       }
       if (selectedItem != null) {
-        const result = await editDenialReason(selectedItem.reasonId, editData)
+        let result = null
+        if (isCollectors()) {
+          result = await editDenialReasonCollectors(
+            selectedItem.reasonId,
+            editData as UpdateDenialReasonCollectors
+          )
+        } else {
+          result = await editDenialReason(
+            selectedItem.reasonId,
+            editData as UpdateDenialReason
+          )
+        }
+        //const result = await editDenialReason(selectedItem.reasonId, editData)
         if (result) {
           onSubmitData('success', t('common.deletedSuccessfully'))
           resetFormData()
