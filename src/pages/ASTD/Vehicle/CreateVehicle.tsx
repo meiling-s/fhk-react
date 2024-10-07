@@ -1,48 +1,23 @@
 import {
   FunctionComponent,
-  useCallback,
   useState,
   useEffect,
   useRef
 } from 'react'
 import { useNavigate } from 'react-router-dom'
 import RightOverlayForm from '../../../components/RightOverlayForm'
-import TextField from '@mui/material/TextField'
 import {
   Grid,
-  FormHelperText,
-  Autocomplete,
-  Modal,
   Box,
-  Stack,
   Divider,
   Typography
 } from '@mui/material'
-import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
-import InputAdornment from '@mui/material/InputAdornment'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
-import Switcher from '../../../components/FormComponents/CustomSwitch'
-import LabelField from '../../../components/FormComponents/CustomField'
-import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
-import { ToastContainer, toast } from 'react-toastify'
 import { extractError, returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
-import {
-  createWarehouse,
-  getWarehouseById,
-  editWarehouse,
-  getRecycleType
-} from '../../../APICalls/warehouseManage'
-import { set } from 'date-fns'
-import { getLocation } from '../../../APICalls/getLocation'
-import { get } from 'http'
-import { getCommonTypes } from '../../../APICalls/commonManage'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { createRecyc, createVehicleData, deleteVehicleData, sendWeightUnit, updateVehicleData } from '../../../APICalls/ASTD/recycling'
+import { createVehicleData, deleteVehicleData, updateVehicleData } from '../../../APICalls/ASTD/recycling'
 import { paletteColors } from '../../../themes/palette'
 import { STATUS_CODE } from '../../../constants/constant'
 
@@ -82,7 +57,6 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
   const { i18n } = useTranslation()
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
   const [errorMsgList, setErrorMsgList] = useState<string[]>([])
-  const [openDelete, setOpenDelete] = useState<boolean>(false)
   const [trySubmited, setTrySubmitted] = useState<boolean>(false)
   const [tChineseName, setTChineseName] = useState<string>('')
   const [sChineseName, setSChineseName] = useState<string>('')
