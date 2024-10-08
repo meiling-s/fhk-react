@@ -48,6 +48,7 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleText from '../../../hooks/useLocaleTextDataGrid'
 import { weekDs } from '../../../components/SpecializeComponents/RoutineSelect/predefinedOption'
+import RejectForm from '../../../components/logistic/RejectForm'
 import { getAllTenant } from '../../../APICalls/tenantManage'
 import { useNavigation } from 'react-router-dom'
 
@@ -164,102 +165,105 @@ type rejectForm = {
   navigate: (url: string) => void
 }
 
-function RejectForm({ open, onClose, selectedRow, reasonList, navigate }: rejectForm) {
-  const { t } = useTranslation()
-  const [rejectReasonId, setRejectReasonId] = useState<string>('')
-  const handleConfirmRejectOnClick = async (rejectReasonId: string) => {
-    const rejectReasonItem = reasonList.find(
-      (item: { id: string }) => item.id === rejectReasonId
-    )
-    const reason = rejectReasonItem?.name || ''
-    const updatePoStatus = {
-      status: 'REJECTED',
-      reason: reason,
-      updatedBy: selectedRow.updatedBy,
-      version: selectedRow.version
-    }
-    try {
-      const result = await editPickupOrderStatus(
-        selectedRow.picoId,
-        updatePoStatus
-      )
-      if (result) {
-        toast.info(t('pick_up_order.rejected_success'), {
-          position: 'top-center',
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'light'
-        })
-        onClose()
-      }
-    } catch (error: any) {
-      const {state} = extractError(error);
-      if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
-      } else if (state.code === STATUS_CODE[409]){
-        showErrorToast(error.response.data.message);
-      }
-    }
-  }
+// function RejectForm({ open, onClose, selectedRow, reasonList, navigate }: rejectForm) {
+//   const { t } = useTranslation();
+//   const [rejectReasonId, setRejectReasonId] = useState<string>('');
 
-  return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={localstyles.modal}>
-        <Stack spacing={2}>
-          <Box>
-            <Typography
-              id="modal-modal-title"
-              variant="h6"
-              component="h2"
-              sx={{ fontWeight: 'bold' }}
-            >
-              {t('pick_up_order.confirm_reject_title')}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography sx={localstyles.typo}>
-              {t('pick_up_order.reject_reasons')}
-              <Required />
-            </Typography>
-            <CustomItemList
-              items={reasonList}
-              singleSelect={setRejectReasonId}
-            />
-          </Box>
+//   const handleConfirmRejectOnClick = async (rejectReasonId: string) => {
+//     const rejectReasonItem = reasonList.find(
+//       (item: { id: string }) => item.id === rejectReasonId
+//     );
+//     const reason = rejectReasonItem?.name || '';
+//     const updatePoStatus = {
+//       status: 'REJECTED',
+//       reason: reason,
+//       updatedBy: selectedRow.updatedBy,
+//       version: selectedRow.version,
+//     };
+//     try {
+//       const result = await editPickupOrderStatus(
+//         selectedRow.picoId,
+//         updatePoStatus
+//       );
+//       if (result) {
+//         toast.info(t('pick_up_order.rejected_success'), {
+//           position: 'top-center',
+//           autoClose: 3000,
+//           hideProgressBar: true,
+//           closeOnClick: true,
+//           pauseOnHover: true,
+//           draggable: true,
+//           progress: undefined,
+//           theme: 'light',
+//         });
+//         onClose();
+//       }
+//     } catch (error: any) {
+//       const { state } = extractError(error);
+//       if (state.code === STATUS_CODE[503]) {
+//         navigate('/maintenance');
+//       } else if (state.code === STATUS_CODE[409]) {
+//         showErrorToast(error.response.data.message);
+//       }
+//     }
+//   };
 
-          <Box sx={{ alignSelf: 'center' }}>
-            <button
-              className="primary-btn mr-2 cursor-pointer"
-              onClick={() => {
-                handleConfirmRejectOnClick(rejectReasonId)
-                onClose()
-              }}
-            >
-              {t('pick_up_order.confirm_reject')}
-            </button>
-            <button
-              className="secondary-btn mr-2 cursor-pointer"
-              onClick={() => {
-                onClose()
-              }}
-            >
-              {t('pick_up_order.cancel')}
-            </button>
-          </Box>
-        </Stack>
-      </Box>
-    </Modal>
-  )
-}
+//   return (
+//     <Modal
+//       open={open}
+//       onClose={onClose}
+//       aria-labelledby="modal-modal-title"
+//       aria-describedby="modal-modal-description"
+//     >
+//       <Box sx={localstyles.modal}>
+//         <Stack spacing={2}>
+//           <Box>
+//             <Typography
+//               id="modal-modal-title"
+//               variant="h6"
+//               component="h2"
+//               sx={{ fontWeight: 'bold' }}
+//             >
+//               {t('pick_up_order.confirm_reject_title')}
+//             </Typography>
+//           </Box>
+//           <Box>
+//             <Typography sx={localstyles.typo}>
+//               {t('pick_up_order.reject_reasons')}
+//               <Required />
+//             </Typography>
+//             <CustomItemList
+//               items={reasonList}
+//               singleSelect={setRejectReasonId}
+//             />
+//           </Box>
+
+//           <Box sx={{ alignSelf: 'center' }}>
+//             <button
+//               className="primary-btn mr-2 cursor-pointer"
+
+//               onClick={() => {
+//                 handleConfirmRejectOnClick(rejectReasonId);
+//                 onClose();
+//               }}
+//               disabled={!rejectReasonId}
+//             >
+//               {t('pick_up_order.confirm_reject')}
+//             </button>
+//             <button
+//               className="secondary-btn mr-2 cursor-pointer"
+//               onClick={() => {
+//                 onClose();
+//               }}
+//             >
+//               {t('pick_up_order.cancel')}
+//             </button>
+//           </Box>
+//         </Stack>
+//       </Box>
+//     </Modal>
+//   );
+// }
 
 interface Option {
   value: string
