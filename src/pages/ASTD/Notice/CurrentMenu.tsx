@@ -1,5 +1,5 @@
 import { useEffect, useState, FunctionComponent, useCallback } from 'react'
-import { Box, Grid, Stack, debounce } from '@mui/material'
+import { Box, Grid, Pagination, Stack, debounce } from '@mui/material'
 import {
   DataGrid,
   GridColDef,
@@ -68,7 +68,9 @@ interface Option {
 const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
   const { t } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
-
+  const [page, setPage] = useState(1)
+  const pageSize = 10
+  const [totalData, setTotalData] = useState<number>(0)
   const [notifTemplate, setNotifTemplateList] = useState<NotifTemplate[]>([])
   const [filteredTemplate, setFillteredTemplate] = useState<NotifTemplate[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -156,33 +158,40 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
     }
   }, [selectedTab])
 
+  useEffect(() => {
+    initStaffList()
+  }, [page, query])
+
   const initStaffList = async () => {
     setIsLoading(true)
+    setTotalData(0)
     try {
-      const result = await getListNotifTemplateStaff()
+      const result = await getListNotifTemplateStaff(page - 1, pageSize, query)
       if (result) {
-        const data = result.data
-
+        const data = result?.data?.content
         let notifMappingTemplate: NotifTemplate[] = []
-        data.map((item: any) => {
-          notifMappingTemplate.push(
-            createNotifTemplate(
-              item?.templateId,
-              item?.notiType,
-              item?.variables,
-              item?.lang,
-              item?.title,
-              item?.senders,
-              item?.receivers,
-              item?.createdBy,
-              item?.updatedBy,
-              item?.createdAt,
-              item?.updatedAt
+        if (data) {
+          data.map((item: any) => {
+            notifMappingTemplate.push(
+              createNotifTemplate(
+                item?.templateId,
+                item?.notiType,
+                item?.variables,
+                item?.lang,
+                item?.title,
+                item?.senders,
+                item?.receivers,
+                item?.createdBy,
+                item?.updatedBy,
+                item?.createdAt,
+                item?.updatedAt
+              )
             )
-          )
-        })
-        setNotifTemplateList(notifMappingTemplate)
-        setFillteredTemplate(notifMappingTemplate)
+          })
+          setTotalData(result?.data.totalPages)
+          setNotifTemplateList(notifMappingTemplate)
+          setFillteredTemplate(notifMappingTemplate)
+        }
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -195,30 +204,34 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
 
   const initRecyclablesList = async () => {
     setIsLoading(true)
+    setTotalData(0)
     try {
-      const result = await getListNotifTemplatePO()
+      const result = await getListNotifTemplatePO(page - 1, pageSize, query)
       if (result) {
-        const data = result.data
+        const data = result?.data?.content
         var notifMappingTemplate: NotifTemplate[] = []
-        data.map((item: any) => {
-          notifMappingTemplate.push(
-            createNotifTemplate(
-              item?.templateId,
-              item?.notiType,
-              item?.variables,
-              item?.lang,
-              item?.title,
-              item?.senders,
-              item?.receivers,
-              item?.createdBy,
-              item?.updatedBy,
-              item?.createdAt,
-              item?.updatedAt
+        if (data) {
+          data.map((item: any) => {
+            notifMappingTemplate.push(
+              createNotifTemplate(
+                item?.templateId,
+                item?.notiType,
+                item?.variables,
+                item?.lang,
+                item?.title,
+                item?.senders,
+                item?.receivers,
+                item?.createdBy,
+                item?.updatedBy,
+                item?.createdAt,
+                item?.updatedAt
+              )
             )
-          )
-        })
-        setNotifTemplateList(notifMappingTemplate)
-        setFillteredTemplate(notifMappingTemplate)
+          })
+          setTotalData(result?.data.totalPages)
+          setNotifTemplateList(notifMappingTemplate)
+          setFillteredTemplate(notifMappingTemplate)
+        }
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -326,10 +339,10 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
 
   const updateQuery = (newQuery: any) => {
     setQuery({ ...query, ...newQuery })
-    // initJobOrderRequest()
   }
 
   const handleSearch = debounce((keyName: string, value: string) => {
+    setPage(1)
     updateQuery({ [keyName]: value })
   }, 1000)
 
@@ -354,35 +367,46 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
           </Stack>
           {isLoading ? (
             <CircularLoading />
-          ) : ( <DataGrid
-            rows={filteredTemplate}
-            getRowId={(row) => row.templateId}
-            hideFooter
-            columns={columns}
-            // checkboxSelection
-            onRowClick={handleSelectRow}
-            getRowSpacing={getRowSpacing}
-            localeText={localeTextDataGrid}
-            sx={{
-              border: 'none',
-              '& .MuiDataGrid-cell': {
-                border: 'none'
-              },
-              '.MuiDataGrid-columnHeaderTitle': { 
-                fontWeight: 'bold !important',
-                overflow: 'visible !important'
-              },
-              '& .MuiDataGrid-row': {
-                bgcolor: 'white',
-                borderRadius: '10px'
-              },
-              '&>.MuiDataGrid-main': {
-                '&>.MuiDataGrid-columnHeaders': {
-                  borderBottom: 'none'
-                }
-              }
-            }}
-          />)}
+          ) : ( 
+            <Box>
+              <DataGrid
+                rows={filteredTemplate}
+                getRowId={(row) => row.templateId}
+                hideFooter
+                columns={columns}
+                // checkboxSelection
+                onRowClick={handleSelectRow}
+                getRowSpacing={getRowSpacing}
+                localeText={localeTextDataGrid}
+                sx={{
+                  border: 'none',
+                  '& .MuiDataGrid-cell': {
+                    border: 'none'
+                  },
+                  '.MuiDataGrid-columnHeaderTitle': { 
+                    fontWeight: 'bold !important',
+                    overflow: 'visible !important'
+                  },
+                  '& .MuiDataGrid-row': {
+                    bgcolor: 'white',
+                    borderRadius: '10px'
+                  },
+                  '&>.MuiDataGrid-main': {
+                    '&>.MuiDataGrid-columnHeaders': {
+                      borderBottom: 'none'
+                    }
+                  }
+                }}
+              />
+              <Pagination
+                count={Math.ceil(totalData)}
+                page={page}
+                onChange={(_, newPage) => {
+                  setPage(newPage)
+                }}
+              />
+            </Box>
+          )}
           </Box>
         </div>
       </Box>

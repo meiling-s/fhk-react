@@ -71,3 +71,10 @@ export type Broadcast = {
   effFromDate: string
   effToDate: string
 }
+
+export type queryNotiTemplate = {
+  templateId: string
+  type: string
+  title: string
+  lang: string
+}
