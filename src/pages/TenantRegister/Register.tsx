@@ -33,6 +33,13 @@ interface FormValues {
   [key: string]: string
 }
 
+interface FormField {
+  name: string // Only allow specific field names
+  label: string
+  placeholder: string
+  type: string
+}
+
 const ImageToBase64 = (images: ImageListType) => {
   var base64: string[] = []
   images.map((image) => {
@@ -64,10 +71,18 @@ const RegisterTenant = () => {
   const [BRNImages, setBRNImages] = useState<ImageListType>([])
   const [EPDImages, setEPDImages] = useState<ImageListType>([])
   const [logoImage, setLogoImage] = useState<string | ImageType[]>([])
+
+  const [edpImgSizeErr, setEdpImgSizeErr] = useState<boolean>(false)
+  const [imageErrors, setImageErrors] = useState<{
+    [key: string]: boolean
+  }>({
+    company_image: false,
+    company_logo: false
+  })
   const [BRNImagesError, setBRNImagesError] = useState<boolean>(false)
   const [logoImageError, setLogoImageError] = useState<boolean>(false)
   const { imgSettings } = useContainer(CommonTypeContainer)
-  const [formStep, setFormStep] = useState(1);
+  const [formStep, setFormStep] = useState(1)
   const [CPNError, setCPNError] = useState<boolean>(false)
   const [CPError, setCPError] = useState<boolean>(false)
 
@@ -88,7 +103,7 @@ const RegisterTenant = () => {
       placeholder: 'Collector Company'
     }
   ]
-  const secondformFields = [
+  const secondformFields: FormField[] = [
     {
       name: 'company_number',
       label: '商業登記編號',
@@ -125,7 +140,8 @@ const RegisterTenant = () => {
       name: 'edp_contract',
       label: 'EPD 合約（可上傳多張合約）',
       placeholder: '上載圖片',
-      type: 'image'
+      type: 'image',
+      isError: false
     }
   ]
 
@@ -151,7 +167,7 @@ const RegisterTenant = () => {
         setMonetaryValue(data?.monetaryValue)
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error);
+      const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         return navigate('/maintenance')
       }
@@ -160,42 +176,52 @@ const RegisterTenant = () => {
 
   const handleToNextForm = useCallback(() => {
     if (formStep === 1) {
-      if (formValues.company_category && formValues.company_cn_name && formValues.company_en_name) {
-        setFormStep(2);
+      if (
+        formValues.company_category &&
+        formValues.company_cn_name &&
+        formValues.company_en_name
+      ) {
+        setFormStep(2)
       }
     } else if (formStep === 2) {
       if (BRNImages.length && logoImage.length) {
-        setFormStep(3);
+        setFormStep(3)
       } else {
-        if (!BRNImages.length) setBRNImagesError(true);
-        if (!logoImage.length) setLogoImageError(true);
+        if (!BRNImages.length) setBRNImagesError(true)
+        if (!logoImage.length) setLogoImageError(true)
       }
     } else if (formStep === 3) {
       if (formValues.contact_person && formValues.contact_person_number) {
         registerTenant()
       } else {
         if (!formValues.contact_person) {
-          setCPError(true);
+          setCPError(true)
         }
         if (!formValues.contact_person_number) {
-          setCPNError(true);
+          setCPNError(true)
         }
       }
     }
-  }, [formStep, formValues, BRNImages, logoImage, EPDImages]);
+  }, [formStep, formValues, BRNImages, logoImage, EPDImages])
 
   const onChangeTextInput = useCallback((name: string, value: string) => {
     setFormValues((prevState) => ({
       ...prevState,
       [name]: value
-    }));
-  }, []);
+    }))
+  }, [])
 
   useEffect(() => {
-    if (formValues.contact_person !== '' && formValues.contact_person !== undefined) {
+    if (
+      formValues.contact_person !== '' &&
+      formValues.contact_person !== undefined
+    ) {
       setCPError(false)
     }
-    if (formValues.contact_person_number !== '' && formValues.contact_person_number !== undefined) {
+    if (
+      formValues.contact_person_number !== '' &&
+      formValues.contact_person_number !== undefined
+    ) {
       setCPNError(false)
     }
   }, [formValues])
@@ -242,10 +268,7 @@ const RegisterTenant = () => {
           ? logoImage[0]?.data_url || ''
           : logoImage,
         epdImages: ImageToBase64(EPDImages),
-        monetaryValue: monetaryValue,
-        // brImages: ['string'],
-        // companyLogo: 'string',
-        // epdImages: ['string']
+        monetaryValue: monetaryValue
       }
       const result = updateTenantRegInfo(registerInfo, tenantIdNumber)
       if (result != null) {
@@ -266,7 +289,9 @@ const RegisterTenant = () => {
                   id={field.label}
                   placeholder={field.placeholder}
                   rows={1}
-                  onChange={(e) => onChangeTextInput(field.name, e.target.value)}
+                  onChange={(e) =>
+                    onChangeTextInput(field.name, e.target.value)
+                  }
                   value={formValues[field.name]}
                   sx={{ width: '100%' }}
                   disabled={true}
@@ -287,7 +312,7 @@ const RegisterTenant = () => {
         </Stack>
       </Box>
     )
-  }, [formValues, onChangeTextInput, handleToNextForm]);
+  }, [formValues, onChangeTextInput, handleToNextForm])
 
   const SecondFormContent = useMemo(() => {
     return (
@@ -296,25 +321,41 @@ const RegisterTenant = () => {
           <Box key={field.name}>
             {field.type === 'image' ? (
               <Box>
-                <CustomField label={field.label} style={constantStyle.labelField} mandatory={field.label !== '' ? true : false}>
+                <CustomField
+                  label={field.label}
+                  style={constantStyle.labelField}
+                  mandatory={field.label !== '' ? true : false}
+                >
                   <ImageUploading
                     multiple
                     value={
                       field.name === 'company_image'
                         ? BRNImages
                         : typeof logoImage === 'string'
-                          ? [{ data_url: logoImage }]
-                          : logoImage
+                        ? [{ data_url: logoImage }]
+                        : logoImage
                     }
-                    onChange={(imageList, addUpdateIndex) =>
+                    onChange={(imageList, addUpdateIndex) => {
+                      setImageErrors((prevErrors) => ({
+                        ...prevErrors,
+                        [field.name]: false
+                      }))
                       onImageChange(imageList, addUpdateIndex, field.name)
-                    }
+                    }}
                     maxNumber={imgSettings?.ImgQuantity}
                     maxFileSize={imgSettings?.ImgSize}
                     dataURLKey="data_url"
+                    onError={(error) => {
+                      if (error?.maxFileSize) {
+                        setImageErrors((prevErrors) => ({
+                          ...prevErrors,
+                          [field.name]: true
+                        }))
+                      }
+                    }}
                   >
                     {({ imageList, onImageUpload, onImageRemove }) => (
-                      <Box className="boox">
+                      <Box className="box">
                         <Card sx={styles.cardImg}>
                           <ButtonBase
                             sx={styles.btnBase}
@@ -334,6 +375,20 @@ const RegisterTenant = () => {
                             </Typography>
                           </ButtonBase>
                         </Card>
+                        {imageErrors[field?.name] && (
+                          <Box sx={{ mt: 2 }}>
+                            <Typography
+                              style={{
+                                color: 'red',
+                                fontWeight: '400',
+                                fontSize: '12px'
+                              }}
+                            >
+                              “圖片超過 {imgSettings?.ImgSize / 1000000 || 1}{' '}
+                              MB。請選擇較小的檔案。”
+                            </Typography>
+                          </Box>
+                        )}
                         <ImageList sx={styles.imagesContainer} cols={3}>
                           {imageList.map((image, index) => (
                             <ImageListItem key={image['file']?.name}>
@@ -372,7 +427,9 @@ const RegisterTenant = () => {
                     id={field.label}
                     placeholder={field.placeholder}
                     rows={1}
-                    onChange={(e) => onChangeTextInput(field.name, e.target.value)}
+                    onChange={(e) =>
+                      onChangeTextInput(field.name, e.target.value)
+                    }
                     value={formValues[field.name]}
                     sx={{ width: '100%' }}
                   ></CustomTextField>
@@ -383,25 +440,31 @@ const RegisterTenant = () => {
         ))}
         {BRNImagesError && (
           <Box sx={styles.errorContainer}>
-            <Box sx={{ display: "flex", flexDirection: "row", flex: 9, alignItems: "center" }}>
-              <Typography sx={styles.txtField}>
-                上載商業登記圖片
-              </Typography>
-              <Typography sx={styles.txtErrorMsg}>
-                不应留白
-              </Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                flex: 9,
+                alignItems: 'center'
+              }}
+            >
+              <Typography sx={styles.txtField}>上載商業登記圖片</Typography>
+              <Typography sx={styles.txtErrorMsg}>不应留白</Typography>
             </Box>
           </Box>
         )}
         {logoImageError && (
           <Box sx={styles.errorContainer}>
-            <Box sx={{ display: "flex", flexDirection: "row", flex: 9, alignItems: "center" }}>
-              <Typography sx={styles.txtField}>
-                上載圖片
-              </Typography>
-              <Typography sx={styles.txtErrorMsg}>
-                不应留白
-              </Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                flex: 9,
+                alignItems: 'center'
+              }}
+            >
+              <Typography sx={styles.txtField}>上載圖片</Typography>
+              <Typography sx={styles.txtErrorMsg}>不应留白</Typography>
             </Box>
           </Box>
         )}
@@ -415,7 +478,17 @@ const RegisterTenant = () => {
         </Button>
       </Stack>
     )
-  }, [formValues, BRNImages, logoImage, BRNImagesError, logoImageError, onImageChange, removeImage, onChangeTextInput, handleToNextForm])
+  }, [
+    formValues,
+    BRNImages,
+    logoImage,
+    BRNImagesError,
+    logoImageError,
+    onImageChange,
+    removeImage,
+    onChangeTextInput,
+    handleToNextForm
+  ])
 
   const ThirdFormContent = useMemo(() => {
     return (
@@ -424,16 +497,24 @@ const RegisterTenant = () => {
           <Box key={field.name}>
             {field.type === 'image' ? (
               <>
-                <Typography sx={constantStyle.labelField}>{field.label}</Typography>
+                <Typography sx={constantStyle.labelField}>
+                  {field.label}
+                </Typography>
                 <ImageUploading
                   multiple
                   value={EPDImages}
-                  onChange={(imageList, addUpdateIndex) =>
+                  onChange={(imageList, addUpdateIndex) => {
+                    setEdpImgSizeErr(false)
                     onImageChange(imageList, addUpdateIndex, field.name)
-                  }
+                  }}
                   maxNumber={imgSettings?.ImgQuantity}
                   maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
+                  onError={(error) => {
+                    if (error?.maxFileSize) {
+                      setEdpImgSizeErr(true)
+                    }
+                  }}
                 >
                   {({ imageList, onImageUpload, onImageRemove }) => (
                     <Box className="box">
@@ -453,6 +534,20 @@ const RegisterTenant = () => {
                           </Typography>
                         </ButtonBase>
                       </Card>
+                      {edpImgSizeErr && (
+                        <Box sx={{ mt: 2 }}>
+                          <Typography
+                            style={{
+                              color: 'red',
+                              fontWeight: '400',
+                              fontSize: '12px'
+                            }}
+                          >
+                            “圖片超過 {imgSettings?.ImgSize / 1000000 || 1}{' '}
+                            MB。請選擇較小的檔案。”
+                          </Typography>
+                        </Box>
+                      )}
                       <ImageList sx={styles.imagesContainer} cols={3}>
                         {imageList.map((image, index) => (
                           <ImageListItem key={image['file']?.name}>
@@ -489,7 +584,9 @@ const RegisterTenant = () => {
                   id={field.label}
                   placeholder={field.placeholder}
                   rows={1}
-                  onChange={(e) => onChangeTextInput(field.name, e.target.value)}
+                  onChange={(e) =>
+                    onChangeTextInput(field.name, e.target.value)
+                  }
                   value={formValues[field.name]}
                   sx={{ width: '100%' }}
                 />
@@ -499,25 +596,31 @@ const RegisterTenant = () => {
         ))}
         {CPError && (
           <Box sx={styles.errorContainer}>
-            <Box sx={{ display: "flex", flexDirection: "row", flex: 9, alignItems: "center" }}>
-              <Typography sx={styles.txtField}>
-                聯絡人姓名
-              </Typography>
-              <Typography sx={styles.txtErrorMsg}>
-                不应留白
-              </Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                flex: 9,
+                alignItems: 'center'
+              }}
+            >
+              <Typography sx={styles.txtField}>聯絡人姓名</Typography>
+              <Typography sx={styles.txtErrorMsg}>不应留白</Typography>
             </Box>
           </Box>
         )}
         {CPNError && (
           <Box sx={styles.errorContainer}>
-            <Box sx={{ display: "flex", flexDirection: "row", flex: 9, alignItems: "center" }}>
-              <Typography sx={styles.txtField}>
-                聯絡人手機號碼
-              </Typography>
-              <Typography sx={styles.txtErrorMsg}>
-                不应留白
-              </Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                flex: 9,
+                alignItems: 'center'
+              }}
+            >
+              <Typography sx={styles.txtField}>聯絡人手機號碼</Typography>
+              <Typography sx={styles.txtErrorMsg}>不应留白</Typography>
             </Box>
           </Box>
         )}
@@ -531,7 +634,16 @@ const RegisterTenant = () => {
         </Button>
       </Stack>
     )
-  }, [formValues, EPDImages, CPError, CPNError, onImageChange, removeImage, onChangeTextInput, registerTenant]);
+  }, [
+    formValues,
+    EPDImages,
+    CPError,
+    CPNError,
+    onImageChange,
+    removeImage,
+    onChangeTextInput,
+    registerTenant
+  ])
 
   return (
     <Box sx={constantStyle.loginPageBg}>
@@ -588,22 +700,22 @@ let styles = {
     justifyContent: 'center'
   },
   errorContainer: {
-    display: "flex",
-    flexDirection: "row",
-    width: "90%",
+    display: 'flex',
+    flexDirection: 'row',
+    width: '90%',
     marginY: 1.5,
     p: 2,
-    backgroundColor: "#F7BCC6",
+    backgroundColor: '#F7BCC6',
     borderRadius: 5
   },
   txtField: {
-    fontWeight: "bold",
-    color: "red",
-    marginRight: "8px"
+    fontWeight: 'bold',
+    color: 'red',
+    marginRight: '8px'
   },
   txtErrorMsg: {
-    color: "red"
-  },
+    color: 'red'
+  }
 }
 
 export default RegisterTenant
