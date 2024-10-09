@@ -289,16 +289,9 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
 
       const formData: any = {
-        // tenantId: tenantId,
-        // contractNo: contractNo,
-        // parentContractNo: referenceNumber,
         status: 'DELETED',
-        // contractFrmDate: startDate.format('YYYY-MM-DD'),
-        // contractToDate: endDate.format('YYYY-MM-DD'),
-        // remark: remark,
-        // epdFlg: whether,
-        // createdBy: loginId,
-        updatedBy: loginId
+        updatedBy: loginId,
+        version: version
       }
       if (selectedItem != null) {
         const result = await deleteContract(formData, selectedItem.contractNo)

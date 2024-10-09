@@ -290,7 +290,8 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
       remark: remark,
       status: 'DELETED',
       createdBy: loginId,
-      updatedBy: loginId
+      updatedBy: loginId,
+      version: version,
     }
 
     if (selectedItem != null) {
