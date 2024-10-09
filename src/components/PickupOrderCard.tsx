@@ -20,9 +20,11 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 
 const PickupOrderCard = ({
-  pickupOrderDetail
+  pickupOrderDetail,
+  status
 }: {
   pickupOrderDetail: PickupOrderDetail[]
+  status: string
 }) => {
   const { t, i18n } = useTranslation()
 
@@ -103,7 +105,7 @@ const PickupOrderCard = ({
               </Box>
             </Box>
             <Box>
-              <StatusCard status={podetail?.status} />
+              <StatusCard status={status} />
             </Box>
           </Box>
           <Box display="flex" mt={'15px !important'}>
