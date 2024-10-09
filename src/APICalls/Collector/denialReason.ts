@@ -28,8 +28,8 @@ export const getAllDenialReason = async (page: number, size: number) => {
 
     return response
   } catch (e) {
-    console.error("Get all denial reason failed:", e);
-    throw(e)
+    console.error('Get all denial reason failed:', e)
+    throw e
   }
 }
 
@@ -60,8 +60,8 @@ export const getAllDenialReasonByFunctionId = async (
 
     return response
   } catch (e) {
-    console.error("Get all denial reason failed:", e);
-    throw(e)
+    console.error('Get all denial reason failed:', e)
+    throw e
   }
 }
 
@@ -96,7 +96,6 @@ export const getReasonTenant = async (
 // create denial reason
 export const createDenialReason = async (data: CreateDenialReason) => {
   try {
-   
     const token = returnApiToken()
 
     const response = await axiosInstance({
@@ -121,8 +120,8 @@ export const createDenialReason = async (data: CreateDenialReason) => {
 
     return response
   } catch (e) {
-    console.error("create denial reason failed:", e);
-    throw(e)
+    console.error('create denial reason failed:', e)
+    throw e
   }
 }
 
@@ -140,8 +139,10 @@ export const editDenialReason = async (
     })
 
     return response
-  } catch (e) {
-    console.error("update denial reason failed:", e);
-    throw(e)
+  } catch (e: any) {
+    console.error('update denial reason failed:', e)
+    console.error('e?.status', e?.status)
+    if (e?.status === 404) return null
+    throw e
   }
 }
