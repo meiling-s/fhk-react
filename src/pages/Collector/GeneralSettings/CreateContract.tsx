@@ -78,9 +78,8 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
 
   useEffect(() => {
     resetData()
-    if (action === 'edit') {
+    if (action === 'edit' || action === 'delete') {
       if (selectedItem !== null && selectedItem !== undefined) {
-        console.log(selectedItem, 'item')
         setContractNo(selectedItem?.contractNo)
         setReferenceNumber(selectedItem?.parentContractNo)
         setContractStatus(selectedItem?.status === 'ACTIVE' ? true : false)
@@ -112,6 +111,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
     setValidation([])
     setWhether(false)
     setTrySubmited(false)
+    setVersion(0)
   }
 
   useEffect(() => {
