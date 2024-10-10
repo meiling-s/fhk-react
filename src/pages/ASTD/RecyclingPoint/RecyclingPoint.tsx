@@ -186,7 +186,7 @@ const RecyclingPoint: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} role="button" aria-label='edit button' data-testId={`astd-land-edit-button-2039-${params?.id}`}>
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
@@ -206,7 +206,7 @@ const RecyclingPoint: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} role="button" aria-label='delete button' data-testId={`astd-land-delete-button-1795-${params?.id}`}>
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
@@ -410,6 +410,7 @@ const RecyclingPoint: FunctionComponent = () => {
             {t(`recycling_point.engineering_land`)}
           </Typography>
           <Button
+            data-testId="astd-land-new-button-4466"
             sx={[
               styles.buttonOutlinedGreen,
               {
@@ -426,7 +427,8 @@ const RecyclingPoint: FunctionComponent = () => {
             <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
         </Box>
-        <div className="table-vehicle">
+
+        <div className="table-vehicle" aria-label='table'>
           <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
             {isLoadingSite ? (
               <CircularLoading />
@@ -486,6 +488,7 @@ const RecyclingPoint: FunctionComponent = () => {
             {t(`recycling_point.house_or_place`)}
           </Typography>
           <Button
+          
             sx={[
               styles.buttonOutlinedGreen,
               {
