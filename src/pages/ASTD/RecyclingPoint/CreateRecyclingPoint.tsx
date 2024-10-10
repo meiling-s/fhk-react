@@ -90,7 +90,7 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
     const [equivalent, setEquivalent] = useState<string>('')
     const [description, setDescription] = useState<string>('')
     const [remark, setRemark] = useState<string>('')
-    const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
+    const [validation, setValidation] = useState<{ field: string; error: string, dataTestId: string }[]>([])
     const [version, setVersion] = useState<number>(0)
     const isInitialRender = useRef(true) // Add this line
     const navigate = useNavigate();
@@ -152,14 +152,15 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
     }
 
     useEffect(() => {
-        const tempV: { field: string; error: string }[] = []
+        const tempV: { field: string; error: string, dataTestId: string }[] = []
 
         tChineseName.trim() === '' &&
             tempV.push({
                 field: `${t('packaging_unit.traditional_chinese_name')}`,
                 error: `${t(`common.traditionalChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}`,
+                 dataTestId: 'astd-house-form-tc-err-warning-5120'
             })
 
         sChineseName.trim() === '' &&
@@ -167,7 +168,8 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
                 field: `${t('packaging_unit.simplified_chinese_name')}`,
                 error: `${t(`common.simplifiedChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}`,
+                 dataTestId: 'astd-house-form-sc-err-warning-8565'
             })
 
         englishName.trim() === '' &&
@@ -175,7 +177,8 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
                 field: `${t('packaging_unit.english_name')}`,
                 error: `${t(`common.englishName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}`,
+                 dataTestId: 'astd-house-form-en-err-warning-28511'
             })
 
         setValidation(tempV)

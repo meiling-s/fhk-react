@@ -14,7 +14,7 @@ interface RecyclingPointFormProps {
     description: string;
     remark: string;
     trySubmited: boolean;
-    validation: { field: string; error: string }[];
+    validation: { field: string; error: string, dataTestId: string }[];
     action?: 'add' | 'edit' | 'delete'; 
     setTChineseName: (value: string) => void;
     setSChineseName: (value: string) => void;
@@ -117,6 +117,7 @@ const RecyclingPointForm: FC<RecyclingPointFormProps> = ({
                             field={t(val.field)}
                             errorMsg={val.error}
                             type={'error'}
+                            dataTestId={val.dataTestId}
                         />
                     ))}
             </Grid>

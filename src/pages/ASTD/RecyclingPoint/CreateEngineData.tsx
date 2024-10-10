@@ -76,7 +76,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     const [remark, setRemark] = useState<string>('')
     const [selectedService, setSelectedService] = useState<string>('')
     const [version, setVersion] = useState<number>(0)
-    const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
+    const [validation, setValidation] = useState<{ field: string; error: string, dataTestId: string }[]>([])
     const navigate = useNavigate();
 
     const serviceTypeSelect = [
@@ -151,14 +151,16 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     }
 
     useEffect(() => {
-        const tempV: { field: string; error: string }[] = []
+        const tempV: { field: string; error: string, dataTestId: string }[] = []
 
         tChineseName.trim() === '' &&
             tempV.push({
                 field: `${t('packaging_unit.traditional_chinese_name')}`,
                 error: `${t(`common.traditionalChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}
+                `,
+                dataTestId: 'astd-land-form-tc-err-warning-4371'
             })
 
         sChineseName.trim() === '' &&
@@ -166,7 +168,8 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 field: `${t('packaging_unit.simplified_chinese_name')}`,
                 error: `${t(`common.simplifiedChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}`,
+                   dataTestId: 'astd-land-form-sc-err-warning-3804'
             })
 
         englishName.trim() === '' &&
@@ -174,7 +177,8 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 field: `${t('packaging_unit.english_name')}`,
                 error: `${t(`common.englishName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}`,
+                dataTestId: 'astd-land-form-en-err-warning-3285'
             })
 
         selectedService.trim() === '' &&
@@ -182,7 +186,8 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
             field: `${t('recycling_point.service_type')}`,
             error: `${t(`recycling_point.service_type`)} ${t(
                 'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: ''
         })
 
         setValidation(tempV)

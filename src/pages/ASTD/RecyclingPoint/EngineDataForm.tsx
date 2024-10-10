@@ -20,7 +20,7 @@ interface EngineDataFormProps {
     description: string;
     remark: string;
     trySubmited: boolean;
-    validation: { field: string; error: string }[];
+    validation: { field: string; error: string, dataTestId: string }[];
     action?: 'add' | 'edit' | 'delete';
     setTChineseName: (value: string) => void;
     setSChineseName: (value: string) => void;
@@ -180,11 +180,11 @@ const EngineDataForm: React.FC<EngineDataFormProps> = ({
                 {trySubmited &&
                     validation.map((val, index) => (
                         <FormErrorMsg
-                           
                             key={index}
                             field={t(val.field)}
                             errorMsg={val.error}
                             type={'error'}
+                            dataTestId={val.dataTestId}
                         />
                     ))}
             </Grid>
