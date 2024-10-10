@@ -183,9 +183,9 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     setTenantDetails(data)
 
     //mapping data
-    if (data?.companyLogo != '' && data?.companyLogo != 'null') {
-      const isBase64 = data?.companyLogo.startsWith('data:image/png')
-      const format = data?.companyLogo.startsWith('data:image/png')
+    if (data?.companyLogo != '' && data?.companyLogo != 'null' && data?.companyLogo) {
+      const isBase64 = data?.companyLogo?.startsWith('data:image')
+      const format = data?.companyLogo?.startsWith('data:image/png')
         ? 'png'
         : 'jpeg'
       const imgdata = `data:image/${format};base64,${data?.companyLogo}`
@@ -517,6 +517,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   maxNumber={1}
                   maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
+                  acceptType={['jpg', 'jpeg', 'png']}
                 >
                   {({ imageList, onImageUpload, onImageRemove }) => (
                     <Box className="box">
