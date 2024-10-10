@@ -15,7 +15,7 @@ type DeleteModalProps = {
   selectedRow?: number | null
   onClose: () => void
   onDelete: () => void
-  deleteText?: string
+  deleteText?: string;
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
@@ -23,7 +23,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   selectedRow,
   onClose,
   onDelete,
-  deleteText
+  deleteText,
 }) => {
   const { t } = useTranslation()
 
@@ -54,6 +54,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               onClick={() => {
                 onDelete()
               }}
+              data-testid='astd-delete-modal-confirm-delete-button-4166'
             >
               {t('check_in.confirm')}
             </button>
@@ -62,6 +63,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               onClick={() => {
                 onClose()
               }}
+              data-testid='astd-delete-modal-cancel-delete-button-4338'
             >
               {t('check_out.cancel')}
             </button>
