@@ -244,7 +244,6 @@ export const editWeightUnit = async (unitId: number, data: any) => {
     
     return response
   } catch (error) {
-    console.error('Post Recycling Failed:', error)
     throw(error)
   }
 }
