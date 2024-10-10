@@ -326,6 +326,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 field={t(val.field)}
                                 errorMsg={val.error}
                                 type={'error'}
+                                dataTestId={val.dataTestId}
                             />
                             ))}
                     </Grid>

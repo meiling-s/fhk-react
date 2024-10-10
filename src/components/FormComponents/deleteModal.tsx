@@ -51,19 +51,19 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
           <Box sx={{ alignSelf: 'center', paddingBottom: 3 }}>
             <button
               className="primary-btn mr-2 cursor-pointer"
+              data-testid="astd-right-drawer-modalconfirm-confirm-button-8612"
               onClick={() => {
                 onDelete()
               }}
-              data-testid='astd-delete-modal-confirm-delete-button-4166'
             >
               {t('check_in.confirm')}
             </button>
             <button
               className="secondary-btn mr-2 cursor-pointer"
+              data-testid="astd-right-drawer-modalconfirm-cancel-button-9984"
               onClick={() => {
                 onClose()
               }}
-              data-testid='astd-delete-modal-cancel-delete-button-4338'
             >
               {t('check_out.cancel')}
             </button>
