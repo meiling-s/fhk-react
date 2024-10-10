@@ -1,19 +1,5 @@
 import { FunctionComponent, useState, useEffect } from 'react'
-import {
-  Box,
-  Divider,
-  Grid,
-  Typography,
-  Button,
-  InputLabel,
-  MenuItem,
-  Card,
-  FormControl,
-  ButtonBase,
-  ImageList,
-  ImageListItem,
-  OutlinedInput
-} from '@mui/material'
+import { Box, Divider } from '@mui/material'
 import dayjs from 'dayjs'
 import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
@@ -29,20 +15,39 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
-import { Vehicle, CreateVehicle as CreateVehicleForm } from '../../../interfaces/vehicles'
+import {
+  Vehicle,
+  CreateVehicle as CreateVehicleForm
+} from '../../../interfaces/vehicles'
 import { STATUS_CODE, formErr, format } from '../../../constants/constant'
-import { returnErrorMsg, ImageToBase64, showSuccessToast, showErrorToast, extractError } from '../../../utils/utils'
+import {
+  returnErrorMsg,
+  ImageToBase64,
+  showSuccessToast,
+  showErrorToast,
+  extractError
+} from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
-import { createVehicles as addVehicle, deleteVehicle, editVehicle } from '../../../APICalls/Collector/vehicles'
-import { localStorgeKeyName } from "../../../constants/constant";
+import {
+  createVehicles as addVehicle,
+  deleteVehicle,
+  editVehicle
+} from '../../../APICalls/Collector/vehicles'
+import { localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
-import { Contract, CreateContract as CreateContractProps } from '../../../interfaces/contract'
+import {
+  Contract,
+  CreateContract as CreateContractProps
+} from '../../../interfaces/contract'
 import LabelField from '../../../components/FormComponents/CustomField'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { createContract, editContract } from '../../../APICalls/Collector/contracts'
+import {
+  createContract,
+  editContract
+} from '../../../APICalls/Collector/contracts'
 import { updateWeightTolerance } from '../../../APICalls/ASTD/weight'
 import { useNavigate } from 'react-router-dom'
 
@@ -69,7 +74,7 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
   handleDrawerClose,
   action,
   onSubmitData,
-  weightformat,
+  weightformat
 }) => {
   const { t } = useTranslation()
   const [weightFormat, setWeightFormat] = useState('')
@@ -77,9 +82,9 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
   const [showError, setShowError] = useState<boolean>(false)
   const [version, setVersion] = useState<number>(0)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
-  const navigate = useNavigate();
-  
-  useEffect (() => {
+  const navigate = useNavigate()
+
+  useEffect(() => {
     if (action === 'edit') {
       if (weightformat) {
         setShowError(false)
@@ -93,15 +98,14 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
   const resetData = () => {
     setWeightFormat('')
   }
-  
 
   const checkString = (s: string) => {
     return s === ''
   }
 
   const handleSubmit = () => {
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
-    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ""
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
 
     const formData = {
       weightVariance: weightFormat,
@@ -110,9 +114,9 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
     }
 
     if (weightFormat.trim() === '') {
-      showErrorToast(t('notify.errorCreated')); 
-      setShowError(true);
-      return;
+      showErrorToast(t('notify.errorCreated'))
+      setShowError(true)
+      return
     } else if (formData) {
       handleUpdateWeight(formData)
     }
@@ -121,20 +125,20 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
   const handleUpdateWeight = async (formData: any) => {
     try {
       const result = await updateWeightTolerance(weightFormatId, formData)
-    
-      if(result) {
-        onSubmitData("weight")
+
+      if (result) {
+        onSubmitData('weight')
         resetData()
         showSuccessToast(t('notify.SuccessEdited'))
       } else {
         showErrorToast(t('notify.errorEdited'))
       }
-    } catch (error:any) {
-      const {state} = extractError(error);
+    } catch (error: any) {
+      const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else if (state.code === STATUS_CODE[409]){
-        showErrorToast(error.response.data.message);
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error.response.data.message)
       }
     }
   }
@@ -151,15 +155,16 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
           submitText: t('add_warehouse_page.save'),
           cancelText: '',
           onCloseHeader: handleDrawerClose,
-          onSubmit: handleSubmit,
+          onSubmit: handleSubmit
         }}
       >
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
-          <Box sx={{marginY: 2}}>
+          <Box sx={{ marginY: 2 }}>
             <CustomField label={t('general_settings.weight_tolerance')}>
               <CustomTextField
                 id="weightFormat"
+                dataTestId="astd-weight-tolerance-form-input-field-3257"
                 value={weightFormat}
                 disabled={action === 'delete'}
                 placeholder={t('general_settings.weight_tolerance')}
@@ -171,12 +176,12 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
           {showError && (
             <FormErrorMsg
               key={0}
+              data-testid="astd-weight-tolerance-err-input-field-7435"
               field={t('general_settings.weight_tolerance')}
               errorMsg={t('form.error.shouldNotBeEmpty')}
               type={'error'}
             />
-            )
-          }
+          )}
         </Box>
       </RightOverlayForm>
     </div>
@@ -228,12 +233,12 @@ const localstyles = {
     ...styles.textField,
     width: '250px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25',
+      color: '#79CA25'
     }
   },
   DateItem: {
     display: 'flex',
-    height: 'fit-content',
+    height: 'fit-content'
   }
 }
 

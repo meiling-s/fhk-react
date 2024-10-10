@@ -1,16 +1,22 @@
 import { FunctionComponent, useState, useEffect } from 'react'
-import {
-  Box,
-  Divider,
-} from '@mui/material'
+import { Box, Divider } from '@mui/material'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { styles } from '../../../constants/styles'
 import { useTranslation } from 'react-i18next'
-import { showErrorToast, showSuccessToast, returnApiToken, extractError } from '../../../utils/utils'
-import { STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
-import { createCurrency, deleteCurrency, editCurrency } from '../../../APICalls/ASTD/currrency'
+import {
+  showErrorToast,
+  showSuccessToast,
+  returnApiToken,
+  extractError
+} from '../../../utils/utils'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
+import {
+  createCurrency,
+  deleteCurrency,
+  editCurrency
+} from '../../../APICalls/ASTD/currrency'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { useNavigate } from 'react-router-dom'
 
@@ -40,19 +46,21 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
   handleDrawerClose,
   action,
   onSubmitData,
-  selectedItem,
+  selectedItem
 }) => {
   const { t } = useTranslation()
   const [monetary, setMonetary] = useState<string>('')
   const [remark, setRemark] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
-  const [validation, setValidation] = useState<{field: string; error: string}[]>([])
+  const [validation, setValidation] = useState<
+    { field: string; error: string }[]
+  >([])
   const [showError, setShowError] = useState<boolean>(false)
   const [version, setVersion] = useState<number>(0)
-  const navigate = useNavigate();
-  
-  useEffect (() => {
+  const navigate = useNavigate()
+
+  useEffect(() => {
     resetData()
     setShowError(false)
     if (action === 'edit' || action === 'delete') {
@@ -77,9 +85,9 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
   }
 
   const isInputFieldsEmpty = () => {
-    const isEmpty = !monetary || !description || !remark;
-    return isEmpty;
-  };
+    const isEmpty = !monetary || !description || !remark
+    return isEmpty
+  }
 
   const handleDelete = async () => {
     const token = returnApiToken()
@@ -88,27 +96,30 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
       updatedBy: token.loginId,
       version: version
     }
-    if (selectedItem !== null && selectedItem !== undefined ) {
+    if (selectedItem !== null && selectedItem !== undefined) {
       try {
-        const response = await deleteCurrency(selectedItem?.monetaryId, currencyForm)
+        const response = await deleteCurrency(
+          selectedItem?.monetaryId,
+          currencyForm
+        )
         if (response) {
           onSubmitData('currency')
           showSuccessToast(t('notify.successDeleted'))
           resetData()
         }
-      } catch (error:any) {
-        const {state} =  extractError(error);
+      } catch (error: any) {
+        const { state } = extractError(error)
         if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
-        } else if (state.code === STATUS_CODE[409]){
-          showErrorToast(error.response.data.message);
+        } else if (state.code === STATUS_CODE[409]) {
+          showErrorToast(error.response.data.message)
         }
       }
     }
   }
 
   const handleSubmit = () => {
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
 
     const currencyProps = {
       monetary: monetary,
@@ -117,12 +128,14 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
       status: selectedItem?.status ?? 'ACTIVE',
       createdBy: loginId,
       updatedBy: loginId,
-      ...(action === 'edit' && {version: version})
+      ...(action === 'edit' && { version: version })
     }
-    if (isInputFieldsEmpty()){
+    if (isInputFieldsEmpty()) {
       setShowError(true)
     } else if (validation.length === 0) {
-      action === 'add' ? createCurrencyData(currencyProps) : editCurrencyData(currencyProps)
+      action === 'add'
+        ? createCurrencyData(currencyProps)
+        : editCurrencyData(currencyProps)
 
       setValidation([])
     } else {
@@ -138,9 +151,9 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
         showSuccessToast(t('notify.successCreated'))
         resetData()
       }
-    } catch (error:any) {
-      const {state} = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
         showErrorToast(t('errorCreated.errorCreated'))
@@ -148,25 +161,24 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
     }
   }
 
-
- const editCurrencyData = async (data: any) => {
-  if (selectedItem !== null && selectedItem !== undefined) {
-    try {
-      const response = await editCurrency(selectedItem?.monetaryId, data)
-      if (response) {
-        onSubmitData('currency')
-        showSuccessToast(t('notify.SuccessEdited'))
-        resetData()
-      }
-    } catch (error:any) {
-      const {state} =  extractError(error)
-      if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
-      } else if (state.code === STATUS_CODE[409]){
-        showErrorToast(error.response.data.message);
+  const editCurrencyData = async (data: any) => {
+    if (selectedItem !== null && selectedItem !== undefined) {
+      try {
+        const response = await editCurrency(selectedItem?.monetaryId, data)
+        if (response) {
+          onSubmitData('currency')
+          showSuccessToast(t('notify.SuccessEdited'))
+          resetData()
+        }
+      } catch (error: any) {
+        const { state } = extractError(error)
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]) {
+          showErrorToast(error.response.data.message)
+        }
       }
     }
-   }
   }
 
   return (
@@ -188,11 +200,12 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
       >
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
-          <Box sx={{marginY: 2}}>
+          <Box sx={{ marginY: 2 }}>
             <CustomField label={t('general_settings.name')} mandatory>
               <CustomTextField
                 id="monetary"
                 value={monetary}
+                dataTestId="astd-currency-form-name-input-field-5357"
                 disabled={action === 'delete'}
                 placeholder={t('general_settings.enter_name')}
                 onChange={(event) => setMonetary(event.target.value)}
@@ -200,10 +213,11 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
               />
             </CustomField>
           </Box>
-          <Box sx={{marginY: 2}}>
+          <Box sx={{ marginY: 2 }}>
             <CustomField label={t('general_settings.remark')} mandatory>
               <CustomTextField
                 id="remark"
+                dataTestId="astd-currency-form-remark-input-field-4081"
                 value={remark}
                 disabled={action === 'delete'}
                 placeholder={t('general_settings.enter_remark')}
@@ -212,10 +226,11 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
               />
             </CustomField>
           </Box>
-          <Box sx={{marginY: 2}}>
+          <Box sx={{ marginY: 2 }}>
             <CustomField label={t('general_settings.introduction')} mandatory>
               <CustomTextField
                 id="description"
+                dataTestId="astd-currency-form-description-input-field-6886"
                 value={description}
                 disabled={action === 'delete'}
                 placeholder={t('general_settings.enter_remark')}
@@ -225,22 +240,25 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
             </CustomField>
           </Box>
           {showError && checkString(monetary) && (
-              <FormErrorMsg
-                field={t('general_settings.name')}
-                errorMsg={t('form.error.shouldNotBeEmpty')}
-                type={'error'}
-              />
-            )}
+            <FormErrorMsg
+              field={t('general_settings.name')}
+              dataTestId="astd-currency-form-name-err-warning-1499"
+              errorMsg={t('form.error.shouldNotBeEmpty')}
+              type={'error'}
+            />
+          )}
           {showError && checkString(remark) && (
-              <FormErrorMsg
-                field={t('common.remark')}
-                errorMsg={t('form.error.shouldNotBeEmpty')}
-                type={'error'}
-              />
-            )}
+            <FormErrorMsg
+              field={t('common.remark')}
+              dataTestId="astd-currency-form-remark-err-warning-9355"
+              errorMsg={t('form.error.shouldNotBeEmpty')}
+              type={'error'}
+            />
+          )}
           {showError && checkString(description) && (
             <FormErrorMsg
               field={t('common.description')}
+              dataTestId="astd-currency-form-description-err-warning-2933"
               errorMsg={t('form.error.shouldNotBeEmpty')}
               type={'error'}
             />
@@ -296,12 +314,12 @@ const localstyles = {
     ...styles.textField,
     width: '250px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25',
+      color: '#79CA25'
     }
   },
   DateItem: {
     display: 'flex',
-    height: 'fit-content',
+    height: 'fit-content'
   }
 }
 

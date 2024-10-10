@@ -13,6 +13,7 @@ type TabsProps = {
   navigate: (value: number, label: string) => void
   selectedProp?: number | 0
   className?: string
+  datatestId?: string
 }
 
 const Tabs: React.FC<TabsProps> = ({
