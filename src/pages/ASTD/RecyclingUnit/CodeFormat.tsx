@@ -68,7 +68,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     const [mainName, setMainName] = useState<string>('')
     const [subName, setSubName] = useState<string>('')
     const [version, setVersion] = useState<number>(0)
-    const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
+    const [validation, setValidation] = useState<{ field: string; error: string, dataTestId: string }[]>([])
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -130,14 +130,15 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
       }
       
     useEffect(() => {
-        const tempV: {field: string; error: string}[] = []
+        const tempV: {field: string; error: string, dataTestId: string}[] = []
 
         codeName.trim() === '' &&
         tempV.push({
             field: `${t('recycling_unit.recyclable_code')}`,
             error: `${t(
             'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: 'astd-code-form-name-err-warning-4381'
         })
 
         mainName.trim() === '' &&
@@ -145,7 +146,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             field: `${t('recycling_unit.main_category')}`,
             error: `${t(
             'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: 'astd-code-form-main-err-warning-5392'
         })
 
         subName.trim() === '' &&
@@ -153,7 +155,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             field: `${t('recycling_unit.sub_category')}`,
             error: `${t(
             'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: 'astd-code-form-sub-err-warning-4927'
         })
 
         setValidation(tempV)
@@ -285,6 +288,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 placeholder={t('recycling_unit.enter_code')}
                                 onChange={(event) => setCodeName(event.target.value)}
                                 error={checkString(codeName)}
+                                dataTestId='astd-code-form-name-input-field-1649'
                             />
                         </CustomField>
                     </Box>
@@ -297,6 +301,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 placeholder={t('recycling_unit.main_category')}
                                 onChange={(event) => setMainName(event.target.value)}
                                 error={checkString(mainName)}
+                                dataTestId='astd-code-form-main-input-field-8567'
                             />
                         </CustomField>
                     </Box>
@@ -309,6 +314,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 placeholder={t('recycling_unit.sub_category')}
                                 onChange={(event) => setSubName(event.target.value)}
                                 error={checkString(subName)}
+                                dataTestId='astd-code-form-sub-input-field-7940'
                             />
                         </CustomField>
                     </Box>

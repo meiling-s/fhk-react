@@ -110,7 +110,7 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
         } else if (lang === 'EN-US' && i18n.language === Languages.ZHCH) {
             setCurrentLang({value: lang, lang: '英语'})
         }else if (lang === 'EN-US' && i18n.language === Languages.ZHHK) {
-            setCurrentLang({value: lang, lang: '英语'})
+            setCurrentLang({value: lang, lang: '英語'})
         }else if (lang === 'EN-US' && i18n.language === Languages.ENUS) {
             setCurrentLang({value: lang, lang: 'English'})
         }
@@ -346,6 +346,7 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                         onChange={(event, newValue) => {
                             if(newValue) onChangeLanguage(newValue.value, newValue.lang)
                         }}
+                        disabled={true}
                         renderInput={(params) => <TextField {...params} 
                             sx={[styles.textField, { width: 400 }]}InputProps={{
                             ...params.InputProps,
