@@ -1,5 +1,5 @@
 import { useEffect, useState, FunctionComponent, useCallback } from 'react'
-import { Box, Grid } from '@mui/material'
+import { Box, Grid, Pagination, Stack, debounce } from '@mui/material'
 import {
   DataGrid,
   GridColDef,
@@ -22,10 +22,11 @@ import {
   localStorgeKeyName
 } from '../../../constants/constant'
 import { extractError, returnApiToken } from '../../../utils/utils'
-import { LanguagesNotif, Option } from '../../../interfaces/notif'
+import { LanguagesNotif } from '../../../interfaces/notif'
 import i18n from '../../../setups/i18n'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import CircularLoading from '../../../components/CircularLoading'
+import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 
 function createNotifTemplate(
   templateId: string,
@@ -38,7 +39,7 @@ function createNotifTemplate(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
 ): NotifTemplate {
   return {
     templateId,
@@ -51,7 +52,7 @@ function createNotifTemplate(
     createdBy,
     updatedBy,
     createdAt,
-    updatedAt
+    updatedAt,
   }
 }
 
@@ -59,10 +60,17 @@ interface CurrentMenuProps {
   selectedTab: number
 }
 
+interface Option {
+  value: string
+  label: string
+}
+
 const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
   const { t } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
-
+  const [page, setPage] = useState(1)
+  const pageSize = 10
+  const [totalData, setTotalData] = useState<number>(0)
   const [notifTemplate, setNotifTemplateList] = useState<NotifTemplate[]>([])
   const [filteredTemplate, setFillteredTemplate] = useState<NotifTemplate[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -72,6 +80,12 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
   const { realmApiRoute } = returnApiToken()
   const realm = localStorage.getItem(localStorgeKeyName.realm)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [query, setQuery] = useState<any>({
+    name: '',
+    type: '',
+    title: '',
+    lang: '',
+  })
   const languages: readonly LanguagesNotif[] = [
     {
       value: 'ZH-CH',
@@ -93,6 +107,47 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
     }
   ]
 
+  const searchfield = [
+    {
+      label: t('notification.menu_staff.name'),
+      field: 'templateId',
+      inputType: 'string'
+    },
+    {
+      label: t('notification.menu_staff.type'),
+      options: getUniqueOptions('notiType'),
+      field: 'type',
+    },
+    {
+      label: t('notification.menu_staff.title'),
+      options: getUniqueOptions('title'),
+      field: 'title',
+    },
+    {
+      label: t('notification.menu_staff.language'),
+      options: getUniqueOptions('lang'),
+      field: 'lang',
+    },
+  ]
+
+  function getUniqueOptions(propertyName: keyof NotifTemplate) {
+    const optionMap = new Map()
+
+    filteredTemplate.forEach((row) => {
+      optionMap.set(row[propertyName], row[propertyName])
+    })
+
+    let options: Option[] = Array.from(optionMap.values()).map((option) => ({
+      value: option,
+      label: option
+    }))
+    options.push({
+      value: '',
+      label: t('check_in.any')
+    })
+    return options
+  }
+
   useEffect(() => {
     if (selectedTab === 0) {
       setFillteredTemplate([])
@@ -103,33 +158,40 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
     }
   }, [selectedTab])
 
+  useEffect(() => {
+    initStaffList()
+  }, [page, query])
+
   const initStaffList = async () => {
     setIsLoading(true)
+    setTotalData(0)
     try {
-      const result = await getListNotifTemplateStaff()
+      const result = await getListNotifTemplateStaff(page - 1, pageSize, query)
       if (result) {
-        const data = result.data
-
+        const data = result?.data?.content
         let notifMappingTemplate: NotifTemplate[] = []
-        data.map((item: any) => {
-          notifMappingTemplate.push(
-            createNotifTemplate(
-              item?.templateId,
-              item?.notiType,
-              item?.variables,
-              item?.lang,
-              item?.title,
-              item?.senders,
-              item?.receivers,
-              item?.createdBy,
-              item?.updatedBy,
-              item?.createdAt,
-              item?.updatedAt
+        if (data) {
+          data.map((item: any) => {
+            notifMappingTemplate.push(
+              createNotifTemplate(
+                item?.templateId,
+                item?.notiType,
+                item?.variables,
+                item?.lang,
+                item?.title,
+                item?.senders,
+                item?.receivers,
+                item?.createdBy,
+                item?.updatedBy,
+                item?.createdAt,
+                item?.updatedAt
+              )
             )
-          )
-        })
-        setNotifTemplateList(notifMappingTemplate)
-        setFillteredTemplate(notifMappingTemplate)
+          })
+          setTotalData(result?.data.totalPages)
+          setNotifTemplateList(notifMappingTemplate)
+          setFillteredTemplate(notifMappingTemplate)
+        }
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -142,30 +204,34 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
 
   const initRecyclablesList = async () => {
     setIsLoading(true)
+    setTotalData(0)
     try {
-      const result = await getListNotifTemplatePO()
+      const result = await getListNotifTemplatePO(page - 1, pageSize, query)
       if (result) {
-        const data = result.data
+        const data = result?.data?.content
         var notifMappingTemplate: NotifTemplate[] = []
-        data.map((item: any) => {
-          notifMappingTemplate.push(
-            createNotifTemplate(
-              item?.templateId,
-              item?.notiType,
-              item?.variables,
-              item?.lang,
-              item?.title,
-              item?.senders,
-              item?.receivers,
-              item?.createdBy,
-              item?.updatedBy,
-              item?.createdAt,
-              item?.updatedAt
+        if (data) {
+          data.map((item: any) => {
+            notifMappingTemplate.push(
+              createNotifTemplate(
+                item?.templateId,
+                item?.notiType,
+                item?.variables,
+                item?.lang,
+                item?.title,
+                item?.senders,
+                item?.receivers,
+                item?.createdBy,
+                item?.updatedBy,
+                item?.createdAt,
+                item?.updatedAt
+              )
             )
-          )
-        })
-        setNotifTemplateList(notifMappingTemplate)
-        setFillteredTemplate(notifMappingTemplate)
+          })
+          setTotalData(result?.data.totalPages)
+          setNotifTemplateList(notifMappingTemplate)
+          setFillteredTemplate(notifMappingTemplate)
+        }
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -248,7 +314,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
     } else if (lang === 'EN-US' && i18n.language === Languages.ZHCH) {
       return (language = '英语')
     } else if (lang === 'EN-US' && i18n.language === Languages.ZHHK) {
-      return (language = '英语')
+      return (language = '英語')
     } else if (lang === 'EN-US' && i18n.language === Languages.ENUS) {
       return (language = 'English')
     }
@@ -271,43 +337,76 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
     }
   }, [])
 
+  const updateQuery = (newQuery: any) => {
+    setQuery({ ...query, ...newQuery })
+  }
+
+  const handleSearch = debounce((keyName: string, value: string) => {
+    setPage(1)
+    updateQuery({ [keyName]: value })
+  }, 1000)
+
+
   return (
       <Box
         sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', pr: 4}}
       >
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, maxWidth: '1460px' }}>
+          <Stack direction="row" mt={3}>
+            {searchfield.map((s) => (
+              <CustomSearchField
+                key={s.field}
+                label={s.label}
+                inputType={s.inputType}
+                field={s.field}
+                options={s.options || []}
+                onChange={(labelField, value) => handleSearch(labelField as keyof NotifTemplate, value)}
+                />
+            ))}
+          </Stack>
           {isLoading ? (
             <CircularLoading />
-          ) : ( <DataGrid
-            rows={filteredTemplate}
-            getRowId={(row) => row.templateId}
-            hideFooter
-            columns={columns}
-            // checkboxSelection
-            onRowClick={handleSelectRow}
-            getRowSpacing={getRowSpacing}
-            localeText={localeTextDataGrid}
-            sx={{
-              border: 'none',
-              '& .MuiDataGrid-cell': {
-                border: 'none'
-              },
-              '.MuiDataGrid-columnHeaderTitle': { 
-                fontWeight: 'bold !important',
-                overflow: 'visible !important'
-              },
-              '& .MuiDataGrid-row': {
-                bgcolor: 'white',
-                borderRadius: '10px'
-              },
-              '&>.MuiDataGrid-main': {
-                '&>.MuiDataGrid-columnHeaders': {
-                  borderBottom: 'none'
-                }
-              }
-            }}
-          />)}
+          ) : ( 
+            <Box>
+              <DataGrid
+                rows={filteredTemplate}
+                getRowId={(row) => row.templateId}
+                hideFooter
+                columns={columns}
+                // checkboxSelection
+                onRowClick={handleSelectRow}
+                getRowSpacing={getRowSpacing}
+                localeText={localeTextDataGrid}
+                sx={{
+                  border: 'none',
+                  '& .MuiDataGrid-cell': {
+                    border: 'none'
+                  },
+                  '.MuiDataGrid-columnHeaderTitle': { 
+                    fontWeight: 'bold !important',
+                    overflow: 'visible !important'
+                  },
+                  '& .MuiDataGrid-row': {
+                    bgcolor: 'white',
+                    borderRadius: '10px'
+                  },
+                  '&>.MuiDataGrid-main': {
+                    '&>.MuiDataGrid-columnHeaders': {
+                      borderBottom: 'none'
+                    }
+                  }
+                }}
+              />
+              <Pagination
+                count={Math.ceil(totalData)}
+                page={page}
+                onChange={(_, newPage) => {
+                  setPage(newPage)
+                }}
+              />
+            </Box>
+          )}
           </Box>
         </div>
       </Box>
