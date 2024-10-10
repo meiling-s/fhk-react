@@ -13,7 +13,8 @@ import {
 } from '../constants/requests'
 import {
   UpdateNotifTemplate,
-  UpdateNotifTemplateBroadcast
+  UpdateNotifTemplateBroadcast,
+  queryNotiTemplate
 } from '../interfaces/notif'
 import { returnApiToken } from '../utils/utils'
 
@@ -60,12 +61,20 @@ export const updateFlagNotif = async (notiId: number) => {
   }
 }
 
-export const getListNotifTemplatePO = async () => {
+export const getListNotifTemplatePO = async (page: number, size: number, query?: queryNotiTemplate) => {
   try {
     const token = returnApiToken()
     const response = await axiosInstance({
       ...GET_LIST_NOTIF_TEMPLATE_PO(token.tenantId, token.realmApiRoute),
-      baseURL: administratorAPI.baseURL
+      baseURL: administratorAPI.baseURL,
+      params: {
+        page: page,
+        size: size,
+        templateId: query?.templateId,
+        notiType: query?.type,
+        title: query?.title,
+        lang: query?.lang,
+      }
     })
     return response
   } catch (e) {
@@ -73,12 +82,20 @@ export const getListNotifTemplatePO = async () => {
   }
 }
 
-export const getListNotifTemplateStaff = async () => {
+export const getListNotifTemplateStaff = async (page: number, size: number, query?: queryNotiTemplate) => {
   try {
     const token = returnApiToken()
     const response = await axiosInstance({
       ...GET_LIST_NOTIF_TEMPLATE_STAFF(token.tenantId, token.realmApiRoute),
-      baseURL: administratorAPI.baseURL
+      baseURL: administratorAPI.baseURL,
+      params: {
+        page: page,
+        size: size,
+        templateId: query?.templateId,
+        notiType: query?.type,
+        title: query?.title,
+        lang: query?.lang,
+      }
     })
     return response
   } catch (e: any) {

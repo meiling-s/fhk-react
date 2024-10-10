@@ -29,11 +29,20 @@ import {
   getPicoById
 } from '../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useTranslation } from 'react-i18next'
-import { displayCreatedDate, extractError, getPrimaryColor, showErrorToast } from '../../utils/utils'
+import {
+  displayCreatedDate,
+  extractError,
+  getPrimaryColor,
+  showErrorToast
+} from '../../utils/utils'
 import CustomButton from './CustomButton'
-import { Languages, STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
+import {
+  Languages,
+  STATUS_CODE,
+  localStorgeKeyName
+} from '../../constants/constant'
 
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
@@ -50,14 +59,14 @@ type DeleteModalProps = {
   open: boolean
   id?: string | null
   onClose: () => void
-  onDelete: (id: number) => void,
+  onDelete: (id: number) => void
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
   open,
   id,
   onClose,
-  onDelete,
+  onDelete
 }) => {
   const { t } = useTranslation()
   return (
@@ -123,14 +132,14 @@ const PickupOrderForm = ({
   onDeleteModal: () => void
   // navigateToJobOrder: () => void;
 }) => {
-  const { t, i18n} = useTranslation()
+  const { t, i18n } = useTranslation()
   const role = localStorage.getItem(localStorgeKeyName.role)
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
-  const {dateFormat} = useContainer(CommonTypeContainer)
-  const [vehicleType, setVehicleType] = useState<string>('');
-  const { marginTop } = useContainer(NotifContainer);
+  const { dateFormat } = useContainer(CommonTypeContainer)
+  const [vehicleType, setVehicleType] = useState<string>('')
+  const { marginTop } = useContainer(NotifContainer)
   const [openDelete, setOpenDelete] = useState<boolean>(false)
-  
+
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -143,7 +152,9 @@ const PickupOrderForm = ({
 
   const handleRowClick = async () => {
     const routeName = role
-    const result = await getPicoById(selectedPickupOrder ? selectedPickupOrder.picoId : '')
+    const result = await getPicoById(
+      selectedPickupOrder ? selectedPickupOrder.picoId : ''
+    )
     if (result) {
       navigate(`/${routeName}/editPickupOrder`, { state: result.data })
     }
@@ -209,11 +220,11 @@ const PickupOrderForm = ({
         onClose && onClose()
         navigate('/collector/PickupOrder')
       } catch (error: any) {
-        const {state} = extractError(error);
+        const { state } = extractError(error)
         if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
-        } else if (state.code === STATUS_CODE[409]){
-          showErrorToast(error.response.data.message);
+        } else if (state.code === STATUS_CODE[409]) {
+          showErrorToast(error.response.data.message)
         }
       }
     } else {
@@ -223,13 +234,15 @@ const PickupOrderForm = ({
 
   const initVehicleDetail = async () => {
     try {
-      if(selectedPickupOrder?.vehicleTypeId){
-        const vehicle = await getVehicleDetail(selectedPickupOrder.vehicleTypeId);
-        if(vehicle){
-          let vehicleLang:string = '';
-          if(i18n.language === Languages.ENUS){
+      if (selectedPickupOrder?.vehicleTypeId) {
+        const vehicle = await getVehicleDetail(
+          selectedPickupOrder.vehicleTypeId
+        )
+        if (vehicle) {
+          let vehicleLang: string = ''
+          if (i18n.language === Languages.ENUS) {
             vehicleLang = vehicle?.data?.vehicleTypeNameEng
-          } else if(i18n.language === Languages.ZHCH){
+          } else if (i18n.language === Languages.ZHCH) {
             vehicleLang = vehicle?.data?.vehicleTypeNameSchi
           } else {
             vehicleLang = vehicle?.data?.vehicleTypeNameTchi
@@ -237,33 +250,31 @@ const PickupOrderForm = ({
           setVehicleType(vehicleLang)
         }
       }
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   }
 
   useEffect(() => {
     initVehicleDetail()
   }, [selectedPickupOrder?.vehicleTypeId, i18n.language])
 
-  const getDeliveryDate = (deliveryDate:string[]) => {
-    const weeks = ['mon', 'tue', 'wed', 'thur', 'fri', 'sat', 'sun'];
-    let delivery = deliveryDate.map(item => item.trim());
-    let isWeek = false;
+  const getDeliveryDate = (deliveryDate: string[]) => {
+    const weeks = ['mon', 'tue', 'wed', 'thur', 'fri', 'sat', 'sun']
+    let delivery = deliveryDate.map((item) => item.trim())
+    let isWeek = false
 
-    for(let deliv of delivery){
-      if(weeks.includes(deliv)){
+    for (let deliv of delivery) {
+      if (weeks.includes(deliv)) {
         isWeek = true
       }
     }
 
-    if(isWeek){
-      delivery = delivery.map(item => {
-        const days = weekDs.find(day => day.id === item);
-        if(days) {
-          if(i18n.language === Languages.ENUS){
+    if (isWeek) {
+      delivery = delivery.map((item) => {
+        const days = weekDs.find((day) => day.id === item)
+        if (days) {
+          if (i18n.language === Languages.ENUS) {
             return days.engName
-          } else if(i18n.language === Languages.ZHCH){
+          } else if (i18n.language === Languages.ZHCH) {
             return days.schiName
           } else {
             return days.tchiName
@@ -291,79 +302,84 @@ const PickupOrderForm = ({
       >
         <div className="header">
           <div className="header-section">
-          <div className="flex flex-row items-center justify-between p-[25px] gap-[25px">
-          <div className="md:flex items-center gap-2 sm:block">
-            <div className="flex-1 flex flex-col items-start justify-start sm:mb-2">
-              <b className="md:text-sm sm:text-xs">{t('pick_up_order.item.detail')}</b>
-              <div className="md:text-smi sm:text-2xs text-grey-dark text-left">
-                {selectedRow?.picoId}
+            <div className="flex flex-row items-center justify-between p-[25px] gap-[25px">
+              <div className="md:flex items-center gap-2 sm:block">
+                <div className="flex-1 flex flex-col items-start justify-start sm:mb-2">
+                  <b className="md:text-sm sm:text-xs">
+                    {t('pick_up_order.item.detail')}
+                  </b>
+                  <div className="md:text-smi sm:text-2xs text-grey-dark text-left">
+                    {selectedRow?.picoId}
+                  </div>
+                </div>
+                {selectedRow?.status && (
+                  <StatusCard status={selectedRow.status} />
+                )}
+              </div>
+              <div className="right-action flex items-center">
+                <Box sx={{ marginLeft: 'auto' }}>
+                  {role === 'logistic' &&
+                  selectedRow?.status &&
+                  ['STARTED', 'OUTSTANDING'].includes(selectedRow?.status) ? (
+                    <CustomButton
+                      text={t('pick_up_order.table.create_job_order')}
+                      onClick={() => {
+                        if (selectedRow?.picoId) {
+                          navigateToJobOrder(selectedRow?.picoId.toString())
+                        }
+                      }}
+                    ></CustomButton>
+                  ) : role === 'logistic' &&
+                    selectedRow &&
+                    selectedRow.status === 'CREATED' &&
+                    selectedRow?.tenantId === tenantId ? (
+                    <>
+                      <CustomButton
+                        text={t('pick_up_order.item.edit')}
+                        style={{ marginRight: '12px' }}
+                        onClick={() => {
+                          selectedRow && handleRowClick()
+                        }}
+                      />
+                      <CustomButton
+                        text={t('pick_up_order.item.delete')}
+                        outlined
+                        onClick={onDeleteModal}
+                      />
+                    </>
+                  ) : role !== 'logistic' &&
+                    selectedRow?.status === 'CREATED' ? (
+                    <>
+                      <CustomButton
+                        text={t('pick_up_order.item.edit')}
+                        style={{ marginRight: '12px' }}
+                        onClick={() => {
+                          selectedRow && handleRowClick()
+                        }}
+                      ></CustomButton>
+                      <CustomButton
+                        text={t('pick_up_order.item.delete')}
+                        outlined
+                        onClick={onDeleteModal}
+                      ></CustomButton>
+                    </>
+                  ) : null}
+                </Box>
+
+                <div className="close-icon ml-2 cursor-pointer">
+                  <img
+                    className="relative w-6 h-6 overflow-hidden shrink-0"
+                    alt=""
+                    src="/collapse1.svg"
+                    onClick={onClose}
+                  />
+                </div>
               </div>
             </div>
-            {selectedRow?.status && <StatusCard status={selectedRow.status} />}
           </div>
-          <div className="right-action flex items-center">
-            <Box sx={{ marginLeft: 'auto' }}>
-              {role === 'logistic' &&
-              selectedRow?.status &&
-              ['STARTED', 'OUTSTANDING'].includes(selectedRow?.status) ? (
-                <CustomButton
-                  text={t('pick_up_order.table.create_job_order')}
-                  onClick={() => {
-                    if(selectedRow?.picoId){
-                      navigateToJobOrder(selectedRow?.picoId.toString())
-                    }
-                  }}
-                ></CustomButton>
-              ) : role === 'logistic' &&
-                selectedRow &&
-                selectedRow.status === 'CREATED' &&
-                selectedRow?.tenantId === tenantId ? (
-                <>
-                  <CustomButton
-                  text={t('pick_up_order.item.edit')}
-                  style={{ marginRight: '12px' }}
-                  onClick={() => {
-                    selectedRow && handleRowClick()
-                  }}
-                />
-                  <CustomButton
-                    text={t('pick_up_order.item.delete')}
-                    outlined
-                    onClick={onDeleteModal}
-                  />
-                </>
-              ) : role !== 'logistic' && selectedRow?.status === 'CREATED'  ? (
-                <>
-                  <CustomButton
-                    text={t('pick_up_order.item.edit')}
-                    style={{ marginRight: '12px' }}
-                    onClick={() => {
-                      selectedRow && handleRowClick()
-                    }}
-                  ></CustomButton>
-                  <CustomButton
-                    text={t('pick_up_order.item.delete')}
-                    outlined
-                    onClick={onDeleteModal}
-                  ></CustomButton>
-                </>
-              ) : null}
-            </Box>
-
-            <div className="close-icon ml-2 cursor-pointer">
-              <img
-                className="relative w-6 h-6 overflow-hidden shrink-0"
-                alt=""
-                src="/collapse1.svg"
-                onClick={onClose}
-              />
-            </div>
-          </div>
-          </div>
-      </div>
         </div>
-         <Divider></Divider>
-         <Stack spacing={2} sx={localstyles.content}>
+        <Divider></Divider>
+        <Stack spacing={2} sx={localstyles.content}>
           <Box>
             <Typography sx={localstyles.typo_header}>
               {t('pick_up_order.item.shipping_info')}
@@ -373,7 +389,10 @@ const PickupOrderForm = ({
           <CustomField label={t('pick_up_order.item.date_time')}>
             <Typography sx={localstyles.typo_fieldContent}>
               {selectedPickupOrder?.createdAt
-                ? dayjs.utc(selectedPickupOrder?.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+                ? dayjs
+                    .utc(selectedPickupOrder?.createdAt)
+                    .tz('Asia/Hong_Kong')
+                    .format(`${dateFormat} HH:mm`)
                 : ''}
             </Typography>
           </CustomField>
@@ -390,22 +409,30 @@ const PickupOrderForm = ({
 
           <CustomField label={t('pick_up_order.item.shipping_validity')}>
             <Typography sx={localstyles.typo_fieldContent}>
-              {dayjs.utc(selectedPickupOrder?.effFrmDate).tz('Asia/Hong_Kong').format(`${dateFormat}`)} To{' '} {dayjs.utc(selectedPickupOrder?.effToDate).tz('Asia/Hong_Kong').format(`${dateFormat}`)}
+              {dayjs
+                .utc(selectedPickupOrder?.effFrmDate)
+                .tz('Asia/Hong_Kong')
+                .format(`${dateFormat}`)}{' '}
+              To{' '}
+              {dayjs
+                .utc(selectedPickupOrder?.effToDate)
+                .tz('Asia/Hong_Kong')
+                .format(`${dateFormat}`)}
             </Typography>
           </CustomField>
-          {selectedPickupOrder?.picoType !== 'AD_HOC' && 
-            (
-              <CustomField label={t('pick_up_order.table.delivery_datetime')}>
+          {selectedPickupOrder?.picoType !== 'AD_HOC' && (
+            <CustomField label={t('pick_up_order.table.delivery_datetime')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {/* {selectedPickupOrder?.routine
                   .map((routineItem) => routineItem)
                   .join(' ')} */}
-                { selectedPickupOrder?.routineType === 'daily' &&  t('pick_up_order.daily')}
-                { selectedPickupOrder?.routineType === 'weekly' && getDeliveryDate(selectedPickupOrder.routine)}
+                {selectedPickupOrder?.routineType === 'daily' &&
+                  t('pick_up_order.daily')}
+                {selectedPickupOrder?.routineType === 'weekly' &&
+                  getDeliveryDate(selectedPickupOrder.routine)}
               </Typography>
             </CustomField>
-            )
-          }
+          )}
           <CustomField label={t('pick_up_order.item.vehicle_category')}>
             <Typography sx={localstyles.typo_fieldContent}>
               {/* {selectedPickupOrder?.vehicleTypeId === '1'
@@ -413,7 +440,7 @@ const PickupOrderForm = ({
                 : selectedPickupOrder?.vehicleTypeId === '2'
                 ? t('pick_up_order.card_detail.large_truck')
                 : ''} */}
-                {vehicleType}
+              {vehicleType}
             </Typography>
           </CustomField>
           <CustomField label={t('pick_up_order.item.plat_number')}>
@@ -443,18 +470,29 @@ const PickupOrderForm = ({
             {t('pick_up_order.item.rec_loc_info')}
           </Typography>
 
-          <PickupOrderCard pickupOrderDetail={selectedRow?.pickupOrderDetail ?? []} />
-        </Stack>
-          <DeleteModal
-            open={openDelete}
-            id={selectedRow?.picoId}
-            onClose={() => {
-              setOpenDelete(false)
-            }}
-            onDelete={onDeleteModal}
+          <PickupOrderCard
+            pickupOrderDetail={selectedRow?.pickupOrderDetail ?? []}
+            status={selectedRow?.status || 'CREATED'}
           />
+          {selectedRow?.status === 'REJECTED' && (
+            <Box>
+              <Typography sx={localstyles.typo_fieldTitle}>
+                {selectedRow?.updatedBy} {t('job_order.rejected_at')}{' '}
+                {dayjs(selectedRow?.updatedAt).format(`${dateFormat} HH:mm`)},
+                {t('job_order.reason_single')} {selectedRow?.reason}
+              </Typography>
+            </Box>
+          )}
+        </Stack>
+        <DeleteModal
+          open={openDelete}
+          id={selectedRow?.picoId}
+          onClose={() => {
+            setOpenDelete(false)
+          }}
+          onDelete={onDeleteModal}
+        />
       </Drawer>
-
     </div>
   )
 }
