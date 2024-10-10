@@ -86,7 +86,7 @@ const RecyclingPointForm: FC<RecyclingPointFormProps> = ({
             <Box sx={{ marginY: 2 }}>
                 <CustomField label={t('packaging_unit.introduction')}>
                     <CustomTextField
-                        dataTestId=""
+                        dataTestId="astd-land-form-intro-input-field-4625"
                         id="description"
                         placeholder={t('packaging_unit.introduction_placeholder')}
                         onChange={(event) => setDescription(event.target.value)}
@@ -99,7 +99,7 @@ const RecyclingPointForm: FC<RecyclingPointFormProps> = ({
             <Box sx={{ marginY: 2 }}>
                 <CustomField label={t('packaging_unit.remark')}>
                     <CustomTextField
-                        dataTestId=""
+                        dataTestId="astd-land-form-remark-input-field-9552"
                         id="remark"
                         placeholder={t('packaging_unit.remark_placeholder')}
                         onChange={(event) => setRemark(event.target.value)}
