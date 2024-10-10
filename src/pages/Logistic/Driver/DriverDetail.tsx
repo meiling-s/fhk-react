@@ -453,6 +453,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                             dataURLKey="data_url"
                                             maxNumber={imgSettings?.ImgQuantity}
                                             maxFileSize={imgSettings?.ImgSize}
+                                            acceptType={['jpg', 'jpeg', 'png']}
                                         >
                                             {({ imageList, onImageUpload, onImageRemove }) => (
                                                 <Box className="box">

@@ -133,6 +133,7 @@ const TenantRegisterForm2 = () => {
                   console.log("error: ",errors);
                 }}
                 dataURLKey="data_url"
+                acceptType={['jpg', 'jpeg', 'png']}
               >
                 {({
                   imageList,
