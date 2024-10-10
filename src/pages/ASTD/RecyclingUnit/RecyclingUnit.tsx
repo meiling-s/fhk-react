@@ -364,7 +364,7 @@ const RecyclingUnit: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} data-testid='astd-packaging-unit-edit-button-5410'>
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
@@ -384,7 +384,7 @@ const RecyclingUnit: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} data-testid='astd-packaging-unit-delete-button-6095'>
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
@@ -452,6 +452,7 @@ const RecyclingUnit: FunctionComponent = () => {
                 handleAction(params, 'edit', 'weight')
               }}
               style={{ cursor: 'pointer' }}
+              data-testid='astd-weight-edit-button-8782'
             />
           </div>
         )
@@ -472,6 +473,7 @@ const RecyclingUnit: FunctionComponent = () => {
                 handleAction(params, 'delete', 'weight')
               }}
               style={{ cursor: 'pointer' }}
+              data-testid='astd-weight-delete-button-7204'
             />
           </div>
         )
@@ -801,6 +803,7 @@ const RecyclingUnit: FunctionComponent = () => {
                 setPackagingDrawerOpen(true)
                 setAction('add')
               }}
+              data-testid='astd-packaging-unit-new-button-1985'
             >
               <ADD_ICON /> {t('top_menu.add_new')}
             </Button>
@@ -875,6 +878,7 @@ const RecyclingUnit: FunctionComponent = () => {
                 setWeightDrawerOpen(true)
                 setAction('add')
               }}
+              data-testid='astd-weight-new-button-1075'
             >
               <ADD_ICON /> {t('top_menu.add_new')}
             </Button>
