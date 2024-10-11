@@ -177,7 +177,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
           field: fieldMapping[fieldName as keyof FormValues],
           problem: formErr.empty,
           type: 'error',
-          id:`astd-company-${companyType}-form-${fieldIdMapping[fieldName]}`
+          dataTestId:`astd-company-${companyType}-form-${fieldIdMapping[fieldName]}`
         })
     })
     existingCompanyList.forEach((item) => {
@@ -186,7 +186,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
           field: t('common.traditionalChineseName'),
           problem: formErr.alreadyExist,
           type: 'error',
-          id: `astd-company-${item.companyType}-form-tc-err-warning-4372`,
+          dataTestId: `astd-company-${item.companyType}-form-tc-err-warning-4372`,
         })
       }
       if (item.nameSchi.toLowerCase() === formData.nameSchi.toLowerCase()) {
@@ -194,7 +194,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
           field: t('common.simplifiedChineseName'),
           problem: formErr.alreadyExist,
           type: 'error',
-          id: `astd-company-${item.companyType}-form-sc-err-warning-6316`
+          dataTestId: `astd-company-${item.companyType}-form-sc-err-warning-6316`
         })
       }
       if (item.nameEng.toLowerCase() === formData.nameEng.toLowerCase()) {
@@ -202,7 +202,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
           field: t('common.englishName'),
           problem: formErr.alreadyExist,
           type: 'error',
-          id: `astd-company-${item.companyType}-form-en-err-warning-8979`
+          dataTestId: `astd-company-${item.companyType}-form-en-err-warning-8979`
         })
       }
     })
@@ -514,7 +514,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
               {trySubmited &&
                 validation.map((val, index) => (
                   <FormErrorMsg
-                    dataTestId={val.id}
+                    dataTestId={val.dataTestId}
                     key={index}
                     field={t(val.field)}
                     errorMsg={returnErrorMsg(val.problem, t)}
