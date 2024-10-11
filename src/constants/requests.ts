@@ -48,7 +48,7 @@ export const UPDATE_TENANT_REGISTER = (
   tenantId: number
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/account/t/updateInfo/${tenantId}`
+  url: `api/v1/account/t/V2/updateInfo/${tenantId}`
 })
 
 export const UPDATE_TENANT_INFO = (tenantId: string): AxiosRequestConfig => ({
@@ -65,7 +65,7 @@ export const GET_TENANT_BY_TENANT_ID = (
 
 export const UPDATE_TENANT_STATUS = (tenantId: number): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/account/t/status/${tenantId}`
+  url: `api/v1/account/t/V2/status/${tenantId}`
 })
 
 export const GET_CURRENCY_LIST: AxiosRequestConfig = {

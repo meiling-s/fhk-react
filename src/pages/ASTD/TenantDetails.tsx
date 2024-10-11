@@ -54,6 +54,7 @@ dayjs.extend(timezone)
 
 type closedTenantModalProps = {
   tenantId: number
+  version: number
   open: boolean
   onClose: () => void
   onSubmit: () => void
@@ -62,6 +63,7 @@ type closedTenantModalProps = {
 
 function ClosedTenantModal({
   tenantId,
+  version,
   open,
   onClose,
   onSubmit,
@@ -75,7 +77,8 @@ function ClosedTenantModal({
     const statData: any = {
       status: 'CLOSED',
       reasonId: reasonId,
-      updatedBy: loginId
+      updatedBy: loginId,
+      version: version
     }
 
     const result = await updateTenantStatus(statData, tenantId)
@@ -183,7 +186,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     setTenantDetails(data)
 
     //mapping data
-    if (data?.companyLogo != '' && data?.companyLogo != 'null') {
+    if (data?.companyLogo != '' && data?.companyLogo != null) {
       const isBase64 = data?.companyLogo.startsWith('data:image/png')
       const format = data?.companyLogo.startsWith('data:image/png')
         ? 'png'
@@ -750,6 +753,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
           <ClosedTenantModal
             tenantId={tenantId}
             open={modalClosedStatus}
+            version={version}
             onClose={() => setModalClosed(false)}
             onSubmit={onSubmitClosedTenant}
             reasons={reasons}
