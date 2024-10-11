@@ -163,7 +163,7 @@ const StaffTitle: FunctionComponent = () => {
               event.stopPropagation()
               handleAction(params, 'edit')
             }}
-            data-testid={'astd-staff-edit-button-8828'}
+            data-testid={'astd-staff-edit-button-8828-' + params.id}
           >
             <EDIT_OUTLINED_ICON
               fontSize="small"
@@ -185,7 +185,7 @@ const StaffTitle: FunctionComponent = () => {
               event.stopPropagation()
               handleAction(params, 'delete')
             }}
-            data-testid={'astd-staff-delete-button-7706'}
+            data-testid={'astd-staff-delete-button-7706-' + params.id}
           >
             <DELETE_OUTLINED_ICON
               fontSize="small"
