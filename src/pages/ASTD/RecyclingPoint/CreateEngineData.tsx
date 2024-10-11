@@ -23,6 +23,7 @@ import { styles } from '../../../constants/styles'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
+import EngineDataForm from './EngineDataForm'
 
 interface engineDataProps {
     createdAt: string
@@ -75,7 +76,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     const [remark, setRemark] = useState<string>('')
     const [selectedService, setSelectedService] = useState<string>('')
     const [version, setVersion] = useState<number>(0)
-    const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
+    const [validation, setValidation] = useState<{ field: string; error: string, dataTestId: string }[]>([])
     const navigate = useNavigate();
 
     const serviceTypeSelect = [
@@ -150,14 +151,16 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     }
 
     useEffect(() => {
-        const tempV: { field: string; error: string }[] = []
+        const tempV: { field: string; error: string, dataTestId: string }[] = []
 
         tChineseName.trim() === '' &&
             tempV.push({
                 field: `${t('packaging_unit.traditional_chinese_name')}`,
                 error: `${t(`common.traditionalChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}
+                `,
+                dataTestId: 'astd-land-form-tc-err-warning-4371'
             })
 
         sChineseName.trim() === '' &&
@@ -165,7 +168,8 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 field: `${t('packaging_unit.simplified_chinese_name')}`,
                 error: `${t(`common.simplifiedChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}`,
+                   dataTestId: 'astd-land-form-sc-err-warning-3804'
             })
 
         englishName.trim() === '' &&
@@ -173,7 +177,8 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 field: `${t('packaging_unit.english_name')}`,
                 error: `${t(`common.englishName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}`,
+                dataTestId: 'astd-land-form-en-err-warning-3285'
             })
 
         selectedService.trim() === '' &&
@@ -181,7 +186,8 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
             field: `${t('recycling_point.service_type')}`,
             error: `${t(`recycling_point.service_type`)} ${t(
                 'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: ''
         })
 
         setValidation(tempV)
@@ -305,131 +311,31 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 }}
             >
                 <Divider></Divider>
-                <Box sx={{ marginX: 2 }}>
-                    <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.traditional_chinese_name')} mandatory>
-                            <CustomTextField
-                                id="tChineseName"
-                                value={tChineseName}
-                                disabled={action === 'delete'}
-                                placeholder={t('packaging_unit.traditional_chinese_name_placeholder')}
-                                onChange={(event) => setTChineseName(event.target.value)}
-                                error={checkString(tChineseName)}
-                            />
-                        </CustomField>
-                    </Box>
-                    <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.simplified_chinese_name')} mandatory>
-                            <CustomTextField
-                                id="sChineseName"
-                                value={sChineseName}
-                                disabled={action === 'delete'}
-                                placeholder={t('packaging_unit.simplified_chinese_name_placeholder')}
-                                onChange={(event) => setSChineseName(event.target.value)}
-                                error={checkString(sChineseName)}
-                            />
-                        </CustomField>
-                    </Box>
-                    <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.english_name')} mandatory>
-                            <CustomTextField
-                                id="englishName"
-                                value={englishName}
-                                disabled={action === 'delete'}
-                                placeholder={t('packaging_unit.english_name_placeholder')}
-                                onChange={(event) => setEnglishName(event.target.value)}
-                                error={checkString(englishName)}
-                            />
-                        </CustomField>
-                    </Box>
-                    <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_point.residence')}>
-                            <Switcher
-                                onText={t('add_warehouse_page.yes')}
-                                offText={t('add_warehouse_page.no')}
-                                disabled={action === 'delete'}
-                                defaultValue={residentalFlg}
-                                setState={(newValue) => setResidentalFlg(newValue)}
-                            />
-                        </CustomField>
-                    </Box>
-                    <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_point.epd')}>
-                            <Switcher
-                                onText={t('add_warehouse_page.yes')}
-                                offText={t('add_warehouse_page.no')}
-                                disabled={action === 'delete'}
-                                defaultValue={registeredFlg}
-                                setState={(newValue) => setRegisteredFlg(newValue)}
-                            />
-                        </CustomField>
-                    </Box>
-                    <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_point.service_type')} mandatory>
-                            <Autocomplete
-                                disablePortal
-                                id="selectedService"
-                                defaultValue={selectedService}
-                                options={serviceTypeSelect.map((functionItem) => functionItem.name)}
-                                onChange={(event, value) => {
-                                    if (value) {
-                                        setSelectedService(value)
-                                    }
-                                }}
-                                value={selectedService}
-                                disabled={action === 'delete'}
-                                renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    placeholder={t('recycling_point.service_type')}
-                                    sx={[styles.textField, { width: 320 }]}
-                                    InputProps={{
-                                    ...params.InputProps,
-                                    sx: styles.inputProps
-                                    }}
-                                    error={checkString(selectedService)}
-                                />
-                                )}
-                                noOptionsText={t('common.noOptions')}
-                            />
-                        </CustomField>
-                    </Box>
-                    <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.introduction')}>
-                            <CustomTextField
-                                id="introduction"
-                                placeholder={t('packaging_unit.introduction_placeholder')}
-                                onChange={(event) => setDescription(event.target.value)}
-                                multiline={true}
-                                defaultValue={description}
-                                disabled={action === 'delete'}
-                            />
-                        </CustomField>
-                    </Box>
-                    <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.remark')}>
-                            <CustomTextField
-                                id="remark"
-                                placeholder={t('packaging_unit.remark_placeholder')}
-                                onChange={(event) => setRemark(event.target.value)}
-                                multiline={true}
-                                defaultValue={remark}
-                                disabled={action === 'delete'}
-                            />
-                        </CustomField>
-                    </Box>
-                    <Grid item sx={{ width: '92%' }}>
-                        {trySubmited &&
-                            validation.map((val, index) => (
-                            <FormErrorMsg
-                                key={index}
-                                field={t(val.field)}
-                                errorMsg={val.error}
-                                type={'error'}
-                            />
-                            ))}
-                    </Grid>
-                </Box>
+                <EngineDataForm
+                    tChineseName={tChineseName}
+                    sChineseName={sChineseName}
+                    englishName={englishName}
+                    residentialFlg={residentalFlg}
+                    registeredFlg={registeredFlg}
+                    selectedService={selectedService}
+                    serviceTypeSelect={serviceTypeSelect}
+                    description={description}
+                    remark={remark}
+                    trySubmited={trySubmited}
+                    validation={validation}
+                    action={action || 'add'}
+                    setTChineseName={setTChineseName}
+                    setSChineseName={setSChineseName}
+                    setEnglishName={setEnglishName}
+                    setResidentalFlg={setResidentalFlg}
+                    setRegisteredFlg={setRegisteredFlg}
+                    setSelectedService={setSelectedService}
+                    setDescription={setDescription}
+                    setRemark={setRemark}
+                    checkString={checkString}
+                    t={t}
+                />
+
             </RightOverlayForm>
         </div>
     )

@@ -44,6 +44,7 @@ import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { createRecyc, createRecyclingPoint, deleteRecyclingPoint, editRecyclingPoint, sendWeightUnit } from '../../../APICalls/ASTD/recycling'
 import { STATUS_CODE } from '../../../constants/constant'
+import RecyclingPointForm from './RecyclingPointForm'
 
 interface siteTypeDataProps {
     createdAt: string
@@ -89,7 +90,7 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
     const [equivalent, setEquivalent] = useState<string>('')
     const [description, setDescription] = useState<string>('')
     const [remark, setRemark] = useState<string>('')
-    const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
+    const [validation, setValidation] = useState<{ field: string; error: string, dataTestId: string }[]>([])
     const [version, setVersion] = useState<number>(0)
     const isInitialRender = useRef(true) // Add this line
     const navigate = useNavigate();
@@ -151,14 +152,15 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
     }
 
     useEffect(() => {
-        const tempV: { field: string; error: string }[] = []
+        const tempV: { field: string; error: string, dataTestId: string }[] = []
 
         tChineseName.trim() === '' &&
             tempV.push({
                 field: `${t('packaging_unit.traditional_chinese_name')}`,
                 error: `${t(`common.traditionalChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}`,
+                 dataTestId: 'astd-house-form-tc-err-warning-5120'
             })
 
         sChineseName.trim() === '' &&
@@ -166,7 +168,8 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
                 field: `${t('packaging_unit.simplified_chinese_name')}`,
                 error: `${t(`common.simplifiedChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}`,
+                 dataTestId: 'astd-house-form-sc-err-warning-8565'
             })
 
         englishName.trim() === '' &&
@@ -174,7 +177,8 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
                 field: `${t('packaging_unit.english_name')}`,
                 error: `${t(`common.englishName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}`,
+                 dataTestId: 'astd-house-form-en-err-warning-28511'
             })
 
         setValidation(tempV)
@@ -294,79 +298,23 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
                 }}
             >
                 <Divider></Divider>
-                <Box sx={{ marginX: 2 }}>
-                    <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.traditional_chinese_name')} mandatory>
-                            <CustomTextField
-                                id="tChineseName"
-                                value={tChineseName}
-                                disabled={action === 'delete'}
-                                placeholder={t('packaging_unit.traditional_chinese_name_placeholder')}
-                                onChange={(event) => setTChineseName(event.target.value)}
-                                error={trySubmited && checkString(tChineseName)}
-                            />
-                        </CustomField>
-                    </Box>
-                    <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.simplified_chinese_name')} mandatory>
-                            <CustomTextField
-                                id="sChineseName"
-                                value={sChineseName}
-                                disabled={action === 'delete'}
-                                placeholder={t('packaging_unit.simplified_chinese_name_placeholder')}
-                                onChange={(event) => setSChineseName(event.target.value)}
-                                error={trySubmited && checkString(sChineseName)}
-                            />
-                        </CustomField>
-                    </Box>
-                    <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.english_name')} mandatory>
-                            <CustomTextField
-                                id="englishName"
-                                value={englishName}
-                                disabled={action === 'delete'}
-                                placeholder={t('packaging_unit.english_name_placeholder')}
-                                onChange={(event) => setEnglishName(event.target.value)}
-                                error={trySubmited && checkString(englishName)}
-                            />
-                        </CustomField>
-                    </Box>
-                    <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.introduction')}>
-                            <CustomTextField
-                                id="description"
-                                placeholder={t('packaging_unit.introduction_placeholder')}
-                                onChange={(event) => setDescription(event.target.value)}
-                                multiline={true}
-                                defaultValue={description}
-                                disabled={action === 'delete'}
-                            />
-                        </CustomField>
-                    </Box>
-                    <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.remark')}>
-                            <CustomTextField
-                                id="remark"
-                                placeholder={t('packaging_unit.remark_placeholder')}
-                                onChange={(event) => setRemark(event.target.value)}
-                                multiline={true}
-                                defaultValue={remark}
-                                disabled={action === 'delete'}
-                            />
-                        </CustomField>
-                    </Box>
-                    <Grid item sx={{ width: '92%' }}>
-                        {trySubmited &&
-                            validation.map((val, index) => (
-                            <FormErrorMsg
-                                key={index}
-                                field={t(val.field)}
-                                errorMsg={val.error}
-                                type={'error'}
-                            />
-                            ))}
-                    </Grid>
-                </Box>
+                <RecyclingPointForm
+                    tChineseName={tChineseName}
+                    sChineseName={sChineseName}
+                    englishName={englishName}
+                    description={description}
+                    remark={remark}
+                    trySubmited={trySubmited}
+                    validation={validation}
+                    action={action || 'add'} 
+                    setTChineseName={setTChineseName}
+                    setSChineseName={setSChineseName}
+                    setEnglishName={setEnglishName}
+                    setDescription={setDescription}
+                    setRemark={setRemark}
+                    checkString={checkString}
+                    t={t}
+                />
             </RightOverlayForm>
         </div>
     )
