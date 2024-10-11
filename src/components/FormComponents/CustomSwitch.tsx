@@ -10,7 +10,8 @@ type props = {
     defaultValue?: boolean,
     disabled?: boolean
     value?: string,
-    helperText?:any
+    helperText?:any,
+    dataTestId?: string
 }
 
 export default function Switches({
@@ -20,7 +21,8 @@ export default function Switches({
     setState,
     disabled,
     value,
-    helperText
+    helperText,
+    dataTestId
     
 }: props) {
     const [onOff, setOnOff] = useState<boolean>((defaultValue!=undefined)? defaultValue : false);
@@ -39,7 +41,7 @@ export default function Switches({
   
     return (
         <>
-        <Button sx={localstyles.container} onClick={() => handleSwitchChange()}>
+        <Button sx={localstyles.container} onClick={() => handleSwitchChange()} data-testId={dataTestId}>
             <Box sx={[disabled? localstyles.switch_disabled : localstyles.switch,{ml: onOff? "5px" : "105px"}]} />
             <Typography sx={localstyles.onOffLabel}>
                 {onText}

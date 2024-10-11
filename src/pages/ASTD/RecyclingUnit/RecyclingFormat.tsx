@@ -119,7 +119,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     const [subTypeId, setSubTypeId] = useState<string>('')
     const [mainTypeId, setMainTypeId] = useState<string>('')
     const [version, setVersion] = useState<number>(0)
-    const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
+    const [validation, setValidation] = useState<{ field: string; error: string, dataTestId: string }[]>([])
     const isInitialRender = useRef(true) // Add this line
     const navigate = useNavigate();
 
@@ -196,14 +196,15 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
       }
       
     useEffect(() => {
-        const tempV: {field: string; error: string}[] = []
+        const tempV: {field: string; error: string; dataTestId: string}[] = []
 
         tChineseName.trim() === '' &&
         tempV.push({
             field: `${t('packaging_unit.traditional_chinese_name')}`,
             error: `${t(
             'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: 'astd-recyclable-form-tc-err-warning-4543'
         })
 
         sChineseName.trim() === '' &&
@@ -211,7 +212,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             field: `${t('packaging_unit.simplified_chinese_name')}`,
             error: `${t(
             'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: 'astd-recyclable-form-sc-err-warning-7195'
         })
 
         englishName.trim() === '' &&
@@ -219,7 +221,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             field: `${t('packaging_unit.english_name')}`,
             error: `${t(
             'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: 'astd-recyclable-form-en-err-warning-2471'
         })
 
         if (isMainCategory === false) {
@@ -228,7 +231,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 field: `${t('recycling_unit.main_category')}`,
                 error: `${t(
                 'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}`,
+                dataTestId: 'astd-recyclable-form-choose-main-select-err-warning-8595'
             })
         }
 
@@ -382,6 +386,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 placeholder={t('packaging_unit.traditional_chinese_name_placeholder')}
                                 onChange={(event) => setTChineseName(event.target.value)}
                                 error={checkString(tChineseName)}
+                                dataTestId='astd-recyclable-form-tc-input-field-5560'
                             />
                         </CustomField>
                     </Box>
@@ -394,6 +399,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 placeholder={t('packaging_unit.simplified_chinese_name_placeholder')}
                                 onChange={(event) => setSChineseName(event.target.value)}
                                 error={checkString(sChineseName)}
+                                dataTestId='astd-recyclable-form-sc-input-field-2575'
                             />
                         </CustomField>
                     </Box>
@@ -406,6 +412,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 placeholder={t('packaging_unit.english_name_placeholder')}
                                 onChange={(event) => setEnglishName(event.target.value)}
                                 error={checkString(englishName)}
+                                dataTestId='astd-recyclable-form-en-input-field-4031'
                             />
                         </CustomField>
                     </Box>
@@ -420,6 +427,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                     setMainCategory(newValue);
                                     newValue === false && setChosenRecyclableType('')
                                 }}
+                                dataTestId='astd-recyclable-form-type-boolean-button-4961'
                             />
                         </CustomField>
                     </Box>
@@ -437,6 +445,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                                 sx={{ borderRadius: '12px' }}
                                                 error={checkString(chosenRecyclableType)}
+                                                data-testid='astd-recyclable-form-choose-main-select-button-2451'
                                             >
                                                 <MenuItem value="">
                                                 <em>-</em>
@@ -467,6 +476,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             onChange={(event) => setDescription(event.target.value)}
                             multiline={true}
                             defaultValue={description}
+                            dataTestId='astd-recyclable-form-intro-input-field-7653'
                         />
                     </CustomField>
                     <CustomField label={t('packaging_unit.remark')}>
@@ -476,6 +486,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             onChange={(event) => setRemark(event.target.value)}
                             multiline={true}
                             defaultValue={remark}
+                            dataTestId='astd-recyclable-form-remark-input-field-3725'
                         />
                     </CustomField>
                     <Grid item sx={{ width: '92%' }}>
@@ -486,6 +497,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 field={t(val.field)}
                                 errorMsg={val.error}
                                 type={'error'}
+                                dataTestId={val.dataTestId}
                             />
                             ))}
                     </Grid>

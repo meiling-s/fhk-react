@@ -15,7 +15,7 @@ type DeleteModalProps = {
   selectedRow?: number | null
   onClose: () => void
   onDelete: () => void
-  deleteText?: string
+  deleteText?: string;
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
@@ -23,7 +23,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   selectedRow,
   onClose,
   onDelete,
-  deleteText
+  deleteText,
 }) => {
   const { t } = useTranslation()
 
@@ -51,6 +51,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
           <Box sx={{ alignSelf: 'center', paddingBottom: 3 }}>
             <button
               className="primary-btn mr-2 cursor-pointer"
+              data-testid="astd-right-drawer-modalconfirm-confirm-button-8612"
               onClick={() => {
                 onDelete()
               }}
@@ -59,6 +60,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
             </button>
             <button
               className="secondary-btn mr-2 cursor-pointer"
+              data-testid="astd-right-drawer-modalconfirm-cancel-button-9984"
               onClick={() => {
                 onClose()
               }}
