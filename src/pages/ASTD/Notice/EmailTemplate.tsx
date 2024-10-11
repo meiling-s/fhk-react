@@ -110,7 +110,7 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
         } else if (lang === 'EN-US' && i18n.language === Languages.ZHCH) {
             setCurrentLang({value: lang, lang: '英语'})
         }else if (lang === 'EN-US' && i18n.language === Languages.ZHHK) {
-            setCurrentLang({value: lang, lang: '英语'})
+            setCurrentLang({value: lang, lang: '英語'})
         }else if (lang === 'EN-US' && i18n.language === Languages.ENUS) {
             setCurrentLang({value: lang, lang: 'English'})
         }
@@ -328,6 +328,7 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
                         onChange={(event, newValue) => {
                             if(newValue) onChangeLanguage(newValue.value, newValue.lang)
                         }}
+                        disabled={true}
                         renderInput={(params) => <TextField {...params} 
                             sx={[styles.textField, { width: 400 }]}InputProps={{
                             ...params.InputProps,

@@ -515,6 +515,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   maxNumber={1}
                   maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
+                  acceptType={['jpg', 'jpeg', 'png']}
                 >
                   {({ imageList, onImageUpload, onImageRemove }) => (
                     <Box className="box">
