@@ -18,72 +18,100 @@ import {
     Divider,
     Typography
 } from '@mui/material'
+import FormControl from '@mui/material/FormControl'
+import OutlinedInput from '@mui/material/OutlinedInput'
+import InputAdornment from '@mui/material/InputAdornment'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import Switcher from '../../../components/FormComponents/CustomSwitch'
+import LabelField from '../../../components/FormComponents/CustomField'
+import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
+import { ToastContainer, toast } from 'react-toastify'
 import { extractError, returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
+import {
+    createWarehouse,
+    getWarehouseById,
+    editWarehouse,
+    getRecycleType
+} from '../../../APICalls/warehouseManage'
+import { set } from 'date-fns'
+import { getLocation } from '../../../APICalls/getLocation'
+import { get } from 'http'
+import { getCommonTypes } from '../../../APICalls/commonManage'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { createCodeData, deleteCodeData, updateCodeData } from '../../../APICalls/ASTD/code'
+import { createRecyc, deleteWeightUnit, editWeightUnit, sendWeightUnit } from '../../../APICalls/ASTD/recycling'
+import { paletteColors } from '../../../themes/palette'
 import { STATUS_CODE } from '../../../constants/constant'
+import { version } from 'os'
 
-interface CodeFormatProps {
+interface WeightFormatData {
     createdAt: string
     createdBy: string
     description: string
-    recycCodeId: number
-    recycCodeName: string
-    recycSubTypeId: string
-    recycTypeId: string
+    poDetail: string[]
     remark: string
     status: string
+    unitId: number
+    unitNameEng: string
+    unitNameSchi: string
+    unitNameTchi: string
     updatedAt: string
     updatedBy: string
+    weight: number
     version: number
-  }
+}
 
-interface RecyclingFormatProps {
+interface WeightFormatProps {
     drawerOpen: boolean
     handleDrawerClose: () => void
     action?: 'add' | 'edit' | 'delete'
     onSubmitData: (type: string) => void
-    selectedItem: CodeFormatProps | null 
-  }
+    rowId?: number,
+    selectedItem: WeightFormatData | null
+}
 
-const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
+const WeightFormat: FunctionComponent<WeightFormatProps> = ({
     drawerOpen,
     handleDrawerClose,
     action,
     onSubmitData,
+    rowId,
     selectedItem
 }) => {
     const { t } = useTranslation()
     const { i18n } = useTranslation()
     const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
     const [errorMsgList, setErrorMsgList] = useState<string[]>([])
+    const [openDelete, setOpenDelete] = useState<boolean>(false)
     const [trySubmited, setTrySubmitted] = useState<boolean>(false)
+    const [tChineseName, setTChineseName] = useState<string>('')
+    const [sChineseName, setSChineseName] = useState<string>('')
+    const [englishName, setEnglishName] = useState<string>('')
+    const [equivalent, setEquivalent] = useState<string>('')
     const [description, setDescription] = useState<string>('')
     const [remark, setRemark] = useState<string>('')
-    const [codeId, setCodeId] = useState<number>(0)
-    const [codeName, setCodeName] = useState<string>('')
-    const [mainName, setMainName] = useState<string>('')
-    const [subName, setSubName] = useState<string>('')
     const [version, setVersion] = useState<number>(0)
+    const [isMainCategory, setMainCategory] = useState(true)
+    const [chosenRecyclableType, setChosenRecyclableType] = useState('')
     const [validation, setValidation] = useState<{ field: string; error: string, dataTestId: string }[]>([])
+    const isInitialRender = useRef(true) // Add this line
     const navigate = useNavigate();
 
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
     }, [i18n, currentLanguage])
-    
+
     useEffect(() => {
         setTrySubmitted(false)
-        resetForm()
-        if (action === 'edit' || action === 'delete') {
+        if (action === 'edit') {
             if (selectedItem !== null && selectedItem !== undefined) {
-                setCodeId(selectedItem.recycCodeId)
-                setCodeName(selectedItem.recycCodeName)
-                setMainName(selectedItem.recycTypeId)
-                setSubName(selectedItem.recycSubTypeId)
+                setTChineseName(selectedItem.unitNameTchi)
+                setSChineseName(selectedItem.unitNameSchi)
+                setEnglishName(selectedItem.unitNameEng)
+                setEquivalent(selectedItem.weight.toString())
                 setDescription(selectedItem.description)
                 setRemark(selectedItem.remark)
                 setVersion(selectedItem.version)
@@ -91,16 +119,15 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         } else if (action === 'add') {
             resetForm()
         }
-    }, [selectedItem, action,drawerOpen])
+    }, [selectedItem, action, drawerOpen])
 
     const resetForm = () => {
-        setCodeId(0)
-        setCodeName('')
-        setMainName('')
-        setSubName('')
+        setTChineseName('')
+        setSChineseName('')
+        setEnglishName('')
+        setEquivalent('')
         setDescription('')
         setRemark('')
-        setVersion(0)
     }
 
     const checkString = (s: string) => {
@@ -116,100 +143,113 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             //before first submit, don't check the validation
             return false
         }
-        return s == 0
+        return s >= 0
+
     }
 
     const getFormErrorMsg = () => {
         const errorList: string[] = []
         validation.map((item) => {
-          errorList.push(`${item.error}`)
+            errorList.push(`${item.error}`)
         })
         setErrorMsgList(errorList)
-    
+
         return ''
-      }
-      
+    }
+
     useEffect(() => {
-        const tempV: {field: string; error: string, dataTestId: string}[] = []
+        const tempV: { field: string; error: string, dataTestId: string }[] = []
 
-        codeName.trim() === '' &&
-        tempV.push({
-            field: `${t('recycling_unit.recyclable_code')}`,
-            error: `${t(
-            'add_warehouse_page.shouldNotEmpty'
-            )}`,
-            dataTestId: 'astd-code-form-name-err-warning-4381'
-        })
+        tChineseName.trim() === '' &&
+            tempV.push({
+                field: `${t(`common.traditionalChineseName`)}`,
+                error: `${t(
+                    'add_warehouse_page.shouldNotEmpty'
+                )}`,
+                dataTestId: 'astd-weight-form-tc-err-warning-3284'
+            })
 
-        mainName.trim() === '' &&
-        tempV.push({
-            field: `${t('recycling_unit.main_category')}`,
-            error: `${t(
-            'add_warehouse_page.shouldNotEmpty'
-            )}`,
-            dataTestId: 'astd-code-form-main-err-warning-5392'
-        })
+        sChineseName.trim() === '' &&
+            tempV.push({
+                field: `${t(`common.simplifiedChineseName`)} `,
+                error: `${t(
+                    'add_warehouse_page.shouldNotEmpty'
+                )}`,
+                dataTestId: 'astd-weight-form-sc-err-warning-2369'
+            })
 
-        subName.trim() === '' &&
-        tempV.push({
-            field: `${t('recycling_unit.sub_category')}`,
-            error: `${t(
-            'add_warehouse_page.shouldNotEmpty'
-            )}`,
-            dataTestId: 'astd-code-form-sub-err-warning-4927'
-        })
+        englishName.trim() === '' &&
+            tempV.push({
+                field: `${t(`common.englishName`)} `,
+                error: `${t(
+                    'add_warehouse_page.shouldNotEmpty'
+                )}`,
+                dataTestId: 'astd-weight-form-en-err-warning-5134'
+            })
+
+        Number(equivalent) < 0 &&
+            tempV.push({
+                field: `${t(`pick_up_order.card_detail.weight`)}`,
+                error: `${t('recycling_unit.weight_error')}`,
+                dataTestId: 'astd-weight-form-weight-err-warning-7858'
+            })
+
+        equivalent === '' &&
+            tempV.push({
+                field: `${t(`pick_up_order.card_detail.weight`)}`,
+                error: `${t('add_warehouse_page.shouldNotEmpty')}`,
+                dataTestId: 'astd-weight-form-weight-err-warning-7858'
+            })
 
         setValidation(tempV)
-    }, [codeName, mainName, subName, i18n, currentLanguage])
+    }, [tChineseName, sChineseName, englishName, equivalent, i18n, currentLanguage])
 
     const handleDelete = async () => {
-        const { loginId, tenantId } = returnApiToken();
-
-        const codeForm = {
-            status: "INACTIVE",
-            updatedBy: loginId,
+        const token = returnApiToken()
+        const weightForm = {
+            status: 'DELETED',
+            updatedBy: token.loginId,
             version: version
         }
 
-       if (codeForm) {
         try {
-            const response = await deleteCodeData(codeForm, codeId)
+            const response = await deleteWeightUnit(Number(selectedItem?.unitId), weightForm)
             if (response) {
-                onSubmitData('code')
+                onSubmitData('weight')
                 showSuccessToast(t('notify.successDeleted'))
-                resetForm()
             }
-        } catch (error:any) {
-            const {state} = extractError(error)
+        } catch (error: any) {
+            const { state } = extractError(error)
             if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
               } else if (state.code === STATUS_CODE[409]){
                 showErrorToast(error.response.data.message);
               }
-        }
-       }
-    }
-    
-    const handleSubmit = () => {
-        const { loginId, tenantId } = returnApiToken();
 
-        const codeForm = {
-            recycCodeName: codeName,
-            recycTypeId: mainName,
-            recycSubTypeId: subName,
+        }
+    }
+
+    const handleSubmit = () => {
+        const { loginId } = returnApiToken();
+
+        const weightForm = {
+            unitNameTchi: tChineseName,
+            unitNameSchi: sChineseName,
+            unitNameEng: englishName,
             description: description,
             remark: remark,
-            status: 'ACTIVE',
+            weight: Number(equivalent),
+            status: "ACTIVE",
             createdBy: loginId,
             updatedBy: loginId,
-            ...(action === 'edit' && {version: version})
+            ...(action === 'edit' && { version: version })
         }
 
         const isError = validation.length == 0
         getFormErrorMsg()
 
         if (validation.length == 0) {
-            action == 'add' ? createCode(codeForm) : editCode(codeForm, codeId)
+            action == 'add' ? createWeightData(weightForm) : editWeightData(weightForm)
 
             setValidation([])
         } else {
@@ -217,39 +257,38 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         }
     }
 
-    const createCode = async (codeForm: any) => {
+    const createWeightData = async (weightForm: any) => {
         try {
-            const response = await createCodeData(codeForm)
+            const response = await sendWeightUnit(weightForm)
             if (response) {
+                onSubmitData('weight')
                 showSuccessToast(t('notify.successCreated'))
-                onSubmitData('code')
-                resetForm()
             }
-        } catch (error:any) {
-            const {state} = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
+        } catch (error: any) {
+            const { state } = extractError(error)
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
             } else {
                 console.error(error)
                 showErrorToast(t('errorCreated.errorCreated'))
             }
+
         }
     }
-    const editCode = async (codeForm: any, codeId: number) => {
+    const editWeightData = async (weightForm: any) => {
         try {
-            const response = await updateCodeData(codeForm, codeId)
+            const response = await editWeightUnit(Number(selectedItem?.unitId), weightForm)
             if (response) {
+                onSubmitData('weight')
                 showSuccessToast(t('notify.SuccessEdited'))
-                onSubmitData('code')
-                resetForm()
             }
-        } catch (error:any) {
-            const {state} = extractError(error)
+        } catch (error: any) {
+            const { state } = extractError(error)
             if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-              } else if (state.code === STATUS_CODE[409]){
+            } else if (state.code === STATUS_CODE[409]) {
                 showErrorToast(error.response.data.message);
-              }
+            }
 
         }
     }
@@ -268,7 +307,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             : action == 'delete'
                                 ? t('common.delete')
                                 : '',
-                    subTitle: t('recycling_unit.recyclable_code'),
+                    subTitle: t('recycling_unit.weight_unit'),
                     submitText: t('add_warehouse_page.save'),
                     cancelText: t('add_warehouse_page.delete'),
                     onCloseHeader: handleDrawerClose,
@@ -280,54 +319,97 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 <Divider></Divider>
                 <Box sx={{ marginX: 2 }}>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_unit.recyclable_code')} mandatory>
+                        <CustomField label={t('packaging_unit.traditional_chinese_name')} mandatory>
                             <CustomTextField
-                                id="codeName"
-                                value={codeName}
+                                id="tChineseName"
+                                value={tChineseName}
                                 disabled={action === 'delete'}
-                                placeholder={t('recycling_unit.enter_code')}
-                                onChange={(event) => setCodeName(event.target.value)}
-                                error={checkString(codeName)}
-                                dataTestId='astd-code-form-name-input-field-1649'
+                                placeholder={t('packaging_unit.traditional_chinese_name_placeholder')}
+                                onChange={(event) => setTChineseName(event.target.value)}
+                                error={checkString(tChineseName)}
+                                dataTestId='astd-weight-form-tc-input-field-2894'
                             />
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_unit.main_category')} mandatory>
+                        <CustomField label={t('packaging_unit.simplified_chinese_name')} mandatory>
                             <CustomTextField
-                                id="mainName"
-                                value={mainName}
+                                id="sChineseName"
+                                value={sChineseName}
                                 disabled={action === 'delete'}
-                                placeholder={t('recycling_unit.main_category')}
-                                onChange={(event) => setMainName(event.target.value)}
-                                error={checkString(mainName)}
-                                dataTestId='astd-code-form-main-input-field-8567'
+                                placeholder={t('packaging_unit.simplified_chinese_name_placeholder')}
+                                onChange={(event) => setSChineseName(event.target.value)}
+                                error={checkString(sChineseName)}
+                                dataTestId='astd-weight-form-sc-input-field-7938'
                             />
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_unit.sub_category')} mandatory>
+                        <CustomField label={t('packaging_unit.english_name')} mandatory>
                             <CustomTextField
-                                id="subName"
-                                value={subName}
+                                id="englishName"
+                                value={englishName}
                                 disabled={action === 'delete'}
-                                placeholder={t('recycling_unit.sub_category')}
-                                onChange={(event) => setSubName(event.target.value)}
-                                error={checkString(subName)}
-                                dataTestId='astd-code-form-sub-input-field-7940'
+                                placeholder={t('packaging_unit.english_name_placeholder')}
+                                onChange={(event) => setEnglishName(event.target.value)}
+                                error={checkString(englishName)}
+                                dataTestId='astd-weight-form-en-input-field-9676'
+                            />
+                        </CustomField>
+                    </Box>
+                    <Box sx={{ marginY: 2 }}>
+                        <CustomField label={t('recycling_unit.1kg_equivalent')} mandatory>
+                            <CustomTextField
+                                id="equivalent"
+                                type="number"
+                                value={equivalent}
+                                disabled={action === 'delete'}
+                                placeholder={t('recycling_unit.enter_weight')}
+                                onChange={(event) => setEquivalent(event.target.value)}
+                                error={checkNumber(Number(equivalent))}
+                                dataTestId='astd-weight-form-weight-input-field-8988'
+                            />
+                        </CustomField>
+                    </Box>
+                    {Number(equivalent) < 0 && (
+                        <Typography sx={{ color: paletteColors.Red1 }}>{t('recycling_unit.weight_error')}</Typography>
+                    )}
+                    <Box sx={{ marginY: 2 }}>
+                        <CustomField label={t('packaging_unit.introduction')}>
+                            <CustomTextField
+                                id="description"
+                                placeholder={t('packaging_unit.introduction_placeholder')}
+                                onChange={(event) => setDescription(event.target.value)}
+                                multiline={true}
+                                defaultValue={description}
+                                disabled={action === 'delete'}
+                                dataTestId='astd-weight-form-intro-input-field-8003'
+                            />
+                        </CustomField>
+                    </Box>
+                    <Box sx={{ marginY: 2 }}>
+                        <CustomField label={t('packaging_unit.remark')}>
+                            <CustomTextField
+                                id="remark"
+                                placeholder={t('packaging_unit.remark_placeholder')}
+                                onChange={(event) => setRemark(event.target.value)}
+                                multiline={true}
+                                defaultValue={remark}
+                                disabled={action === 'delete'}
+                                dataTestId='astd-weight-form-remark-input-field-9721'
                             />
                         </CustomField>
                     </Box>
                     <Grid item sx={{ width: '92%' }}>
                         {trySubmited &&
                             validation.map((val, index) => (
-                            <FormErrorMsg
-                                key={index}
-                                field={t(val.field)}
-                                errorMsg={val.error}
-                                type={'error'}
-                                dataTestId={val.dataTestId}
-                            />
+                                <FormErrorMsg
+                                    key={index}
+                                    field={t(val.field)}
+                                    errorMsg={val.error}
+                                    type={'error'}
+                                    dataTestId={val.dataTestId}
+                                />
                             ))}
                     </Grid>
                 </Box>
@@ -387,4 +469,4 @@ let styles = {
     }
 }
 
-export default RecyclingFormat
+export default WeightFormat
