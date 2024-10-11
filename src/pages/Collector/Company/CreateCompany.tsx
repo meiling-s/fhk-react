@@ -61,37 +61,43 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
       label: t('common.traditionalChineseName'),
       placeholder: t('common.enterName'),
       field: 'nameTchi',
-      type: 'text'
+      type: 'text',
+      id: `astd-company-${selectedItem?.companyType}-form-tc-input-field-9717`
     },
     {
       label: t('common.simplifiedChineseName'),
       placeholder: t('common.enterName'),
       field: 'nameSchi',
-      type: 'text'
+      type: 'text',
+      id: `astd-company-${selectedItem?.companyType}-form-sc-input-field-2809`
     },
     {
       label: t('common.englishName'),
       placeholder: t('common.enterName'),
       field: 'nameEng',
-      type: 'text'
+      type: 'text',
+      id: `astd-company-${selectedItem?.companyType}-form-en-input-field-1442`
     },
     {
       label: t('companyManagement.brNo'),
       placeholder: t('companyManagement.enterBrNo'),
       field: 'brNo',
-      type: 'text'
+      type: 'text',
+      id: `astd-company-${selectedItem?.companyType}-form-brn-input-field-5627`
     },
     {
       label: t('common.description'),
       placeholder: t('common.enterText'),
       field: 'description',
-      type: 'text'
+      type: 'text',
+      id: `astd-company-${selectedItem?.companyType}-form-desc-input-field-8229`
     },
     {
       label: t('common.remark'),
       placeholder: t('common.enterText'),
       field: 'remark',
-      type: 'text'
+      type: 'text',
+      id: `astd-company-${selectedItem?.companyType}-form-remark-input-field-7911`
     }
   ]
   const navigate = useNavigate();
@@ -156,12 +162,22 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
       description: t('common.description'),
       remark: t('common.remark')
     }
+
+    const fieldIdMapping: Record<string, string> = {
+      nameTchi: 'tc-err-warning-4372',
+      nameSchi: 'sc-err-warning-6316',
+      nameEng: 'en-err-warning-8979',
+      brNo: 'brn-err-warning-4976',
+      description: 'desc-err-warning-9102',
+      remark: 'remark-err-warning-5854'
+    }
     Object.keys(formData).forEach((fieldName) => {
       formData[fieldName as keyof FormValues].trim() === '' &&
         tempV.push({
           field: fieldMapping[fieldName as keyof FormValues],
           problem: formErr.empty,
-          type: 'error'
+          type: 'error',
+          id:`astd-company-${companyType}-form-${fieldIdMapping[fieldName]}`
         })
     })
     existingCompanyList.forEach((item) => {
@@ -169,21 +185,24 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
         tempV.push({
           field: t('common.traditionalChineseName'),
           problem: formErr.alreadyExist,
-          type: 'error'
+          type: 'error',
+          id: `astd-company-${item.companyType}-form-tc-err-warning-4372`,
         })
       }
       if (item.nameSchi.toLowerCase() === formData.nameSchi.toLowerCase()) {
         tempV.push({
           field: t('common.simplifiedChineseName'),
           problem: formErr.alreadyExist,
-          type: 'error'
+          type: 'error',
+          id: `astd-company-${item.companyType}-form-sc-err-warning-6316`
         })
       }
       if (item.nameEng.toLowerCase() === formData.nameEng.toLowerCase()) {
         tempV.push({
           field: t('common.englishName'),
           problem: formErr.alreadyExist,
-          type: 'error'
+          type: 'error',
+          id: `astd-company-${item.companyType}-form-en-err-warning-8979`
         })
       }
     })
@@ -269,7 +288,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
     } else {
       setTrySubmited(true)
     }
-   } catch (error:any) {
+  } catch (error:any) {
     const {state} = extractError(error);
     if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
@@ -303,7 +322,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
         )
       }
     }
-   }
+  }
   }
 
   const handleEditCompany = async () => {
@@ -473,6 +492,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
                 <CustomField label={item.label} mandatory>
                   <CustomTextField
                     id={item.label}
+                    dataTestId={item.id}
                     //value={formData[item.field as keyof FormValues]}
                     defaultValue={formData[item.field as keyof FormValues]}
                     disabled={action === 'delete'}
@@ -494,6 +514,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
               {trySubmited &&
                 validation.map((val, index) => (
                   <FormErrorMsg
+                    dataTestId={val.id}
                     key={index}
                     field={t(val.field)}
                     errorMsg={returnErrorMsg(val.problem, t)}
