@@ -66,7 +66,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
   const [remark, setRemark] = useState<string>('')
   const [vehicleTypeId, setVehicleTypeId] = useState<string>('')
   const [version, setVersion] = useState<number>(0)
-  const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
+  const [validation, setValidation] = useState<{ field: string; error: string; dataTestId:string }[]>([])
   const [errorMessage, setErrorMessage] = useState<string>('')
   const isInitialRender = useRef(true) // Add this line
   const navigate = useNavigate();
@@ -128,14 +128,15 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
   }
 
   useEffect(() => {
-    const tempV: { field: string; error: string }[] = []
+    const tempV: { field: string; error: string; dataTestId: string }[] = []
 
     tChineseName.trim() === '' &&
       tempV.push({
         field: `${t(`common.traditionalChineseName`)}`,
         error: `${t(
           'add_warehouse_page.shouldNotEmpty'
-        )}`
+        )}`,
+        dataTestId: `astd-vehicles-form-tc-err-warning-3317`
       })
 
     sChineseName.trim() === '' &&
@@ -143,7 +144,8 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         field: `${t(`common.simplifiedChineseName`)} `,
         error: `${t(
           'add_warehouse_page.shouldNotEmpty'
-        )}`
+        )}`,
+        dataTestId: `astd-vehicles-form-sc-err-warning-8740`
       })
 
     englishName.trim() === '' &&
@@ -151,22 +153,23 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         field: `${t(`common.englishName`)} `,
         error: `${t(
           'add_warehouse_page.shouldNotEmpty'
-        )}`
+        )}`,
+        dataTestId:`astd-vehicles-form-en-err-warning-8515`
       })
 
     Number(weight) < 0 &&
       tempV.push({
         field: `${t('vehicle.loading_capacity')} `,
-        error: `${t('recycling_unit.weight_error')}`
+        error: `${t('recycling_unit.weight_error')}`,
+        dataTestId:`astd-vehicles-form-capacity-err-warning-1032`
       })
 
     weight == '' &&
       tempV.push({
         field: `${t('vehicle.loading_capacity')} `,
-        error: `${t('add_warehouse_page.shouldNotEmpty')}`
+        error: `${t('add_warehouse_page.shouldNotEmpty')}`,
+        dataTestId:`astd-vehicles-form-capacity-err-warning-1032`
       })
-
-    
 
     setValidation(tempV)
   }, [tChineseName, sChineseName, englishName, weight, i18n, currentLanguage])
@@ -335,6 +338,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
           <Box sx={{ marginY: 2 }}>
             <CustomField label={t('packaging_unit.traditional_chinese_name')} mandatory>
               <CustomTextField
+                dataTestId='astd-vehicles-form-tc-input-field-9962'
                 id="tChineseName"
                 value={tChineseName}
                 disabled={action === 'delete'}
@@ -347,6 +351,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
           <Box sx={{ marginY: 2 }}>
             <CustomField label={t('packaging_unit.simplified_chinese_name')} mandatory>
               <CustomTextField
+                dataTestId='astd-vehicles-form-sc-input-field-2191'
                 id="sChineseName"
                 value={sChineseName}
                 disabled={action === 'delete'}
@@ -359,6 +364,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
           <Box sx={{ marginY: 2 }}>
             <CustomField label={t('packaging_unit.english_name')} mandatory>
               <CustomTextField
+                dataTestId='astd-vehicles-form-en-input-field-7884'
                 id="englishName"
                 value={englishName}
                 disabled={action === 'delete'}
@@ -371,6 +377,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
           <Box sx={{ marginY: 2 }}>
             <CustomField label={t('vehicle.loading_capacity')} mandatory>
               <CustomTextField
+                dataTestId='astd-vehicles-form-capacity-input-field-9424'
                 id="weight"
                 type="number"
                 value={weight}
@@ -401,6 +408,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
           <Box sx={{ marginY: 2 }}>
             <CustomField label={t('packaging_unit.introduction')}>
               <CustomTextField
+                dataTestId='astd-vehicles-form-intro-input-field-1178'
                 id="description"
                 placeholder={t('packaging_unit.introduction_placeholder')}
                 onChange={(event) => setDescription(event.target.value)}
@@ -413,6 +421,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
           <Box sx={{ marginY: 2 }}>
             <CustomField label={t('packaging_unit.remark')}>
               <CustomTextField
+                dataTestId='astd-vehicles-form-remark-input-field-9641'
                 id="remark"
                 placeholder={t('packaging_unit.remark_placeholder')}
                 onChange={(event) => setRemark(event.target.value)}
@@ -426,6 +435,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
             {trySubmited &&
               validation.map((val, index) => (
                 <FormErrorMsg
+                  dataTestId={val.dataTestId}
                   key={index}
                   field={t(val.field)}
                   errorMsg={val.error}
