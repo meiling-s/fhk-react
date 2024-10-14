@@ -192,6 +192,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
                       if (selectedDateFormat) {
                         setDateFormat(selectedDateFormat.dateFormat);
                         setDateFormatId(selectedDateFormat.dateFormatId);
+                        setVersion(selectedDateFormat.version)
                       }
                     }
                 }}
