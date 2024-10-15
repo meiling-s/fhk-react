@@ -301,7 +301,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
     }
     if (state.code === STATUS_CODE[409]) {
       const errorMessage = error.response.data.message
-      if (errorMessage.includes('[typeNameDuplicate]')) {
+      if (errorMessage.includes('[titleNameDuplicate]')) {
         showErrorToast(handleDuplicateErrorMessage(errorMessage))
       } else {
         showErrorToast(error.response.data.message);
@@ -342,7 +342,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       navigate('/maintenance')
     } else if (state.code === STATUS_CODE[409]) {
       const errorMessage = error.response.data.message
-      if (errorMessage.includes('[typeNameDuplicate]')) {
+      if (errorMessage.includes('[titleNameDuplicate]')) {
         showErrorToast(handleDuplicateErrorMessage(errorMessage))
       } else {
         showErrorToast(error.response.data.message);
@@ -381,7 +381,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       '[schi]': 'Simplified Chinese Name'
     };
   
-    let result = input.replace(/\[typeNameDuplicate\]/, '');
+    let result = input.replace(/\[titleNameDuplicate\]/, '');
   
     const matches = result.match(/\[(tchi|eng|schi)\]/g);
   
