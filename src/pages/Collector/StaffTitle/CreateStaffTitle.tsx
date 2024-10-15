@@ -177,43 +177,43 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
         })
     })
 
-    if (
-      tchiNameExisting.some(
-        (item) => item.toLowerCase() === formData.titleNameTchi.toLowerCase()
-      )
-    ) {
-      tempV.push({
-        field: t('common.traditionalChineseName'),
-        problem: formErr.alreadyExist,
-        type: 'error'
-      })
-    }
+    // if (
+    //   tchiNameExisting.some(
+    //     (item) => item.toLowerCase() === formData.titleNameTchi.toLowerCase()
+    //   )
+    // ) {
+    //   tempV.push({
+    //     field: t('common.traditionalChineseName'),
+    //     problem: formErr.alreadyExist,
+    //     type: 'error'
+    //   })
+    // }
 
-    // Check for existing titles in Simplified Chinese
-    if (
-      schiNameExisting.some(
-        (item) => item.toLowerCase() === formData?.titleNameSchi.toLowerCase()
-      )
-    ) {
-      tempV.push({
-        field: t('common.simplifiedChineseName'),
-        problem: formErr.alreadyExist,
-        type: 'error'
-      })
-    }
-    console.log(engNameExisting, formData.titleNameEng)
-    // Check for existing titles in English
-    if (
-      engNameExisting.some(
-        (item) => item.toLowerCase() === formData.titleNameEng.toLowerCase()
-      )
-    ) {
-      tempV.push({
-        field: t('common.englishName'),
-        problem: formErr.alreadyExist,
-        type: 'error'
-      })
-    }
+    // // Check for existing titles in Simplified Chinese
+    // if (
+    //   schiNameExisting.some(
+    //     (item) => item.toLowerCase() === formData?.titleNameSchi.toLowerCase()
+    //   )
+    // ) {
+    //   tempV.push({
+    //     field: t('common.simplifiedChineseName'),
+    //     problem: formErr.alreadyExist,
+    //     type: 'error'
+    //   })
+    // }
+    // console.log(engNameExisting, formData.titleNameEng)
+    // // Check for existing titles in English
+    // if (
+    //   engNameExisting.some(
+    //     (item) => item.toLowerCase() === formData.titleNameEng.toLowerCase()
+    //   )
+    // ) {
+    //   tempV.push({
+    //     field: t('common.englishName'),
+    //     problem: formErr.alreadyExist,
+    //     type: 'error'
+    //   })
+    // }
 
     setValidation(tempV)
     return tempV.length === 0
@@ -299,6 +299,14 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       }
       // onSubmitData('error', t('common.saveFailed'))
     }
+    if (state.code === STATUS_CODE[409]) {
+      const errorMessage = error.response.data.message
+      if (errorMessage.includes('[typeNameDuplicate]')) {
+        showErrorToast(handleDuplicateErrorMessage(errorMessage))
+      } else {
+        showErrorToast(error.response.data.message);
+      }
+    }
    }
   }
 
@@ -332,10 +340,12 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
     const { state } = extractError(error);
     if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
-    } else {
-      setTrySubmited(true)
-      if(error?.response?.data?.status === STATUS_CODE[409]){
-        showErrorToast(error?.response?.data?.message);
+    } else if (state.code === STATUS_CODE[409]) {
+      const errorMessage = error.response.data.message
+      if (errorMessage.includes('[typeNameDuplicate]')) {
+        showErrorToast(handleDuplicateErrorMessage(errorMessage))
+      } else {
+        showErrorToast(error.response.data.message);
       }
     }
    }
@@ -363,6 +373,37 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       }
     }
   }
+
+  const handleDuplicateErrorMessage = (input: string) => {
+    const replacements: { [key: string]: string } = {
+      '[tchi]': 'Traditional Chinese Name',
+      '[eng]': 'English Name',
+      '[schi]': 'Simplified Chinese Name'
+    };
+  
+    let result = input.replace(/\[typeNameDuplicate\]/, '');
+  
+    const matches = result.match(/\[(tchi|eng|schi)\]/g);
+  
+    if (matches) {
+      const replaced = matches.map(match => replacements[match as keyof typeof replacements]);
+  
+      let formatted: string;
+      if (replaced.length === 1) {
+        formatted = replaced[0];
+      } else if (replaced.length === 2) {
+        formatted = replaced.join(' and ');
+      } else if (replaced.length === 3) {
+        formatted = `${replaced[0]}, ${replaced[1]} and ${replaced[2]}`;
+      }
+  
+      result = result.replace(/\[(tchi|eng|schi)\]+/, formatted!);
+  
+      result = result.replace(/\[(tchi|eng|schi)\]/g, '');
+    }
+  
+    return result.trim();
+  };
 
   return (
     <div className="add-vehicle">
