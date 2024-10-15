@@ -273,7 +273,7 @@ export const UPDATE_PICK_UP_ORDER_STATUS: AxiosRequestConfig = {
 }
 export const UPDATE_PICK_UP_ORDER_DETAIL_STATUS: AxiosRequestConfig = {
   method: 'patch',
-  url: 'api/v1/administrator/pico/V2/detail/status'
+  url: 'api/v1/administrator/pico/V2/details/status'
 }
 //common
 export const GET_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {
