@@ -348,6 +348,7 @@ const RegisterTenant = () => {
                     maxNumber={imgSettings?.ImgQuantity}
                     maxFileSize={imgSettings?.ImgSize}
                     dataURLKey="data_url"
+                    acceptType={['jpg', 'jpeg', 'png']}
                     onError={(error) => {
                       if (error?.maxFileSize) {
                         setImageErrors((prevErrors) => ({
@@ -513,6 +514,7 @@ const RegisterTenant = () => {
                   maxNumber={imgSettings?.ImgQuantity}
                   maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
+                  acceptType={['jpg', 'jpeg', 'png']}
                   onError={(error) => {
                     if (error?.maxFileSize) {
                       setEdpImgSizeErr(true)

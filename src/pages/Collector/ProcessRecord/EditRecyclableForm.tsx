@@ -345,6 +345,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
                     maxNumber={imgSettings?.ImgQuantity}
                     maxFileSize={imgSettings?.ImgSize}
                     dataURLKey="data_url"
+                    acceptType={['jpg', 'jpeg', 'png']}
                   >
                     {({ imageList, onImageUpload, onImageRemove }) => (
                       <Box className="box">

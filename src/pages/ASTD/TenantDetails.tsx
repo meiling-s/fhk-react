@@ -184,35 +184,33 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     const result = await getTenantById(tenantId)
     const data = result?.data
     setTenantDetails(data)
-
-    //mapping data
-    if (data?.companyLogo != '' && data?.companyLogo != null) {
-      const isBase64 = data?.companyLogo.startsWith('data:image/png')
-      const format = data?.companyLogo.startsWith('data:image/png')
-        ? 'png'
-        : 'jpeg'
-      const imgdata = `data:image/${format};base64,${data?.companyLogo}`
-
+  
+    // Mapping data with checks
+    if (data?.companyLogo && data.companyLogo !== '' && data.companyLogo !== 'null') {
+      const isBase64 = data.companyLogo.startsWith('data:image/png')
+      const format = isBase64 ? 'png' : 'jpeg'
+      const imgdata = `data:image/${format};base64,${data.companyLogo}`
+  
       const tempLogo: any = []
       tempLogo.push({
-        data_url: isBase64 ? data?.companyLogo : imgdata,
+        data_url: isBase64 ? data.companyLogo : imgdata,
         file: {
-          name: `image_logo${data?.tenantId}`,
+          name: `image_logo${data.tenantId || 'unknown'}`,
           size: 0,
-          type: 'image/jpeg'
+          type: `image/${format}`
         }
       })
       setCompanyLogo(tempLogo)
     }
-
+  
     setNumOfAccount(data?.decimalPlace || 0)
     setNumOfUplodedPhoto(data?.allowImgNum || 0)
-    setMaxUploadSize(data?.allowImgSize.toString())
+    setMaxUploadSize(data?.allowImgSize?.toString() || '0') 
     setDefaultLang(data?.lang || 'ZH-HK')
     setSelectedStatus(data?.status || '')
     setVersion(data?.version || 0)
   }
-
+  
   useEffect(() => {
     setTranslatedTenantType('...')
 
@@ -520,6 +518,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   maxNumber={1}
                   maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
+                  acceptType={['jpg', 'jpeg', 'png']}
                 >
                   {({ imageList, onImageUpload, onImageRemove }) => (
                     <Box className="box">

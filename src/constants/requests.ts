@@ -1126,7 +1126,7 @@ export const GET_LIST_NOTIF_TEMPLATE_PO = (
   path: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${path}/notiTemplate/${tenantId}`
+  url: `api/v1/${path}/notiTemplate/search/${tenantId}`
 })
 
 export const GET_LIST_NOTIF_TEMPLATE_STAFF = (
@@ -1134,7 +1134,7 @@ export const GET_LIST_NOTIF_TEMPLATE_STAFF = (
   path: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${path}/notiTemplate/${tenantId}`
+  url: `api/v1/${path}/notiTemplate/search/${tenantId}`
 })
 
 //get denial reason
