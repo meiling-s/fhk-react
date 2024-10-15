@@ -747,7 +747,7 @@ export const EDIT_PROCESS_OUT_DETAIL_ITEM = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/processout/V2/${table}${realmApiRoute === 'manufacturer' ? `/processout/${processOutId}/` : `/${processOutId}/`}proecessoutDtl/${processOutDtlId}`
+  url: `api/v1/${realmApiRoute}/processout/V2/${table}/${processOutId}/proecessoutDtl/${processOutDtlId}`
 })
 
 export const DELETE_PROCESS_OUT_RECORD = (
