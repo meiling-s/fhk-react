@@ -45,7 +45,8 @@
     "warehouseName": "仓库名称已存在",
     "vehicle": "车辆",
     "theNameAlreadyExist": "员工职位名称已存在",
-    "leaveConfirmMsg": "您确定要离开此页面吗？未保存的更改将会丢失"
+    "leaveConfirmMsg": "您确定要离开此页面吗？未保存的更改将会丢失",
+    "noData": "没有数据"
   },
   "col": {
     "createCP": "建立回收点",
