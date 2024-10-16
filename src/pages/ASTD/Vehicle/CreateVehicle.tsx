@@ -76,7 +76,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
   }, [i18n, currentLanguage])
 
   useEffect(() => {
-    if (action === 'edit') {
+    if (action === 'edit' || action === 'delete') {
       if (selectedItem !== null && selectedItem !== undefined) {
         setVehicleTypeId(selectedItem.vehicleTypeId)
         setTChineseName(selectedItem.vehicleTypeNameTchi)
@@ -99,6 +99,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     setDescription('')
     setWeight('')
     setRemark('')
+    setVersion(0)
   }
 
   const checkString = (s: string) => {
