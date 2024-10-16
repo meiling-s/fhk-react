@@ -622,7 +622,7 @@ const RecyclingUnit: FunctionComponent = () => {
     const recyclingForm = {
       status: 'INACTIVE',
       updatedBy: token.loginId,
-      version: selectedRecyclingRow?.version
+      version: selectedRecyclingRow?.version !== undefined ? selectedRecyclingRow?.version : switchValue.version
     }
 
     if (switchValue !== null) {
