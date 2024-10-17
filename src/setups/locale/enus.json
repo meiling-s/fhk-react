@@ -798,7 +798,8 @@
     "failedDeleteUser": "Failed delete user",
     "resetPasswaitApproval": "Reset password awaiting approval",
     "resetPassword": "Reset Password",
-    "emailIsExisting": "The email address had been used. Are you sure to proceed?"
+    "emailIsExisting": "The email address had been used. Are you sure to proceed?",
+    "passwordPolicy": "The new password matches one of 8 previous passwords, please provide another one"
   },
   "checkinandcheckout": {
     "checkinandcheckout": "Check-in and Check-out",
