@@ -126,8 +126,6 @@ const EditPurchaseOrder = () => {
       const result = await submitUpdatePurchaseOrder(values.poId, values)
       if (result) {
         navigate(`/${realm}/purchaseOrder`, { state: 'updated' })
-      } else {
-        showErrorToast('fail to update purchase order')
       }
     }
   })

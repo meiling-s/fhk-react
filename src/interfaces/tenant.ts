@@ -8,6 +8,7 @@ export type Company = {
   type: string
   createDate: string
   accountNum: number
+  version: number
 }
 
 export type CreateTenant = {
@@ -36,4 +37,5 @@ export type CreateTenant = {
 export type UpdateStatus = {
   status: string
   updatedBy: string
+  version: number
 }
