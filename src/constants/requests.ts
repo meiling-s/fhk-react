@@ -1207,7 +1207,7 @@ export const UPDATE_STAFF_TITLE = (
   titleId: string
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/stafftitle${realmApiRoute !== 'account' ? '/V2/' : '/'}${table}/${titleId}`
+  url: `/api/v1/${realmApiRoute}/stafftitle/V2/${table}/${titleId}`
 })
 
 //get disposal location

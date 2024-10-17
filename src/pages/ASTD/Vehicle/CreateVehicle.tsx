@@ -99,7 +99,6 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     setDescription('')
     setWeight('')
     setRemark('')
-    setVersion(0)
   }
 
   const checkString = (s: string) => {
