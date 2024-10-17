@@ -18,8 +18,6 @@ import {
 } from '@mui/material'
 import dayjs from 'dayjs'
 import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
-import ImageUploading, { ImageListType } from 'react-images-uploading'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
