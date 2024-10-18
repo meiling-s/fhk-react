@@ -85,6 +85,7 @@ const RegisterTenant = () => {
   const [formStep, setFormStep] = useState(1)
   const [CPNError, setCPNError] = useState<boolean>(false)
   const [CPError, setCPError] = useState<boolean>(false)
+  const [version, setVersion] = useState<number>(0)
 
   const firstFormFields = [
     {
@@ -165,6 +166,7 @@ const RegisterTenant = () => {
         setEPDImages(data?.epdPhoto ?? [])
         setLang(data?.lang)
         setMonetaryValue(data?.monetaryValue)
+        setVersion(data?.version)
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -268,7 +270,8 @@ const RegisterTenant = () => {
           ? logoImage[0]?.data_url || ''
           : logoImage,
         epdImages: ImageToBase64(EPDImages),
-        monetaryValue: monetaryValue
+        monetaryValue: monetaryValue,
+        version: version
       }
       const result = updateTenantRegInfo(registerInfo, tenantIdNumber)
       if (result != null) {
