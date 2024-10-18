@@ -1,24 +1,24 @@
-import { useTranslation } from 'react-i18next'
-import CircleIcon from '@mui/icons-material/Circle'
+import { useTranslation } from "react-i18next";
+import CircleIcon from "@mui/icons-material/Circle";
 import {
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   Stack,
-  Typography
-} from '@mui/material'
-import dayjs from 'dayjs'
-import { format } from '../constants/constant'
+  Typography,
+} from "@mui/material";
+import dayjs from "dayjs";
+import { format } from "../constants/constant";
 
 type NotifItemProps = {
-  notifId: number
-  handleItem: () => void
-  title?: string
-  content?: string
-  datetime?: string
-  readFlg?: boolean
-}
+  notifId: number;
+  handleItem: () => void;
+  title?: string;
+  content?: string;
+  datetime?: string;
+  readFlg?: boolean;
+};
 
 const NotifItem: React.FC<NotifItemProps> = ({
   notifId,
@@ -26,16 +26,27 @@ const NotifItem: React.FC<NotifItemProps> = ({
   title,
   content,
   datetime,
-  readFlg
+  readFlg,
 }) => {
   const createdDate = datetime
     ? dayjs(new Date(datetime)).format(format.dateFormat1)
-    : '-'
+    : "-";
 
   const onClickItem = () => {
     if (handleItem) {
-      handleItem()
+      handleItem();
     }
+  };
+
+  const contentArray = content?.split(" ") ?? null;
+  if (contentArray) {
+    contentArray.forEach((val, key) => {
+      if (val.includes("T") && val.includes("-") && val.includes(":")) {
+        contentArray[key] = createdDate;
+        content = contentArray.join(" ");
+        return;
+      }
+    });
   }
 
   return (
@@ -44,24 +55,24 @@ const NotifItem: React.FC<NotifItemProps> = ({
         <ListItemButton>
           <Stack>
             <Stack spacing={-2} direction="row" alignItems="center">
-              <ListItemIcon style={{ color: readFlg ? 'green' : 'red' }}>
-                <CircleIcon sx={{ fontSize: '0.75rem' }} />
+              <ListItemIcon style={{ color: readFlg ? "green" : "red" }}>
+                <CircleIcon sx={{ fontSize: "0.75rem" }} />
               </ListItemIcon>
-              <Typography fontWeight="bold" sx={{ ml: '40px' }}>
+              <Typography fontWeight="bold" sx={{ ml: "40px" }}>
                 {title}
               </Typography>
             </Stack>
 
-            <Typography sx={{ ml: '40px' }}>{content}</Typography>
+            <Typography sx={{ ml: "40px" }}>{content}</Typography>
 
-            <Typography sx={{ ml: '40px', mt: '10px' }}>
+            {/* <Typography sx={{ ml: "40px", mt: "10px" }}>
               {createdDate}
-            </Typography>
+            </Typography> */}
           </Stack>
         </ListItemButton>
       </ListItem>
     </List>
-  )
-}
+  );
+};
 
-export default NotifItem
+export default NotifItem;
