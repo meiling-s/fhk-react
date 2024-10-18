@@ -302,6 +302,14 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
           ]
         )
       }
+      if (error?.response?.data.status === STATUS_CODE[409]) {
+        const errorMessage = error.response.data.message
+        if (errorMessage.includes(`[${prefixItemName}NameDuplicate]`)) {
+          showErrorToast(handleDuplicateErrorMessage(errorMessage))
+        } else {
+          showErrorToast(error.response.data.message);
+        }
+      }
     }
    }
   }
@@ -363,7 +371,12 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
         if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
         } else if (state.code === STATUS_CODE[409]){
-          showErrorToast(error.response.data.message);
+          const errorMessage = error.response.data.message
+          if (errorMessage.includes(`[${prefixItemName}NameDuplicate]`)) {
+            showErrorToast(handleDuplicateErrorMessage(errorMessage))
+          } else {
+            showErrorToast(error.response.data.message);
+          }
         }
     }
   }
@@ -426,6 +439,43 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
     }
   }
 
+  const handleDuplicateErrorMessage = (input: string) => {
+    const replacements: { [key: string]: string } = {
+      '[tchi]': 'Traditional Chinese Name',
+      '[eng]': 'English Name',
+      '[schi]': 'Simplified Chinese Name'
+    };
+  
+    // Remove type-specific duplicate tags
+    let result = input.replace(/\[(collectorNameDuplicate|logisticNameDuplicate|manufacturerNameDuplicate|customerNameDuplicate)\]/, '');
+  
+    // Find and replace language-specific tags with descriptive text
+    const matches = result.match(/\[(tchi|eng|schi)\]/g);
+    
+    let formatted = '';
+  
+    if (matches) {
+      const replaced = matches.map(match => replacements[match as keyof typeof replacements]);
+  
+      if (replaced.length === 1) {
+        formatted = replaced[0];
+      } else if (replaced.length === 2) {
+        formatted = replaced.join(' and ');
+      } else if (replaced.length === 3) {
+        formatted = `${replaced[0]}, ${replaced[1]} and ${replaced[2]}`;
+      }
+    }
+  
+    // Prepend the descriptive text to the result if there are matches
+    if (formatted) {
+      result = `${formatted} ${result.replace(/\[(tchi|eng|schi)\]/g, '')}`;
+    }
+  
+    return result.trim();
+  };
+  
+  
+  
   return (
     <div className="add-vehicle">
       <RightOverlayForm
