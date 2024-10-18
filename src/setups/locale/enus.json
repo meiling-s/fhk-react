@@ -990,7 +990,7 @@
   "companyManagement": {
     "collectorlist": "Collection Company",
     "logisticlist": "Logistic Company",
-    "manulist": "Recycling Plant",
+    "manulist": "Manufacturer Company",
     "customerlist": "Customer Company",
     "brNo": "Business Registration Number",
     "enterBrNo": "Please enter business registration number"

@@ -198,6 +198,7 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
                       if (selecteddecimalVal) {
                         setNumFormat(selecteddecimalVal.decimalVal);
                         setDecimalValId(selecteddecimalVal.decimalValId);
+                        setVersion(selecteddecimalVal.version)
                       }
                     }
                 }}

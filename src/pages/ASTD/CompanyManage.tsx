@@ -83,9 +83,10 @@ function createCompany(
   status: string,
   type: string,
   createDate: string,
-  accountNum: number
+  accountNum: number,
+  version: number
 ): Company {
-  return { id, cName, eName, status, type, createDate, accountNum }
+  return { id, cName, eName, status, type, createDate, accountNum, version }
 }
 
 type inviteModal = {
@@ -110,12 +111,13 @@ const Required = () => {
 
 type rejectModal = {
   tenantId: number
+  version: number
   open: boolean
   onClose: () => void
   onSubmit: () => void
 }
 
-function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
+function RejectModal({ tenantId, version, open, onClose, onSubmit }: rejectModal) {
   const { t } = useTranslation()
   const [rejectReasonId, setRejectReasonId] = useState<string[]>([])
   const navigate = useNavigate()
@@ -164,7 +166,8 @@ function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
     try {
       const statData: UpdateStatus = {
         status: 'REJECTED',
-        updatedBy: 'admin'
+        updatedBy: 'admin',
+        version: version
       }
 
       const result = await updateTenantStatus(statData, tenantId)
@@ -919,6 +922,7 @@ function CompanyManage() {
   const [selectedTenanId, setSelectedTenantId] = useState(0)
   const [isLoadingInvite, setIsLoadingInvite] = useState<boolean>(false)
   const [rejectedId, setRejectId] = useState(0)
+  const [rejectVersion, setRejectVersion] = useState<number>(0)
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
@@ -971,12 +975,13 @@ function CompanyManage() {
     )
   }
 
-  const handleApproveTenant = async (tenantId: number) => {
+  const handleApproveTenant = async (tenantId: number, version: number) => {
     try {
       setOpenDetails(false)
       const statData: UpdateStatus = {
         status: 'CONFIRMED',
-        updatedBy: 'admin'
+        updatedBy: 'admin',
+        version: version
       }
 
       const result = await updateTenantStatus(statData, tenantId)
@@ -994,8 +999,9 @@ function CompanyManage() {
     }
   }
 
-  const handleRejectTenant = (tenantId: number) => {
+  const handleRejectTenant = (tenantId: number, version: number) => {
     setRejectId(tenantId)
+    setRejectVersion(version)
     setRejectModal(true)
   }
 
@@ -1107,7 +1113,7 @@ function CompanyManage() {
                   ]}
                   variant="outlined"
                   onClick={(event) => {
-                    handleApproveTenant(params.row.id)
+                    handleApproveTenant(params.row.id, params.row.version)
                     event.stopPropagation()
                   }}
                 >
@@ -1123,7 +1129,7 @@ function CompanyManage() {
                   ]}
                   variant="outlined"
                   onClick={(event) => {
-                    handleRejectTenant(params.row.id)
+                    handleRejectTenant(params.row.id, params.row.version)
                     event.stopPropagation() // Prevent event bubbling
                   }}
                 >
@@ -1154,7 +1160,8 @@ function CompanyManage() {
           com?.status,
           com?.tenantType,
           com?.createdAt,
-          com?.decimalPlace || 0
+          com?.decimalPlace || 0,
+          com?.version
         )
       )
     })
@@ -1491,6 +1498,7 @@ function CompanyManage() {
 
         <RejectModal
           tenantId={rejectedId}
+          version={rejectVersion}
           open={rejectModal}
           onClose={() => setRejectModal(false)}
           onSubmit={onRejectModal}

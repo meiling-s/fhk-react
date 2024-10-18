@@ -989,7 +989,7 @@
   "companyManagement": {
     "collectorlist": "回收公司",
     "logisticlist": "物流公司",
-    "manulist": "回收厂",
+    "manulist": "制造商",
     "customerlist": "顾客公司",
     "brNo": "商业登记号码",
     "enterBrNo": "请输入商业登记号码"

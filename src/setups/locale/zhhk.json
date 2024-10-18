@@ -987,7 +987,7 @@
   "companyManagement": {
     "collectorlist": "回收公司",
     "logisticlist": "物流公司",
-    "manulist": "回收廠",
+    "manulist": "製造商",
     "customerlist": "顧客公司",
     "brNo": "商業登記號碼",
     "enterBrNo": "請輸入商業登記號碼"
