@@ -105,7 +105,7 @@ const PickupOrderCard = ({
               </Box>
             </Box>
             <Box>
-              <StatusCard status={status} />
+              <StatusCard status={podetail.status} />
             </Box>
           </Box>
           <Box display="flex" mt={'15px !important'}>
