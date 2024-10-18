@@ -213,7 +213,8 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
       status: status,
       createdBy: token.loginId,
       updatedBy: token.loginId,
-      ...(action === 'edit' && {version: version})
+      ...(action === 'edit' && {version: version}),
+      ...(action === 'delete' && {version: version})
     }
 
     if (action == 'add') {
@@ -336,6 +337,8 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
       const {state} = extractError(error);
       if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
+      } else if (state.code === 409) {
+        showErrorToast(error?.response?.data?.message);
       } else {
         onSubmitData('error', t('common.deleteFailed'))
       }
