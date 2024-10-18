@@ -88,6 +88,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     const [description, setDescription] = useState('')
     const [remark, setRemark] = useState('')
     const [packagingId, setPackagingId] = useState('')
+    const [version, setVersion] = useState(0)
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
     const navigate = useNavigate();
 
@@ -105,6 +106,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 setEnglishName(selectedItem.packagingNameEng)
                 setDescription(selectedItem.description)
                 setRemark(selectedItem.remark)
+                setVersion(selectedItem.version)
             }
         } else if (action === 'add') {
             resetForm()
@@ -187,7 +189,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             remark: remark,
             status: 'DELETED',
             createdBy: loginId,
-            updatedBy: loginId
+            updatedBy: loginId,
+            version: version
         }
 
         if (validation.length == 0) {
@@ -211,7 +214,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             status: 'ACTIVE',
             createdBy: loginId,
             updatedBy: loginId,
-            ...(action == 'edit' && {version: selectedItem?.version ?? 0})
+            ...(action == 'edit' && {version: version ?? 0})
         }
 
         const isError = validation.length == 0

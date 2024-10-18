@@ -31,7 +31,6 @@ export const editRecyc = async (data: any) => {
   
       return response
     } catch (e: any) {
-      console.error('Post Recycling Failed:', e)
       return null
     }
 }
@@ -46,7 +45,6 @@ export const updateRecyc = async (data: any, recycTypeId: string) => {
 
   return response
   } catch (error) {
-    console.error('Post Recycling Failed:', error)
     throw(error)
   }
 }
@@ -61,7 +59,6 @@ export const deleteRecyc = async (data: any, recycTypeId: string) => {
 
   return response
   } catch (error) {
-    console.error('Post Recycling Failed:', error)
     throw(error)
   }
 }
@@ -90,7 +87,6 @@ export const updateSubRecyc = async (data: any, recycTypeId: string) => {
 
   return response
   } catch (error) {
-    console.error('Post Recycling Failed:', error)
     throw(error)
   }
 }
@@ -105,7 +101,6 @@ export const deleteSubRecyc = async (data: any, recycTypeId: string) => {
   
     return response
     } catch (error) {
-      console.error('Post Recycling Failed:', error)
       throw(error)
     }
 }
@@ -126,7 +121,6 @@ export const getAllPackagingUnit = async (page: number, size: number) => {
     })
     return response
   } catch (e) {
-    console.error('Get all packaging unit failed:', e)
     throw(e)
   }
 }

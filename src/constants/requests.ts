@@ -48,7 +48,7 @@ export const UPDATE_TENANT_REGISTER = (
   tenantId: number
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/account/t/updateInfo/${tenantId}`
+  url: `api/v1/account/t/V2/updateInfo/${tenantId}`
 })
 
 export const UPDATE_TENANT_INFO = (tenantId: string): AxiosRequestConfig => ({
@@ -65,7 +65,7 @@ export const GET_TENANT_BY_TENANT_ID = (
 
 export const UPDATE_TENANT_STATUS = (tenantId: number): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/account/t/status/${tenantId}`
+  url: `api/v1/account/t/V2/status/${tenantId}`
 })
 
 export const GET_CURRENCY_LIST: AxiosRequestConfig = {
@@ -273,7 +273,7 @@ export const UPDATE_PICK_UP_ORDER_STATUS: AxiosRequestConfig = {
 }
 export const UPDATE_PICK_UP_ORDER_DETAIL_STATUS: AxiosRequestConfig = {
   method: 'patch',
-  url: 'api/v1/administrator/pico/V2/detail/status'
+  url: 'api/v1/administrator/pico/V2/details/status'
 }
 //common
 export const GET_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {
@@ -747,7 +747,7 @@ export const EDIT_PROCESS_OUT_DETAIL_ITEM = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/processout/V2/${table}${realmApiRoute === 'manufacturer' ? `/processout/${processOutId}/` : `/${processOutId}/`}proecessoutDtl/${processOutDtlId}`
+  url: `api/v1/${realmApiRoute}/processout/V2/${table}/${processOutId}/proecessoutDtl/${processOutDtlId}`
 })
 
 export const DELETE_PROCESS_OUT_RECORD = (
