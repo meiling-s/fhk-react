@@ -76,8 +76,7 @@ export const createSubRecyc = async (data: any, recycTypeId: string) => {
 
   return response
   } catch (error) {
-    console.error('Post Recycling Failed:', error)
-    return null
+    throw (error)
   }
 }
 
