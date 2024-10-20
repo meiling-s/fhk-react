@@ -8,6 +8,7 @@ import {
   Autocomplete,
   TextField as MuiTextField,
   TextField,
+  Divider,
   Stack,
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -205,12 +206,15 @@ const CreateCollectionPoint = () => {
         validateOnChange={true}
         onSubmit={(values) => handleCreateOnClick(values)}
       >
-        {({ setFieldValue, isValid }) => (
+        {({ setFieldValue, isValid, dirty }) => { 
+         
+          return  (
           <Form>
 
             <Box sx={{ paddingLeft: { xs: 0 }, width: '80%' }}>
             <Grid item my={2}>
               <Button
+               sx={{color: '#111'}}
                 onClick={() => navigate('/collector/collectionPoint')}
               >
                 <ArrowBackIos sx={{ fontSize: 16, marginX: 0.5 }} />
@@ -219,7 +223,7 @@ const CreateCollectionPoint = () => {
             </Grid>
               <Grid container direction={'column'} spacing={2.5}>
                 <Grid item>
-                <Typography fontWeight="bold" fontSize="24px" color="#666">
+                <Typography fontWeight="bold" fontSize="20px" color="#666">
                   {t('col.locationData')}
                 </Typography>
               </Grid>
@@ -323,14 +327,18 @@ const CreateCollectionPoint = () => {
                       label={getLabel()}
                       mandatory={true}
                     >
-                      <CustomTextField
-                        id="premiseRemark"
+                      <Field
+                        as={MuiTextField} 
+                        name="premiseRemark"
                         placeholder={t('col.enterText')}
-                        onChange={(event) => setPremiseRemark(event.target.value)}
+                        fullWidth
+                        sx={inputSx} 
                       />
+                      <ErrorMessage name="premiseRemark" component="div" className="text-red text-sm font-bold" />
                     </CustomField>
                   </Grid>
                 )}
+
                 <Grid item>
                   <CustomField label={t('col.status')}>
                     <CustomSwitch
@@ -340,10 +348,25 @@ const CreateCollectionPoint = () => {
                       setState={setStatus}
                     />
                   </CustomField>
+                  <Divider sx={{marginTop: '16px'}}/>
                 </Grid>
                 
+           
+              
                 <Grid item>
-                <Typography fontWeight="bold" fontSize="24px" color="#666">{t('col.staffInfo')}</Typography>
+                <Typography fontWeight="bold" fontSize="20px" color="#666">
+                  {t('col.colRecycType')}
+                </Typography>
+              </Grid>
+                <Grid item>
+                  <CustomField label={t('col.recycType')} mandatory={true}>
+                    <RecyclablesList recycL={typeList.recyc} setState={(value) => setFieldValue('recyclables', value)} />
+                    <ErrorMessage name="recyclables" component="div" className="text-red text-sm font-bold"/>
+                  </CustomField>
+                </Grid>
+
+                <Grid item>
+                <Typography fontWeight="bold" fontSize="20px" color="#666">{t('col.staffInfo')}</Typography>
               </Grid>
                 <Grid item>
                   <CustomField label={t('col.numOfStaff')} mandatory={true}>
@@ -357,22 +380,10 @@ const CreateCollectionPoint = () => {
                     <ErrorMessage name="staffNum" component="div" className="text-red text-sm font-bold"/>
                   </CustomField>
                 </Grid>
-
-              
-                <Grid item>
-                <Typography fontWeight="bold" fontSize="24px" color="#666">
-                  {t('col.colRecycType')}
-                </Typography>
-              </Grid>
-                <Grid item>
-                  <CustomField label={t('col.recyclables')} mandatory={true}>
-                    <RecyclablesList recycL={typeList.recyc} setState={(value) => setFieldValue('recyclables', value)} />
-                    <ErrorMessage name="recyclables" component="div" className="text-red text-sm font-bold"/>
-                  </CustomField>
-                </Grid>
+                <Divider sx={{marginTop: '16px'}}/>
                 <Grid item>
                 
-                <Typography fontWeight="bold" fontSize="24px" color="#666">
+                <Typography fontWeight="bold" fontSize="20px" color="#666" my="8px">
                   {t('col.serviceInfo')}
                 </Typography>
 
@@ -405,7 +416,7 @@ const CreateCollectionPoint = () => {
                     noOptionsText={t('common.noOptions')}
                   />
                 </CustomField>
-
+                  
                   <CustomField label={t('col.serviceType')} mandatory={true}>
                   <CustomItemList
                       items={serviceTypeList}
@@ -424,7 +435,7 @@ const CreateCollectionPoint = () => {
                       variant="contained"
                       size="large"
                       color="info"
-                      disabled={!!routineValidationError || !isValid} 
+                      disabled={!!routineValidationError || !isValid || !dirty} 
                       sx={submitButtonStyles}
                     >
                       {t('col.create')}
@@ -443,6 +454,7 @@ const CreateCollectionPoint = () => {
             </Box>
           </Form>
         )}
+        }
       </Formik>
     </LocalizationProvider>
   );

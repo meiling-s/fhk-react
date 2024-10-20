@@ -42,7 +42,7 @@ export const submitButtonStyles = {
   color: 'white',
   fontSize: '18px',
   fontWeight: 'bold', 
-  padding: '12px 32px', 
+  padding: '12px 64px', 
   borderRadius: '50px',
   '&:hover': {
     backgroundColor: 'darkgreen'
@@ -53,7 +53,9 @@ export const cancelButtonStyles = {
   fontWeight: 'bold',
   fontSize: '16px',
   color: '#79CA25',
-  padding: '12px 32px', 
+  backgroundColor: "#FFF",
+  padding: '12px 64px', 
+  border: 1,
   borderRadius: '50px'
 };
 
