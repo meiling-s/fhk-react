@@ -444,7 +444,20 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 </Select>
               </FormControl>
             </Grid>
-
+            <Grid item>
+            <CustomField label={t('driver.vehicleMenu.imei')} mandatory>
+              <CustomTextField
+                  id="licensePlate"
+                  value={licensePlate}
+                  disabled={action === 'delete'}
+                  placeholder={t(
+                    'driver.vehicleMenu.imei'
+                  )}
+                  onChange={(event) => setLicensePlate(event.target.value)}
+                  error={checkString(licensePlate)}
+                />
+              </CustomField>
+            </Grid>
             <Grid item>
               <CustomField
                 label={t('driver.vehicleMenu.vehicle_cargo_capacity')} mandatory

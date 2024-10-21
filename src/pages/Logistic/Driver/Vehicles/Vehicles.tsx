@@ -408,14 +408,34 @@ const Vehicles: FunctionComponent = () => {
             <ADD_ICON /> {t('top_menu.add_new_vehicle')}
           </Button>
         </Box>
-        <CustomSearchField
-          label={t('driver.vehicleMenu.vehicle_number')}
-          width={'100%'}
-          field={'searchValue'}
-          placeholder={t('driver.vehicleMenu.vehicle_number')}
-          handleSearch={(value) => handleSearch(value)}
-          onChange={handleChange}
-        />
+        <Box
+          sx={{
+            display: 'flex',
+            gap: '16px',
+            width: '100%'
+          }}
+        >
+          <Box sx={{ flexGrow: 1 }}>
+            <CustomSearchField
+              label={t('driver.vehicleMenu.vehicle_number')}
+              width={'100%'}
+              field={'searchValue'}
+              placeholder={t('driver.vehicleMenu.vehicle_number')}
+              handleSearch={(value) => handleSearch(value)}
+              onChange={handleChange}
+            />
+          </Box>
+          <Box sx={{ flexGrow: 1 }}>
+            <CustomSearchField
+              label={t('driver.vehicleMenu.imei')}
+              width={'100%'}
+              field={'searchValue'}
+              placeholder={t('driver.vehicleMenu.imei')}
+              handleSearch={(value) => handleSearch(value)}
+              onChange={handleChange}
+            />
+          </Box>
+        </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
             {isLoading ? (
