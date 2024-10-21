@@ -190,6 +190,7 @@ const RecyclingUnit: FunctionComponent = () => {
   const { localeTextDataGrid } = useLocaleTextDataGrid()
   const [openDelete, setOpenDelete] = useState<boolean>(false)
   const [recycSubTypeIdValue, setRecycSubTypeIdValue] = useState<any>(null)
+  const [subTypeVersion, setSubTypeVersion] = useState<number>(0)
   const [isLoadingPackaging, setIsLoadingPackaging] = useState<boolean>(false)
   const [isLoadingRecycling, setIsLoadingRecycling] = useState<boolean>(false)
   const [isLoadingWeight, setIsLoadingWeight] = useState<boolean>(false)
@@ -488,7 +489,8 @@ const RecyclingUnit: FunctionComponent = () => {
 
     const recyclingForm = {
       status: 'INACTIVE',
-      updatedBy: token.loginId
+      updatedBy: token.loginId,
+      version: subTypeVersion
     }
 
     const response = await deleteSubRecyc(recyclingForm, recycSubTypeIdValue)
@@ -610,6 +612,7 @@ const RecyclingUnit: FunctionComponent = () => {
       setSwitchValue(null)
       setRecycSubTypeIdValue(value.recycSubTypeId)
       setOpenDelete(true)
+      setSubTypeVersion(value.version)
     }
   }
 
@@ -618,8 +621,10 @@ const RecyclingUnit: FunctionComponent = () => {
     const recycId = selectedRecyclingRow && selectedRecyclingRow.recycTypeId
     const recyclingForm = {
       status: 'INACTIVE',
-      updatedBy: token.loginId
+      updatedBy: token.loginId,
+      version: selectedRecyclingRow?.version !== undefined ? selectedRecyclingRow?.version : switchValue.version
     }
+
     if (switchValue !== null) {
       try {
         const response = await deleteRecyc(
@@ -631,8 +636,15 @@ const RecyclingUnit: FunctionComponent = () => {
           handleOnSubmitData('recycle')
           setSwitchValue(null)
         }
-      } catch (error) {
-        showErrorToast(t('notify.errorDeleted'))
+      } catch (error: any) {
+        const { state } = extractError(error)
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]) {
+          showErrorToast(error.response.data.message)
+        }  else {
+          showErrorToast(t('notify.errorDeleted'))
+        }
       }
     } else if (recycId !== null) {
       try {
@@ -646,8 +658,9 @@ const RecyclingUnit: FunctionComponent = () => {
         const { state } = extractError(error)
         if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]) {
+          showErrorToast(error.response.data.message)
         } else {
-          console.error(error)
           showErrorToast(t('notify.errorDeleted'))
         }
       }

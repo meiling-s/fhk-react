@@ -47,12 +47,12 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
   const [remark, setRemark] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
-  const [validation, setValidation] = useState<{field: string; error: string}[]>([])
+  const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
   const [showError, setShowError] = useState<boolean>(false)
   const [version, setVersion] = useState<number>(0)
   const navigate = useNavigate();
-  
-  useEffect (() => {
+
+  useEffect(() => {
     resetData()
     setShowError(false)
     if (action === 'edit' || action === 'delete') {
@@ -88,7 +88,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
       updatedBy: token.loginId,
       version: version
     }
-    if (selectedItem !== null && selectedItem !== undefined ) {
+    if (selectedItem !== null && selectedItem !== undefined) {
       try {
         const response = await deleteCurrency(selectedItem?.monetaryId, currencyForm)
         if (response) {
@@ -96,11 +96,11 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
           showSuccessToast(t('notify.successDeleted'))
           resetData()
         }
-      } catch (error:any) {
-        const {state} =  extractError(error);
+      } catch (error: any) {
+        const { state } = extractError(error);
         if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
-        } else if (state.code === STATUS_CODE[409]){
+        } else if (state.code === STATUS_CODE[409]) {
           showErrorToast(error.response.data.message);
         }
       }
@@ -117,9 +117,9 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
       status: selectedItem?.status ?? 'ACTIVE',
       createdBy: loginId,
       updatedBy: loginId,
-      ...(action === 'edit' && {version: version})
+      ...(action === 'edit' && { version: version })
     }
-    if (isInputFieldsEmpty()){
+    if (isInputFieldsEmpty()) {
       setShowError(true)
     } else if (validation.length === 0) {
       action === 'add' ? createCurrencyData(currencyProps) : editCurrencyData(currencyProps)
@@ -138,36 +138,52 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
         showSuccessToast(t('notify.successCreated'))
         resetData()
       }
-    } catch (error:any) {
-      const {state} = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
-        navigate('/maintenance')
-      } else {
-        showErrorToast(t('errorCreated.errorCreated'))
-      }
-    }
-  }
-
-
- const editCurrencyData = async (data: any) => {
-  if (selectedItem !== null && selectedItem !== undefined) {
-    try {
-      const response = await editCurrency(selectedItem?.monetaryId, data)
-      if (response) {
-        onSubmitData('currency')
-        showSuccessToast(t('notify.SuccessEdited'))
-        resetData()
-      }
-    } catch (error:any) {
-      const {state} =  extractError(error)
+    } catch (error: any) {
+      const { state } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else if (state.code === STATUS_CODE[409]){
-        showErrorToast(error.response.data.message);
+      } else if (state.code === STATUS_CODE[409]) {
+        const errorMessage = error.response.data.message
+        if (errorMessage.includes('[monetaryDuplicate]')) {
+          showErrorToast(handleDuplicateErrorMessage(errorMessage))
+        } else {
+          showErrorToast(error.response.data.message);
+        }
       }
     }
-   }
   }
+
+
+  const editCurrencyData = async (data: any) => {
+    if (selectedItem !== null && selectedItem !== undefined) {
+      try {
+        const response = await editCurrency(selectedItem?.monetaryId, data)
+        if (response) {
+          onSubmitData('currency')
+          showSuccessToast(t('notify.SuccessEdited'))
+          resetData()
+        }
+      } catch (error: any) {
+        const { state } = extractError(error)
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]) {
+          const errorMessage = error.response.data.message
+          if (errorMessage.includes('[monetaryDuplicate]')) {
+            showErrorToast(handleDuplicateErrorMessage(errorMessage))
+          } else {
+            showErrorToast(error.response.data.message);
+          }
+        }
+      }
+    }
+  }
+
+  const handleDuplicateErrorMessage = (input: string) => {
+    let result = input.replace('[monetaryDuplicate]', '');
+
+    return result
+  };
 
   return (
     <div className="add-vehicle">
@@ -188,7 +204,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
       >
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
-          <Box sx={{marginY: 2}}>
+          <Box sx={{ marginY: 2 }}>
             <CustomField label={t('general_settings.name')} mandatory>
               <CustomTextField
                 id="monetary"
@@ -200,7 +216,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
               />
             </CustomField>
           </Box>
-          <Box sx={{marginY: 2}}>
+          <Box sx={{ marginY: 2 }}>
             <CustomField label={t('general_settings.remark')} mandatory>
               <CustomTextField
                 id="remark"
@@ -212,7 +228,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
               />
             </CustomField>
           </Box>
-          <Box sx={{marginY: 2}}>
+          <Box sx={{ marginY: 2 }}>
             <CustomField label={t('general_settings.introduction')} mandatory>
               <CustomTextField
                 id="description"
@@ -225,19 +241,19 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
             </CustomField>
           </Box>
           {showError && checkString(monetary) && (
-              <FormErrorMsg
-                field={t('general_settings.name')}
-                errorMsg={t('form.error.shouldNotBeEmpty')}
-                type={'error'}
-              />
-            )}
+            <FormErrorMsg
+              field={t('general_settings.name')}
+              errorMsg={t('form.error.shouldNotBeEmpty')}
+              type={'error'}
+            />
+          )}
           {showError && checkString(remark) && (
-              <FormErrorMsg
-                field={t('common.remark')}
-                errorMsg={t('form.error.shouldNotBeEmpty')}
-                type={'error'}
-              />
-            )}
+            <FormErrorMsg
+              field={t('common.remark')}
+              errorMsg={t('form.error.shouldNotBeEmpty')}
+              type={'error'}
+            />
+          )}
           {showError && checkString(description) && (
             <FormErrorMsg
               field={t('common.description')}

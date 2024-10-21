@@ -88,6 +88,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     const [description, setDescription] = useState('')
     const [remark, setRemark] = useState('')
     const [packagingId, setPackagingId] = useState('')
+    const [version, setVersion] = useState(0)
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
     const navigate = useNavigate();
 
@@ -105,6 +106,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 setEnglishName(selectedItem.packagingNameEng)
                 setDescription(selectedItem.description)
                 setRemark(selectedItem.remark)
+                setVersion(selectedItem.version)
             }
         } else if (action === 'add') {
             resetForm()
@@ -187,7 +189,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             remark: remark,
             status: 'DELETED',
             createdBy: loginId,
-            updatedBy: loginId
+            updatedBy: loginId,
+            version: version
         }
 
         if (validation.length == 0) {
@@ -211,7 +214,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             status: 'ACTIVE',
             createdBy: loginId,
             updatedBy: loginId,
-            ...(action == 'edit' && {version: selectedItem?.version ?? 0})
+            ...(action == 'edit' && {version: version ?? 0})
         }
 
         const isError = validation.length == 0
@@ -237,10 +240,14 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             const {state} =  extractError(error)
             if(state.code === STATUS_CODE[503] ){
                 navigate('/maintenance')
-            } else {
-                console.error(error)
-                showErrorToast(t('errorCreated.errorCreated'))
-            }
+            } else if (state.code === STATUS_CODE[409]) {
+				const errorMessage = error.response.data.message
+				if (errorMessage.includes('packagingNameDuplicate')) {
+					showErrorToast(handleDuplicateErrorMessage(errorMessage))
+				} else {
+					showErrorToast(error.response.data.message);
+				}
+			}
 
         }
     }
@@ -259,11 +266,47 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             const {state} = extractError(error);
             if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-            } else if (state.code === STATUS_CODE[409]){
-                showErrorToast(error.response.data.message);
-            }
+            } else if (state.code === STATUS_CODE[409]) {
+				const errorMessage = error.response.data.message
+				if (errorMessage.includes('packagingNameDuplicate')) {
+					showErrorToast(handleDuplicateErrorMessage(errorMessage))
+				} else {
+					showErrorToast(error.response.data.message);
+				}
+			}
         }
     }
+
+    const handleDuplicateErrorMessage = (input: string) => {
+		const replacements: { [key: string]: string } = {
+			'[tchi]': 'Traditional Chinese Name',
+			'[eng]': 'English Name',
+			'[schi]': 'Simplified Chinese Name'
+		};
+
+		let result = input.replace(/\[packagingNameDuplicate\]/, '');
+
+		const matches = result.match(/\[(tchi|eng|schi)\]/g);
+
+		if (matches) {
+			const replaced = matches.map(match => replacements[match as keyof typeof replacements]);
+
+			let formatted: string;
+			if (replaced.length === 1) {
+				formatted = replaced[0];
+			} else if (replaced.length === 2) {
+				formatted = replaced.join(' and ');
+			} else if (replaced.length === 3) {
+				formatted = `${replaced[0]}, ${replaced[1]} and ${replaced[2]}`;
+			}
+
+			result = result.replace(/\[(tchi|eng|schi)\]+/, formatted!);
+
+			result = result.replace(/\[(tchi|eng|schi)\]/g, '');
+		}
+
+		return result.trim();
+	};
 
     return (
         <div className="add-vehicle">

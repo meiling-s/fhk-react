@@ -78,9 +78,8 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
 
   useEffect(() => {
     resetData()
-    if (action === 'edit') {
+    if (action === 'edit' || action === 'delete') {
       if (selectedItem !== null && selectedItem !== undefined) {
-        console.log(selectedItem, 'item')
         setContractNo(selectedItem?.contractNo)
         setReferenceNumber(selectedItem?.parentContractNo)
         setContractStatus(selectedItem?.status === 'ACTIVE' ? true : false)
@@ -112,6 +111,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
     setValidation([])
     setWhether(false)
     setTrySubmited(false)
+    setVersion(0)
   }
 
   useEffect(() => {
@@ -289,16 +289,9 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
 
       const formData: any = {
-        // tenantId: tenantId,
-        // contractNo: contractNo,
-        // parentContractNo: referenceNumber,
         status: 'DELETED',
-        // contractFrmDate: startDate.format('YYYY-MM-DD'),
-        // contractToDate: endDate.format('YYYY-MM-DD'),
-        // remark: remark,
-        // epdFlg: whether,
-        // createdBy: loginId,
-        updatedBy: loginId
+        updatedBy: loginId,
+        version: version
       }
       if (selectedItem != null) {
         const result = await deleteContract(formData, selectedItem.contractNo)
