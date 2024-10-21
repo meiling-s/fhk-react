@@ -63,7 +63,7 @@ export type collectionPoint = {
 
 export type createCP = {
   //data for creating Collection Point
-
+  tenantId: string
   colName: string
   colPointTypeId: string
   effFrmDate: String
