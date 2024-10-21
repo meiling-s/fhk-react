@@ -789,6 +789,7 @@
     "suspend": "暫停",
     "deleted": "已刪除",
     "staffId": "員工編號",
+    "isAdmin": "是否管理員",
     "successCreatedUser": "成功創建用戶",
     "failedCreatedUser": "創建用戶失敗",
     "successEditUser": "成功編輯用戶",

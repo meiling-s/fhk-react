@@ -91,6 +91,14 @@ const UserAccount: FunctionComponent = () => {
       valueGetter: (params) => params.row?.userGroup.roleName
     },
     {
+      field: 'isAdmin',
+      headerName: t('userAccount.isAdmin'),
+      width: 250,
+      type: 'string',
+      valueGetter: (params) =>
+        params.row?.isAdmin ? t('common.yes') : t('common.no')
+    },
+    {
       field: 'status',
       headerName: t('col.status'),
       width: 300,
