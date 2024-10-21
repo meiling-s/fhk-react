@@ -34,15 +34,6 @@ export default function FunctionList({
     setSelected(!selected)
   }
 
-  //   useEffect(() => {
-  //     const index = functions.indexOf(item.functionId)
-  //     if (index !== -1) {
-  //       setSelected(true)
-  //     } else {
-  //       setSelected(false)
-  //     }
-  //   }, [functions, item.functionId])
-
   useEffect(() => {
     setSelected(functions.includes(item.functionId))
   }, [functions, item.functionId])

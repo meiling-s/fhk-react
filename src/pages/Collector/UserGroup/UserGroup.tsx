@@ -161,6 +161,14 @@ const UserGroup: FunctionComponent = () => {
       type: 'string'
     },
     {
+      field: 'isAdmin',
+      headerName: t('userAccount.isAdmin'),
+      width: 250,
+      type: 'string',
+      valueGetter: (params) =>
+        params.row?.isAdmin ? t('common.yes') : t('common.no')
+    },
+    {
       field: 'functions',
       headerName: t('userGroup.availableFeatures'),
       width: 600,
