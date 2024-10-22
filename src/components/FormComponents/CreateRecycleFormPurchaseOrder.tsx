@@ -44,6 +44,8 @@ import i18n from '../../setups/i18n'
 import { WeightUnit } from '../../interfaces/weightUnit'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import Switcher from './CustomSwitch'
+import Selection from '../SpecializeComponents/ProductListSingleSelect'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -169,6 +171,15 @@ const CreateRecycleForm = ({
     useContainer(CommonTypeContainer)
   const [editRow, setEditRow] = useState<PurchaseOrderDetail>()
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
+  const [isRecyc, setRecycType] = useState<boolean>(true)
+
+  // dummy data for a while until API is ready
+  const section1Options = ["1號膠", "2號膠"];
+  const section2Options = ["水樽", "膠杯", "菲林", "其他"];
+  const section3Options = ["500ml", "1L", "2L", "其他"];
+  const [selectedSection1, setSelectedSection1] = useState<string | null>(null);
+  const [selectedSection2, setSelectedSection2] = useState<string | null>(null);
+  const [selectedSection3, setSelectedSection3] = useState<string | null>(null);
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
 
   //---set custom style each role---
@@ -628,35 +639,75 @@ const CreateRecycleForm = ({
                   ''
                 )} */}
               </Grid>
+              <CustomField label={t('pick_up_order.recyclForm.item_category')}>
+                <Switcher
+                  onText={t('recyclables')}
+                  offText={t('product')}
+                  defaultValue={isRecyc}
+                  setState={(newValue) => setRecycType(newValue)}
+                />
+              </CustomField>
               <Grid item>
-                <CustomField label={t('col.recycType')} mandatory>
-                  <RecyclablesListSingleSelect
-                    showError={
-                      errorsField.recycTypeId.status ||
-                      errorsField.recycSubTypeId.status ||
-                      undefined
-                    }
-                    recycL={recycType ?? []}
-                    setState={(values) => {
-                      if (values.recycTypeId !== undefined) {
-                        onChangeContent('recycTypeId', values.recycTypeId)
+                {isRecyc ? (
+                  <CustomField label={t('col.recycType')} mandatory>
+                    <RecyclablesListSingleSelect
+                      showError={
+                        errorsField.recycTypeId.status ||
+                        errorsField.recycSubTypeId.status ||
+                        undefined
                       }
-                      if (values.recycSubTypeId !== undefined) {
-                        onChangeContent('recycSubTypeId', values.recycSubTypeId)
-                      }
+                      recycL={recycType ?? []}
+                      setState={(values) => {
+                        if (values.recycTypeId !== undefined) {
+                          onChangeContent('recycTypeId', values.recycTypeId)
+                        }
+                        if (values.recycSubTypeId !== undefined) {
+                          onChangeContent('recycSubTypeId', values.recycSubTypeId)
+                        }
+                      }}
+                      itemColor={{
+                        bgColor: customListTheme
+                          ? customListTheme.bgColor
+                          : '#E4F6DC',
+                        borderColor: customListTheme
+                          ? customListTheme.border
+                          : '79CA25'
+                      }}
+                      defaultRecycL={defaultRecyc}
+                      key={formik.values.id}
+                    />
+                  </CustomField>
+                ) : 
+                <>
+                  <Selection
+                    label={t('pick_up_order.product_type.product')}
+                    options={section1Options}
+                    selected={selectedSection1}
+                    onSelect={(option) => {
+                      setSelectedSection1(option);
                     }}
-                    itemColor={{
-                      bgColor: customListTheme
-                        ? customListTheme.bgColor
-                        : '#E4F6DC',
-                      borderColor: customListTheme
-                        ? customListTheme.border
-                        : '79CA25'
-                    }}
-                    defaultRecycL={defaultRecyc}
-                    key={formik.values.id}
                   />
-                </CustomField>
+                  {selectedSection1 && (
+                    <Selection
+                      label={t('pick_up_order.product_type.subtype')}
+                      options={section2Options}
+                      selected={selectedSection2}
+                      onSelect={(option) => {
+                        setSelectedSection2(option);
+                        setSelectedSection3(null);
+                      }}
+                    />
+                  )}
+                  {selectedSection2 && (
+                    <Selection
+                      label={t('pick_up_order.product_type.add-on')}
+                      options={section3Options}
+                      selected={selectedSection3}
+                      onSelect={setSelectedSection3}
+                    />
+                  )}
+                </> 
+                }
                 {/* {errorsField['recycSubTypeId' as keyof ErrorsField].required &&
                 errorsField['recycSubTypeId' as keyof ErrorsField].status ? (
                   <ErrorMessages
