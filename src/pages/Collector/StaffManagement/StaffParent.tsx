@@ -27,7 +27,7 @@ const Settings: FunctionComponent = () => {
   const tabSettingsCollectors = [
     t('staffManagement.list'),
     t('staffManagement.schedule'),
-    t('staffManagement.manufacturer')
+    // t('staffManagement.manufacturer')
   ]
 
   const tabSettingsNonCollectors = [
