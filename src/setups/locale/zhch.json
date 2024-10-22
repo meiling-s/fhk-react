@@ -187,6 +187,7 @@
     "save": "储存",
     "delete": "删除",
     "type_name": "请输入名称",
+    "recyclable_subcategories": "物品类别",
     "place_placeholders": "请输入地点",
     "subtype": "亚型",
     "recycle_type": "可回收物类别",
@@ -207,7 +208,9 @@
     "workshopFlag": "是否工厂",
     "warningCloseWarehouse": "仓库里还有库存, 确定要关闭仓库吗?",
     "warningDeleteExistingRecy": "仓库里还有库存, 确定要刪除仓库吗?",
-    "warningDeleteWarehouse": "你确定要删除吗?"
+    "warningDeleteWarehouse": "你确定要删除吗?",
+    "product": "产品",
+    "recyling": "回收物品"
   },
   "check_in": {
     "transport_information": "运输资料",

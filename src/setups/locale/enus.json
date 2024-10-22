@@ -187,7 +187,7 @@
     "save": "Save",
     "delete": "Delete",
     "type_name": "Please type a name",
-    "recyclable_subcategories": "Storage recyclable and capacity",
+    "recyclable_subcategories": "Item Category",
     "place_placeholders": "No. 14, Ao Pui Wan Street, Fo Tan",
     "subtype": "Subtype",
     "recycle_type": "Recycle type",
@@ -208,7 +208,9 @@
     "workshopFlag": "Is workshop",
     "warningCloseWarehouse": "There are stocks in the warehouse, are you sure to close the warehouse?",
     "warningDeleteExistingRecy": "There are stocks in the warehouse, are you sure to delete the warehouse?",
-    "warningDeleteWarehouse": "Are you sure to delete?"
+    "warningDeleteWarehouse": "Are you sure to delete?",
+    "product": "Product",
+    "recyling": "Recycling"
   },
   "check_in": {
     "transport_information": "Transport Information",

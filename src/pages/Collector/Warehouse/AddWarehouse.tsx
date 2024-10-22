@@ -68,6 +68,14 @@ interface recyleItem {
   recycTypeCapacity: number
 }
 
+interface productItem {
+  recycTypeId: string
+  recycSubTypeId: string
+  addonType: string
+  recycSubTypeCapacity: number
+  recycTypeCapacity: number
+}
+
 interface recyleSubtyeData {
   recycSubTypeId: string
   recyclableNameEng: string
@@ -144,6 +152,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const [onDeleteWarehouseMsg, setOnDeleteWarehouseMsg] = useState<string>('')
   const [openWHDeleteModal, setOpenWHDeleteModal] = useState<boolean>(false)
   const [openWHCloseModal, setOpenWHCloseModal] = useState<boolean>(false)
+  const [itemType, setItemType] = useState<boolean>(false)
 
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
@@ -312,6 +321,18 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       recycTypeCapacity: 0
     }
   ]
+
+  const initProductCategory: productItem[] = [
+    // product field
+    {
+      recycTypeId: '',
+      recycSubTypeId: '',
+      addonType: '',
+      recycTypeCapacity: 0,
+      recycSubTypeCapacity: 0
+    }
+  ]
+
   const [validation, setValidation] = useState<
     { field: string; error: string }[]
   >([])
@@ -319,6 +340,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   const [recycleCategory, setRecycleCategory] =
     useState<recyleItem[]>(initRecyleCategory)
+
+  const [productCategory, setProductCategory] =
+    useState<productItem[]>(initProductCategory)
 
   const [locationGps, setLocationGps] = useState<number[]>([])
 
@@ -571,11 +595,37 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
   }
 
+  const handleAddProductCategory = () => {
+    // const checkRecyc = productCategory.find((recyc) => recyc.recycTypeId === '')
+    // if (!checkRecyc) {
+    const updatedProductCategory = [
+      ...productCategory,
+      {
+        recycTypeId: '',
+        recycSubTypeId: '',
+        addonType: '',
+        recycTypeCapacity: 0,
+        recycSubTypeCapacity: 0
+      }
+    ]
+    setProductCategory(updatedProductCategory)
+    // } else {
+    //   showErrorToast(t('form.error.selectFirst'))
+    // }
+  }
+
   const handleRemoveReycleCategory = (indexToRemove: number) => {
     const updatedRecycleCategory = recycleCategory.filter(
       (_, index) => index !== indexToRemove
     )
     setRecycleCategory(updatedRecycleCategory)
+  }
+
+  const handleRemoveProductCategory = (indexToRemove: number) => {
+    const updatedProductCategory = productCategory.filter(
+      (_, index) => index !== indexToRemove
+    )
+    setProductCategory(updatedProductCategory)
   }
 
   const handleChangeRecycleType = (
@@ -995,166 +1045,372 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             {/* Recyle category */}
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px]">
               <LabelField
-                label={t('warehouse_page.recyclable_subcategories')}
+                label={t('add_warehouse_page.recyclable_subcategories')}
                 mandatory={true}
               />
-              <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-mini">
-                <div className="self-stretch overflow-hidden flex flex-row items-center justify-start gap-[8px]">
-                  <div className="w-full ">
-                    {recycleCategory.map((item, index) => (
-                      <div
-                        className="flex justify-center items-center gap-2 mb-2"
-                        key={index + 'recyle'}
-                      >
-                        <FormControl sx={{ m: 1, width: '100%' }}>
-                          <Select
-                            value={item.recycTypeId}
-                            onChange={(event: SelectChangeEvent<string>) =>
-                              handleChangeRecycleType(event, index)
-                            }
-                            displayEmpty
-                            disabled={action === 'delete'}
-                            inputProps={{
-                              'aria-label': 'Without label'
-                            }}
-                            sx={{
-                              borderRadius: '12px' // Adjust the value as needed
-                            }}
-                            error={
-                              checkString(item.recycTypeId) ||
-                              !isRecycleTypeIdUnique
-                            }
-                          >
-                            <MenuItem value="">
-                              <em>-</em>
-                            </MenuItem>
-                            {recycleType.length > 0 ? (
-                              recycleType.map((item, index) => (
-                                <MenuItem value={item.id} key={index}>
-                                  {currentLanguage === 'zhhk'
-                                    ? item.recyclableNameTchi
-                                    : currentLanguage === 'zhch'
-                                    ? item.recyclableNameSchi
-                                    : item.recyclableNameEng}
-                                </MenuItem>
-                              ))
-                            ) : (
-                              <MenuItem disabled value="">
-                                <em>{t('common.noOptions')}</em>
+              {/* switcher product type */}
+              <Switcher
+                onText={t('add_warehouse_page.recyling')}
+                offText={t('add_warehouse_page.product')}
+                disabled={action === 'delete'}
+                defaultValue={itemType}
+                setState={(newValue) => {
+                  setItemType(newValue)
+                }}
+              />
+              {itemType ? (
+                <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-mini">
+                  <div className="self-stretch overflow-hidden flex flex-row items-center justify-start gap-[8px]">
+                    <div className="w-full ">
+                      {recycleCategory.map((item, index) => (
+                        <div
+                          className="flex justify-center items-center gap-2 mb-2"
+                          key={index + 'recyle'}
+                        >
+                          <FormControl sx={{width: '100%' }}>
+                            <Select
+                              value={item.recycTypeId}
+                              onChange={(event: SelectChangeEvent<string>) =>
+                                handleChangeRecycleType(event, index)
+                              }
+                              displayEmpty
+                              disabled={action === 'delete'}
+                              inputProps={{
+                                'aria-label': 'Without label'
+                              }}
+                              sx={{
+                                borderRadius: '12px' // Adjust the value as needed
+                              }}
+                              error={
+                                checkString(item.recycTypeId) ||
+                                !isRecycleTypeIdUnique
+                              }
+                            >
+                              <MenuItem value="">
+                                <em>-</em>
                               </MenuItem>
-                            )}
-                          </Select>
-                        </FormControl>
-                        <FormControl sx={{ m: 1, width: '100%' }}>
-                          <Select
-                            value={item.recycSubTypeId}
-                            onChange={(event: SelectChangeEvent<string>) =>
-                              handleChangeSubtype(event, index)
-                            }
-                            displayEmpty
-                            disabled={action === 'delete'}
-                            inputProps={{
-                              'aria-label': 'Without label'
-                            }}
-                            sx={{
-                              borderRadius: '12px'
-                            }}
-                            // error={
-                            //   checkString(item.recycSubTypeId) ||
-                            //   !isRecycleSubUnique
-                            // }
-                          >
-                            <MenuItem value="">
-                              <em>-</em>
-                            </MenuItem>
-                            {recycleSubType[item.recycTypeId]?.length > 0 ? (
-                              recycleSubType[item.recycTypeId]?.map(
-                                (item, index) => (
-                                  <MenuItem
-                                    value={item.recycSubTypeId}
-                                    key={index}
-                                  >
+                              {recycleType.length > 0 ? (
+                                recycleType.map((item, index) => (
+                                  <MenuItem value={item.id} key={index}>
                                     {currentLanguage === 'zhhk'
                                       ? item.recyclableNameTchi
                                       : currentLanguage === 'zhch'
                                       ? item.recyclableNameSchi
                                       : item.recyclableNameEng}
                                   </MenuItem>
-                                )
-                              )
-                            ) : (
-                              <MenuItem disabled value="">
-                                <em>{t('common.noOptions')}</em>
+                                ))
+                              ) : (
+                                <MenuItem disabled value="">
+                                  <em>{t('common.noOptions')}</em>
+                                </MenuItem>
+                              )}
+                            </Select>
+                          </FormControl>
+                          <FormControl sx={{width: '100%' }}>
+                            <Select
+                              value={item.recycSubTypeId}
+                              onChange={(event: SelectChangeEvent<string>) =>
+                                handleChangeSubtype(event, index)
+                              }
+                              displayEmpty
+                              disabled={action === 'delete'}
+                              inputProps={{
+                                'aria-label': 'Without label'
+                              }}
+                              sx={{
+                                borderRadius: '12px'
+                              }}
+                            >
+                              <MenuItem value="">
+                                <em>-</em>
                               </MenuItem>
-                            )}
-                          </Select>
-                        </FormControl>
-                        <FormControl fullWidth variant="standard">
-                          <OutlinedInput
-                            value={item.recycSubTypeCapacity}
-                            type="number"
-                            onChange={(
-                              event: React.ChangeEvent<
-                                HTMLInputElement | HTMLTextAreaElement
-                              >
-                            ) =>
-                              handleChangeWeight(
-                                event as React.ChangeEvent<HTMLInputElement>,
-                                index
-                              )
-                            }
-                            fullWidth
-                            id="outlined-adornment-weight"
-                            placeholder={t('add_warehouse_page.weight')}
-                            endAdornment={
-                              <InputAdornment position="end">kg</InputAdornment>
-                            }
-                            aria-describedby="outlined-weight-helper-text"
-                            inputProps={{
-                              'aria-label': 'weight',
-                              sx: styles.textField
-                            }}
-                            sx={styles.textField}
-                            disabled={action === 'delete'}
-                            error={checkNumber(item.recycSubTypeCapacity)}
-                          />
-                        </FormControl>
-                        {index === recycleCategory.length - 1 ? (
-                          <ADD_CIRCLE_ICON
-                            fontSize="small"
-                            className={`${
-                              action === 'delete'
-                                ? 'text-gray'
-                                : 'text-green-primary'
-                            } " cursor-pointer"`}
-                            onClick={
-                              action !== 'delete'
-                                ? handleAddRecycleCategory
-                                : undefined
-                            }
-                          />
-                        ) : (
-                          index !== recycleCategory.length - 1 && (
-                            <REMOVE_CIRCLE_ICON
+                              {recycleSubType[item.recycTypeId]?.length > 0 ? (
+                                recycleSubType[item.recycTypeId]?.map(
+                                  (item, index) => (
+                                    <MenuItem
+                                      value={item.recycSubTypeId}
+                                      key={index}
+                                    >
+                                      {currentLanguage === 'zhhk'
+                                        ? item.recyclableNameTchi
+                                        : currentLanguage === 'zhch'
+                                        ? item.recyclableNameSchi
+                                        : item.recyclableNameEng}
+                                    </MenuItem>
+                                  )
+                                )
+                              ) : (
+                                <MenuItem disabled value="">
+                                  <em>{t('common.noOptions')}</em>
+                                </MenuItem>
+                              )}
+                            </Select>
+                          </FormControl>
+                          <FormControl fullWidth variant="standard">
+                            <OutlinedInput
+                              value={item.recycSubTypeCapacity}
+                              type="number"
+                              onChange={(
+                                event: React.ChangeEvent<
+                                  HTMLInputElement | HTMLTextAreaElement
+                                >
+                              ) =>
+                                handleChangeWeight(
+                                  event as React.ChangeEvent<HTMLInputElement>,
+                                  index
+                                )
+                              }
+                              fullWidth
+                              id="outlined-adornment-weight"
+                              placeholder={t('add_warehouse_page.weight')}
+                              endAdornment={
+                                <InputAdornment position="end">
+                                  kg
+                                </InputAdornment>
+                              }
+                              aria-describedby="outlined-weight-helper-text"
+                              inputProps={{
+                                'aria-label': 'weight',
+                                sx: styles.textField
+                              }}
+                              sx={styles.textField}
+                              disabled={action === 'delete'}
+                              error={checkNumber(item.recycSubTypeCapacity)}
+                            />
+                          </FormControl>
+                          {index === recycleCategory.length - 1 ? (
+                            <ADD_CIRCLE_ICON
                               fontSize="small"
-                              className={`text-grey-light ${
-                                recycleCategory.length === 1
-                                  ? 'cursor-not-allowed'
-                                  : 'cursor-pointer'
-                              } `}
-                              onClick={() =>
+                              className={`${
+                                action === 'delete'
+                                  ? 'text-gray'
+                                  : 'text-green-primary'
+                              } " cursor-pointer"`}
+                              onClick={
                                 action !== 'delete'
-                                  ? handleRemoveReycleCategory(index)
+                                  ? handleAddRecycleCategory
                                   : undefined
                               }
                             />
-                          )
-                        )}
-                      </div>
-                    ))}
+                          ) : (
+                            index !== recycleCategory.length - 1 && (
+                              <REMOVE_CIRCLE_ICON
+                                fontSize="small"
+                                className={`text-grey-light ${
+                                  recycleCategory.length === 1
+                                    ? 'cursor-not-allowed'
+                                    : 'cursor-pointer'
+                                } `}
+                                onClick={() =>
+                                  action !== 'delete'
+                                    ? handleRemoveReycleCategory(index)
+                                    : undefined
+                                }
+                              />
+                            )
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-mini">
+                  <div className="self-stretch overflow-hidden flex flex-row items-center justify-start gap-[8px]">
+                    <div className="w-full ">
+                      {productCategory.map((item, index) => (
+                        <div
+                          className="flex justify-center items-center gap-2 mb-2"
+                          key={index + 'recyle'}
+                        >
+                          <FormControl sx={{ width: '100%' }}>
+                            <Select
+                              value={item.recycTypeId}
+                              onChange={(event: SelectChangeEvent<string>) =>
+                                handleChangeRecycleType(event, index)
+                              }
+                              displayEmpty
+                              disabled={action === 'delete'}
+                              inputProps={{
+                                'aria-label': 'Without label'
+                              }}
+                              sx={{
+                                borderRadius: '12px' // Adjust the value as needed
+                              }}
+                              error={
+                                checkString(item.recycTypeId) ||
+                                !isRecycleTypeIdUnique
+                              }
+                            >
+                              <MenuItem value="">
+                                <em>-</em>
+                              </MenuItem>
+                              {recycleType.length > 0 ? (
+                                recycleType.map((item, index) => (
+                                  <MenuItem value={item.id} key={index}>
+                                    {currentLanguage === 'zhhk'
+                                      ? item.recyclableNameTchi
+                                      : currentLanguage === 'zhch'
+                                      ? item.recyclableNameSchi
+                                      : item.recyclableNameEng}
+                                  </MenuItem>
+                                ))
+                              ) : (
+                                <MenuItem disabled value="">
+                                  <em>{t('common.noOptions')}</em>
+                                </MenuItem>
+                              )}
+                            </Select>
+                          </FormControl>
+                          <FormControl sx={{ width: '100%' }}>
+                            <Select
+                              value={item.recycSubTypeId}
+                              onChange={(event: SelectChangeEvent<string>) =>
+                                handleChangeSubtype(event, index)
+                              }
+                              displayEmpty
+                              disabled={action === 'delete'}
+                              inputProps={{
+                                'aria-label': 'Without label'
+                              }}
+                              sx={{
+                                borderRadius: '12px'
+                              }}
+                            >
+                              <MenuItem value="">
+                                <em>-</em>
+                              </MenuItem>
+                              {recycleSubType[item.recycTypeId]?.length > 0 ? (
+                                recycleSubType[item.recycTypeId]?.map(
+                                  (item, index) => (
+                                    <MenuItem
+                                      value={item.recycSubTypeId}
+                                      key={index}
+                                    >
+                                      {currentLanguage === 'zhhk'
+                                        ? item.recyclableNameTchi
+                                        : currentLanguage === 'zhch'
+                                        ? item.recyclableNameSchi
+                                        : item.recyclableNameEng}
+                                    </MenuItem>
+                                  )
+                                )
+                              ) : (
+                                <MenuItem disabled value="">
+                                  <em>{t('common.noOptions')}</em>
+                                </MenuItem>
+                              )}
+                            </Select>
+                          </FormControl>
+                          <FormControl sx={{ width: '100%' }}>
+                            <Select
+                              value={item.recycSubTypeId}
+                              onChange={(event: SelectChangeEvent<string>) =>
+                                handleChangeSubtype(event, index)
+                              }
+                              displayEmpty
+                              disabled={action === 'delete'}
+                              inputProps={{
+                                'aria-label': 'Without label'
+                              }}
+                              sx={{
+                                borderRadius: '12px'
+                              }}
+                            >
+                              <MenuItem value="">
+                                <em>-</em>
+                              </MenuItem>
+                              {recycleSubType[item.recycTypeId]?.length > 0 ? (
+                                recycleSubType[item.recycTypeId]?.map(
+                                  (item, index) => (
+                                    <MenuItem
+                                      value={item.recycSubTypeId}
+                                      key={index}
+                                    >
+                                      {currentLanguage === 'zhhk'
+                                        ? item.recyclableNameTchi
+                                        : currentLanguage === 'zhch'
+                                        ? item.recyclableNameSchi
+                                        : item.recyclableNameEng}
+                                    </MenuItem>
+                                  )
+                                )
+                              ) : (
+                                <MenuItem disabled value="">
+                                  <em>{t('common.noOptions')}</em>
+                                </MenuItem>
+                              )}
+                            </Select>
+                          </FormControl>
+                          <FormControl fullWidth variant="standard">
+                            <OutlinedInput
+                              value={item.recycSubTypeCapacity}
+                              type="number"
+                              onChange={(
+                                event: React.ChangeEvent<
+                                  HTMLInputElement | HTMLTextAreaElement
+                                >
+                              ) =>
+                                handleChangeWeight(
+                                  event as React.ChangeEvent<HTMLInputElement>,
+                                  index
+                                )
+                              }
+                              fullWidth
+                              id="outlined-adornment-weight"
+                              placeholder={t('add_warehouse_page.weight')}
+                              endAdornment={
+                                <InputAdornment position="end">
+                                  kg
+                                </InputAdornment>
+                              }
+                              aria-describedby="outlined-weight-helper-text"
+                              inputProps={{
+                                'aria-label': 'weight',
+                                sx: styles.textField
+                              }}
+                              sx={styles.textField}
+                              disabled={action === 'delete'}
+                              error={checkNumber(item.recycSubTypeCapacity)}
+                            />
+                          </FormControl>
+                          {index === recycleCategory.length - 1 ? (
+                            <ADD_CIRCLE_ICON
+                              fontSize="small"
+                              className={`${
+                                action === 'delete'
+                                  ? 'text-gray'
+                                  : 'text-green-primary'
+                              } " cursor-pointer"`}
+                              onClick={
+                                action !== 'delete'
+                                  ? handleAddProductCategory
+                                  : undefined
+                              }
+                            />
+                          ) : (
+                            index !== recycleCategory.length - 1 && (
+                              <REMOVE_CIRCLE_ICON
+                                fontSize="small"
+                                className={`text-grey-light ${
+                                  recycleCategory.length === 1
+                                    ? 'cursor-not-allowed'
+                                    : 'cursor-pointer'
+                                } `}
+                                onClick={() =>
+                                  action !== 'delete'
+                                    ? handleRemoveProductCategory(index)
+                                    : undefined
+                                }
+                              />
+                            )
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             {/* Workshop flag */}
             {role === 'collector' && (

@@ -188,6 +188,7 @@
     "delete": "刪除",
     "type_name": "請輸入名稱",
     "place_placeholders": "請輸入地點",
+    "recyclable_subcategories": "物品類別",
     "subtype": "亞型",
     "recycle_type": "可回收物類別",
     "weight": "請輸入重量",
@@ -207,7 +208,9 @@
     "workshopFlag": "是否工場",
     "warningCloseWarehouse": "倉庫裡還有庫存, 確定要關閉倉庫嗎?",
     "warningDeleteExistingRecy": "倉庫裡還有庫存, 確定要刪除倉庫嗎?",
-    "warningDeleteWarehouse": "你確定要刪除嗎？"
+    "warningDeleteWarehouse": "你確定要刪除嗎？",
+    "product": "產品",
+    "recyling": "回收物"
   },
   "check_in": {
     "transport_information": "運輸資料",
