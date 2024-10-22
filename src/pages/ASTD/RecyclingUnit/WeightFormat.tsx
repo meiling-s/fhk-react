@@ -106,7 +106,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
 
 	useEffect(() => {
 		setTrySubmitted(false)
-		if (action === 'edit') {
+		if (action === 'edit' || action === 'delete') {
 			if (selectedItem !== null && selectedItem !== undefined) {
 				setTChineseName(selectedItem.unitNameTchi)
 				setSChineseName(selectedItem.unitNameSchi)
@@ -128,6 +128,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
 		setEquivalent('')
 		setDescription('')
 		setRemark('')
+		setVersion(0)
 	}
 
 	const checkString = (s: string) => {

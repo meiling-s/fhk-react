@@ -75,7 +75,6 @@ export const editVehicle = async (
     })
     return response
   } catch (e) {
-    console.error('Edit a vehicle failed:', e)
     throw (e)
   }
 }
@@ -96,8 +95,7 @@ export const deleteVehicle = async (data: {status: string, version: number}, veh
     })
     return response
   } catch (e) {
-    console.error('Edit a vehicle failed:', e)
-    return null
+    throw (e)
   }
 }
 

@@ -12,6 +12,7 @@ export type RegisterItem = {
   brImages: string[]
   epdImages: string[]
   monetaryValue: string
+  version: number
 }
 
 export type Tenant = {

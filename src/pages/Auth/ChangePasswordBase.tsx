@@ -164,10 +164,13 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
     try {
       const innerError = JSON.parse(errorString);
 
-      // Get the actual error message
-      console.log(innerError, 'error')
-      setErrorMessage(innerError.errorMessage);
-      setErrorUpdate(true)
+      if (innerError.errorCode === '002') {
+        setErrorMessage(t('userAccount.passwordPolicy'));
+        setErrorUpdate(true)
+      } else {
+        setErrorMessage(innerError.errorMessage);
+        setErrorUpdate(true)
+      }
     } catch (e) {
       console.error('Failed to parse error message:', e);
     }
