@@ -413,6 +413,11 @@ const PickupOrderCreateForm = ({
       width: 150
     },
     {
+      field: 'type',
+      headerName: t('pick_up_order.recyclForm.item_category'),
+      width: 150
+    },
+    {
       field: 'recycType',
       headerName: t('pick_up_order.detail.main_category'),
       width: 150,
@@ -476,6 +481,13 @@ const PickupOrderCreateForm = ({
           }
         }
       }
+    },
+    {
+      field: 'addon',
+      headerName: t('pick_up_order.product_type.add-on'),
+      type: 'string',
+      width: 150,
+      editable: true
     },
     {
       field: 'weight',

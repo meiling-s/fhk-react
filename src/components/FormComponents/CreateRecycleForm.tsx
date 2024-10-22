@@ -43,6 +43,8 @@ import {
 import { useTranslation } from 'react-i18next'
 import NotifContainer from '../../contexts/NotifContainer'
 import i18n from '../../setups/i18n'
+import Switcher from './CustomSwitch'
+import Selection from '../SpecializeComponents/ProductListSingleSelect'
 
 type props = {
   openModal: boolean
@@ -131,6 +133,7 @@ const CreateRecycleForm = ({
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
   const { marginTop } = useContainer(NotifContainer)
   const [isDetailDouble, setIsDetailDouble] = useState(false)
+  const [isRecyc, setRecycType] = useState<boolean>(true)
   //---set custom style each role---
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
   const colorTheme: string = getThemeColorRole(role) || '#79CA25'
@@ -145,6 +148,20 @@ const CreateRecycleForm = ({
     console.log('set def', defRecyc)
     setDefaultRecyc(defRecyc)
   }
+  const section1Options = ["1號膠", "2號膠"];
+  const section2Options = ["水樽", "膠杯", "菲林", "其他"];
+  const section3Options = ["500ml", "1L", "2L", "其他"];
+  const [selectedSection1, setSelectedSection1] = useState<string | null>(null);
+  const [selectedSection2, setSelectedSection2] = useState<string | null>(null);
+  const [selectedSection3, setSelectedSection3] = useState<string | null>(null);
+  const dummyData: string[] = [
+    "Other Metals", "Kitchen Waste", "Metals", "Metal", "Wood Products",
+    "Other Plastics (Mixed Plastics)", "Plastic Bottles", "Plastics",
+    "Straw", "Textile En", "Rechargeable Batteries", "Non-Recyclable",
+    "Fluorescent Lamps and Tubes", "Glass Bottles", "Paper", "Alloy",
+    "Regulated Waste Electrical & Electronic Equipment", "Metal33",
+    "Cameras", "TetraPak", "Regulated Electrical Equipment"
+  ];
 
   useEffect(() => {
     if (editRowId && editRowId) {
@@ -207,7 +224,7 @@ const CreateRecycleForm = ({
         pickupAt: editRow.pickupAt,
         recycType: editRow.recycType,
         recycSubType: editRow.recycSubType,
-        weight: formatWeight(editRow.weight, decimalVal)
+        weight: formatWeight(editRow.weight, decimalVal),
       })
     }
   }, [editRow])
@@ -544,43 +561,87 @@ const CreateRecycleForm = ({
                   />
                 </CustomField>
 
-                <CustomField label={t('col.recycType')} mandatory>
-                  <RecyclablesListSingleSelect
-                    showError={
-                      (formik.errors?.recycType && formik.touched?.recycType) ||
-                      undefined
-                    }
-                    recycL={recycType ?? []}
-                    setState={(values) => {
-                      console.log('recycSubType', values?.recycSubTypeId)
-                      formik.setFieldValue('recycType', values?.recycTypeId)
-                      formik.setFieldValue(
-                        'recycSubType',
-                        values?.recycSubTypeId
-                      )
-                      const recyc = recycType?.find(
-                        (item) => item.recycTypeId === values.recycTypeId
-                      )
-                      // will use to validate when non-recycable selected
-                      if (recyc) {
-                        formik.setFieldValue(
-                          'recycTypeName',
-                          recyc?.recyclableNameEng
-                        )
-                      }
-                    }}
-                    itemColor={{
-                      bgColor: customListTheme
-                        ? customListTheme.bgColor
-                        : '#E4F6DC',
-                      borderColor: customListTheme
-                        ? customListTheme.border
-                        : '79CA25'
-                    }}
-                    defaultRecycL={defaultRecyc}
-                    key={formik.values.picoDtlId}
+                <CustomField label={t('pick_up_order.recyclForm.item_category')}>
+                  <Switcher
+                    onText={t('recyclables')}
+                    offText={t('product')}
+                    defaultValue={isRecyc}
+                    setState={(newValue) => setRecycType(newValue)}
+                    
                   />
                 </CustomField>
+                {isRecyc ? (
+                  <CustomField label={t('col.recycType')} mandatory>
+                    <RecyclablesListSingleSelect
+                      showError={
+                        (formik.errors?.recycType && formik.touched?.recycType) ||
+                        undefined
+                      }
+                      recycL={recycType ?? []}
+                      setState={(values) => {
+                        console.log('recycSubType', values?.recycSubTypeId)
+                        formik.setFieldValue('recycType', values?.recycTypeId)
+                        formik.setFieldValue(
+                          'recycSubType',
+                          values?.recycSubTypeId
+                        )
+                        const recyc = recycType?.find(
+                          (item) => item.recycTypeId === values.recycTypeId
+                        )
+                        // will use to validate when non-recycable selected
+                        if (recyc) {
+                          formik.setFieldValue(
+                            'recycTypeName',
+                            recyc?.recyclableNameEng
+                          )
+                        }
+                      }}
+                      itemColor={{
+                        bgColor: customListTheme
+                          ? customListTheme.bgColor
+                          : '#E4F6DC',
+                        borderColor: customListTheme
+                          ? customListTheme.border
+                          : '79CA25'
+                      }}
+                      defaultRecycL={defaultRecyc}
+                      key={formik.values.picoDtlId}
+                    />
+                  </CustomField>
+                ) : 
+                  <>
+                    <Selection
+                      label={t('pick_up_order.product_type.product')}
+                      options={section1Options}
+                      selected={selectedSection1}
+                      onSelect={(option) => {
+                        setSelectedSection1(option);
+                      }}
+                    />
+                    {selectedSection1 && (
+                      <Selection
+                        label={t('pick_up_order.product_type.subtype')}
+                        options={section2Options}
+                        selected={selectedSection2}
+                        onSelect={(option) => {
+                          setSelectedSection2(option);
+                          setSelectedSection3(null); // Reset section 3
+                        }}
+                      />
+                    )}
+
+                    {/* Section 3 (shown only if section 2 is selected) */}
+                    {selectedSection2 && (
+                      <Selection
+                        label={t('pick_up_order.product_type.add-on')}
+                        options={section3Options}
+                        selected={selectedSection3}
+                        onSelect={setSelectedSection3}
+                      />
+                    )}
+                  </>
+                }
+                
                 <CustomField
                   label={t('pick_up_order.recyclForm.weight')}
                   mandatory
