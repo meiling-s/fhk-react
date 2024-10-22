@@ -184,13 +184,17 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     const result = await getTenantById(tenantId)
     const data = result?.data
     setTenantDetails(data)
-  
+
     // Mapping data with checks
-    if (data?.companyLogo && data.companyLogo !== '' && data.companyLogo !== 'null') {
-      const isBase64 = data.companyLogo.startsWith('data:image/png')
+    if (
+      data?.companyLogo &&
+      data.companyLogo !== '' &&
+      data.companyLogo !== 'null'
+    ) {
+      const isBase64 = data?.companyLogo?.startsWith('data:image')
       const format = isBase64 ? 'png' : 'jpeg'
       const imgdata = `data:image/${format};base64,${data.companyLogo}`
-  
+
       const tempLogo: any = []
       tempLogo.push({
         data_url: isBase64 ? data.companyLogo : imgdata,
@@ -202,15 +206,15 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
       })
       setCompanyLogo(tempLogo)
     }
-  
+
     setNumOfAccount(data?.decimalPlace || 0)
     setNumOfUplodedPhoto(data?.allowImgNum || 0)
-    setMaxUploadSize(data?.allowImgSize?.toString() || '0') 
+    setMaxUploadSize(data?.allowImgSize?.toString() || '0')
     setDefaultLang(data?.lang || 'ZH-HK')
     setSelectedStatus(data?.status || '')
     setVersion(data?.version || 0)
   }
-  
+
   useEffect(() => {
     setTranslatedTenantType('...')
 
@@ -425,7 +429,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-4">
                   {t('tenant.detail.business_reg_number_picture')}
                 </div>
-                <div className="">
+                <div className="flex gap-3">
                   {tenantDetail?.brPhoto.map((item, index) => (
                     <img
                       key={index}

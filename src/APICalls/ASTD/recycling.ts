@@ -73,7 +73,7 @@ export const createSubRecyc = async (data: any, recycTypeId: string) => {
 
   return response
   } catch (error) {
-    return null
+    throw (error)
   }
 }
 
