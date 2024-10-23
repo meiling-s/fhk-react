@@ -413,7 +413,7 @@ const PickupOrderCreateForm = ({
       width: 150
     },
     {
-      field: 'type',
+      field: 'itemCategory',
       headerName: t('pick_up_order.recyclForm.item_category'),
       width: 150
     },
@@ -443,6 +443,8 @@ const PickupOrderCreateForm = ({
               break
           }
           return name
+        } else {
+          return row.recycType
         }
       }
     },
@@ -479,6 +481,8 @@ const PickupOrderCreateForm = ({
 
             return subName
           }
+        } else {
+          return row.recycSubType
         }
       }
     },
@@ -1086,6 +1090,7 @@ const PickupOrderCreateForm = ({
                 type="submit"
                 sx={[buttonFilledCustom, localstyles.localButton]}
                 onClick={onhandleSubmit}
+                disabled={state.find(value => value.itemCategory === 'Product') ? true : false}
               >
                 {t('pick_up_order.finish')}
               </Button>

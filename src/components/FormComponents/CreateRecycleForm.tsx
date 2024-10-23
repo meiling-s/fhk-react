@@ -86,6 +86,8 @@ export interface InitValue {
   newDetail?: boolean
   id?: number
   recycTypeName?: string
+  itemCategory?: string
+  addon?: string
 }
 
 const initValue: InitValue = {
@@ -107,7 +109,9 @@ const initValue: InitValue = {
   weight: '0',
   newDetail: true,
   id: 0,
-  recycTypeName: ''
+  recycTypeName: '',
+  itemCategory: 'Recyclables',
+  addon: ''
 }
 
 const CreateRecycleForm = ({
@@ -225,6 +229,8 @@ const CreateRecycleForm = ({
         recycType: editRow.recycType,
         recycSubType: editRow.recycSubType,
         weight: formatWeight(editRow.weight, decimalVal),
+        itemCategory: editRow.itemCategory,
+        addon: editRow.addon
       })
     }
   }, [editRow])
@@ -241,80 +247,146 @@ const CreateRecycleForm = ({
     } else {
       prevData = data
     }
-
-    return Yup.object().shape({
-      pickupAt: Yup.string()
-        .required(t('pick_up_order.error.pickuAt'))
-        .test(
-          'invalid-date',
-          t('pick_up_order.error.invalid_pickup_time'),
-          function (value) {
-            if (value !== 'Invalid Date') return true
-            if (value === undefined) return true
-            return false
-            // return value !== t('pick_up_order.error.invalid_date')
+    
+    if (isRecyc) {
+      return Yup.object().shape({
+        pickupAt: Yup.string()
+          .required(t('pick_up_order.error.pickuAt'))
+          .test(
+            'invalid-date',
+            t('pick_up_order.error.invalid_pickup_time'),
+            function (value) {
+              if (value !== 'Invalid Date') return true
+              if (value === undefined) return true
+              return false
+              // return value !== t('pick_up_order.error.invalid_date')
+            }
+          ),
+        // .test(
+        //   t('pick_up_order.error.not_in_prev_data'),
+        //   t('pick_up_order.error.pickup_time'),
+        //   function (value) {
+        //     return !prevData.some((item) => item.pickupAt === value)
+        //   }
+        // ),
+  
+        senderName: Yup.string().required(t('pick_up_order.error.senderName')),
+        senderAddr: Yup.string()
+          .required(t('pick_up_order.error.senderAddr'))
+          .test(
+            t('pick_up_order.error.not_same_as_receiver'),
+            t('pick_up_order.error.sender_address'),
+            function (value) {
+              const receiverAddr = values.receiverAddr
+              return value !== receiverAddr
+            }
+          ),
+        // .test(
+        //   t('pick_up_order.error.not_in_prev_data'),
+        //   t('pick_up_order.error.sender_address_exists'),
+        //   function (value) {
+        //     return !prevData.some((item) => item.senderAddr === value)
+        //   }
+        // ),
+        receiverName: Yup.string().required(
+          t('pick_up_order.error.receiverName')
+        ),
+        receiverAddr: Yup.string()
+          .required(t('pick_up_order.error.receiverAddr'))
+          .test(
+            t('pick_up_order.error.not_same_as_sender'),
+            t('pick_up_order.error.receiver_address_cannot'),
+            function (value) {
+              const senderAddr = values.senderAddr
+              return value !== senderAddr
+            }
+          ),
+        // .test(
+        //   t('pick_up_order.error.not_in_prev_data'),
+        //   t('pick_up_order.error.receiver_address_exists'),
+        //   function (value) {
+        //     return !prevData.some((item) => item.receiverAddr === value)
+        //   }
+        // ),
+        recycType: Yup.string().required(t('pick_up_order.error.recycType')),
+          
+        recycSubType: Yup.string().when(
+          'recycTypeName',
+          (recycTypeName, schema) => {
+            if (recycTypeName[0] !== 'Non-recyclable')
+              return schema.required(t('pick_up_order.error.recycSubType'))
+            return schema
           }
         ),
-      // .test(
-      //   t('pick_up_order.error.not_in_prev_data'),
-      //   t('pick_up_order.error.pickup_time'),
-      //   function (value) {
-      //     return !prevData.some((item) => item.pickupAt === value)
-      //   }
-      // ),
-
-      senderName: Yup.string().required(t('pick_up_order.error.senderName')),
-      senderAddr: Yup.string()
-        .required(t('pick_up_order.error.senderAddr'))
-        .test(
-          t('pick_up_order.error.not_same_as_receiver'),
-          t('pick_up_order.error.sender_address'),
-          function (value) {
-            const receiverAddr = values.receiverAddr
-            return value !== receiverAddr
-          }
+        weight: Yup.number()
+          .moreThan(0, t('pick_up_order.error.weightGreaterThanZero'))
+          .required(t('pick_up_order.error.weight'))
+      })
+    } else {
+      return Yup.object().shape({
+        pickupAt: Yup.string()
+          .required(t('pick_up_order.error.pickuAt'))
+          .test(
+            'invalid-date',
+            t('pick_up_order.error.invalid_pickup_time'),
+            function (value) {
+              if (value !== 'Invalid Date') return true
+              if (value === undefined) return true
+              return false
+              // return value !== t('pick_up_order.error.invalid_date')
+            }
+          ),
+        // .test(
+        //   t('pick_up_order.error.not_in_prev_data'),
+        //   t('pick_up_order.error.pickup_time'),
+        //   function (value) {
+        //     return !prevData.some((item) => item.pickupAt === value)
+        //   }
+        // ),
+  
+        senderName: Yup.string().required(t('pick_up_order.error.senderName')),
+        senderAddr: Yup.string()
+          .required(t('pick_up_order.error.senderAddr'))
+          .test(
+            t('pick_up_order.error.not_same_as_receiver'),
+            t('pick_up_order.error.sender_address'),
+            function (value) {
+              const receiverAddr = values.receiverAddr
+              return value !== receiverAddr
+            }
+          ),
+        // .test(
+        //   t('pick_up_order.error.not_in_prev_data'),
+        //   t('pick_up_order.error.sender_address_exists'),
+        //   function (value) {
+        //     return !prevData.some((item) => item.senderAddr === value)
+        //   }
+        // ),
+        receiverName: Yup.string().required(
+          t('pick_up_order.error.receiverName')
         ),
-      // .test(
-      //   t('pick_up_order.error.not_in_prev_data'),
-      //   t('pick_up_order.error.sender_address_exists'),
-      //   function (value) {
-      //     return !prevData.some((item) => item.senderAddr === value)
-      //   }
-      // ),
-      receiverName: Yup.string().required(
-        t('pick_up_order.error.receiverName')
-      ),
-      receiverAddr: Yup.string()
-        .required(t('pick_up_order.error.receiverAddr'))
-        .test(
-          t('pick_up_order.error.not_same_as_sender'),
-          t('pick_up_order.error.receiver_address_cannot'),
-          function (value) {
-            const senderAddr = values.senderAddr
-            return value !== senderAddr
-          }
-        ),
-      // .test(
-      //   t('pick_up_order.error.not_in_prev_data'),
-      //   t('pick_up_order.error.receiver_address_exists'),
-      //   function (value) {
-      //     return !prevData.some((item) => item.receiverAddr === value)
-      //   }
-      // ),
-      recycType: Yup.string().required(t('pick_up_order.error.recycType')),
-      // recycSubType: Yup.string().required(t('pick_up_order.error.recycSubType')),
-      recycSubType: Yup.string().when(
-        'recycTypeName',
-        (recycTypeName, schema) => {
-          if (recycTypeName[0] !== 'Non-recyclable')
-            return schema.required(t('pick_up_order.error.recycSubType'))
-          return schema
-        }
-      ),
-      weight: Yup.number()
-        .moreThan(0, t('pick_up_order.error.weightGreaterThanZero'))
-        .required(t('pick_up_order.error.weight'))
-    })
+        receiverAddr: Yup.string()
+          .required(t('pick_up_order.error.receiverAddr'))
+          .test(
+            t('pick_up_order.error.not_same_as_sender'),
+            t('pick_up_order.error.receiver_address_cannot'),
+            function (value) {
+              const senderAddr = values.senderAddr
+              return value !== senderAddr
+            }
+          ),
+        // .test(
+        //   t('pick_up_order.error.not_in_prev_data'),
+        //   t('pick_up_order.error.receiver_address_exists'),
+        //   function (value) {
+        //     return !prevData.some((item) => item.receiverAddr === value)
+        //   }
+        // ),
+        weight: Yup.number()
+          .moreThan(0, t('pick_up_order.error.weightGreaterThanZero'))
+          .required(t('pick_up_order.error.weight'))
+      })
+    }
   })
 
   const formik = useFormik({
@@ -322,7 +394,6 @@ const CreateRecycleForm = ({
     validationSchema: validateSchema,
 
     onSubmit: (values, { resetForm }) => {
-      console.log('values', values)
       if (isDetailDouble) return
       if (isEditing) {
         //editing row
@@ -566,7 +637,15 @@ const CreateRecycleForm = ({
                     onText={t('recyclables')}
                     offText={t('product')}
                     defaultValue={isRecyc}
-                    setState={(newValue) => setRecycType(newValue)}
+                    setState={(newValue) => {
+                      formik.setFieldValue('itemCategory', newValue === true ? 'Recyclables' : 'Product');
+                      setRecycType(!isRecyc)
+                      if (newValue === true) {
+                        setSelectedSection1('')
+                        setSelectedSection2('')
+                        setSelectedSection3('')
+                      }
+                    }}
                     
                   />
                 </CustomField>
@@ -579,12 +658,12 @@ const CreateRecycleForm = ({
                       }
                       recycL={recycType ?? []}
                       setState={(values) => {
-                        console.log('recycSubType', values?.recycSubTypeId)
                         formik.setFieldValue('recycType', values?.recycTypeId)
                         formik.setFieldValue(
                           'recycSubType',
                           values?.recycSubTypeId
                         )
+                        formik.setFieldValue('addon', '')
                         const recyc = recycType?.find(
                           (item) => item.recycTypeId === values.recycTypeId
                         )
@@ -613,30 +692,30 @@ const CreateRecycleForm = ({
                     <Selection
                       label={t('pick_up_order.product_type.product')}
                       options={section1Options}
-                      selected={selectedSection1}
+                      selected={formik?.values?.recycType}
                       onSelect={(option) => {
-                        setSelectedSection1(option);
+                        formik.setFieldValue('recycType', option);
                       }}
                     />
-                    {selectedSection1 && (
+                    {formik?.values?.recycType && (
                       <Selection
                         label={t('pick_up_order.product_type.subtype')}
                         options={section2Options}
-                        selected={selectedSection2}
+                        selected={formik?.values?.recycSubType}
                         onSelect={(option) => {
-                          setSelectedSection2(option);
-                          setSelectedSection3(null); // Reset section 3
+                          formik.setFieldValue('recycSubType', option);
                         }}
                       />
                     )}
 
-                    {/* Section 3 (shown only if section 2 is selected) */}
-                    {selectedSection2 && (
+                    {formik?.values?.recycSubType && (
                       <Selection
                         label={t('pick_up_order.product_type.add-on')}
                         options={section3Options}
-                        selected={selectedSection3}
-                        onSelect={setSelectedSection3}
+                        selected={formik?.values?.addon}
+                        onSelect={(option) => {
+                          formik.setFieldValue('addon', option)
+                        }}
                       />
                     )}
                   </>

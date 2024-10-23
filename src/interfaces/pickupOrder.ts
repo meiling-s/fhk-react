@@ -118,7 +118,9 @@ export interface CreatePicoDetail {
     recycType:    string;
     recycSubType: string;
     weight:       string;
+    itemCategory?: string;
     version?: number;
+    addon?: string;
     
 }
 

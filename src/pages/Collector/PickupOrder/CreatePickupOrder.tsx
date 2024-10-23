@@ -76,8 +76,10 @@ const CreatePickupOrder = () => {
       updatedBy: 'Admin',
       createPicoDetail: []
     },
+
     // validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
+      // console.log(addRow, 'row')
       values.createPicoDetail = addRow;
       if(picoTypeValue === 'AD_HOC'){
         values.routine = [];

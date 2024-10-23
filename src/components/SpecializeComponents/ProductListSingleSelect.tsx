@@ -6,7 +6,7 @@ import { localStorgeKeyName } from '../../constants/constant';
 interface SelectionProps {
   label: string;
   options: string[];
-  selected: string | null;
+  selected: string | undefined;
   onSelect: (option: string) => void;
 }
 
