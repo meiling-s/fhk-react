@@ -169,7 +169,8 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         description: description,
         functions: functions,
         createdBy: token.loginId,
-        status: 'ACTIVE'
+        status: 'ACTIVE',
+        isAdmin: isAdmin
       }
       handleCreateUserGroup(formData)
     } else {
@@ -178,7 +179,8 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         roleName: roleName,
         description: description,
         updatedBy: token.loginId,
-        status: 'ACTIVE'
+        status: 'ACTIVE',
+        isAdmin: isAdmin
       }
       handleEditUserGroup(formData)
     }

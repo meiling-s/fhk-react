@@ -96,7 +96,7 @@ const UserAccount: FunctionComponent = () => {
       width: 250,
       type: 'string',
       valueGetter: (params) =>
-        params.row?.isAdmin ? t('common.yes') : t('common.no')
+        params.row?.userGroup.isAdmin ? t('common.yes') : t('common.no')
     },
     {
       field: 'status',

@@ -50,7 +50,8 @@ function createUserGroup(
   updatedBy: string,
   updatedAt: string,
   userAccount: object[],
-  functions: Functions[]
+  functions: Functions[],
+  isAdmin: boolean
 ): UserGroupItem {
   return {
     groupId,
@@ -63,7 +64,8 @@ function createUserGroup(
     updatedBy,
     updatedAt,
     userAccount,
-    functions
+    functions,
+    isAdmin
   }
 }
 
@@ -123,7 +125,8 @@ const UserGroup: FunctionComponent = () => {
               item?.updatedBy,
               item?.updatedAt,
               item?.userAccount,
-              item?.functions
+              item?.functions,
+              item?.isAdmin
             )
           )
 
@@ -148,11 +151,6 @@ const UserGroup: FunctionComponent = () => {
       headerName: t('userGroup.groupName'),
       width: 200,
       type: 'string'
-      // renderCell: (params) => {
-      //   return (
-      //     <div>{params.row.serviceType}</div>
-      //   )
-      // }
     },
     {
       field: 'description',
