@@ -469,9 +469,9 @@
       "item_category": "物品类别"
     },
     "product_type": {
-      "Product": "制成品类别",
-      "Subtype": "次类别",
-      "Add-on": "追加类别"
+      "product": "制成品类别",
+      "subtype": "次类别",
+      "add-on": "追加类别"
     },
     "select_po": "选择运单",
     "search_company_name": "输入发件人公司",
