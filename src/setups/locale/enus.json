@@ -1150,7 +1150,8 @@
     "report_of_user_management_list": "The Report of User Management List",
     "report_of_audit_trail": "The Report of Audit Trail",
     "report_of_user_activity": "The Report of User Activity",
-    "report_of_notification": "The Report of Notification"
+    "report_of_notification": "The Report of Notification",
+    "report_formula": "報表數據提取方式"
   },
   "purchase_order": {
     "all_order": "All Orders",
