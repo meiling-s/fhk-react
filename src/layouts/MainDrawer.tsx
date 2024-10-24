@@ -204,7 +204,8 @@ function MainDrawer() {
         onClick: () => navigate(`/${realm}/report`),
         collapse: false,
         path: `/${realm}/report`,
-        functionName: 'Reports'
+        functionName: 'Reports',
+        datatestId: 'astd-reports-menu-list-6697'
       },
       'Process out recyclables': {
         name: t('processRecord.processingRecords'),
