@@ -1,14 +1,16 @@
-import { Box } from '@mui/material'
-import { useTranslation } from 'react-i18next'
-import CustomButton from './FormComponents/CustomButton'
-import { getPrimaryColor } from '../utils/utils'
+import { Box } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import CustomButton from "./FormComponents/CustomButton";
+import { getFormatId, getPrimaryColor } from "../utils/utils";
+import { useEffect, useState } from "react";
+import { localStorgeKeyName } from "../constants/constant";
 
 interface TableOperationProps {
-  row: any
-  onApprove: (row: any) => void
-  onReject: (row: any) => void
-  navigateToJobOrder: (row: any) => void
-  color?: 'blue' | 'green'
+  row: any;
+  onApprove: (row: any) => void;
+  onReject: (row: any) => void;
+  navigateToJobOrder: (row: any) => void;
+  color?: "blue" | "green";
 }
 
 const TableOperation = ({
@@ -16,38 +18,54 @@ const TableOperation = ({
   onApprove,
   onReject,
   navigateToJobOrder,
-  color
+  color,
 }: TableOperationProps) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
+  const [isShow, setIsShow] = useState<boolean>(false);
+  const currentTenantId = localStorage.getItem(localStorgeKeyName.tenantId);
+
+  useEffect(() => {
+    const formatLogisticId = getFormatId(row.logisticId);
+    if (formatLogisticId === currentTenantId) {
+      setIsShow(true);
+    }
+  }, [currentTenantId, row.logisticId]);
+
   return (
     <>
-      {row.status === 'CREATED' ? (
+      {row.status === "CREATED" ? (
         <Box>
-          <CustomButton
-            text={t('pick_up_order.table.approve')}
-            style={{ marginRight: '8px' }}
-            onClick={() => {
-              onApprove(row)
-            }}
-          ></CustomButton>
-          <CustomButton
-            text={t('pick_up_order.table.reject')}
-            outlined={true}
-            onClick={() => {
-              onReject(row)
-            }}
-          ></CustomButton>
+          {isShow ? (
+            <>
+              <CustomButton
+                text={t("pick_up_order.table.approve")}
+                style={{ marginRight: "8px" }}
+                onClick={() => {
+                  onApprove(row);
+                }}
+              ></CustomButton>
+              <CustomButton
+                text={t("pick_up_order.table.reject")}
+                outlined={true}
+                onClick={() => {
+                  onReject(row);
+                }}
+              ></CustomButton>
+            </>
+          ) : (
+            <></>
+          )}
         </Box>
-      ) : row.status === 'STARTED' || row.status === 'OUTSTANDING' ? (
+      ) : row.status === "STARTED" || row.status === "OUTSTANDING" ? (
         <CustomButton
-          text={t('pick_up_order.table.create_job_order')}
+          text={t("pick_up_order.table.create_job_order")}
           onClick={() => {
-            navigateToJobOrder(row)
+            navigateToJobOrder(row);
           }}
         ></CustomButton>
       ) : null}
     </>
-  )
-}
+  );
+};
 
-export default TableOperation
+export default TableOperation;
