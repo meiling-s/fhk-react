@@ -10,18 +10,21 @@ export default function FunctionList({
   item,
   functions,
   disabled,
-  setFunctions
+  setFunctions,
+  readOnly = false
 }: {
   keyId: number
   item: Functions
   functions: number[]
-  disabled: boolean
+  disabled: boolean,
+  readOnly?: boolean
   setFunctions: (value: SetStateAction<number[]>) => void
 }) {
   const [selected, setSelected] = useState(functions.includes(item.functionId))
 
   const handleClick = () => {
     const index = functions.indexOf(item.functionId)
+    if(readOnly) return
     let newValue
     if (index !== -1) {
       // Remove the functionId from the array

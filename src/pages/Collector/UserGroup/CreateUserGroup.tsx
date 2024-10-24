@@ -343,7 +343,8 @@ const CreateUserGroup: FunctionComponent<Props> = ({
                   keyId={index}
                   item={item}
                   functions={functions}
-                  disabled={action === 'delete' || isAdmin}
+                  disabled={action === 'delete'}
+                  readOnly={isAdmin}
                   setFunctions={setFunctions}
                 />
               ))}
