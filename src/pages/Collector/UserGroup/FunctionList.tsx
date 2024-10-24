@@ -41,6 +41,7 @@ export default function FunctionList({
   return (
     <Button
       key={keyId}
+      datatest-id="astd-user-group-form-available-feature-select-button-9031"
       value={item.functionId}
       color="success"
       variant={selected ? 'soft' : 'outlined'}

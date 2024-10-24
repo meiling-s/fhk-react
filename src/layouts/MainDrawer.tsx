@@ -131,6 +131,7 @@ function MainDrawer() {
         onClick: () => navigate(`/${realm}/account`),
         collapse: false,
         path: `/${realm}/account`,
+        datatestId: 'astd-user-group-menu-list-6766',
         functionName: 'User account'
       },
       'Collection point': {

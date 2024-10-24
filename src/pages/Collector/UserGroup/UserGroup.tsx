@@ -1,5 +1,5 @@
 import { useEffect, useState, FunctionComponent, useCallback } from 'react'
-import { Box, Button, Checkbox, Typography, Pagination } from '@mui/material'
+import { Box, Button, Typography, Pagination } from '@mui/material'
 import {
   DataGrid,
   GridColDef,
@@ -111,7 +111,7 @@ const UserGroup: FunctionComponent = () => {
       const data = result?.data
       let tempGroupList: string[] = []
       if (data) {
-        var userGroupMapping: UserGroupItem[] = []
+        let userGroupMapping: UserGroupItem[] = []
         data.content.map((item: any) => {
           userGroupMapping.push(
             createUserGroup(
@@ -196,6 +196,7 @@ const UserGroup: FunctionComponent = () => {
       renderCell: (params) => {
         return (
           <Button
+            data-testid="astd-user-group-edit-button-9924"
             onClick={(event) => {
               event.stopPropagation()
               handleAction(params, 'edit')
@@ -217,6 +218,7 @@ const UserGroup: FunctionComponent = () => {
       renderCell: (params) => {
         return (
           <Button
+          data-testid="astd-user-group-delete-button-7688"
             onClick={(event) => {
               event.stopPropagation()
               handleAction(params, 'delete')
@@ -329,6 +331,7 @@ const UserGroup: FunctionComponent = () => {
                 height: '40px'
               }
             ]}
+            data-testid="astd-user-group-new-button-8674"
             variant="outlined"
             onClick={() => {
               setDrawerOpen(true)

@@ -73,6 +73,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         newFunctions.push(item.functionId)
       })
       setFunctions(newFunctions)
+      setIsAdmin(selectedItem.isAdmin)
       setDescription(selectedItem.description)
     }
   }
@@ -82,6 +83,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       const allFunctionIds = functionList.map(
         (item: Functions) => item.functionId
       )
+      console.log('allFunctionIds', functionList)
       setFunctions(allFunctionIds)
     } else {
       setFunctions([])
@@ -131,6 +133,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         tempV.push({
           field: t('userGroup.groupName'),
           problem: formErr.empty,
+          dataTestId: "astd-user-group-form-group-name-err-warning-3882",
           type: 'error'
         })
       groupList.some((item) => item.toLowerCase() == roleName.toLowerCase()) &&
@@ -143,12 +146,14 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         tempV.push({
           field: t('userGroup.description'),
           problem: formErr.empty,
+          dataTestId: "astd-user-group-form-desc-err-warning-1635",
           type: 'error'
         })
       functions.length == 0 &&
         tempV.push({
           field: t('userGroup.availableFeatures'),
           problem: formErr.empty,
+          dataTestId: "astd-user-group-form-available-feature-err-warning-6315",
           type: 'error'
         })
       // console.log("tempV", tempV)
@@ -312,6 +317,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
             <CustomField label={t('userGroup.groupName')} mandatory>
               <CustomTextField
                 id="roleName"
+                dataTestId="astd-user-group-form-group-name-input-field-9870"
                 value={roleName}
                 disabled={action === 'delete'}
                 placeholder={t('userGroup.pleaseEnterName')}
@@ -322,6 +328,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
             <CustomField label={t('userGroup.description')} mandatory>
               <CustomTextField
                 id="description"
+                dataTestId="astd-user-group-form-available-feature-select-button-9031"
                 value={description}
                 disabled={action === 'delete'}
                 placeholder={t('userGroup.pleaseEnterText')}
@@ -349,6 +356,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
                     field={t(val.field)}
                     errorMsg={returnErrorMsg(val.problem, t)}
                     type={val.type}
+                    dataTestId={val.dataTestId}
                   />
                 ))}
             </Grid>
