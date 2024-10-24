@@ -88,8 +88,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     const [description, setDescription] = useState('')
     const [remark, setRemark] = useState('')
     const [packagingId, setPackagingId] = useState('')
+    const [validation, setValidation] = useState<{ field: string; error: string, dataTestId: string }[]>([])
     const [version, setVersion] = useState(0)
-    const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -148,14 +148,15 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
       }
       
     useEffect(() => {
-        const tempV: {field: string; error: string}[] = []
+        const tempV: {field: string; error: string, dataTestId: string}[] = []
 
         tChineseName.trim() === '' &&
         tempV.push({
             field: `${t('packaging_unit.traditional_chinese_name')}`,
             error: `${t(
             'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: 'astd-packaging-unit-form-tc-err-warning-4738'
         })
 
         sChineseName.trim() === '' &&
@@ -163,7 +164,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             field: `${t('packaging_unit.simplified_chinese_name')}`,
             error: `${t(
             'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: 'astd-packaging-unit-form-sc-err-warning-7683'
         })
 
         englishName.trim() === '' &&
@@ -171,7 +173,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             field: `${t('packaging_unit.english_name')}`,
             error: `${t(
             'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: 'astd-packaging-unit-form-en-err-warning-6715'
         })
 
         setValidation(tempV)
@@ -342,6 +345,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 placeholder={t('packaging_unit.traditional_chinese_name_placeholder')}
                                 onChange={(event) => setTChineseName(event.target.value)}
                                 error={checkString(tChineseName)}
+                                dataTestId='astd-packaging-unit-form-tc-input-field-9028'
                             />
                         </CustomField>
                     </Box>
@@ -354,6 +358,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 placeholder={t('packaging_unit.simplified_chinese_name_placeholder')}
                                 onChange={(event) => setSChineseName(event.target.value)}
                                 error={checkString(sChineseName)}
+                                dataTestId='astd-packaging-unit-form-sc-input-field-2397'
                             />
                         </CustomField>
                     </Box>
@@ -366,6 +371,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 placeholder={t('packaging_unit.english_name_placeholder')}
                                 onChange={(event) => setEnglishName(event.target.value)}
                                 error={checkString(englishName)}
+                                dataTestId='astd-packaging-unit-form-en-input-field-3992'
                             />
                         </CustomField>
                     </Box>
@@ -377,6 +383,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             multiline={true}
                             defaultValue={description}
                             disabled={action === 'delete'}
+                            dataTestId='astd-packaging-unit-form-intro-input-field-8409'
                         />
                     </CustomField>
                     <CustomField label={t('packaging_unit.remark')}>
@@ -387,6 +394,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             multiline={true}
                             defaultValue={remark}
                             disabled={action === 'delete'}
+                            dataTestId='astd-packaging-unit-form-remark-input-field-8657'
                         />
                     </CustomField>
                     <Grid item sx={{ width: '92%' }}>
@@ -397,6 +405,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 field={t(val.field)}
                                 errorMsg={val.error}
                                 type={'error'}
+                                dataTestId={val.dataTestId}
                             />
                             ))}
                     </Grid>
