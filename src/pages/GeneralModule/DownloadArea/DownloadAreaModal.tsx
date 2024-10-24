@@ -560,6 +560,9 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                 onChange={(event: SelectChangeEvent<string>) => {
                   setSelectedFormula(Number(event.target.value));
                 }}
+                data-testid={
+                  "astd-download-area-report-extraction-select-button-5858"
+                }
               >
                 {formulaList.map((item, index) => (
                   <MenuItem key={index} value={item.id}>
@@ -595,6 +598,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                   url={item.url}
                   typeFile={selectedItem?.typeFile}
                   validation={validation}
+                  dataTestId={"astd-download-area-download-button-6751"}
                 />
               ))}
 
@@ -608,6 +612,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                   typeFile={selectedItem?.typeFile}
                   validation={validation}
                   reportName={selectedItem?.report_name}
+                  dataTestId={"astd-download-area-download-button-6759"}
                 />
               ))}
           </Grid>
@@ -634,7 +639,8 @@ const DownloadItem: FunctionComponent<{
   typeFile: string | undefined;
   validation: formValidate[];
   reportName?: string;
-}> = ({ date, url, typeFile, validation = [], reportName }) => {
+  dataTestId?: string;
+}> = ({ date, url, typeFile, validation = [], reportName, dataTestId }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const getUrl = () => {
@@ -680,6 +686,7 @@ const DownloadItem: FunctionComponent<{
 
         target="_blank"
         href={validation.length === 0 ? getUrl() : ""}
+        data-testid={dataTestId}
       >
         <DOCUMENT_ICON style={{ color: getPrimaryColor() }} />
         <Typography
