@@ -60,7 +60,7 @@ pipeline {
               aws eks update-kubeconfig --name ${config_EksCluster} --profile assume
               export AWS_ACCESS_KEY_ID=
               export AWS_SECRET_ACCESS_KEY=
-              kubectl apply -f ${input_WorkloadYaml}
+              kubectl replace -f ${input_WorkloadYaml}
             """)
           }
         }

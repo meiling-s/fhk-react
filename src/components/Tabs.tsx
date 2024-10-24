@@ -69,6 +69,7 @@ const Tabs: React.FC<TabsProps> = ({
                 {tab}
               </span>
             }
+            data-testid={'astd-settings-tab-' + index}
             value={index}
           />
         ))}

@@ -10,6 +10,7 @@ type Props = {
   value?: string;
   helperText?: string;
   styles?: object;
+  dataTestId?: string;
 };
 
 export default function Switcher({
@@ -21,6 +22,7 @@ export default function Switcher({
   value,
   helperText,
   styles,
+  dataTestId
 }: Props) {
   const [onOff, setOnOff] = useState<boolean>(defaultValue !== undefined ? defaultValue : false);
 
@@ -53,6 +55,7 @@ export default function Switcher({
           marginTop: "5px"
         }}
         onClick={handleSwitchChange}
+        data-testId={dataTestId}
       >
         <Box
           sx={{
