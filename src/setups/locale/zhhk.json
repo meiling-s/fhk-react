@@ -174,7 +174,31 @@
     "add_new_vehicle": "新增車輛"
   },
   "settings_page": {
-    "title": "設定"
+    "title": "設定",
+    "recycling": {
+      "semi_finish_product": "半成品 ・ 產品類別",
+      "remarks": "備註",
+      "new": "新",
+      "add_new": "新增",
+      "product_category": "產品類別",
+      "traditional_chinese_name": "繁體中文名稱",
+      "traditional_chinese_name_placeholder": "請輸入繁體中文名稱",
+      "simplified_chinese_name": "簡體中文名稱",
+      "simplified_chinese_name_placeholder": "請輸入簡體中文名稱",
+      "english_name": "英文名稱",
+      "english_name_placeholder": "請輸入英文名稱",
+      "introduction": "簡介",
+      "introduction_placeholder": "請輸入簡介",
+      "category": "類別",
+      "main_category": "主類別",
+      "sub_category": "次類別",
+      "additional_category": "追加類別",
+      "plastic_no_1": "1號膠",
+      "plastic_no_2": "2號膠",
+      "enter_text": "請輸入文字",
+      "water_bottle": "水",
+      "film": "菲林"
+    }
   },
   "warehouse_page": {
     "trad_name": "繁體中文名稱",

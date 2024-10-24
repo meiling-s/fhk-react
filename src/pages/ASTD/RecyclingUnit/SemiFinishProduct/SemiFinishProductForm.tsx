@@ -5,6 +5,7 @@ import { Box, FormControl, InputLabel, Select, MenuItem, Tabs, Tab, Typography }
 import RightOverlayForm from '../../../../components/RightOverlayForm';
 import CustomField from '../../../../components/FormComponents/CustomField';
 import CustomTextField from '../../../../components/FormComponents/CustomTextField';
+import { useTranslation } from 'react-i18next';
 
 const validationSchema = Yup.object({
   traditionalName: Yup.string().required('Required'),
@@ -43,7 +44,7 @@ function TabPanel(props: { children: React.ReactNode; value: number; index: numb
 
 const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, open, handleSubmit }) => {
   const [tabIndex, setTabIndex] = useState(0);
-
+  const {t, i18n} = useTranslation()
   const handleTabChange = (event: React.ChangeEvent<{}>, newIndex: number) => {
     setTabIndex(newIndex);
   };
@@ -71,8 +72,8 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
       anchor="right"
       showHeader={true}
       headerProps={{
-        title: '新增',
-        subTitle: '產品類別',
+        title:   t('settings_page.recycling.add_new'),
+        subTitle: t('settings_page.recycling.product_category'),
         submitText: 'Save',
         cancelText: 'Cancel',
         onCloseHeader: handleClose,
@@ -82,12 +83,11 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
       <form onSubmit={formik.handleSubmit}>
         <Box display="flex" flexDirection="column" gap={2} padding="25px">
           <Box mb="16px">
-            {/* 繁體中文名稱 - Traditional Chinese Name */}
-            <CustomField label="繁體中文名稱" mandatory>
+            <CustomField label={ t('settings_page.recycling.traditional_chinese_name')} mandatory>
               <CustomTextField
                 id="traditionalName"
                 value={formik.values.traditionalName}
-                placeholder="請輸入名稱"
+                placeholder={t('settings_page.recycling.traditional_chinese_name_placeholder')}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 error={formik.touched.traditionalName && Boolean(formik.errors.traditionalName)}
@@ -97,12 +97,12 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
           </Box>
 
           <Box mb="16px">
-            {/* 简体中文名称 - Simplified Chinese Name */}
-            <CustomField label="简体中文名称" mandatory>
+           
+            <CustomField label={ t('settings_page.recycling.simplified_chinese_name')} mandatory>
               <CustomTextField
                 id="simplifiedName"
                 value={formik.values.simplifiedName}
-                placeholder="请输入名称"
+                placeholder={t('settings_page.recycling.simplified_chinese_name_placeholder')}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 error={formik.touched.simplifiedName && Boolean(formik.errors.simplifiedName)}
@@ -113,11 +113,11 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
 
           <Box mb="16px">
             {/* English Name */}
-            <CustomField label="English Name" mandatory>
+            <CustomField label={t('settings_page.recycling.english_name')} mandatory>
               <CustomTextField
                 id="englishName"
                 value={formik.values.englishName}
-                placeholder="Enter English Name"
+                placeholder={t('settings_page.recycling.english_name_placeholder')}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 error={formik.touched.englishName && Boolean(formik.errors.englishName)}
@@ -127,19 +127,19 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
           </Box>
 
           <Tabs value={tabIndex} onChange={handleTabChange} aria-label="form tabs">
-            <Tab label="主類別 " />
-            <Tab label="次類別 " />
-            <Tab label="追加類別" />
+            <Tab label={t('settings_page.recycling.main_category')} />
+            <Tab label={t('settings_page.recycling.sub_category')} />
+            <Tab label={t('settings_page.recycling.additional_category')}/>
           </Tabs>
 
           <TabPanel value={tabIndex} index={0}>
             <Box mb="16px">
               {/* 簡介 - Introduction */}
-              <CustomField label="簡介">
+              <CustomField  label={t('settings_page.recycling.introduction')}>
                 <CustomTextField
                   id="introduction"
                   value={formik.values.introduction}
-                  placeholder="請輸入文字"
+                  placeholder={t('settings_page.recycling.enter_text')}
                   onChange={formik.handleChange}
                   multiline
                   rows={4}
@@ -149,11 +149,11 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
 
             <Box mb="16px">
               {/* 備註 - Remarks */}
-              <CustomField label="備註">
+              <CustomField label={t('settings_page.recycling.remarks')}>
                 <CustomTextField
                   id="remarks"
                   value={formik.values.remarks}
-                  placeholder="請輸入文字"
+                  placeholder={t('settings_page.recycling.enter_text')}
                   onChange={formik.handleChange}
                   multiline
                   rows={4}
@@ -165,9 +165,9 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
           <TabPanel value={tabIndex} index={1}>
             <Box mb="16px">
               {/* 類別 - Category */}
-              <CustomField label="類別" mandatory>
+              <CustomField label={t('settings_page.recycling.category')} mandatory>
                 <FormControl fullWidth>
-                  <InputLabel id="category-label">類別</InputLabel>
+                  <InputLabel id="category-label">{t('settings_page.recycling.category')}</InputLabel>
                   <Select
                     labelId="category-label"
                     id="category"
@@ -175,10 +175,10 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     error={formik.touched.category && Boolean(formik.errors.category)}
-                    label="類別"
+                    label={t('settings_page.recycling.category')}
                   >
-                    <MenuItem value="1號膠">1號膠</MenuItem>
-                    <MenuItem value="2號膠">2號膠</MenuItem>
+                    <MenuItem value="1號膠">{t('settings_page.recycling.plastic_no_1')}</MenuItem>
+                    <MenuItem value="2號膠">{t('settings_page.recycling.plastic_no_2')}</MenuItem>
                   </Select>
                   {formik.touched.category && formik.errors.category && (
                     <Typography color="error">{formik.errors.category}</Typography>
@@ -187,11 +187,11 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
                 </CustomField>
                 <Box mb="16px">
                 {/* 簡介 - Introduction */}
-                <CustomField label="簡介">
+                <CustomField  label={t('settings_page.recycling.introduction')}>
                     <CustomTextField
                     id="introduction"
                     value={formik.values.introduction}
-                    placeholder="請輸入文字"
+                    placeholder={t('settings_page.recycling.enter_text')}
                     onChange={formik.handleChange}
                     multiline
                     rows={4}
@@ -201,14 +201,14 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
 
                 <Box mb="16px">
                 {/* 備註 - Remarks */}
-                <CustomField label="備註">
+                <CustomField label={t('settings_page.recycling.remarks')}>
                     <CustomTextField
-                    id="remarks"
-                    value={formik.values.remarks}
-                    placeholder="請輸入文字"
-                    onChange={formik.handleChange}
-                    multiline
-                    rows={4}
+                      id="remarks"
+                      value={formik.values.remarks}
+                      placeholder={t('settings_page.recycling.enter_text')}
+                      onChange={formik.handleChange}
+                      multiline
+                      rows={4}
                     />
                 </CustomField>
                 </Box>
@@ -217,9 +217,9 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
 
           <TabPanel value={tabIndex} index={2}>
             <Box mb="16px">
-              <CustomField label="主類別 " mandatory>
+              <CustomField label={t('settings_page.recycling.main_category')} mandatory>
                 <FormControl fullWidth>
-                    <InputLabel id="subcategory-label">主類別</InputLabel>
+                    <InputLabel id="subcategory-label">{t('settings_page.recycling.category')}</InputLabel>
                     <Select
                       labelId="subcategory-label"
                       id="subcategory"
@@ -227,10 +227,10 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       error={formik.touched.subcategory && Boolean(formik.errors.subcategory)}
-                      label="次類別"
+                      label={t('settings_page.recycling.sub_category')}
                     >
-                      <MenuItem value="水樟">1號膠</MenuItem>
-                      <MenuItem value="菲林">2號膠</MenuItem>
+                      <MenuItem value="水樟">{t('settings_page.recycling.category')} 1</MenuItem>
+                      <MenuItem value="水樟">{t('settings_page.recycling.category')} 2</MenuItem>
                     </Select>
                     {formik.touched.subcategory && formik.errors.subcategory && (
                       <Typography color="error">{formik.errors.subcategory}</Typography>
@@ -240,9 +240,9 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
               </Box>
 
                 <Box mb="16px">
-                <CustomField label="次類別">
+                <CustomField label={t('settings_page.recycling.sub_category')}>
                   <FormControl fullWidth>
-                    <InputLabel id="subcategory-label">次類別</InputLabel>
+                    <InputLabel id="subcategory-label">{t('settings_page.recycling.sub_category')}</InputLabel>
                     <Select
                       labelId="subcategory-label"
                       id="subcategory"
@@ -250,10 +250,9 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       error={formik.touched.subcategory && Boolean(formik.errors.subcategory)}
-                      label="次類別"
-                    >
-                      <MenuItem value="水樽">水樽</MenuItem>
-                      <MenuItem value="菲林">菲林</MenuItem>
+                      label={t('settings_page.recycling.sub_category')}>
+                      <MenuItem value="water_bottle">{t('settings_page.recycling.water_bottle')}</MenuItem>
+                      <MenuItem value="film">{t('settings_page.recycling.film')}</MenuItem>
                     </Select>
                     {formik.touched.subcategory && formik.errors.subcategory && (
                       <Typography color="error">{formik.errors.subcategory}</Typography>
@@ -263,11 +262,11 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
                 </Box>
                 
               <Box mb="16px">
-              <CustomField label="簡介">
+              <CustomField label={t('settings_page.recycling.introduction')}>
                   <CustomTextField
                       id="introduction"
                       value={formik.values.introduction}
-                      placeholder="請輸入文字"
+                      placeholder={t('settings_page.recycling.enter_text')}
                       onChange={formik.handleChange}
                       multiline
                       rows={4}
@@ -276,11 +275,11 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, 
             </Box>
             <Box mb="16px">
               {/* 備註 - Remarks */}
-              <CustomField label="備註">
+              <CustomField label={t('settings_page.recycling.remarks')}>
                 <CustomTextField
                   id="remarks"
                   value={formik.values.remarks}
-                  placeholder="請輸入文字"
+                  placeholder={t('settings_page.recycling.enter_text')}
                   onChange={formik.handleChange}
                   multiline
                   rows={4}

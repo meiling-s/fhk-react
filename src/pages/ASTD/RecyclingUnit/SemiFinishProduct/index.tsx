@@ -17,6 +17,7 @@ import {
   } from '../../../../themes/icons'
 import SemiFinishProductForm from './SemiFinishProductForm';
 import NestedTableRow from './NestedTableRow';
+import { useTranslation } from 'react-i18next';
 
 type Products = {
   id: number;
@@ -65,33 +66,33 @@ const data: Products[] = [
   },
 ];
 
-
 const SemiFinishProduct: React.FC<SemiFinishProductProps> = () => {
+  const { t, i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   return (
     <>
       <Box>
       <Box display="flex" justifyContent="left" alignItems="center" my={2}>
-        <Typography variant="h6" marginRight="16px" fontWeight="bold">半製成品・產品類別</Typography>
+        <Typography fontSize="16px" marginRight="16px" fontWeight="bold">{t('settings_page.recycling.semi_finish_product')}</Typography>
         <Button
           variant="outlined"
           color="primary"
           onClick={() => setIsOpen(true)}
           startIcon={<ADD_ICON />}
-          sx={{ textTransform: 'none', borderRadius: '24px', padding: "8px 24px", fontWeight: "bold" }}
+          sx={{ textTransform: 'upercase', borderRadius: '24px', padding: "8px 24px", fontWeight: "bold" }}
         >
-          新增
+          {t('settings_page.recycling.new')}
         </Button>
       </Box>
       <TableContainer>
         <Table aria-label="nested table">
           <TableHead>
             <TableRow  sx={{ '&:last-child td, &:last-child th': { border: 0 }}}>
-              <TableCell sx={{borderBottom: 0, fontWeight: 'bold'}}>繁體中文名稱</TableCell>
-              <TableCell sx={{borderBottom: 0, fontWeight: 'bold'}}>简体中文名称</TableCell>
-              <TableCell sx={{borderBottom: 0, fontWeight: 'bold'}}>English Name</TableCell>
-              <TableCell sx={{borderBottom: 0, fontWeight: 'bold'}}>簡介</TableCell>
-              <TableCell sx={{borderBottom: 0, fontWeight: 'bold'}}>備註</TableCell>
+              <TableCell sx={{borderBottom: 0, fontWeight: 'bold'}}>{t('common.traditionalChineseName')}</TableCell>
+              <TableCell sx={{borderBottom: 0, fontWeight: 'bold'}}>{t('common.simplifiedChineseName')}</TableCell>
+              <TableCell sx={{borderBottom: 0, fontWeight: 'bold'}}>{t('common.englishName')}</TableCell>
+              <TableCell sx={{borderBottom: 0, fontWeight: 'bold'}}>{t('settings_page.recycling.introduction')}</TableCell>
+              <TableCell sx={{borderBottom: 0, fontWeight: 'bold'}}>{t('settings_page.recycling.remarks')}</TableCell>
               <TableCell sx={{borderBottom: 0, fontWeight: 'bold'}}></TableCell>
             </TableRow>
           </TableHead>
