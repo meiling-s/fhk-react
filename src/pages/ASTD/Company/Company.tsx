@@ -233,6 +233,7 @@ const Company: FunctionComponent = () => {
       renderCell: (params) => {
         return (
           <Button
+            data-testid={`astd-company-${params.row.companyType}-edit-button-6738`}
             onClick={(event) => {
               event.stopPropagation()
               handleAction(params, 'edit')
@@ -255,6 +256,7 @@ const Company: FunctionComponent = () => {
       renderCell: (params) => {
         return (
           <Button
+            data-testid={`astd-company-${params.row.companyType}-delete-button-5111`}
             onClick={(event) => {
               event.stopPropagation()
               handleAction(params, 'delete')
@@ -394,6 +396,7 @@ const Company: FunctionComponent = () => {
                 {t(`companyManagement.${item}`)}
               </Typography>
               <Button
+                data-typeid={`astd-company-${item}-new-button-5877`}
                 sx={[
                   styles.buttonOutlinedGreen,
                   {

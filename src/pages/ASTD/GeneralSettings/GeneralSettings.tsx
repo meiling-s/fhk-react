@@ -213,6 +213,7 @@ const ASTDSettings: FunctionComponent = () => {
           <div style={{ display: 'flex', gap: '8px' }}>
             <EDIT_OUTLINED_ICON
               fontSize="small"
+              data-testid={`astd-currency-edit-button-7605` + params.id}
               className="cursor-pointer text-grey-dark mr-2"
               onClick={(event) => {
                 event.stopPropagation()
@@ -234,6 +235,7 @@ const ASTDSettings: FunctionComponent = () => {
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
+              data-testid={`astd-currency-delete-button-3721` + params.id}
               onClick={(event) => {
                 event.stopPropagation()
                 handleAction(params, 'delete')
@@ -333,7 +335,10 @@ const ASTDSettings: FunctionComponent = () => {
             <Typography variant="body1" sx={{ flexGrow: 1 }}>
               {decimalValue !== null && decimalValue.decimalVal}
             </Typography>
-            <IconButton onClick={() => handleOpenSidebar('number')}>
+            <IconButton
+              onClick={() => handleOpenSidebar('number')}
+              data-testid="astd-number-format-edit-button-9208"
+            >
               <EditIcon />
             </IconButton>
           </Container>
@@ -364,7 +369,10 @@ const ASTDSettings: FunctionComponent = () => {
             <Typography variant="body1" sx={{ flexGrow: 1 }}>
               {dateFormat !== null && dateFormat?.dateFormat}
             </Typography>
-            <IconButton onClick={() => handleOpenSidebar('date')}>
+            <IconButton
+              onClick={() => handleOpenSidebar('date')}
+              data-testid="astd-date-format-edit-button-3456"
+            >
               <EditIcon />
             </IconButton>
           </Container>
@@ -395,7 +403,10 @@ const ASTDSettings: FunctionComponent = () => {
             <Typography variant="body1" sx={{ flexGrow: 1 }}>
               {weightFormat !== null && weightFormat?.weightVariance}
             </Typography>
-            <IconButton onClick={() => handleOpenSidebar('weight')}>
+            <IconButton
+              onClick={() => handleOpenSidebar('weight')}
+              data-testid="astd-weight-tolerance-edit-button-1958"
+            >
               <EditIcon />
             </IconButton>
           </Container>
@@ -412,6 +423,7 @@ const ASTDSettings: FunctionComponent = () => {
             {t('general_settings.currency_category')}
           </Typography>
           <Button
+            data-testid="astd-currency-new-button-3559"
             sx={[
               styles.buttonOutlinedGreen,
               {
