@@ -790,6 +790,7 @@
     "suspend": "暂停",
     "deleted": "已删除",
     "staffId": "员工编号",
+    "isAdmin": "是否管理员",
     "successCreatedUser": "成功创建用户",
     "failedCreatedUser": "创建用户失败",
     "successEditUser": "成功编辑用户",

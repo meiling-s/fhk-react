@@ -212,7 +212,8 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         tempV.push({
           field: t('userAccount.loginName'),
           problem: formErr.empty,
-          type: 'error'
+          type: 'error',
+          dataTestId: 'astd-user-form-login-name-err-warning-4845'
         })
 
       if (hasProhibitedSubstring(loginId, prohibitedLoginId)) {
@@ -232,13 +233,15 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         tempV.push({
           field: t('staffManagement.contactNumber'),
           problem: formErr.empty,
-          type: 'error'
+          type: 'error',
+          dataTestId: 'astd-user-form-email-address-err-warning-3197'
         })
       email?.toString() == '' &&
         tempV.push({
           field: t('userAccount.emailAddress'),
           problem: formErr.empty,
-          type: 'error'
+          type: 'error',
+          dataTestId: 'astd-user-form-contact-number-err-warning-5232'
         })
 
       !validateEmail(email) &&
@@ -429,6 +432,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
             {action == 'add' && (
               <CustomField label={t('userAccount.staffId')}>
                 <CustomTextField
+                  dataTestId="astd-user-form-staff-id-input-field-6488"
                   id="staffId"
                   value={staffId}
                   placeholder={t('userAccount.pleaseEnterNumber')}
@@ -439,6 +443,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
             <CustomField label={t('userAccount.loginName')} mandatory>
               <CustomTextField
                 id="LoginId"
+                dataTestId="astd-user-form-login-name-input-field-1164"
                 value={loginId}
                 disabled={action === 'delete' || action === 'edit'}
                 placeholder={t('userAccount.pleaseEnterName')}
@@ -452,6 +457,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                   <CustomField label={t('userAccount.emailAddress')} mandatory>
                     <CustomTextField
                       id="email"
+                      dataTestId="astd-user-form-email-address-input-field-7349"
                       value={email}
                       placeholder={t('userAccount.pleaseEnterEmailAddress')}
                       onChange={(event) => setEmail(event.target.value)}
@@ -466,6 +472,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 >
                   <CustomTextField
                     id="contactNo"
+                    dataTestId="astd-user-form-user-group-select-button-1083"
                     value={contactNo}
                     placeholder={t('staffManagement.enterContactNo')}
                     onChange={(event) => setContactNo(event.target.value)}
@@ -489,6 +496,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 <Select
                   labelId="userGroup"
                   id="userGroup"
+                  data-testid="astd-user-form-status-select-button-6538"
                   value={userGroup.toString()}
                   sx={{
                     borderRadius: '12px'
@@ -554,6 +562,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                     field={t(val.field)}
                     errorMsg={returnErrorMsg(val.problem, t)}
                     type={val.type}
+                    dataTestId={val.dataTestId}
                   />
                 ))}
             </Grid>
