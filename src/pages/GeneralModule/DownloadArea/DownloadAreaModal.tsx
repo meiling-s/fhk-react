@@ -86,16 +86,16 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   const [trySubmited, setTrySubmited] = useState<boolean>(false);
   const [validation, setValidation] = useState<formValidate[]>([]);
   const [tenant, setTenant] = useState<string>("");
-  const [selectedFormula, setSelectedFormula] = useState<number>(0);
+  const [selectedFormula, setSelectedFormula] = useState<number>(1);
 
   const initialFormula: formulaItem[] = [
     {
-      id: 0,
-      label: t("generate_report.formula_check_in"),
-    },
-    {
       id: 1,
       label: t("generate_report.formula_check_out"),
+    },
+    {
+      id: 0,
+      label: t("generate_report.formula_check_in"),
     },
   ];
 
@@ -112,6 +112,21 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   useEffect(() => {
     getReport();
   }, [selectedItem?.id, i18n.language]);
+
+  useEffect(() => {
+    setFormulaList(
+      [
+        {
+          id: 1,
+          label: t("generate_report.formula_check_out"),
+        },
+        {
+          id: 0,
+          label: t("generate_report.formula_check_in"),
+        },
+      ]
+    )
+  }, [i18n.language])
 
   const isValidDayjsISODate = (date: Dayjs): boolean => {
     if (!date.isValid()) {
@@ -409,7 +424,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     setStartDate(dayjs());
     setEndDate(dayjs());
     setTenant("");
-    setSelectedFormula(0);
+    setSelectedFormula(1);
   };
 
   const onCloseDrawer = () => {
