@@ -1178,7 +1178,10 @@
     "report_of_user_management_list": "用戶報表",
     "report_of_audit_trail": "審計追蹤報表",
     "report_of_user_activity": "用户活动报表",
-    "report_of_notification": "通知报表"
+    "report_of_notification": "通知报表",
+    "report_formula": "報表數據提取方式",
+    "formula_check_in": "以回收公司出貨作準",
+    "formula_check_out": "以工廠入貨作準"
   },
   "purchase_order": {
     "all_order": "所有订单",
