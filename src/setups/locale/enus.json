@@ -171,7 +171,31 @@
     "add_new_vehicle": "Add New Vehicle"
   },
   "settings_page": {
-    "title": "Settings"
+    "title": "Settings",
+    "recycling": {
+      "semi_finish_product": "Semi-finished Products ・ Product Categories",
+      "remarks": "Remarks",
+      "new": "New",
+      "add_new": "Add New",
+      "product_category": "Product Category",
+      "traditional_chinese_name": "Traditional Chinese Name",
+      "traditional_chinese_name_placeholder": "Please enter Traditional Chinese Name",
+      "simplified_chinese_name": "Simplified Chinese Name",
+      "simplified_chinese_name_placeholder": "Please enter Simplified Chinese Name",
+      "english_name": "English Name",
+      "english_name_placeholder": "Please enter English Name",
+      "introduction": "Introduction",
+      "introduction_placeholder": "Please enter introduction",
+      "category": "Category",
+      "main_category": "Main Category",
+      "sub_category": "Sub Category",
+      "additional_category": "Additional Category",
+      "plastic_no_1": "Plastic 1",
+      "plastic_no_2": "Plastic 2",
+      "enter_text": "Please enter text",
+      "water_bottle": "Water Bottle",
+      "film": "Film"
+    }
   },
   "warehouse_page": {
     "trad_name": "Traditional Name",

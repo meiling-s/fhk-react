@@ -171,7 +171,31 @@
     "add_new_vehicle": "添加新车辆"
   },
   "settings_page": {
-    "title": "设定"
+    "title": "设定",
+    "recycling": {
+      "semi_finish_product": "半成品 ・ 产品类别",
+      "remarks": "备注",
+      "new": "新",
+      "add_new": "新增",
+      "product_category": "产品类别",
+      "traditional_chinese_name": "繁体中文名称",
+      "traditional_chinese_name_placeholder": "请输入繁体中文名称",
+      "simplified_chinese_name": "简体中文名称",
+      "simplified_chinese_name_placeholder": "请输入简体中文名称",
+      "english_name": "英文名称",
+      "english_name_placeholder": "请输入英文名称",
+      "introduction": "简介",
+      "introduction_placeholder": "请输入简介",
+      "category": "类别",
+      "main_category": "主类别",
+      "sub_category": "次类别",
+      "additional_category": "追加类别",
+      "plastic_no_1": "1号塑料",
+      "plastic_no_2": "2号塑料",
+      "enter_text": "请输入文字",
+      "water_bottle": "水瓶",
+      "film": "胶片"
+    }
   },
   "warehouse_page": {
     "trad_name": "繁体中文名称",
@@ -1109,7 +1133,13 @@
     "introduction": "简介",
     "introduction_placeholder": "请输入简介",
     "remark": "备注",
-    "remark_placeholder": "请输入备注"
+    "remark_placeholder": "请输入备注",
+    "category": "类别",
+    "main_category": "主类别",
+    "sub_category": "次類別",
+    "additional_category": "追加类别",
+    "plastic_no_1": "1号胶",
+    "plastic_no_2": "2号胶"
   },
   "staffEnquiry": {
     "title": "員工查詢",
