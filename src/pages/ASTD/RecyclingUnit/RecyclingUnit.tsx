@@ -293,7 +293,7 @@ const RecyclingUnit: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} data-testid='astd-code-edit-button-6691'>
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
@@ -313,7 +313,7 @@ const RecyclingUnit: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} data-testid='astd-code-delete-button-8979'>
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
@@ -366,7 +366,7 @@ const RecyclingUnit: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} data-testid='astd-packaging-unit-edit-button-5410'>
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
@@ -386,7 +386,7 @@ const RecyclingUnit: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} data-testid='astd-packaging-unit-delete-button-6095'>
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
@@ -454,6 +454,7 @@ const RecyclingUnit: FunctionComponent = () => {
                 handleAction(params, 'edit', 'weight')
               }}
               style={{ cursor: 'pointer' }}
+              data-testid='astd-weight-edit-button-8782'
             />
           </div>
         )
@@ -474,6 +475,7 @@ const RecyclingUnit: FunctionComponent = () => {
                 handleAction(params, 'delete', 'weight')
               }}
               style={{ cursor: 'pointer' }}
+              data-testid='astd-weight-delete-button-7204'
             />
           </div>
         )
@@ -704,6 +706,7 @@ const RecyclingUnit: FunctionComponent = () => {
               setRecycDrawerOpen(true)
               setAction('add')
             }}
+            data-testid='astd-recyclable-new-button-5393'
           >
             <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
@@ -745,6 +748,7 @@ const RecyclingUnit: FunctionComponent = () => {
               setCodeDrawerOpen(true)
               setAction('add')
             }}
+            data-testid='astd-code-new-button-4949'
           >
             <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
@@ -817,6 +821,7 @@ const RecyclingUnit: FunctionComponent = () => {
                 setPackagingDrawerOpen(true)
                 setAction('add')
               }}
+              data-testid='astd-packaging-unit-new-button-1985'
             >
               <ADD_ICON /> {t('top_menu.add_new')}
             </Button>
@@ -891,6 +896,7 @@ const RecyclingUnit: FunctionComponent = () => {
                 setWeightDrawerOpen(true)
                 setAction('add')
               }}
+              data-testid='astd-weight-new-button-1075'
             >
               <ADD_ICON /> {t('top_menu.add_new')}
             </Button>
@@ -1073,6 +1079,7 @@ const CustomDataGrid = ({
       >
         {data.map((item: any, index: any) => (
           <div
+            key={index}
             style={{
               backgroundColor: '#fff',
               marginBottom: 15,
@@ -1080,7 +1087,6 @@ const CustomDataGrid = ({
             }}
           >
             <div
-              key={index}
               style={{
                 display: 'flex',
                 borderBottom: '1px solid #ccc',
@@ -1111,16 +1117,17 @@ const CustomDataGrid = ({
                   alignItems: 'center'
                 }}
               >
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex' }} data-testid={`astd-recyclable-edit-button-5941` + index}>
                   <EDIT_OUTLINED_ICON
                     fontSize="small"
                     className="cursor-pointer text-grey-dark mr-5"
                     onClick={() =>
                       customGridHandleAction(item, 'edit', 'mainCategory')
                     }
+                    
                   />
                 </div>
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex' }} data-testid={`astd-recyclable-delete-button-2955` + index}>
                   <DELETE_OUTLINED_ICON
                     fontSize="small"
                     className="cursor-pointer text-grey-dark mr-2"
@@ -1175,7 +1182,7 @@ const CustomDataGrid = ({
                       //marginLeft: -10
                     }}
                   >
-                    <div style={{ display: 'flex' }}>
+                    <div style={{ display: 'flex' }} data-testid={`astd-subrecyclable-edit-button-5941` + index}>
                       <EDIT_OUTLINED_ICON
                         fontSize="small"
                         className="cursor-pointer text-grey-dark mr-5"
@@ -1184,7 +1191,7 @@ const CustomDataGrid = ({
                         }
                       />
                     </div>
-                    <div style={{ display: 'flex' }}>
+                    <div style={{ display: 'flex' }} data-testid={`astd-subrecyclable-delete-button-2955` + index}>
                       <DELETE_OUTLINED_ICON
                         fontSize="small"
                         className="cursor-pointer text-grey-dark mr-2"
@@ -1244,6 +1251,7 @@ const DeleteModal: React.FC<DeleteForm> = ({
                 handleConfirmDelete()
                 onClose()
               }}
+              dataTestId='astd-recyclable-confirm-delete-button-4166'
             />
             <CustomButton
               text={t('check_in.cancel')}
@@ -1253,6 +1261,7 @@ const DeleteModal: React.FC<DeleteForm> = ({
               onClick={() => {
                 onClose()
               }}
+              dataTestId='astd-recyclable-cancel-delete-button-4338'
             />
           </Box>
         </Stack>
