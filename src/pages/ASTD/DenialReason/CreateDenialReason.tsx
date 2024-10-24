@@ -333,9 +333,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else {
-        setTrySubmited(true)
-        onSubmitData('error', t('common.saveFailed'))
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error.response.data.message);
       }
     }
   }
@@ -376,7 +375,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       const {state} = extractError(error);
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else if (state.code === STATUS_CODE[409]){
+      } else if (state.code === STATUS_CODE[409]) {
         showErrorToast(error.response.data.message);
       }
     }

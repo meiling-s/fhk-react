@@ -224,9 +224,13 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
       const {state} =  extractError(error)
       if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
-      } else {
-        setTrySubmited(true)
-        onSubmitData('error', t('common.saveFailed'))
+      } else if (state.code === STATUS_CODE[409]) {
+        const errorMessage = error.response.data.message
+        if (errorMessage.includes('[titleNameDuplicate]')) {
+          showErrorToast(handleDuplicateErrorMessage(errorMessage))
+        } else {
+          showErrorToast(error.response.data.message);
+        }
       }
     }
   }
@@ -262,7 +266,12 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else if (state.code === STATUS_CODE[409]) {
-        showErrorToast(error?.response?.data?.message)
+        const errorMessage = error.response.data.message
+        if (errorMessage.includes('[titleNameDuplicate]')) {
+          showErrorToast(handleDuplicateErrorMessage(errorMessage))
+        } else {
+          showErrorToast(error.response.data.message);
+        }
       }
     }
   }
@@ -298,6 +307,37 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
       }
     }
   }
+
+  const handleDuplicateErrorMessage = (input: string) => {
+    const replacements: { [key: string]: string } = {
+      '[tchi]': 'Traditional Chinese Name',
+      '[eng]': 'English Name',
+      '[schi]': 'Simplified Chinese Name'
+    };
+  
+    let result = input.replace(/\[titleNameDuplicate\]/, '');
+  
+    const matches = result.match(/\[(tchi|eng|schi)\]/g);
+  
+    if (matches) {
+      const replaced = matches.map(match => replacements[match as keyof typeof replacements]);
+  
+      let formatted: string;
+      if (replaced.length === 1) {
+        formatted = replaced[0];
+      } else if (replaced.length === 2) {
+        formatted = replaced.join(' and ');
+      } else if (replaced.length === 3) {
+        formatted = `${replaced[0]}, ${replaced[1]} and ${replaced[2]}`;
+      }
+  
+      result = result.replace(/\[(tchi|eng|schi)\]+/, formatted!);
+  
+      result = result.replace(/\[(tchi|eng|schi)\]/g, '');
+    }
+  
+    return result.trim();
+  };
 
   return (
     <div className="add-vehicle">

@@ -129,6 +129,7 @@ const GeneralSettings: FunctionComponent = () => {
       const result = await getTenantById(parseInt(token.tenantId))
       const data = result?.data
       setTenantCurrency(data?.monetaryValue || '')
+      setMonetaryVersion(data?.version || 0)
     } catch (error: any) {
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {

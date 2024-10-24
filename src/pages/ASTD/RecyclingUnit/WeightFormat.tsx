@@ -106,7 +106,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
 
     useEffect(() => {
         setTrySubmitted(false)
-        if (action === 'edit') {
+        if (action === 'edit' || action === 'delete') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 setTChineseName(selectedItem.unitNameTchi)
                 setSChineseName(selectedItem.unitNameSchi)
@@ -128,6 +128,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
         setEquivalent('')
         setDescription('')
         setRemark('')
+        setVersion(0)
     }
 
     const checkString = (s: string) => {
@@ -222,9 +223,9 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
             const { state } = extractError(error)
             if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-              } else if (state.code === STATUS_CODE[409]){
+            } else if (state.code === STATUS_CODE[409]) {
                 showErrorToast(error.response.data.message);
-              }
+            }
 
         }
     }

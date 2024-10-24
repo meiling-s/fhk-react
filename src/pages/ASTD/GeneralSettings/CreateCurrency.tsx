@@ -53,12 +53,10 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
   const [remark, setRemark] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
-  const [validation, setValidation] = useState<
-    { field: string; error: string }[]
-  >([])
+  const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
   const [showError, setShowError] = useState<boolean>(false)
   const [version, setVersion] = useState<number>(0)
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     resetData()
@@ -108,11 +106,11 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
           resetData()
         }
       } catch (error: any) {
-        const { state } = extractError(error)
+        const { state } = extractError(error);
         if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
         } else if (state.code === STATUS_CODE[409]) {
-          showErrorToast(error.response.data.message)
+          showErrorToast(error.response.data.message);
         }
       }
     }
@@ -152,14 +150,20 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
         resetData()
       }
     } catch (error: any) {
-      const { state } = extractError(error)
+      const { state } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else {
-        showErrorToast(t('errorCreated.errorCreated'))
+      } else if (state.code === STATUS_CODE[409]) {
+        const errorMessage = error.response.data.message
+        if (errorMessage.includes('[monetaryDuplicate]')) {
+          showErrorToast(handleDuplicateErrorMessage(errorMessage))
+        } else {
+          showErrorToast(error.response.data.message);
+        }
       }
     }
   }
+
 
   const editCurrencyData = async (data: any) => {
     if (selectedItem !== null && selectedItem !== undefined) {
@@ -175,11 +179,22 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
         if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
         } else if (state.code === STATUS_CODE[409]) {
-          showErrorToast(error.response.data.message)
+          const errorMessage = error.response.data.message
+          if (errorMessage.includes('[monetaryDuplicate]')) {
+            showErrorToast(handleDuplicateErrorMessage(errorMessage))
+          } else {
+            showErrorToast(error.response.data.message);
+          }
         }
       }
     }
   }
+
+  const handleDuplicateErrorMessage = (input: string) => {
+    let result = input.replace('[monetaryDuplicate]', '');
+
+    return result
+  };
 
   return (
     <div className="add-vehicle">

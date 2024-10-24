@@ -694,7 +694,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       updatedBy: 'string',
       warehouseRecyc: recycleCategory,
       ...(role === 'collector' && { workshopFlg: workshopFlg }),
-      ...(role === 'collector' && { version: version })
+      version: version
     }
 
     return addWarehouseForm

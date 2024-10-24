@@ -77,6 +77,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
   const initStaff: string[] = ['']
 
   const [rosterDate, setRosterDate] = useState<string>('')
+  const [rosterReason, setRosterReason] = useState<string>('')
   const [dateParent, setDateParent] = useState<dayjs.Dayjs>(dayjs())
   const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs())
   const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs())
@@ -175,6 +176,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
       setRosterDate(selectedRoster.startAt)
       setStartDate(dayjs(selectedRoster.startAt))
       setEndDate(dayjs(selectedRoster.endAt))
+      setRosterReason(selectedRoster.reason)
       setSelectedColPoint(selectedRoster.collectionPoint.colId.toString())
       setRoutineType(selectedRoster.routineType)
       setSelectedStaff(staffIdList.length > 0 ? staffIdList : initStaff)
@@ -186,6 +188,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
     setSelectedColPoint('')
     setStartDate(dayjs())
     setEndDate(dayjs())
+    setRosterReason('')
     setSelectedStaff(initStaff)
     setValidation([])
     setTrySubmited(false)
@@ -353,7 +356,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
       startAt: formattedDate(startDate),
       endAt: formattedDate(endDate),
       status: 'ACTIVE',
-      reason: 0,
+      reason: rosterReason,
       createdBy: loginName,
       updatedBy: loginName
     }
@@ -380,7 +383,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
 
   const handleCancelRoster = async () => {
     const cancelForm = {
-      reason: 0,
+      reason: rosterReason,
       updatedBy: loginName
     }
     if (selectedRoster) {
@@ -518,11 +521,13 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                     setSelectedColPoint(event.target.value)
                   }}
                 >
-                  {colPointList.length > 0 ? (colPointList?.map((item, index) => (
-                    <MenuItem key={index} value={item.id}>
-                      {item.name}
-                    </MenuItem>
-                  ))) : (
+                  {colPointList.length > 0 ? (
+                    colPointList?.map((item, index) => (
+                      <MenuItem key={index} value={item.id}>
+                        {item.name}
+                      </MenuItem>
+                    ))
+                  ) : (
                     <MenuItem disabled value="">
                       <em>{t('common.noOptions')}</em>
                     </MenuItem>
@@ -573,14 +578,16 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                       }}
                       error={trySubmited && selectedStaff.length == 0}
                     >
-                      {staffList.length > 0 ? (staffList?.map((item, index) => (
-                        <MenuItem key={index} value={item.id}>
-                          {`${item.id} - ${item.name}`}
-                        </MenuItem>
-                      ))) : (
+                      {staffList.length > 0 ? (
+                        staffList?.map((item, index) => (
+                          <MenuItem key={index} value={item.id}>
+                            {`${item.id} - ${item.name}`}
+                          </MenuItem>
+                        ))
+                      ) : (
                         <MenuItem disabled value="">
-                      <em>{t('common.noOptions')}</em>
-                    </MenuItem>
+                          <em>{t('common.noOptions')}</em>
+                        </MenuItem>
                       )}
                     </Select>
                   </FormControl>

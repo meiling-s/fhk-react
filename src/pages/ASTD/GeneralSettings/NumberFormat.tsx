@@ -166,12 +166,11 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
                 )}
                 onChange={(event, value) => {
                   if (value) {
-                    const selecteddecimalVal = decimalValList.find(
-                      (item) => item.decimalVal === value
-                    )
+                    const selecteddecimalVal = decimalValList.find((item) => item.decimalVal === value);
                     if (selecteddecimalVal) {
-                      setNumFormat(selecteddecimalVal.decimalVal)
-                      setDecimalValId(selecteddecimalVal.decimalValId)
+                      setNumFormat(selecteddecimalVal.decimalVal);
+                      setDecimalValId(selecteddecimalVal.decimalValId);
+                      setVersion(selecteddecimalVal.version)
                     }
                   }
                 }}

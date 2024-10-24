@@ -798,7 +798,8 @@
     "failedDeleteUser": "删除用户失败",
     "resetPasswaitApproval": "重置密码等待批准",
     "resetPassword": "重设密码",
-    "emailIsExisting": "电邮地址已经被使用过, 请问要继续吗?"
+    "emailIsExisting": "电邮地址已经被使用过, 请问要继续吗?",
+    "passwordPolicy": "新密码与之前 8 个密码之一相同，请提供另一个密码"
   },
   "checkinandcheckout": {
     "checkinandcheckout": "概覽",
@@ -988,7 +989,7 @@
   "companyManagement": {
     "collectorlist": "回收公司",
     "logisticlist": "物流公司",
-    "manulist": "回收厂",
+    "manulist": "制造商",
     "customerlist": "顾客公司",
     "brNo": "商业登记号码",
     "enterBrNo": "请输入商业登记号码"

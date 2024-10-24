@@ -269,7 +269,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       updatedBy: loginId,
       vehicleTypeId: vehicleTypeId,
       netWeight: Number(vehicleWeight),
-      ...(action === 'edit' && {version: version})
+      ...(action === 'edit' && {version: version}),
+      ...(action === 'delete' && {version: version})
     }
     //console.log('iamge', ImageToBase64(pictures))
     if (action == 'add') {
