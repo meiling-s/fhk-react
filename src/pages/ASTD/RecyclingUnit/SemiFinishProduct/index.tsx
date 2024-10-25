@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Table,
   TableBody,
@@ -11,64 +12,43 @@ import {
   Typography,
 } from '@mui/material';
 
-import {
-    ADD_ICON,
- 
-  } from '../../../../themes/icons'
+import {ADD_ICON} from '../../../../themes/icons'
+import { Products } from '../../../../types/settings';
 import SemiFinishProductForm from './SemiFinishProductForm';
 import NestedTableRow from './NestedTableRow';
-import { useTranslation } from 'react-i18next';
+import { getProductTypeList } from '../../../../APICalls/ASTD/settings/productType';
+import CircularLoading from '../../../../components/CircularLoading';
 
-type Products = {
-  id: number;
-  traditionalName: string;
-  simplifiedName: string;
-  englishName: string;
-  subProducts?: Products[];
-};
-
-type SemiFinishProductProps = {
-    handleClick: () => void
+export type SemiFinishProductProps = {
+  handleClick: () => void
 }
 
-const data: Products[] = [
-  {
-    id: 1,
-    traditionalName: '1号胶',
-    simplifiedName: '1号胶',
-    englishName: 'No. 1 glue',
-    subProducts: [
-      {
-        id: 2,
-        traditionalName: '水沟',
-        simplifiedName: '水瓶子',
-        englishName: 'Water Bottle',
-        subProducts: [
-          { id: 3, traditionalName: '500ml', simplifiedName: '-', englishName: '-' },
-          { id: 4, traditionalName: '菲林', simplifiedName: '-', englishName: '-' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 5,
-    traditionalName: '2号胶',
-    simplifiedName: '2号胶',
-    englishName: 'No. 2 glue',
-    subProducts: [],
-  },
-  {
-    id: 6,
-    traditionalName: '其他',
-    simplifiedName: '-',
-    englishName: '-',
-    subProducts: [],
-  },
-];
-
 const SemiFinishProduct: React.FC<SemiFinishProductProps> = () => {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [products, setProducts] = useState<Products[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await getProductTypeList();
+        const fetchedProducts = response.data; 
+        setProducts(fetchedProducts);
+      } catch (err) {
+        console.error('Error fetching product types:', err);
+        setError('Failed to load product types.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []); 
+ 
+  if (loading) return <CircularLoading/>
+  if (error) return <p>{error}</p>;
+ 
   return (
     <>
       <Box>
@@ -97,8 +77,8 @@ const SemiFinishProduct: React.FC<SemiFinishProductProps> = () => {
             </TableRow>
           </TableHead>
           <TableBody sx={{backgroundColor: 'white'}}>
-            {data.map((product) => (
-              <NestedTableRow key={product.id} products={product} />
+            {products.map((product: Products) => (
+              <NestedTableRow key={product.productTypeId} products={product} />
             ))}
           </TableBody>
         </Table>
