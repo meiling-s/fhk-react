@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import { Box, FormControl, InputLabel, Select, MenuItem, Tabs, Tab, Typography } from '@mui/material';
 import RightOverlayForm from '../../../../components/RightOverlayForm';
 import CustomField from '../../../../components/FormComponents/CustomField';
 import CustomTextField from '../../../../components/FormComponents/CustomTextField';
-import { useTranslation } from 'react-i18next';
 import { Products } from '../../../../types/settings';
+import { createProductType } from '../../../../APICalls/ASTD/settings/productType';
 
 const validationSchema = Yup.object({
   traditionalName: Yup.string().required('Required'),
@@ -48,27 +50,63 @@ function TabPanel(props: { children: React.ReactNode; value: number; index: numb
 
 const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({isEditMode = false, initialData, handleClose, open, handleSubmit }) => {
   const [tabIndex, setTabIndex] = useState(0);
-  const {t, i18n} = useTranslation()
+  const {t} = useTranslation()
   const handleTabChange = (event: React.ChangeEvent<{}>, newIndex: number) => {
     setTabIndex(newIndex);
   };
 
   const formik = useFormik({
     initialValues: {
-      traditionalName: '',
-      simplifiedName: '',
-      englishName: '',
+      traditionalName: initialData?.productNameTchi || '',
+      simplifiedName: initialData?.productNameSchi || '',
+      englishName: initialData?.productNameEng || '',
       category: '',
       subcategory: '',
-      introduction: '',
-      remarks: '',
+      introduction: initialData?.description || '',
+      remarks: initialData?.remark || '',
     },
     validationSchema,
     onSubmit: (values) => {
-      console.log(values);
+      const payload = {
+        productNameTchi: values.traditionalName,
+        productNameSchi: values.simplifiedName,
+        productNameEng: values.englishName,
+        description: values.introduction,
+        remark: values.remarks,
+        createdBy: localStorage.getItem('username') || '',
+        updatedBy: localStorage.getItem('username') || '',
+      };
+      console.log(payload);
+      handleSubmit();
     },
   });
-
+  const onSubmitForm = async () => {
+    try {
+      
+      const payload = {
+        productNameTchi: formik.values.traditionalName,
+        productNameSchi: formik.values.simplifiedName,
+        productNameEng: formik.values.englishName,
+        description: formik.values.introduction,
+        remark: formik.values.remarks,
+        createdBy: localStorage.getItem('username') || '',
+        updatedBy: localStorage.getItem('username') || '',
+      };
+  
+      const response = await createProductType(payload);
+      console.log('API Response:', response.data);
+  
+      toast.success('Product type created successfully!');
+  
+      handleSubmit();
+      handleClose();
+    } catch (error) {
+      console.error('Error during form submission:', error);
+      // Show error toast
+      toast.error('Failed to create product type. Please try again.');
+    }
+  };
+  
   return (
     <RightOverlayForm
       open={open}
@@ -81,7 +119,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({isEditMode = f
         submitText: 'Save',
         cancelText: 'Cancel',
         onCloseHeader: handleClose,
-        onSubmit: () => handleSubmit,
+        onSubmit: () => onSubmitForm(),
       }}
     >
       <form onSubmit={formik.handleSubmit}>
