@@ -720,10 +720,7 @@ const RecyclingUnit: FunctionComponent = () => {
             />
           </Box>
         </div>
-        <SemiFinishProduct handleClick={() => {
-          setDrawerOpen(true);
-          setAction('add');
-          }} />
+        <SemiFinishProduct />
         <Box
           sx={{
             display: 'flex',

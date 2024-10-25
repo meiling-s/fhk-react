@@ -6,6 +6,7 @@ import RightOverlayForm from '../../../../components/RightOverlayForm';
 import CustomField from '../../../../components/FormComponents/CustomField';
 import CustomTextField from '../../../../components/FormComponents/CustomTextField';
 import { useTranslation } from 'react-i18next';
+import { Products } from '../../../../types/settings';
 
 const validationSchema = Yup.object({
   traditionalName: Yup.string().required('Required'),
@@ -18,6 +19,8 @@ const validationSchema = Yup.object({
 });
 
 type SemiFinishProductProps = {
+  isEditMode?: boolean;
+  initialData?: Products
   handleClose: () => void;
   handleSubmit: () => void;
   open: boolean;
@@ -27,6 +30,7 @@ function TabPanel(props: { children: React.ReactNode; value: number; index: numb
   const { children, value, index, ...other } = props;
   return (
     <div
+      data-testId=""
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
@@ -42,7 +46,7 @@ function TabPanel(props: { children: React.ReactNode; value: number; index: numb
   );
 }
 
-const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({ handleClose, open, handleSubmit }) => {
+const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({isEditMode = false, initialData, handleClose, open, handleSubmit }) => {
   const [tabIndex, setTabIndex] = useState(0);
   const {t, i18n} = useTranslation()
   const handleTabChange = (event: React.ChangeEvent<{}>, newIndex: number) => {
