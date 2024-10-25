@@ -11,6 +11,9 @@ import {
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { ProductAddon, Products, ProductSubType } from '../../../../types/settings';
 import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../../../themes/icons';
+import SemiFinishProductForm from './SemiFinishProductForm';
+import { getProductType, getProductSubtype, getProductAddonType } from '../../../../APICalls/ASTD/settings/productType';
+
 
 type NestedTableRowProps = {
   products: Products;
@@ -19,6 +22,10 @@ type NestedTableRowProps = {
 const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
   const [open, setOpen] = useState(false);
   const [subtypeOpen, setSubtypeOpen] = useState<{ [key: string]: boolean }>({});
+  const [isOpenForm, setIsOpenForm] = useState<boolean>(false);
+  const [activetab, setActiveTab] = useState<number>(0)
+  
+  const [initialDataProduct, setInitialData] = useState<any>({});
 
   const toggleSubtypeOpen = (id: string) => {
     setSubtypeOpen((prevState) => ({
@@ -26,22 +33,58 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
       [id]: !prevState[id],
     }));
   };
+  
+  const handleFetchInitialData = async (id: string) => {
+    try {
+      const response = await getProductType(id);
+      console.log(response.data)
+      setInitialData(response.data); 
+      
+    } catch (error) {
+      console.error('Failed to fetch initial data:', error);
+    }
+  };
+
+  const handleFetchSubtypeData = async (id: string) => {
+    try {
+      const response = await getProductSubtype(id);
+      setInitialData(response.data); 
+      
+    } catch (error) {
+      console.error('Failed to fetch subtype data:', error);
+    }
+  };
+  
+  const handleFetchAddonData = async (id: string) => {
+    try {
+      const response = await getProductAddonType(id);
+      setInitialData(response.data); 
+      
+    } catch (error) {
+      console.error('Failed to fetch addon data:', error);
+    }
+  };
 
   const handleEditProduct = (id: string) => {
-    console.log('Edit Product:', id);
+    setIsOpenForm(true);
+    setActiveTab(0)
+    handleFetchInitialData(id);
   };
 
   const handleEditSubProduct = (id: string) => {
-    console.log('Edit Sub-Product:', id);
+    setIsOpenForm(true);
+    setActiveTab(1)
+    handleFetchSubtypeData(id);
   };
 
   const handleEditProductAddon = (id: string) => {
-    console.log('Edit Product Addon:', id);
+    setIsOpenForm(true);
+    setActiveTab(2)
+    handleFetchAddonData(id);
   };
 
   const handleDeleteProduct = (id: string) => {
     console.log('Delete Product:', id);
-    
   };
 
   const handleDeleteSubProduct = (id: string) => {
@@ -51,6 +94,12 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
   const handleDeleteProductAddon = (id: string) => {
     console.log('Delete Product Addon:', id);
   };
+  
+  const handleClose = () => {
+    setInitialData('')
+    setIsOpenForm(false)
+    setActiveTab(0)
+  }
 
   return (
     <>
@@ -96,7 +145,8 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
                         <TableCell sx={{ paddingLeft: 4 }}>
                           {subProduct.productAddonType && subProduct.productAddonType.length > 0 && (
                             <IconButton
-              data-testId=""                aria-label="expand row"
+                              data-testId=""
+                              aria-label="expand row"
                               size="small"
                               onClick={() => toggleSubtypeOpen(subProduct.productSubTypeId)}
                             >
@@ -160,6 +210,14 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
           </TableCell>
         </TableRow>
       )}
+      <SemiFinishProductForm
+        activeTab={activetab}
+        isEditMode
+        initialData={initialDataProduct}
+        open={isOpenForm}
+        handleClose={() => handleClose()}
+        handleSubmit={() => {}}
+      />
     </>
   );
 };
