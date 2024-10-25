@@ -28,22 +28,26 @@ import { ToastContainer, toast } from 'react-toastify'
 import CircularLoading from '../../../components/CircularLoading'
 import { useTranslation } from 'react-i18next'
 import { extractError, returnApiToken } from '../../../utils/utils'
-import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { STATUS_CODE } from '../../../constants/constant'
 import { useNavigate } from 'react-router-dom'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
-import { ProcessTypeItem } from '../../../interfaces/processType'
+import { ProcessTypeData, ProcessTypeItem } from '../../../interfaces/processType'
 import CreateProcessType from './CreateProcessType'
 import { getWeightUnit } from '../../../APICalls/ASTD/recycling'
 import { WeightUnit } from '../../../interfaces/weightUnit'
+import { getProcessTypeData } from '../../../APICalls/Collector/processType'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+
 
 const ProcessType: FunctionComponent = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [processTypeData, setProcessTypeData] = useState<ProcessTypeItem[]>(
+  const {weightUnits} = useContainer(CommonTypeContainer)
+  const [processTypeData, setProcessTypeData] = useState<ProcessTypeData[]>(
     []
   )
-  const [selectedRow, setSelectedRow] = useState<ProcessTypeItem | null>(null)
+  const [selectedRow, setSelectedRow] = useState<ProcessTypeData | null>(null)
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
   const [page, setPage] = useState(1)
@@ -55,17 +59,56 @@ const ProcessType: FunctionComponent = () => {
   const [weightUnit, setWeightUnit] = useState<WeightUnit[]>([])
 
   useEffect(() => {
-    getProcessTypeData()
+    initProcessTypeData()
     initWeightUnit()
   }, [page])
 
-  const getProcessTypeData = () => {
-    console.log('hit')
+  const initProcessTypeData = async () => {
+    try {
+      const result = await getProcessTypeData(page - 1, pageSize)
+      const data = result?.data
+      if (data) {
+        var processTypeMapping: ProcessTypeData[] = []
+  
+        data.content.map((item: ProcessTypeData) => {
+          const selectedWeightUnit = weightUnits.find(value => value.unitId === item?.processingWeightUnitId)
+          const weightUnitLang = i18n.language === 'enus' ? selectedWeightUnit?.unitNameEng : i18n.language === 'zhhk' ? selectedWeightUnit?.unitNameTchi : selectedWeightUnit?.unitNameSchi
+          const selectedTimeUnit = item?.processingTimeUnit === 'D' ? 'Day' : item?.processingTimeUnit === 'h' ? 'Hour' : item?.processingTimeUnit === 'm' ? 'Minute' : 'Second'
+          processTypeMapping.push({
+            processTypeNameEng: item?.processTypeNameEng,
+            processTypeNameSchi: item?.processTypeNameSchi,
+            processTypeNameTchi: item?.processTypeNameTchi,
+            processTypeId: item?.processTypeId,
+            description: item?.description,
+            remark: item?.remark,
+            createdAt: item?.createdAt,
+            createdBy: item?.createdBy,
+            updatedAt: item?.updatedAt,
+            updatedBy: item?.updatedBy,
+            processingTime: item?.processingTime,
+            processingTimeUnit: item?.processingTimeUnit,
+            processingWeightUnitId: item?.processingWeightUnitId,
+            status: item?.status,
+            processingStructure: `${item?.processingTime} ${selectedTimeUnit} / ${weightUnitLang}`,
+            version: item?.version
+          })
+        })
+
+        setProcessTypeData(processTypeMapping)
+        setTotalData(data.totalPages)
+      }
+
+    } catch (error) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+    }
   }
 
   const initWeightUnit = async () => {
     try {
-      const result = await getWeightUnit(page - 1, pageSize)
+      const result = await getWeightUnit(0, 1000)
       const data = result?.data
 
       setWeightUnit(data)
@@ -97,7 +140,7 @@ const ProcessType: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'processTypeTime',
+      field: 'processingStructure',
       headerName: t('process_type.time'),
       width: 300,
       type: 'string'
@@ -129,6 +172,7 @@ const ProcessType: FunctionComponent = () => {
                 handleAction(params, 'edit')
               }}
               style={{ cursor: 'pointer' }}
+              data-testId='astd-product-type-edit-button-4166'
             />
           </div>
         )
@@ -149,6 +193,7 @@ const ProcessType: FunctionComponent = () => {
                 handleAction(params, 'delete')
               }}
               style={{ cursor: 'pointer' }}
+              data-testId='astd-product-type-delete-button-4927'
             />
           </div>
         )
@@ -174,6 +219,7 @@ const ProcessType: FunctionComponent = () => {
   }
 
   const onSubmitData = (type: string, msg: string) => {
+    initProcessTypeData()
     if (type == 'success') {
       showSuccessToast(msg)
     } else {
@@ -256,6 +302,7 @@ const ProcessType: FunctionComponent = () => {
               setDrawerOpen(true)
               setAction('add')
             }}
+            data-testid='astd-product-type-new-button-4297'
           >
             <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
@@ -268,17 +315,18 @@ const ProcessType: FunctionComponent = () => {
               <Box>
                 <DataGrid
                   rows={processTypeData}
-                  getRowId={(row) => row.id}
+                  getRowId={(row) => row.processTypeId}
                   hideFooter
                   columns={columns}
                   onRowClick={handleSelectRow}
                   getRowSpacing={getRowSpacing}
                   localeText={localeTextDataGrid}
-                  getRowClassName={(params) =>
-                    selectedRow && params.id === selectedRow.id
-                      ? 'selected-row'
-                      : ''
-                  }
+                  getRowClassName={(params) =>{
+                    if (selectedRow && params.id === selectedRow.processTypeId) {
+                      return 'selectedRow'
+                    }
+                    return ''
+                  }}
                   sx={{
                     border: 'none',
                     '& .MuiDataGrid-cell': {
@@ -325,6 +373,7 @@ const ProcessType: FunctionComponent = () => {
           rowId={rowId}
           onSubmitData={onSubmitData}
           weightUnit={weightUnit}
+          selectedItem={selectedRow}
         />
       </Box>
     </>

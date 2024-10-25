@@ -32,8 +32,9 @@ import {
 } from '../../../APICalls/Collector/packagingUnit'
 import CustomItemList from '../../../components/FormComponents/CustomItemList'
 import { useNavigate } from 'react-router-dom'
-import { ProcessTypeItem } from '../../../interfaces/processType'
+import { CreateProcessTypeProps, ProcessTypeData } from '../../../interfaces/processType'
 import { WeightUnit } from '../../../interfaces/weightUnit'
+import { createProcessTypeData, deleteProcessTypeData, updateProcessTypeData } from '../../../APICalls/Collector/processType'
 
 interface CreateProcessType {
   drawerOpen: boolean
@@ -41,7 +42,7 @@ interface CreateProcessType {
   action: 'add' | 'edit' | 'delete' | 'none'
   onSubmitData: (type: string, msg: string) => void
   rowId?: number
-  selectedItem?: ProcessTypeItem | null
+  selectedItem?: ProcessTypeData | null
   weightUnit: WeightUnit[]
 }
 
@@ -54,13 +55,13 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
   selectedItem,
   weightUnit
 }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [tChineseName, setTChineseName] = useState<string>('')
   const [sChineseName, setSChineseName] = useState<string>('')
   const [englishName, setEnglishName] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [remark, setRemark] = useState<string>('')
-  const [packagingTypeId, setPackagingTypeId] = useState<string>('')
+  const [processTypeId, setProcessTypeId] = useState<string>('')
   const [status, setStatus] = useState<string>('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
@@ -70,30 +71,47 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
   const [processWeight, setProcessWeight] = useState<string>('')
   const navigate = useNavigate();
   const number = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  const time = ['Minutes', 'Hours']
+  const time = [
+    {
+      id: 'D',
+      nameEn: 'Day',
+      nameTchi: '日',
+      nameSchi: '日',
+    },
+    {
+      id: 'h',
+      nameEn: 'Hour',
+      nameTchi: '小時',
+      nameSchi: '小时',
+    },
+    {
+      id: 'm',
+      nameEn: 'Minute',
+      nameTchi: '分鐘',
+      nameSchi: '分钟'
+    },
+    {
+      id: 's',
+      nameEn: 'Second',
+      nameTchi: '秒',
+      nameSchi: '秒'
+    }
+  ]
 
   useEffect(() => {
     if (action === 'edit' || action === 'delete') {
       if (selectedItem !== null && selectedItem !== undefined) {
-        // setPackagingTypeId(selectedItem.packagingTypeId)
-        // setTChineseName(selectedItem.packagingNameTchi)
-        // setSChineseName(selectedItem.packagingNameSchi)
-        // setEnglishName(selectedItem.packagingNameEng)
-        // setDescription(selectedItem.description)
-        // setRemark(selectedItem.remark)
-        // setStatus(selectedItem.status)
-        // setVersion(selectedItem.version ?? 0)
-
-        // // set existing name
-        // setEngNameExisting(
-        //   engNameList.filter((item) => item != selectedItem.packagingNameEng)
-        // )
-        // setSchiNameExisting(
-        //   schiNameList.filter((item) => item != selectedItem.packagingNameSchi)
-        // )
-        // setTchiNameExisting(
-        //   tchiNameList.filter((item) => item != selectedItem.packagingNameTchi)
-        // )
+        setProcessTypeId(selectedItem.processTypeId)
+        setTChineseName(selectedItem.processTypeNameTchi)
+        setSChineseName(selectedItem.processTypeNameSchi)
+        setEnglishName(selectedItem.processTypeNameEng)
+        setDescription(selectedItem.description)
+        setRemark(selectedItem.remark)
+        setStatus(selectedItem.status)
+        setProcessTime(selectedItem.processingTimeUnit)
+        setProcessNumber(selectedItem.processingTime.toString())
+        setProcessWeight(selectedItem.processingWeightUnitId.toString())
+        setVersion(selectedItem.version ?? 0)
       }
     } else if (action === 'add') {
       resetData()
@@ -120,25 +138,29 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
         tempV.push({
           field: t('process_type.traditional_chinese_name'),
           problem: formErr.empty,
-          type: 'error'
+          type: 'error',
+          dataTestId: 'astd-product-type-form-tc-err-warning-3762'
         })
       sChineseName.toString() == '' &&
         tempV.push({
           field: t('process_type.simplified_chinese_name'),
           problem: formErr.empty,
-          type: 'error'
+          type: 'error',
+          dataTestId: 'astd-product-type-form-sc-err-warning-3672'
         })
       englishName.toString() == '' &&
         tempV.push({
           field: t('process_type.english_name'),
           problem: formErr.empty,
-          type: 'error'
+          type: 'error',
+          dataTestId: 'astd-product-type-form-en-err-warning-3278'
         })
       processNumber.toString() == '' && processTime.toString() == '' && processWeight.toString() == '' &&
         tempV.push({
           field: t('process_type.time'),
           problem: formErr.empty,
-          type: 'error'
+          type: 'error',
+          dataTestId: 'astd-product-type-form-time-err-warning-6697'
         })
 
       setValidation(tempV)
@@ -159,31 +181,33 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
     const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
 
-    const formData: CreatePackagingUnitProps = {
-      tenantId: tenantId,
-      packagingNameTchi: tChineseName,
-      packagingNameSchi: sChineseName,
-      packagingNameEng: englishName,
+    const formData: CreateProcessTypeProps = {
+      processTypeNameTchi: tChineseName,
+      processTypeNameSchi: sChineseName,
+      processTypeNameEng: englishName,
       description: description,
       remark: remark,
-      status: status,
-      createdBy: loginId,
-      updatedBy: loginId,
-      ...(action === 'edit' && { version: version })
+      status: 'ACTIVE',
+      processingTime: Number(processNumber),
+      processingTimeUnit: processTime,
+      processingWeightUnitId: Number(processWeight),
+      ...(action === 'edit' && {version: version}),
+      // ...(action === 'delete' && {version: version})
+
     }
     if (action == 'add') {
-      handleCreatePackaging(formData)
+      handleCreateProcessType(formData)
     } else if (action == 'edit') {
-      handleEditPackaging(formData, packagingTypeId)
-    } else if (action === 'delete') {
+      handleEditProcessType(formData, processTypeId)
+    } else if (action == 'delete') {
       handleDelete()
     }
   }
 
-  const handleCreatePackaging = async (formData: CreatePackagingUnitProps) => {
+  const handleCreateProcessType = async (formData: CreateProcessTypeProps) => {
     try {
       if (validation.length === 0) {
-        const result = await createPackaging(formData)
+        const result = await createProcessTypeData(formData)
         if (result) {
           onSubmitData('success', t('common.saveSuccessfully'))
           resetData()
@@ -199,31 +223,34 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
-        if (error?.response?.data?.status === STATUS_CODE[500] ||
-          error?.response?.data?.status === STATUS_CODE[409]) {
-          setValidation(
-            [
-              {
-                field: t('common.packageName'),
-                problem: '',
-                type: 'error'
-              }
-            ]
-          )
+        if (error?.response?.data?.status === STATUS_CODE[409]) {
+          showErrorToast(error?.response?.data?.message);
         }
+        // if (error?.response?.data?.status === STATUS_CODE[500] ||
+        //   error?.response?.data?.status === STATUS_CODE[409]) {
+        //   setValidation(
+        //     [
+        //       {
+        //         field: t('common.packageName'),
+        //         problem: '',
+        //         type: 'error'
+        //       }
+        //     ]
+        //   )
+        // }
         setTrySubmited(true)
         // onSubmitData('error', t('common.saveFailed'))
       }
     }
   }
 
-  const handleEditPackaging = async (
-    formData: CreatePackagingUnitProps,
-    packagingTypeId: string
+  const handleEditProcessType = async (
+    formData: CreateProcessTypeProps,
+    processTypeId: string
   ) => {
     try {
       if (validation.length === 0) {
-        const result = await editPackaging(formData, packagingTypeId)
+        const result = await updateProcessTypeData(formData, processTypeId)
         if (result) {
           onSubmitData('success', t('common.editSuccessfully'))
           resetData()
@@ -246,24 +273,8 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
 
   const handleDelete = async () => {
     try {
-      const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
-      const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
-
-      const formData: CreatePackagingUnitProps = {
-        tenantId: tenantId,
-        packagingNameTchi: tChineseName,
-        packagingNameSchi: sChineseName,
-        packagingNameEng: englishName,
-        description: description,
-        remark: remark,
-        status: 'DELETED',
-        createdBy: loginId,
-        updatedBy: loginId,
-        version: version,
-      }
-
       if (selectedItem != null) {
-        const result = await editPackaging(formData, packagingTypeId)
+        const result = await deleteProcessTypeData(processTypeId)
         if (result) {
           onSubmitData('success', t('common.deletedSuccessfully'))
           resetData()
@@ -317,6 +328,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                 placeholder={t('process_type.traditional_chinese_name_placeholder')}
                 onChange={(event) => setTChineseName(event.target.value)}
                 error={checkString(tChineseName)}
+                dataTestId='astd-product-type-form-tc-input-field-1266'
               />
             </CustomField>
           </Box>
@@ -333,6 +345,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                 placeholder={t('process_type.simplified_chinese_name_placeholder')}
                 onChange={(event) => setSChineseName(event.target.value)}
                 error={checkString(sChineseName)}
+                dataTestId='astd-product-type-form-sc-input-field-6727'
               />
             </CustomField>
           </Box>
@@ -346,6 +359,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                 placeholder={t('process_type.english_name_placeholder')}
                 onChange={(event) => setEnglishName(event.target.value)}
                 error={checkString(englishName)}
+                dataTestId='astd-product-type-form-en-input-field-4655'
               />
             </CustomField>
           </Box>
@@ -371,6 +385,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                           borderRadius: '12px'
                         }}
                         error={checkString(processNumber)}
+                        data-testId='astd-product-type-duration-select-button-4196'
                       >
                         {number.map((value, index) => (
                           <MenuItem value={value} key={index}>
@@ -392,12 +407,16 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                           borderRadius: '12px' // Adjust the value as needed
                         }}
                         error={checkString(processTime)}
+                        data-testId='astd-product-type-duration-type-select-button-4370'
                       >
-                        {time.map((value, index) => (
-                          <MenuItem value={value} key={index}>
-                            {value}
-                          </MenuItem>
-                        ))}
+                        {time.map((value, index) => {
+                          const selectedLang = i18n.language === 'enus' ? value.nameEn : i18n.language === 'zhhk' ? value.nameTchi : value.nameSchi
+                          return (
+                            <MenuItem value={value.id} key={index}>
+                              {selectedLang}
+                            </MenuItem>
+                          )
+                        })}
                       </Select>
                     </FormControl>
                     <FormControl sx={{ m: 1, width: '100%' }}>
@@ -413,6 +432,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                           borderRadius: '12px'
                         }}
                         error={checkString(processWeight)}
+                        data-testId='astd-product-type-weight-unit-select-button-3108'
                       >
                         {weightUnit.map((value, index) => {
                           const name = i18n.language === 'enus' ? value.unitNameEng : i18n.language === 'zhhk' ? value.unitNameTchi : value.unitNameSchi
@@ -442,6 +462,8 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                 onChange={(event) => setDescription(event.target.value)}
                 multiline={true}
                 defaultValue={description}
+                disabled={action === 'delete'}
+                dataTestId='astd-product-type-desc-input-field-2290'
               />
             </CustomField>
           </Box>
@@ -454,6 +476,8 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                 onChange={(event) => setRemark(event.target.value)}
                 multiline={true}
                 defaultValue={remark}
+                disabled={action === 'delete'}
+                dataTestId='astd-product-type-remark-input-field-4854'
               />
             </CustomField>
           </Box>
