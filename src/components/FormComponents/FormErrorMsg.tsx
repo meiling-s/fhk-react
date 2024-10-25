@@ -7,19 +7,21 @@ type props = {
     field: string,
     errorMsg: string,
     setContinue?: () => void 
+    dataTestId?: string;
 }
 
 export function FormErrorMsg({
     type,
     field,
     errorMsg,
-    setContinue
+    setContinue,
+    dataTestId
 }: props){
 
     const warning = type? type == "warning"? true : false : false;
 
     return(
-        <Box sx={warning? localstyles.container_warning : localstyles.container}>
+        <Box sx={warning? localstyles.container_warning : localstyles.container} data-testid={dataTestId}>
             <Box sx={{display: "flex", flexDirection: "row", flex: 9, alignItems: "center"}}>
                 <Typography sx={warning? localstyles.txtField_warning : localstyles.txtField}>
                 {field}

@@ -306,7 +306,7 @@ const JobOrder = () => {
   const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const initJobOrderRequest = async () => {
-    setIsLoading(true)
+    // setIsLoading(true)
     try {
       setJobOrder([])
       const params = {
@@ -326,7 +326,6 @@ const JobOrder = () => {
         navigate('/maintenance')
       }
     }
-    setIsLoading(false)
   }
 
   const initDriverList = async () => {
@@ -432,14 +431,27 @@ const JobOrder = () => {
         }
       }) ?? []
 
+    // Promise.all(tempRows).then((resolvedRows) => {
+    //   const filteredRows = resolvedRows.filter(
+    //     (item) => item.status !== 'CLOSED'
+    //   )
+    //   setRows(filteredRows)
+    //   setFilteredPico(filteredRows)
+    // })
     Promise.all(tempRows).then((resolvedRows) => {
       const filteredRows = resolvedRows.filter(
         (item) => item.status !== 'CLOSED'
-      )
-      setRows(filteredRows)
-      setFilteredPico(filteredRows)
-    })
-    setIsLoading(false)
+      );
+      setRows(filteredRows);
+      setFilteredPico(filteredRows);
+      
+      // Set loading to false after all promises have resolved
+      setIsLoading(false);
+    }).catch((error) => {
+      console.error("Error fetching tenant details:", error);
+      setIsLoading(false); // Ensure loading is false even if there's an error
+    });
+
   }, [jobOrder, i18n.language])
 
   const searchfield = [
@@ -473,17 +485,27 @@ const JobOrder = () => {
   const navigate = useNavigate()
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [selectedRow, setSelectedRow] = useState<Row | null>(null)
+
   function getUniqueOptions(propertyName: keyof Row) {
     const optionMap = new Map()
+    let options: Option[] = []
 
-    rows.forEach((row) => {
-      optionMap.set(row[propertyName], row[propertyName])
-    })
+    if (propertyName != 'driverId') {
+      rows.forEach((row) => {
+        optionMap.set(row[propertyName], row[propertyName])
+      })
 
-    let options: Option[] = Array.from(optionMap.values()).map((option) => ({
-      value: option,
-      label: option
-    }))
+      options = Array.from(optionMap.values()).map((option) => ({
+        value: option,
+        label: option
+      }))
+    } else {
+      options = driverLists.map(item => ({
+        value: item.driverId.toString(),
+        label: i18n.language === 'enus' ? item.driverNameEng : i18n.language === 'zhch' ?  item.driverNameSchi : item.driverNameTchi
+      }));
+    }
+
     options.push({
       value: '',
       label: t('check_in.any')

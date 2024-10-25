@@ -156,9 +156,11 @@ const DriverMenu = () => {
     if (search.trim() !== '') {
       setIsLoading(true)
       const filterData: Driver[] = filterDriverLists.filter((item) =>
-        item.labelId?.toString().toLowerCase().startsWith(search.toLowerCase())
+        item.labelId?.toString().toLowerCase().includes(search.toLowerCase())
       )
       setFilterDriverLists(filterData)
+      setPage(1)
+      setTotalData(filterData.length)
       setIsLoading(false)
       return
     }

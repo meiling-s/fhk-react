@@ -98,7 +98,7 @@ const Vehicles: FunctionComponent = () => {
 
   useEffect(() => {
     initVehicleList()
-    initAllVehicleList()
+    //initAllVehicleList()
   }, [page])
 
   const initVehicleList = useCallback(async () => {
@@ -115,6 +115,7 @@ const Vehicles: FunctionComponent = () => {
         data.content.map(async (item: any) => {
           const result = await getVehicleImages(table, item.vehicleId)
           const vehicleImages = result?.data
+          
           if (result) {
             const vehicle = createVehicles(
               item?.vehicleId,
@@ -138,49 +139,49 @@ const Vehicles: FunctionComponent = () => {
         }).filter(Boolean)
       )
       setVehicleList(vehicleMapping)
+      //setIsLoading(false)
+
+      setTimeout(() => {
+        setVehicleList(vehicleMapping);
+        setIsLoading(false);
+      }, 1000); // Adjust the delay as necessary (100ms here)
     }
     setTotalData(data.totalPages)
-    setIsLoading(false)
+   
   }, [page, pageSize])
 
-  const initAllVehicleList = useCallback(async () => {
-    setIsLoading(true)
-    const result = await getAllVehicles(0, 1000)
-    const data = result?.data
-    const newPlateList: string[] = []
-    const newDeviceIdList: string[] = []
-    if (data) {
-      var vehicleMapping: VehicleItem[] = []
-      data.content.map((item: any) => {
-        vehicleMapping.push(
-          createVehicles(
-            item?.vehicleId,
-            item?.vehicleTypeId,
-            item?.plateNo,
-            item?.photo,
-            item?.status,
-            item?.deviceId,
-            item?.netWeight,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt,
-            item?.version
-          )
-        )
+  // const initAllVehicleList = useCallback(async () => {
+  //   setIsLoading(true)
+  //   const result = await getAllVehicles(0, 1000)
+  //   const data = result?.data
+  //   const newPlateList: string[] = []
+  //   if (data) {
+  //     var vehicleMapping: VehicleItem[] = []
+  //     data.content.map((item: any) => {
+  //       vehicleMapping.push(
+  //         createVehicles(
+  //           item?.vehicleId,
+  //           item?.vehicleTypeId,
+  //           item?.plateNo,
+  //           item?.photo,
+  //           item?.status,
+  //           item?.netWeight,
+  //           item?.createdBy,
+  //           item?.updatedBy,
+  //           item?.createdAt,
+  //           item?.updatedAt,
+  //           item?.version
+  //         )
+  //       )
 
-        //mappping plate list
-        console.log("device", item?.deviceId)
-        newPlateList.push(item?.plateNo)
-        newDeviceIdList.push(item?.deviceId)
-        
-      })
-      // setVehicleList(vehicleMapping)
-      setPlateList(newPlateList)
-      setDeviceIdList(newDeviceIdList)
-    }
-    setIsLoading(false)
-  }, [])
+  //       //mappping plate list
+  //       newPlateList.push(item?.plateNo)
+  //     })
+  //     // setVehicleList(vehicleMapping)
+  //     setPlateList(newPlateList)
+  //   }
+  //   setIsLoading(false)
+  // }, [])
 
   const columns: GridColDef[] = [
     {
@@ -253,6 +254,7 @@ const Vehicles: FunctionComponent = () => {
                   className="w-[30px] h-[30px]"
                   src={imgdata}
                   alt=""
+                  style={{ width: '50px', height: '50px', objectFit: 'cover' }}
                 />
               )
             })}
@@ -267,7 +269,7 @@ const Vehicles: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} data-testid="logistic-vehicles-edit-button-7448">
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
@@ -287,7 +289,7 @@ const Vehicles: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} data-testid="logistic-vehicles-delete-button-8214">
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
@@ -400,8 +402,8 @@ const Vehicles: FunctionComponent = () => {
   }
 
   const handleChange = async (keyName: string, value: string) => {
-    console.log('handleChange', value.length)
-    if (value.length === 0) {
+    handleSearch(value)
+    if (value.length == 0) {
       //setSearching(false)
       setVehicleList([])
       initVehicleList()
@@ -412,7 +414,8 @@ const Vehicles: FunctionComponent = () => {
     <>
       <Box
         sx={{
-          width: '100%',
+          width: '1200px',
+          maxWidth: '100%',
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
@@ -429,6 +432,7 @@ const Vehicles: FunctionComponent = () => {
           }}
         >
           <Button
+            data-testid="logistic-vehicles-new-button-7614"
             sx={[
               styles.buttonOutlinedGreen,
               {
@@ -454,6 +458,7 @@ const Vehicles: FunctionComponent = () => {
         >
           <Box sx={{ flexGrow: 1 }}>
             <CustomSearchField
+              dataTestId='logistic-vehicles-search-vehicle-id-8158'
               label={t('driver.vehicleMenu.vehicle_number')}
               width={'100%'}
               field={'searchValue'}
@@ -464,6 +469,7 @@ const Vehicles: FunctionComponent = () => {
           </Box>
           <Box sx={{ flexGrow: 1 }}>
             <CustomSearchField
+              dataTestId='logistic-vehicles-search-imei-4288'
               label={t('driver.vehicleMenu.imei')}
               width={'100%'}
               field={'searchValue'}
@@ -484,6 +490,7 @@ const Vehicles: FunctionComponent = () => {
                   getRowId={(row) => row.vehicleId}
                   hideFooter
                   columns={columns}
+                  loading={isLoading}
                   onRowClick={handleSelectRow}
                   getRowSpacing={getRowSpacing}
                   localeText={localeTextDataGrid}
@@ -513,6 +520,9 @@ const Vehicles: FunctionComponent = () => {
                     '& .selected-row': {
                       backgroundColor: '#F6FDF2 !important',
                       border: '1px solid #79CA25'
+                    },
+                    '& .MuiDataGrid-overlayWrapper ':{
+                      height: '30px'
                     }
                   }}
                 />

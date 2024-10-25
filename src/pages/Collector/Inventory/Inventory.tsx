@@ -636,11 +636,11 @@ const Inventory: FunctionComponent = () => {
             sx={styles.inputStyle}
             label={t('tenant.invite_form.company_number')}
             placeholder={t('tenant.enter_company_number')}
-            // inputProps={{
-            //   inputMode: 'numeric',
-            //   pattern: '[0-9]*',
-            //   maxLength: 6
-            // }}
+            inputProps={{
+              inputMode: 'numeric',
+              pattern: '[0-9]*',
+              maxLength: 6
+            }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

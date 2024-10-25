@@ -114,10 +114,6 @@ interface warehouseSubtype {
   capacity: number
 }
 
-type RecycSubTypeCapacity = {
-  [recycsubtypeId: string]: number
-}
-
 const WarehouseDashboard: FunctionComponent = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
@@ -432,6 +428,7 @@ const WarehouseDashboard: FunctionComponent = () => {
       }
       setIsLoading(false)
     }
+    setIsLoading(false)
   }
 
   const initCheckInOut = async () => {
@@ -667,8 +664,9 @@ const WarehouseDashboard: FunctionComponent = () => {
   const handleSearchByTenantId = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    console.log('event.target.value', event.target.value)
     if (event.target.value === '') {
-      setWarehouseList([])
+      resetData()
     }
 
     const numericValue = event.target.value.replace(/\D/g, '')
@@ -679,16 +677,20 @@ const WarehouseDashboard: FunctionComponent = () => {
     }
   }
 
+  const resetData = () => {
+    setWarehouseList([])
+    setCurrentCapacity(0)
+    setTotalCapacity(0)
+    setCheckIn(0)
+    setCheckOut(0)
+    setSelectedWarehouse(null)
+    setWarehouseSubtype([])
+    setCheckInOut([])
+  }
+
   useEffect(() => {
     if (debouncedSearchValue) {
-      setWarehouseList([])
-      setCurrentCapacity(0)
-      setTotalCapacity(0)
-      setCheckIn(0)
-      setCheckOut(0)
-      setSelectedWarehouse(null)
-      setWarehouseSubtype([])
-      setCheckInOut([])
+      resetData()
       initWarehouse()
     }
   }, [debouncedSearchValue, i18n.language])
@@ -902,46 +904,60 @@ const WarehouseDashboard: FunctionComponent = () => {
           </Box>
         ) : (
           <Box sx={{ display: 'flex', gap: 2 }}>
-            {warehouseSubtype.map((item) => (
-              <Card
-                key={item.subTypeId}
+            {warehouseSubtype.length > 0 ? (
+              warehouseSubtype.map((item) => (
+                <Card
+                  key={item.subTypeId}
+                  sx={{
+                    borderRadius: 2,
+                    backgroundColor: 'white',
+                    padding: 2,
+                    boxShadow: 'none',
+                    color: 'white',
+                    width: '110px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <div
+                    className="circle-color w-[30px] h-[30px] rounded-[50px]"
+                    style={{
+                      background: generateRandomPastelColor()
+                    }}
+                  ></div>
+                  <div className="text-sm font-bold text-black mt-2 mb-10 min-h-12">
+                    {item.subtypeName}
+                  </div>
+                  <div className="flex items-baseline">
+                    <div className="text-3xl font-bold text-black">
+                      {item.weight}
+                    </div>
+                    <div className="text-2xs font-bold text-black ">
+                      /{item.capacity}kg
+                    </div>
+                  </div>
+                  <Box sx={{ marginTop: 1 }}>
+                    <ProgressLine
+                      value={item.weight}
+                      total={item.capacity}
+                    ></ProgressLine>
+                  </Box>
+                </Card>
+              ))
+            ) : (
+              <Box
                 sx={{
-                  borderRadius: 2,
-                  backgroundColor: 'white',
-                  padding: 2,
-                  boxShadow: 'none',
-                  color: 'white',
-                  width: '110px',
                   display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between'
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  marginTop: '24px'
                 }}
               >
-                <div
-                  className="circle-color w-[30px] h-[30px] rounded-[50px]"
-                  style={{
-                    background: generateRandomPastelColor()
-                  }}
-                ></div>
-                <div className="text-sm font-bold text-black mt-2 mb-10 min-h-12">
-                  {item.subtypeName}
-                </div>
-                <div className="flex items-baseline">
-                  <div className="text-3xl font-bold text-black">
-                    {item.weight}
-                  </div>
-                  <div className="text-2xs font-bold text-black ">
-                    /{item.capacity}kg
-                  </div>
-                </div>
-                <Box sx={{ marginTop: 1 }}>
-                  <ProgressLine
-                    value={item.weight}
-                    total={item.capacity}
-                  ></ProgressLine>
-                </Box>
-              </Card>
-            ))}
+                {t('common.noData')}
+              </Box>
+            )}
           </Box>
         )}
       </Box>
