@@ -82,7 +82,6 @@ const SemiFinishProduct = () => {
       </TableContainer>
     </Box>
       <SemiFinishProductForm open={isOpen} handleClose={() => setIsOpen(false)} handleSubmit={() => {}}/>
-      <SemiFinishProductForm isEditMode open={isOpen} handleClose={() => setIsOpen(false)} handleSubmit={() => {}}/>
     </>
   );
 };
