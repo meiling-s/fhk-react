@@ -31,7 +31,8 @@ const CustomSearchField = ({
   placeholder,
   handleSearch,
   inputType,
-  numberOnly = false
+  numberOnly = false,
+  dataTestId,
 }: {
   label: string
   width?: string
@@ -42,6 +43,7 @@ const CustomSearchField = ({
   handleSearch?: (value: string) => void
   inputType?: string
   numberOnly?: boolean
+  dataTestId?: string
 }) => {
   const hasOptions = options && options.length > 0
   //const [selectedValue, setSelectedValue] = useState<string>("")
@@ -95,6 +97,7 @@ const CustomSearchField = ({
                   color: getPrimaryColor()
                 }
               }}
+              data-testid={dataTestId}
             ></DatePicker>
           </Box>
         ) : (
@@ -156,6 +159,7 @@ const CustomSearchField = ({
                     pattern: '[A-Za-z0-9]*'
                   }
             }
+            data-testid={dataTestId}
           >
             {hasOptions &&
               options.map((option) => (

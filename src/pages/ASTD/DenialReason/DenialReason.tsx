@@ -325,6 +325,7 @@ const DenialReason: FunctionComponent = () => {
               event.stopPropagation()
               handleAction(params, 'edit')
             }}
+            data-testid={'astd-reject-delete-button-5983-' + params.id}
           >
             <EDIT_OUTLINED_ICON
               fontSize="small"
@@ -346,6 +347,7 @@ const DenialReason: FunctionComponent = () => {
               event.stopPropagation()
               handleAction(params, 'delete')
             }}
+            data-testid={'astd-reject-delete-button-5983-'  + params.id}
           >
             <DELETE_OUTLINED_ICON
               fontSize="small"
@@ -372,7 +374,8 @@ const DenialReason: FunctionComponent = () => {
       label: t('denial_reason.corresponding_functions'),
       placeholder: t('denial_reason.corresponding_functions'),
       width: '100%',
-      options: functionOptions
+      options: functionOptions,
+      dataTestId: 'astd-reject-functions-select-menu-8108'
     }
   ]
 
@@ -485,6 +488,7 @@ const DenialReason: FunctionComponent = () => {
               setDrawerOpen(true)
               setAction('add')
             }}
+            data-testid='astd-reject-new-button-6726'
           >
             <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
@@ -499,6 +503,7 @@ const DenialReason: FunctionComponent = () => {
               label={s.label}
               options={s.options || []}
               onChange={handleSearch}
+              dataTestId={s.dataTestId}
             />
           ))}
           {/* </Stack> */}

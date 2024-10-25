@@ -1,16 +1,22 @@
 import { FunctionComponent, useState, useEffect } from 'react'
-import {
-  Box,
-  Divider,
-} from '@mui/material'
+import { Box, Divider } from '@mui/material'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { styles } from '../../../constants/styles'
 import { useTranslation } from 'react-i18next'
-import { showErrorToast, showSuccessToast, returnApiToken, extractError } from '../../../utils/utils'
-import { STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
-import { createCurrency, deleteCurrency, editCurrency } from '../../../APICalls/ASTD/currrency'
+import {
+  showErrorToast,
+  showSuccessToast,
+  returnApiToken,
+  extractError
+} from '../../../utils/utils'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
+import {
+  createCurrency,
+  deleteCurrency,
+  editCurrency
+} from '../../../APICalls/ASTD/currrency'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { useNavigate } from 'react-router-dom'
 
@@ -40,7 +46,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
   handleDrawerClose,
   action,
   onSubmitData,
-  selectedItem,
+  selectedItem
 }) => {
   const { t } = useTranslation()
   const [monetary, setMonetary] = useState<string>('')
@@ -77,9 +83,9 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
   }
 
   const isInputFieldsEmpty = () => {
-    const isEmpty = !monetary || !description || !remark;
-    return isEmpty;
-  };
+    const isEmpty = !monetary || !description || !remark
+    return isEmpty
+  }
 
   const handleDelete = async () => {
     const token = returnApiToken()
@@ -90,7 +96,10 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
     }
     if (selectedItem !== null && selectedItem !== undefined) {
       try {
-        const response = await deleteCurrency(selectedItem?.monetaryId, currencyForm)
+        const response = await deleteCurrency(
+          selectedItem?.monetaryId,
+          currencyForm
+        )
         if (response) {
           onSubmitData('currency')
           showSuccessToast(t('notify.successDeleted'))
@@ -108,7 +117,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
   }
 
   const handleSubmit = () => {
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
 
     const currencyProps = {
       monetary: monetary,
@@ -122,7 +131,9 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
     if (isInputFieldsEmpty()) {
       setShowError(true)
     } else if (validation.length === 0) {
-      action === 'add' ? createCurrencyData(currencyProps) : editCurrencyData(currencyProps)
+      action === 'add'
+        ? createCurrencyData(currencyProps)
+        : editCurrencyData(currencyProps)
 
       setValidation([])
     } else {
@@ -209,6 +220,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
               <CustomTextField
                 id="monetary"
                 value={monetary}
+                dataTestId="astd-currency-form-name-input-field-5357"
                 disabled={action === 'delete'}
                 placeholder={t('general_settings.enter_name')}
                 onChange={(event) => setMonetary(event.target.value)}
@@ -220,6 +232,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
             <CustomField label={t('general_settings.remark')} mandatory>
               <CustomTextField
                 id="remark"
+                dataTestId="astd-currency-form-remark-input-field-4081"
                 value={remark}
                 disabled={action === 'delete'}
                 placeholder={t('general_settings.enter_remark')}
@@ -232,6 +245,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
             <CustomField label={t('general_settings.introduction')} mandatory>
               <CustomTextField
                 id="description"
+                dataTestId="astd-currency-form-description-input-field-6886"
                 value={description}
                 disabled={action === 'delete'}
                 placeholder={t('general_settings.enter_remark')}
@@ -243,6 +257,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
           {showError && checkString(monetary) && (
             <FormErrorMsg
               field={t('general_settings.name')}
+              dataTestId="astd-currency-form-name-err-warning-1499"
               errorMsg={t('form.error.shouldNotBeEmpty')}
               type={'error'}
             />
@@ -250,6 +265,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
           {showError && checkString(remark) && (
             <FormErrorMsg
               field={t('common.remark')}
+              dataTestId="astd-currency-form-remark-err-warning-9355"
               errorMsg={t('form.error.shouldNotBeEmpty')}
               type={'error'}
             />
@@ -257,6 +273,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
           {showError && checkString(description) && (
             <FormErrorMsg
               field={t('common.description')}
+              dataTestId="astd-currency-form-description-err-warning-2933"
               errorMsg={t('form.error.shouldNotBeEmpty')}
               type={'error'}
             />
@@ -312,12 +329,12 @@ const localstyles = {
     ...styles.textField,
     width: '250px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25',
+      color: '#79CA25'
     }
   },
   DateItem: {
     display: 'flex',
-    height: 'fit-content',
+    height: 'fit-content'
   }
 }
 
