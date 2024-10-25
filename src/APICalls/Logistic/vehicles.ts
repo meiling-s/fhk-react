@@ -121,10 +121,14 @@ export const searchVehicle = async (vehicleId: string) => {
 export const searchVehicleNew = async (vehicleId?: string, deviceId?: string) => {
   try {
     const token = returnApiToken()
-
+    const params: any = {}
+    if (vehicleId) params.vehicleId = vehicleId
+    if (deviceId) params.deviceId = deviceId
+    
     const response = await axiosInstance({
       baseURL: window.baseURL.logistic,
       ...NEW_SEARCH_LOGISTIC_VEHICLE(token.decodeKeycloack, vehicleId, deviceId),
+      params: params,
       headers: {
         AuthToken: token.authToken
       }

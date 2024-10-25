@@ -363,9 +363,16 @@ const Vehicles: FunctionComponent = () => {
     }
   }, [])
 
-  const handleSearch = async (vehicleId?: string, deviceId?: string) => {
+  const handleSearch = async (keyName?: string, value?: string) => {
+    let deviceId;
+    let vehicleId;
     setIsLoading(true)
     setVehicleList([])
+    if (keyName === 'deviceId') {
+      deviceId = value !== undefined ? value : ''
+    } else {
+      vehicleId = value !== undefined ? value : ''
+    }
     const result = await searchVehicleNew(vehicleId, deviceId)
     const data = result?.data
     const table = localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
@@ -461,10 +468,9 @@ const Vehicles: FunctionComponent = () => {
               dataTestId='logistic-vehicles-search-vehicle-id-8158'
               label={t('driver.vehicleMenu.vehicle_number')}
               width={'100%'}
-              field={'searchValue'}
+              field={'vehicleId'}
               placeholder={t('driver.vehicleMenu.vehicle_number')}
-              handleSearch={(value) => handleSearch(value)}
-              onChange={handleChange}
+              onChange={handleSearch}
             />
           </Box>
           <Box sx={{ flexGrow: 1 }}>
@@ -472,10 +478,9 @@ const Vehicles: FunctionComponent = () => {
               dataTestId='logistic-vehicles-search-imei-4288'
               label={t('driver.vehicleMenu.imei')}
               width={'100%'}
-              field={'searchValue'}
+              field={'deviceId'}
               placeholder={t('driver.vehicleMenu.imei')}
-              handleSearch={(value) => handleSearch('', value)}
-              onChange={handleChange}
+              onChange={handleSearch}
             />
           </Box>
         </Box>

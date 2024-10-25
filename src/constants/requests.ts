@@ -640,13 +640,13 @@ export const NEW_SEARCH_LOGISTIC_VEHICLE = (
   deviceId?: string
 ): AxiosRequestConfig => {
   let url = `api/v1/logistic/vehicle/${table}/search`
-  if (vehicleId) {
-    url += `?vehicleId=${vehicleId}`;
-  }
+  // if (vehicleId !== undefined) {
+  //   url += `?vehicleId=${vehicleId}`;
+  // }
 
-  if (deviceId) {
-    url += vehicleId ? `&deviceId=${deviceId}` : `?deviceId=${deviceId}`;
-  }
+  // if (deviceId) {
+  //   url += vehicleId ? `&deviceId=${deviceId}` : `?deviceId=${deviceId}`;
+  // }
 
   return {
     method: 'get',
