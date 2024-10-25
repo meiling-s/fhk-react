@@ -19,11 +19,7 @@ import NestedTableRow from './NestedTableRow';
 import { getProductTypeList } from '../../../../APICalls/ASTD/settings/productType';
 import CircularLoading from '../../../../components/CircularLoading';
 
-export type SemiFinishProductProps = {
-  handleClick: () => void
-}
-
-const SemiFinishProduct: React.FC<SemiFinishProductProps> = () => {
+const SemiFinishProduct = () => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [products, setProducts] = useState<Products[]>([]);
@@ -55,6 +51,7 @@ const SemiFinishProduct: React.FC<SemiFinishProductProps> = () => {
       <Box display="flex" justifyContent="left" alignItems="center" my={2}>
         <Typography fontSize="16px" marginRight="16px" fontWeight="bold">{t('settings_page.recycling.semi_finish_product')}</Typography>
         <Button
+          data-testId=""
           variant="outlined"
           color="primary"
           onClick={() => setIsOpen(true)}
@@ -65,7 +62,7 @@ const SemiFinishProduct: React.FC<SemiFinishProductProps> = () => {
         </Button>
       </Box>
       <TableContainer>
-        <Table aria-label="nested table">
+        <Table aria-label="nested table" padding="none">
           <TableHead>
             <TableRow  sx={{ '&:last-child td, &:last-child th': { border: 0 }}}>
               <TableCell sx={{borderBottom: 0, fontWeight: 'bold'}}>{t('common.traditionalChineseName')}</TableCell>
@@ -85,6 +82,7 @@ const SemiFinishProduct: React.FC<SemiFinishProductProps> = () => {
       </TableContainer>
     </Box>
       <SemiFinishProductForm open={isOpen} handleClose={() => setIsOpen(false)} handleSubmit={() => {}}/>
+      <SemiFinishProductForm isEditMode open={isOpen} handleClose={() => setIsOpen(false)} handleSubmit={() => {}}/>
     </>
   );
 };
