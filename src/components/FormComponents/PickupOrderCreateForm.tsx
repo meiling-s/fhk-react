@@ -540,6 +540,7 @@ const PickupOrderCreateForm = ({
               setIndex(params.row.id)
               handleEditRow(params.row.picoDtlId)
             }}
+            data-testId={'astd-create-edit-pickup-order-edit-recycling-3943' + params.row.id}
           />
         </IconButton>
       )
@@ -558,6 +559,7 @@ const PickupOrderCreateForm = ({
             setOpenDelete(true)
             setRecycbleLocId(params.row)
           }}
+          data-testId={'astd-create-edit-pickup-order-delete-recycling-4671' + params.row.id}
         >
           <DELETE_OUTLINED_ICON />
         </IconButton>
@@ -690,6 +692,7 @@ const PickupOrderCreateForm = ({
                     )
                   }
                   value={formik.values.picoType}
+                  dataTestId='astd-create-edit-pickup-order-type-select-button-2449'
                 />
               </CustomField>
             </Grid>
@@ -781,6 +784,7 @@ const PickupOrderCreateForm = ({
                     errorsField.logisticName.status
                     //formik.errors.logisticName && formik.touched.logisticName
                   }
+                  dataTestId={'astd-create-edit-pickup-order-choose-logistic-select-button-6878'}
                 />
               </CustomField>
               {/* {errorsField.logisticName.status ? (
@@ -811,6 +815,7 @@ const PickupOrderCreateForm = ({
                       ? customListTheme.border
                       : '#79CA25'
                   }}
+                  dataTestId='astd-create-edit-pickup-order-vehicle-type-select-button-9679'
                 />
               </CustomField>
               {/* {errorsField.vehicleTypeId.status ? (
@@ -834,6 +839,7 @@ const PickupOrderCreateForm = ({
                   value={formik.values.platNo}
                   sx={{ width: '400px' }}
                   error={formik.errors.platNo && formik.touched.platNo}
+                  dataTestId='astd-create-edit-pickup-order-vehicle-plate-input-field-9795'
                 />
               </CustomField>
               {/* {errorsField.platNo.status ? (
@@ -858,6 +864,7 @@ const PickupOrderCreateForm = ({
                   value={formik.values.contactNo}
                   sx={{ width: '400px' }}
                   error={formik.errors.contactNo && formik.touched.contactNo}
+                  dataTestId='astd-create-edit-pickup-order-contact-no-input-field-6429'
                 />
                 {/* {errorsField.contactNo.status ? (
                   <ErrorMessage message={errorsField.contactNo.message} />
@@ -893,6 +900,7 @@ const PickupOrderCreateForm = ({
                             ...params.InputProps,
                             sx: styles.inputProps
                           }}
+                          data-testId='astd-create-edit-pickup-order-contract-no-select-button-3176'
                         />
                       )}
                       noOptionsText={t('common.noOptions')}
@@ -924,6 +932,7 @@ const PickupOrderCreateForm = ({
                         ? customListTheme.border
                         : '#79CA25'
                     }}
+                    dataTestId='astd-create-edit-pickup-order-ad-hoc-reason-select-button-5199'
                   />
                 </CustomField>
                 {/* {errorsField.AD_HOC.status ? (
@@ -946,6 +955,7 @@ const PickupOrderCreateForm = ({
                     <div
                       className={`text-mini cursor-pointer text-[${colorTheme}]`}
                       onClick={resetPicoId}
+                      data-testId='astd-create-edit-pickup-order-related-po-change-menu-button-5755'
                     >
                       {t('pick_up_order.change')}
                     </div>
@@ -955,6 +965,7 @@ const PickupOrderCreateForm = ({
                     <Button
                       sx={[picoIdButton]}
                       onClick={() => setOpenPico(true)}
+                      data-testId='astd-create-edit-pickup-order-related-po-select-menu-button-7503'
                     >
                       <AddCircleIcon sx={{ ...endAdornmentIcon, pr: 1 }} />
                       {t('pick_up_order.choose')}
@@ -1040,6 +1051,7 @@ const PickupOrderCreateForm = ({
                     setOpenModal(true)
                     changeTouchField('createPicoDetail')
                   }}
+                  data-testId='astd-create-edit-pickup-order-new-recycling-9199'
                   sx={{
                     height: '40px',
                     width: '100%',

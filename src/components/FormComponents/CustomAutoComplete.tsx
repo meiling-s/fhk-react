@@ -20,7 +20,8 @@ const CustomAutoComplete = ({
   error,
   helpertext,
   readOnly,
-  onCompositionEnd
+  onCompositionEnd,
+  dataTestId
 }: {
   option: any
   placeholder: string
@@ -37,6 +38,7 @@ const CustomAutoComplete = ({
   helpertext?: any
   readOnly?: boolean | undefined
   onCompositionEnd?: any
+  dataTestId?: string
 }) => {
   return (
     <Autocomplete
@@ -60,6 +62,7 @@ const CustomAutoComplete = ({
           }}
           helperText={helpertext}
           sx={{ ...styles.textField, ...sx }}
+          data-testId={dataTestId}
         />
       )}
     />
