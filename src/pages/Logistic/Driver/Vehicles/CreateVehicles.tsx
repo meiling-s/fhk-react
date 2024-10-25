@@ -51,6 +51,7 @@ interface CreateVehicleProps {
   rowId?: number
   selectedItem?: LogisticVehicle | null
   plateListExist: string[]
+  deviceIdListExist: string[]
 }
 
 const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
@@ -60,15 +61,18 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   onSubmitData,
   rowId,
   selectedItem,
-  plateListExist
+  plateListExist,
+  deviceIdListExist
 }) => {
   const { t } = useTranslation()
+  console.log('selected', selectedItem)
   const [vehicleTypeId, setVehicleTypeId] = useState<string>('')
   const [selectedVehicle, setSelectedVehicle] = useState<il_item>({
     id: '1',
     name: 'Van'
   })
   const [licensePlate, setLicensePlate] = useState('')
+  const [deviceId, setDeviceId] = useState<string>('')
   const [pictures, setPictures] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
@@ -80,6 +84,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   const mappingData = () => {
     if (selectedItem != null) {
       setLicensePlate(selectedItem.plateNo)
+      setDeviceId(selectedItem.deviceId)
       setVehicleTypeId(selectedItem.vehicleTypeId)
       setVehicleWeight(selectedItem.netWeight.toString())
       setVersion(selectedItem.version)
@@ -123,6 +128,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     setLicensePlate('')
     setVehicleTypeId('')
     setVehicleWeight('')
+    setDeviceId('')
     setPictures([])
     setValidation([])
   }
@@ -211,15 +217,36 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
+      } else if (deviceId === '') {
+        tempV.push({
+          field: t('driver.vehicleMenu.imei'),
+          problem: formErr.empty,
+          type: 'error'
+        })
       } else if (plateListExist && action === 'add' && plateListExist.includes(licensePlate)) {
         tempV.push({
           field: t('driver.vehicleMenu.license_plate_number'),
           problem: formErr.alreadyExist,
           type: 'error'
         })
+      } else if (deviceIdListExist && action === 'add' && deviceIdListExist.includes(deviceId)) {
+        tempV.push({
+          field: t('driver.vehicleMenu.imei'),
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
       } else if (plateListExist && action === 'edit' && selectedItem) {
         // Check if the license plate has changed and if the new plate already exists
         if (licensePlate !== selectedItem.plateNo && plateListExist.includes(licensePlate)) {
+          tempV.push({
+            field: t('driver.vehicleMenu.license_plate_number'),
+            problem: formErr.alreadyExist,
+            type: 'error'
+          })
+        }
+      } else if (deviceIdListExist && action === 'edit' && selectedItem) {
+        // Check if the license plate has changed and if the new plate already exists
+        if (deviceId !== selectedItem.deviceId && deviceIdListExist.includes(deviceId)) {
           tempV.push({
             field: t('driver.vehicleMenu.license_plate_number'),
             problem: formErr.alreadyExist,
@@ -268,6 +295,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       createdBy: loginId,
       updatedBy: loginId,
       vehicleTypeId: vehicleTypeId,
+      deviceId: deviceId,
       netWeight: Number(vehicleWeight),
       ...(action === 'edit' && {version: version}),
       ...(action === 'delete' && {version: version})
@@ -447,14 +475,13 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
             <Grid item>
             <CustomField label={t('driver.vehicleMenu.imei')} mandatory>
               <CustomTextField
-                  id="licensePlate"
-                  value={licensePlate}
-                  disabled={action === 'delete'}
+                  id="deviceId"
+                  value={deviceId}
                   placeholder={t(
                     'driver.vehicleMenu.imei'
                   )}
-                  onChange={(event) => setLicensePlate(event.target.value)}
-                  error={checkString(licensePlate)}
+                  onChange={(event) => setDeviceId(event.target.value)}
+                  error={checkString(deviceId)}
                 />
               </CustomField>
             </Grid>

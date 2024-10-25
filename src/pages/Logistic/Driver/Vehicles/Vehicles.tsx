@@ -29,7 +29,8 @@ import {
 import {
   getAllVehicles,
   getVehicleImages,
-  searchVehicle
+  searchVehicle,
+  searchVehicleNew
 } from '../../../../APICalls/Logistic/vehicles'
 import { ToastContainer, toast } from 'react-toastify'
 
@@ -53,6 +54,7 @@ function createVehicles(
   plateNo: string,
   photo: string[],
   status: string,
+  deviceId: string,
   netWeight: number,
   createdBy: string,
   updatedBy: string,
@@ -67,6 +69,7 @@ function createVehicles(
     netWeight,
     photo,
     status,
+    deviceId,
     createdBy,
     updatedBy,
     createdAt,
@@ -87,6 +90,7 @@ const Vehicles: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [plateList, setPlateList] = useState<string[]>([])
+  const [deviceIdList, setDeviceIdList] = useState<string[]>([])
   const [searchValue, setSearchValue] = useState<string>('')
   const [isSearching, setSearching] = useState(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -103,6 +107,7 @@ const Vehicles: FunctionComponent = () => {
     const result = await getAllVehicles(page - 1, pageSize)
     const data = result?.data
     const newPlateList: string[] = []
+    const newDeviceIdList: string[] = []
     const table = localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
   
     if (data) {
@@ -117,6 +122,7 @@ const Vehicles: FunctionComponent = () => {
               item?.plateNo,
               vehicleImages.photo,
               item?.status,
+              item?.deviceId,
               item?.netWeight,
               item?.createdBy,
               item?.updatedBy,
@@ -125,6 +131,7 @@ const Vehicles: FunctionComponent = () => {
               item?.version,
             )
             newPlateList.push(item?.plateNo)
+            newDeviceIdList.push(item?.deviceId)
             return vehicle
           }
           return null
@@ -141,6 +148,7 @@ const Vehicles: FunctionComponent = () => {
     const result = await getAllVehicles(0, 1000)
     const data = result?.data
     const newPlateList: string[] = []
+    const newDeviceIdList: string[] = []
     if (data) {
       var vehicleMapping: VehicleItem[] = []
       data.content.map((item: any) => {
@@ -151,6 +159,7 @@ const Vehicles: FunctionComponent = () => {
             item?.plateNo,
             item?.photo,
             item?.status,
+            item?.deviceId,
             item?.netWeight,
             item?.createdBy,
             item?.updatedBy,
@@ -161,10 +170,14 @@ const Vehicles: FunctionComponent = () => {
         )
 
         //mappping plate list
+        console.log("device", item?.deviceId)
         newPlateList.push(item?.plateNo)
+        newDeviceIdList.push(item?.deviceId)
+        
       })
       // setVehicleList(vehicleMapping)
       setPlateList(newPlateList)
+      setDeviceIdList(newDeviceIdList)
     }
     setIsLoading(false)
   }, [])
@@ -348,23 +361,47 @@ const Vehicles: FunctionComponent = () => {
     }
   }, [])
 
-  const handleSearch = async (value: string) => {
-    if (value) {
-      setVehicleList([])
-      const result = await searchVehicle(value)
-      const data = result?.data
-      if (data) {
-        var vehicleMapping: VehicleItem[] = []
-        vehicleMapping.push(data)
-        setVehicleList(vehicleMapping)
-        setSearching(true)
-      }
+  const handleSearch = async (vehicleId?: string, deviceId?: string) => {
+    setIsLoading(true)
+    setVehicleList([])
+    const result = await searchVehicleNew(vehicleId, deviceId)
+    const data = result?.data
+    const table = localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
+  
+    if (data && data.content) {
+      const vehicleMapping: VehicleItem[] = await Promise.all(
+        (Array.isArray(data.content) ? data.content : [data.content]).map(async (item: any) => {
+          const result = await getVehicleImages(table, item.vehicleId)
+          const vehicleImages = result?.data
+          if (result) {
+            return createVehicles(
+              item?.vehicleId,
+              item?.vehicleTypeId,
+              item?.plateNo,
+              vehicleImages.photo,
+              item?.status,
+              item?.deviceId, 
+              item?.netWeight,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt,
+              item?.version,
+            )
+          }
+          return null
+        }).filter(Boolean)
+      )
+      setVehicleList(vehicleMapping)
+      setSearching(true)
     }
+    setTotalData(data.totalPages)
+    setIsLoading(false)
   }
 
   const handleChange = async (keyName: string, value: string) => {
     console.log('handleChange', value.length)
-    if (value.length == 0) {
+    if (value.length === 0) {
       //setSearching(false)
       setVehicleList([])
       initVehicleList()
@@ -431,7 +468,7 @@ const Vehicles: FunctionComponent = () => {
               width={'100%'}
               field={'searchValue'}
               placeholder={t('driver.vehicleMenu.imei')}
-              handleSearch={(value) => handleSearch(value)}
+              handleSearch={(value) => handleSearch('', value)}
               onChange={handleChange}
             />
           </Box>
@@ -503,6 +540,7 @@ const Vehicles: FunctionComponent = () => {
             selectedItem={selectedRow}
             onSubmitData={onSubmitData}
             plateListExist={plateList}
+            deviceIdListExist={deviceIdList}
           />
         )}
       </Box>
