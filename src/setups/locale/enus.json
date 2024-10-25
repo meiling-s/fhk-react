@@ -45,7 +45,8 @@
     "warehouseName": "Warehouse Name already Exist",
     "vehicle": "Vehicle",
     "theNameAlreadyExist": "Staff position name already exist",
-    "leaveConfirmMsg": "Are you sure you want to leave this page? Unsaved changes will be lost"
+    "leaveConfirmMsg": "Are you sure you want to leave this page? Unsaved changes will be lost",
+    "noData": "No Data"
   },
   "col": {
     "createCP": "Create Collection Point",
@@ -790,6 +791,7 @@
     "suspend": "Suspended",
     "deleted": "Deleted",
     "staffId": "Staff ID",
+    "isAdmin": "Is Administrator",
     "successCreatedUser": "Success created user",
     "failedCreatedUser": "Failed created user",
     "successEditUser": "Success edit user",

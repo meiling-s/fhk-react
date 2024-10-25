@@ -45,7 +45,8 @@
     "warehouseName": "仓库名称已存在",
     "vehicle": "车辆",
     "theNameAlreadyExist": "员工职位名称已存在",
-    "leaveConfirmMsg": "您确定要离开此页面吗？未保存的更改将会丢失"
+    "leaveConfirmMsg": "您确定要离开此页面吗？未保存的更改将会丢失",
+    "noData": "没有数据"
   },
   "col": {
     "createCP": "建立回收点",
@@ -790,6 +791,7 @@
     "suspend": "暂停",
     "deleted": "已删除",
     "staffId": "员工编号",
+    "isAdmin": "是否管理员",
     "successCreatedUser": "成功创建用户",
     "failedCreatedUser": "创建用户失败",
     "successEditUser": "成功编辑用户",
