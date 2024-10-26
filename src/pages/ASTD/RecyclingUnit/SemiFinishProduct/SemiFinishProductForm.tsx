@@ -34,7 +34,7 @@ function TabPanel(props: { children: React.ReactNode; value: number; index: numb
   const { children, value, index, ...other } = props;
   return (
     <div
-      data-testId=""
+      data-testId="astd-semi-product-new-button-473"
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
@@ -49,6 +49,7 @@ function TabPanel(props: { children: React.ReactNode; value: number; index: numb
     </div>
   );
 }
+
 
 const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   {
@@ -175,11 +176,12 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
         onSubmit: () => onSubmitForm(),
       }}
     >
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} data-testId="astd-semi-product-form-564">
         <Box display="flex" flexDirection="column" gap={2} padding="25px">
           <Box mb="16px">
             <CustomField label={ t('settings_page.recycling.traditional_chinese_name')} mandatory>
               <CustomTextField
+                dataTestId="astd-semi-product-traditional-name-473"
                 id="traditionalName"
                 value={formik.values.traditionalName}
                 placeholder={t('settings_page.recycling.traditional_chinese_name_placeholder')}
@@ -195,6 +197,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
            
             <CustomField label={ t('settings_page.recycling.simplified_chinese_name')} mandatory>
               <CustomTextField
+                dataTestId="astd-semi-product-simplified-name-391"
                 id="simplifiedName"
                 value={formik.values.simplifiedName}
                 placeholder={t('settings_page.recycling.simplified_chinese_name_placeholder')}
@@ -211,6 +214,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
             <CustomField label={t('settings_page.recycling.english_name')} mandatory>
               <CustomTextField
                 id="englishName"
+                dataTestId="astd-semi-product-english-name-829"
                 value={formik.values.englishName}
                 placeholder={t('settings_page.recycling.english_name_placeholder')}
                 onChange={formik.handleChange}
@@ -222,16 +226,17 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
           </Box>
 
           <Tabs value={tabIndex} onChange={handleTabChange} aria-label="form tabs">
-            <Tab label={t('settings_page.recycling.main_category')} />
+            <Tab label={t('settings_page.recycling.main_category')}/>
             <Tab label={t('settings_page.recycling.sub_category')} />
             <Tab label={t('settings_page.recycling.additional_category')}/>
           </Tabs>
 
-          <TabPanel value={tabIndex} index={0}>
+          <TabPanel value={tabIndex} index={0} data-testId="astd-semi-product-tabpanel-main-category-219">
             <Box mb="16px">
               {/* 簡介 - Introduction */}
               <CustomField  label={t('settings_page.recycling.introduction')}>
                 <CustomTextField
+                  data-testId="astd-semi-product-main-category-introduction-625"
                   id="introduction"
                   value={formik.values.introduction}
                   placeholder={t('settings_page.recycling.enter_text')}
@@ -246,6 +251,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
               {/* 備註 - Remarks */}
               <CustomField label={t('settings_page.recycling.remarks')}>
                 <CustomTextField
+                  dataTestId="astd-semi-product-main-category-remarks-904"
                   id="remarks"
                   value={formik.values.remarks}
                   placeholder={t('settings_page.recycling.enter_text')}
@@ -257,13 +263,14 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
             </Box>
           </TabPanel>
 
-          <TabPanel value={tabIndex} index={1}>
+          <TabPanel value={tabIndex} index={1} data-testId="astd-semi-product-tabpanel-sub-category-308">
             <Box mb="16px">
               {/* 類別 - Category */}
               <CustomField label={t('settings_page.recycling.category')} mandatory>
                 <FormControl fullWidth>
                   <InputLabel id="category-label">{t('settings_page.recycling.category')}</InputLabel>
                   <Select
+                    data-testId="astd-semi-product-sub-category-select-512"
                     labelId="category-label"
                     id="category"
                     value={formik.values.category}
@@ -285,6 +292,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                 {/* 簡介 - Introduction */}
                 <CustomField  label={t('settings_page.recycling.introduction')}>
                     <CustomTextField
+                    dataTestId="astd-semi-product-sub-category-introduction-123"
                     id="introduction"
                     value={formik.values.introduction}
                     placeholder={t('settings_page.recycling.enter_text')}
@@ -299,6 +307,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                 {/* 備註 - Remarks */}
                 <CustomField label={t('settings_page.recycling.remarks')}>
                     <CustomTextField
+                      dataTestId="astd-semi-product-sub-category-remarks-654"
                       id="remarks"
                       value={formik.values.remarks}
                       placeholder={t('settings_page.recycling.enter_text')}
@@ -311,12 +320,13 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
             </Box>
           </TabPanel>
 
-          <TabPanel value={tabIndex} index={2}>
+          <TabPanel value={tabIndex} index={2} data-testId="astd-semi-product-tabpanel-additional-category-737">
             <Box mb="16px">
               <CustomField label={t('settings_page.recycling.main_category')} mandatory>
                 <FormControl fullWidth>
                     <InputLabel id="subcategory-label">{t('settings_page.recycling.category')}</InputLabel>
                     <Select
+                      data-testId="astd-semi-product-additional-category-select-831"
                       labelId="subcategory-label"
                       id="subcategory"
                       value={formik.values.subcategory}
@@ -341,6 +351,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                   <FormControl fullWidth>
                     <InputLabel id="subcategory-label">{t('settings_page.recycling.sub_category')}</InputLabel>
                     <Select
+                      data-testId="astd-semi-product-additional-category-sub-select-978"
                       labelId="subcategory-label"
                       id="subcategory"
                       value={formik.values.subcategory}
@@ -363,7 +374,8 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
               <Box mb="16px">
               <CustomField label={t('settings_page.recycling.introduction')}>
                   <CustomTextField
-                      id="introduction"
+                      dataTestId="astd-semi-product-additional-category-introduction-211"
+                      id="addonIntroduction"
                       value={formik.values.introduction}
                       placeholder={t('settings_page.recycling.enter_text')}
                       onChange={formik.handleChange}
@@ -376,7 +388,8 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
               {/* 備註 - Remarks */}
               <CustomField label={t('settings_page.recycling.remarks')}>
                 <CustomTextField
-                  id="remarks"
+                  dataTestId="astd-semi-product-additional-category-remarks-789"
+                  id="addOnRemarks"
                   value={formik.values.remarks}
                   placeholder={t('settings_page.recycling.enter_text')}
                   onChange={formik.handleChange}
