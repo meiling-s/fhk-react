@@ -33,7 +33,18 @@ export interface ProductAddon {
     productSubType?: ProductSubType[];
     version?: number;
   };
-  
 
   
-  
+  export interface ProductPayload {
+    productNameTchi: string;
+    productNameSchi: string;
+    productNameEng: string;
+    description: string;
+    remark: string;
+    updatedBy: string;
+    status?: string;
+    version?: number;
+    productTypeId?: string;
+    productSubTypeId?: string;
+    createdBy?: string;
+  }

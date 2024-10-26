@@ -7,7 +7,7 @@ import { Box, FormControl, InputLabel, Select, MenuItem, Tabs, Tab, Typography }
 import RightOverlayForm from '../../../../components/RightOverlayForm';
 import CustomField from '../../../../components/FormComponents/CustomField';
 import CustomTextField from '../../../../components/FormComponents/CustomTextField';
-import { Products } from '../../../../types/settings';
+import { Products, ProductPayload } from '../../../../types/settings';
 import { createProductType, editProductType, editProductSubtype, editProductAddonType } from '../../../../APICalls/ASTD/settings/productType';
 
 const validationSchema = Yup.object({
@@ -94,9 +94,9 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
     },
   });
   
-  const onSubmitForm = async () => {
+  const onSubmitForm = async (): Promise<void> => {
     try {
-      const payload: any = {
+      const payload: ProductPayload = {
         productNameTchi: formik.values.traditionalName,
         productNameSchi: formik.values.simplifiedName,
         productNameEng: formik.values.englishName,
@@ -106,45 +106,56 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       };
   
       if (isEditMode && initialData) {
-        // Increment version for edits
-        const version = (initialData.version || 0) + 1;
-        let editPayload = { ...payload, status: 'ACTIVE', version };
-  
-        // Determine the edit operation based on activeTab
-        if (paramId) {
-          if (activeTab === 0) {
-            await editProductType(paramId, editPayload);
-            toast.success('Product type updated successfully!');
-          } else if (activeTab === 1) {
-            editPayload = { ...editPayload, productTypeId: paramId };
-            await editProductSubtype(paramId, editPayload);
-            toast.success('Product subtype updated successfully!');
-          } else if (activeTab === 2) {
-            editPayload = { ...editPayload, productSubTypeId: paramId };
-            await editProductAddonType(paramId, editPayload);
-            toast.success('Product addon type updated successfully!');
-          }
-          handleSubmit();
-          handleClose();
-        } else {
-          throw new Error('Missing parameter ID for edit operation.');
-        }
+        await handleEdit(payload);
       } else {
-        // Creating a new product type
-        const createPayload = { ...payload, createdBy: localStorage.getItem('username') || '' };
-        const response = await createProductType(createPayload);
-        console.log('API Response:', response.data);
-        toast.success('Product type created successfully!');
-  
-        handleSubmit();
-        handleClose();
+        await handleCreate(payload);
       }
     } catch (error) {
       console.error('Error during form submission:', error);
     }
   };
   
- 
+  const handleEdit = async (payload: ProductPayload): Promise<void> => {
+    if (!paramId) {
+      throw new Error('Missing parameter ID for edit operation.');
+    }
+  
+    const version = (initialData?.version ?? 0) + 1;
+    let editPayload: ProductPayload = { ...payload, status: 'ACTIVE', version };
+  
+    switch (activeTab) {
+      case 0:
+        await editProductType(paramId, editPayload);
+        toast.success('Product type updated successfully!');
+        break;
+      case 1:
+        editPayload = { ...editPayload, productTypeId: paramId };
+        await editProductSubtype(paramId, editPayload);
+        toast.success('Product subtype updated successfully!');
+        break;
+      case 2:
+        editPayload = { ...editPayload, productSubTypeId: paramId };
+        await editProductAddonType(paramId, editPayload);
+        toast.success('Product addon type updated successfully!');
+        break;
+      default:
+        throw new Error('Invalid active tab selection.');
+    }
+  
+    handleSubmit();
+    handleClose();
+  };
+  
+  const handleCreate = async (payload: ProductPayload): Promise<void> => {
+    const createPayload: ProductPayload = { ...payload, createdBy: localStorage.getItem('username') || '' };
+    const response = await createProductType(createPayload);
+    console.log('API Response:', response.data);
+    toast.success('Product type created successfully!');
+  
+    handleSubmit();
+    handleClose();
+  };
+  
   useEffect(() => {
     setTabIndex(activeTab || 0);
   }, [activeTab]);
