@@ -48,10 +48,10 @@ const SemiFinishProduct = () => {
   return (
     <>
       <Box>
-      <Box display="flex" justifyContent="left" alignItems="center" my={2}>
+      <Box display="flex" justifyContent="left" alignItems="center" my={2} mb={6}>
         <Typography fontSize="16px" marginRight="16px" fontWeight="bold">{t('settings_page.recycling.semi_finish_product')}</Typography>
         <Button
-          data-testId=""
+          data-testId="astd-semi-product-new-button-001"
           variant="outlined"
           color="primary"
           onClick={() => setIsOpen(true)}
