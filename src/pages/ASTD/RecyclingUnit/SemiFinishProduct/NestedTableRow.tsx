@@ -24,8 +24,9 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
   const [subtypeOpen, setSubtypeOpen] = useState<{ [key: string]: boolean }>({});
   const [isOpenForm, setIsOpenForm] = useState<boolean>(false);
   const [activetab, setActiveTab] = useState<number>(0)
-  
-  const [initialDataProduct, setInitialData] = useState<any>({});
+  const [paramId, setParamId] = useState<string>('')
+
+  const [initialData, setInitialData] = useState<any>({});
 
   const toggleSubtypeOpen = (id: string) => {
     setSubtypeOpen((prevState) => ({
@@ -37,8 +38,8 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
   const handleFetchInitialData = async (id: string) => {
     try {
       const response = await getProductType(id);
-      console.log(response.data)
       setInitialData(response.data); 
+      setParamId(id)
       
     } catch (error) {
       console.error('Failed to fetch initial data:', error);
@@ -49,6 +50,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     try {
       const response = await getProductSubtype(id);
       setInitialData(response.data); 
+      setParamId(id)
       
     } catch (error) {
       console.error('Failed to fetch subtype data:', error);
@@ -59,6 +61,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     try {
       const response = await getProductAddonType(id);
       setInitialData(response.data); 
+      setParamId(id)
       
     } catch (error) {
       console.error('Failed to fetch addon data:', error);
@@ -123,10 +126,10 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
         <TableCell sx={{ padding: '4px 8px' }}>{products.remark || '-'}</TableCell>
         <TableCell sx={{ padding: '4px 8px', display: 'flex', justifyContent: 'flex-end'}} >
          <Box display="flex" alignItems="center" gap="8px">
-         <IconButton data-testId="" aria-label="edit row" size="small" onClick={() => handleEditProduct(products.productTypeId)}>
+         <IconButton data-testId="" aria-label="edit row" size="small" onClick={() => products && handleEditProduct(products.productTypeId)}>
             <EDIT_OUTLINED_ICON />
           </IconButton>
-          <IconButton data-testId="" aria-label="delete row" size="small" onClick={() => handleDeleteProduct(products.productTypeId)}>
+          <IconButton data-testId="" aria-label="delete row" size="small" onClick={() =>products &&  handleDeleteProduct(products.productTypeId)}>
             <DELETE_OUTLINED_ICON />
           </IconButton>
          </Box>
@@ -213,7 +216,8 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
       <SemiFinishProductForm
         activeTab={activetab}
         isEditMode
-        initialData={initialDataProduct}
+        initialData={initialData}
+        paramId={paramId}
         open={isOpenForm}
         handleClose={() => handleClose()}
         handleSubmit={() => {}}

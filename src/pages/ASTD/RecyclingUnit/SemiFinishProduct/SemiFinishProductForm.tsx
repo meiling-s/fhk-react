@@ -8,7 +8,7 @@ import RightOverlayForm from '../../../../components/RightOverlayForm';
 import CustomField from '../../../../components/FormComponents/CustomField';
 import CustomTextField from '../../../../components/FormComponents/CustomTextField';
 import { Products } from '../../../../types/settings';
-import { createProductType, editProductType } from '../../../../APICalls/ASTD/settings/productType';
+import { createProductType, editProductType, editProductSubtype, editProductAddonType } from '../../../../APICalls/ASTD/settings/productType';
 
 const validationSchema = Yup.object({
   traditionalName: Yup.string().required('Required'),
@@ -23,6 +23,7 @@ const validationSchema = Yup.object({
 type SemiFinishProductProps = {
   isEditMode?: boolean;
   initialData?: Products;
+  paramId?: string;
   activeTab?: number;
   handleClose: () => void;
   handleSubmit: () => void;
@@ -49,7 +50,17 @@ function TabPanel(props: { children: React.ReactNode; value: number; index: numb
   );
 }
 
-const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({isEditMode = false, initialData, handleClose, open, handleSubmit, activeTab }) => {
+const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
+  {
+    isEditMode = false, 
+    initialData, 
+    open, 
+    activeTab, 
+    paramId, 
+    handleClose, 
+    handleSubmit
+  }
+) => {
   const [tabIndex, setTabIndex] = useState<number>(activeTab || 0);
   const {t} = useTranslation()
   const handleTabChange = (event: React.ChangeEvent<{}>, newIndex: number) => {
@@ -85,34 +96,54 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({isEditMode = f
   
   const onSubmitForm = async () => {
     try {
-      const payload = {
+      const payload: any = {
         productNameTchi: formik.values.traditionalName,
         productNameSchi: formik.values.simplifiedName,
         productNameEng: formik.values.englishName,
         description: formik.values.introduction,
         remark: formik.values.remarks,
         updatedBy: localStorage.getItem('username') || '',
-        createdBy: localStorage.getItem('username') || '',
       };
   
       if (isEditMode && initialData) {
-        const editPayload = {...payload, status: 0, version: 3 }
-        const id = initialData?.productTypeId
-        await editProductType( id, editPayload);
-        toast.success('Product type updated successfully!');
+        // Increment version for edits
+        const version = (initialData.version || 0) + 1;
+        let editPayload = { ...payload, status: 'ACTIVE', version };
+  
+        // Determine the edit operation based on activeTab
+        if (paramId) {
+          if (activeTab === 0) {
+            await editProductType(paramId, editPayload);
+            toast.success('Product type updated successfully!');
+          } else if (activeTab === 1) {
+            editPayload = { ...editPayload, productTypeId: paramId };
+            await editProductSubtype(paramId, editPayload);
+            toast.success('Product subtype updated successfully!');
+          } else if (activeTab === 2) {
+            editPayload = { ...editPayload, productSubTypeId: paramId };
+            await editProductAddonType(paramId, editPayload);
+            toast.success('Product addon type updated successfully!');
+          }
+          handleSubmit();
+          handleClose();
+        } else {
+          throw new Error('Missing parameter ID for edit operation.');
+        }
       } else {
-        const response = await createProductType(payload);
+        // Creating a new product type
+        const createPayload = { ...payload, createdBy: localStorage.getItem('username') || '' };
+        const response = await createProductType(createPayload);
         console.log('API Response:', response.data);
         toast.success('Product type created successfully!');
-      }
   
-      handleSubmit();
-      handleClose();
+        handleSubmit();
+        handleClose();
+      }
     } catch (error) {
       console.error('Error during form submission:', error);
-      toast.error(isEditMode ? 'Failed to update product type. Please try again.' : 'Failed to create product type. Please try again.');
     }
   };
+  
  
   useEffect(() => {
     setTabIndex(activeTab || 0);

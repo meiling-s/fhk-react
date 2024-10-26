@@ -23,6 +23,7 @@ export interface ProductAddon {
   
   export interface Products {
     productTypeId: string;
+    productSubTypeId?: string;
     productNameTchi: string;
     productNameSchi: string;
     productNameEng: string;
@@ -30,5 +31,9 @@ export interface ProductAddon {
     remark: string;
     status: string;
     productSubType?: ProductSubType[];
+    version?: number;
   };
+  
+
+  
   
