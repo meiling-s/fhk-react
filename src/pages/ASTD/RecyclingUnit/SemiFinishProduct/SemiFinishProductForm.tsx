@@ -271,6 +271,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                     onBlur={formik.handleBlur}
                     error={formik.touched.category && Boolean(formik.errors.category)}
                     label={t('settings_page.recycling.category')}
+                    disabled={isEditMode && activeTab !== 1}
                   >
                     <MenuItem value="1號膠">{t('settings_page.recycling.plastic_no_1')}</MenuItem>
                     <MenuItem value="2號膠">{t('settings_page.recycling.plastic_no_2')}</MenuItem>
@@ -323,6 +324,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                       onBlur={formik.handleBlur}
                       error={formik.touched.subcategory && Boolean(formik.errors.subcategory)}
                       label={t('settings_page.recycling.sub_category')}
+                      disabled={isEditMode && activeTab !== 2}
                     >
                       <MenuItem value="水樟">{t('settings_page.recycling.category')} 1</MenuItem>
                       <MenuItem value="水樟">{t('settings_page.recycling.category')} 2</MenuItem>
@@ -345,7 +347,9 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       error={formik.touched.subcategory && Boolean(formik.errors.subcategory)}
-                      label={t('settings_page.recycling.sub_category')}>
+                      label={t('settings_page.recycling.sub_category')}
+                      disabled={isEditMode && activeTab !== 2}
+                      >
                       <MenuItem value="water_bottle">{t('settings_page.recycling.water_bottle')}</MenuItem>
                       <MenuItem value="film">{t('settings_page.recycling.film')}</MenuItem>
                     </Select>
