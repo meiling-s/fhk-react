@@ -9,7 +9,7 @@ import CustomField from '../../../../components/FormComponents/CustomField';
 import CustomTextField from '../../../../components/FormComponents/CustomTextField';
 import { Products, ProductPayload, ProductSubType } from '../../../../types/settings';
 import { createProductType, createProductSubtype, createProductAddonType, editProductType, editProductSubtype, editProductAddonType, getProductTypeList, getProductSubtypeList } from '../../../../APICalls/ASTD/settings/productType';
-
+import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg';
 const StyledTab = styled(Tab)(({ theme }) => ({
   border: '1px solid',
   borderRadius: '24px',
@@ -23,20 +23,15 @@ const StyledTab = styled(Tab)(({ theme }) => ({
     borderColor: '#79CA25',
   },
   '&:not(.Mui-selected)': {
-    color: '#b0b0b0',
+    color: '#bdbdbd',
+    '&:hover': {
+      backgroundColor: 'transparent',
+      cursor: 'default',
+    },
   },
 }));
 
 
-const validationSchema = Yup.object({
-  traditionalName: Yup.string().required('Required'),
-  simplifiedName: Yup.string().required('Required'),
-  englishName: Yup.string().required('Required'),
-  category: Yup.string().required('Please select a category'),
-  subcategory: Yup.string().required('Please select a subcategory'),
-  introduction: Yup.string(),
-  remarks: Yup.string(),
-});
 
 type SemiFinishProductProps = {
   isEditMode?: boolean;
@@ -88,6 +83,35 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
     setTabIndex(newIndex);
   };
 
+  const getValidationSchema = (tabIndex: number) => {
+ 
+    switch (tabIndex) {
+      case 0:
+        return Yup.object({
+          traditionalName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
+          simplifiedName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
+          englishName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
+          introduction: Yup.string(),
+          remarks: Yup.string(),
+        });
+      case 1:
+        return Yup.object({
+          category: Yup.string().required('Please select a category'),
+          introduction: Yup.string(),
+          remarks: Yup.string(),
+        });
+      case 2:
+        return Yup.object({
+          category: Yup.string().required('Please select a category'),
+          subcategory: Yup.string().required('Please select a subcategory'),
+          introduction: Yup.string(),
+          remarks: Yup.string(),
+        });
+      default:
+        return Yup.object({});
+    }
+  };
+
   const formik = useFormik({
     initialValues: {
       traditionalName: initialData?.productNameTchi || '',
@@ -98,7 +122,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       introduction: initialData?.description || '',
       remarks: initialData?.remark || '',
     },
-    validationSchema,
+    validationSchema: Yup.lazy(() => getValidationSchema(tabIndex)),
     enableReinitialize: true,
     onSubmit: (values) => {
       const payload = {
@@ -116,15 +140,11 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   });
 
   const handleSave = async () => {
-    // Trigger validation manually
     const isValid = await formik.validateForm();
-    formik.setTouched({
-      traditionalName: true,
-      simplifiedName: true,
-      englishName: true,
-      category: true,
-      subcategory: true,
-    });
+    formik.setTouched(Object.keys(formik.values).reduce((acc: any, key: any) => {
+      acc[key] = true;
+      return acc;
+    }, {}));
 
    
     if (Object.keys(isValid).length === 0) {
@@ -273,7 +293,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 error={formik.touched.traditionalName && Boolean(formik.errors.traditionalName)}
-                helperText={formik.touched.traditionalName && formik.errors.traditionalName}
+                // helperText={formik.touched.traditionalName && formik.errors.traditionalName}
               />
             </CustomField>
           </Box>
@@ -289,7 +309,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 error={formik.touched.simplifiedName && Boolean(formik.errors.simplifiedName)}
-                helperText={formik.touched.simplifiedName && formik.errors.simplifiedName}
+                // helperText={formik.touched.simplifiedName && formik.errors.simplifiedName}
               />
             </CustomField>
           </Box>
@@ -305,15 +325,15 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 error={formik.touched.englishName && Boolean(formik.errors.englishName)}
-                helperText={formik.touched.englishName && formik.errors.englishName}
+                // helperText={formik.touched.englishName && formik.errors.englishName}
               />
             </CustomField>
           </Box>
           <CustomField label={ t('settings_page.recycling.category')} mandatory>
             <Tabs value={tabIndex} onChange={handleTabChange} aria-label="form tabs" TabIndicatorProps={{ style: { display: 'none' } }} >
-              <StyledTab label={t('settings_page.recycling.main_category')} />
-              <StyledTab label={t('settings_page.recycling.sub_category')} />
-              <StyledTab label={t('settings_page.recycling.additional_category')} />
+              <StyledTab label={t('settings_page.recycling.main_category')}  disabled={tabIndex === 0 || tabIndex === 2}/>
+              <StyledTab label={t('settings_page.recycling.sub_category')} disabled={tabIndex === 0 || tabIndex === 2} />
+              <StyledTab label={t('settings_page.recycling.additional_category')} disabled={tabIndex === 0 || tabIndex === 1} />
             </Tabs>
           </CustomField>
 
@@ -486,6 +506,28 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
               </CustomField>
             </Box>
           </TabPanel>
+        </Box>
+        <Box
+          mt={0}
+          mx="26px"
+          mb={2} 
+          paddingX="32px"
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+        >
+          {
+            Object.entries(formik.errors).map(([key, value], index) =>
+              formik.touched[key as keyof typeof formik.touched] && value ? (
+                <FormErrorMsg
+                  key={index}
+                  field={t(`common.${key}`)}
+                  errorMsg={String(value)}
+                  type="error" // Assuming type is "error" here; adjust if needed.
+                />
+              ) : null
+            )
+          }
         </Box>
       </form>
     </RightOverlayForm>
