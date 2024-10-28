@@ -91,20 +91,13 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
   };
 
 
-  
-
-
   const handleDeleteProduct = async (id: string) => {
     await handleFetchInitialData(id); 
     const payload = {
-      productNameTchi: initialData?.traditionalName || '',
-      productNameSchi: initialData?.simplifiedName || '',
-      productNameEng: initialData?.englishName || '',
-      description: initialData?.introduction || '',
-      version:  initialData?.version || '',
-      remark: initialData?.remarks || '',
-      createdBy: localStorage.getItem('username') || '',
-      updatedBy: localStorage.getItem('username') || '',
+      version:  initialData?.version,
+      status: 'INACTIVE',
+      createdBy: localStorage.getItem('username'),
+      updatedBy: localStorage.getItem('username'),
     };
     setDeleteItem({ data: payload, id, type: 'product' });
     setOpenDelete(true);
@@ -113,12 +106,8 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
    await handleFetchSubtypeData(id)
 
     const payload = {
-      productNameTchi: initialData?.traditionalName || '',
-      productNameSchi: initialData?.simplifiedName || '',
-      productNameEng: initialData?.englishName || '',
-      description: initialData?.introduction || '',
-      version:  initialData?.version || '',
-      remark: initialData?.remarks || '',
+      version:  initialData?.version,
+      status: 'INACTIVE',
       createdBy: localStorage.getItem('username') || '',
       updatedBy: localStorage.getItem('username') || '',
     };
@@ -131,12 +120,8 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     
     await handleFetchAddonData(id)
     const payload = {
-      productNameTchi: initialData?.traditionalName || '',
-      productNameSchi: initialData?.simplifiedName || '',
-      productNameEng: initialData?.englishName || '',
-      description: initialData?.introduction || '',
-      version:  initialData?.version || '',
-      remark: initialData?.remarks || '',
+      version:  initialData?.version,
+      status: 'INACTIVE',
       createdBy: localStorage.getItem('username') || '',
       updatedBy: localStorage.getItem('username') || '',
     };
@@ -159,19 +144,19 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     switch (type) {
       case 'product':
         console.log('Deleting Product:', id);
-        editProductType(id, {...data, status: 1});
+        editProductType(id, {...data});
         toastMsg = 'Product deleted successfully';
         break;
   
       case 'subProduct':
         console.log('Deleting Sub-Product:', id);
-        editProductSubtype(id, {...data, status: 1, productSubTypeId: payloadId});
+        editProductSubtype(id, {...data, productSubTypeId: payloadId});
         toastMsg = 'Sub-Product deleted successfully';
         break;
   
       case 'addon':
         console.log('Deleting Product Addon:', id);
-        editProductAddonType(id,{...data, status: 1 , productAddonTypeId: payloadId});
+        editProductAddonType(id,{...data , productAddonTypeId: payloadId});
         toastMsg = 'Product Addon deleted successfully';
         break;
   
