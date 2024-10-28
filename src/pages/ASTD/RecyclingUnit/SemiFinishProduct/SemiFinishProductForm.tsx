@@ -104,6 +104,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
         description: formik.values.introduction,
         remark: formik.values.remarks,
         updatedBy: localStorage.getItem('username') || '',
+        createdBy: localStorage.getItem('username') || ''
       };
   
       if (isEditMode && initialData) {
@@ -121,8 +122,8 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       throw new Error('Missing parameter ID for edit operation.');
     }
   
-    const version = (initialData?.version ?? 0) + 1;
-    let editPayload: ProductPayload = { ...payload, status: 'ACTIVE', version };
+    const version =initialData?.version 
+    let editPayload: ProductPayload = { ...payload, status: 0, version };
   
     switch (activeTab) {
       case 0:
@@ -135,7 +136,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
         toast.success('Product subtype updated successfully!');
         break;
       case 2:
-        editPayload = { ...editPayload, productSubTypeId: paramId };
+        editPayload = { ...editPayload, productSubTypeId: paramId, };
         await editProductAddonType(paramId, editPayload);
         toast.success('Product addon type updated successfully!');
         break;
@@ -148,7 +149,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   };
   
   const handleCreate = async (payload: ProductPayload): Promise<void> => {
-    const createPayload: ProductPayload = { ...payload, createdBy: localStorage.getItem('username') || '' };
+    const createPayload: ProductPayload = { ...payload };
     const response = await createProductType(createPayload);
     console.log('API Response:', response.data);
     toast.success('Product type created successfully!');
@@ -156,7 +157,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
     handleSubmit();
     handleClose();
   };
-  
+
   useEffect(() => {
     setTabIndex(activeTab || 0);
   }, [activeTab]);
