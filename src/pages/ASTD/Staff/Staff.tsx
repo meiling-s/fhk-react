@@ -163,6 +163,7 @@ const StaffTitle: FunctionComponent = () => {
               event.stopPropagation()
               handleAction(params, 'edit')
             }}
+            data-testid={'astd-staff-edit-button-8828-' + params.id}
           >
             <EDIT_OUTLINED_ICON
               fontSize="small"
@@ -184,6 +185,7 @@ const StaffTitle: FunctionComponent = () => {
               event.stopPropagation()
               handleAction(params, 'delete')
             }}
+            data-testid={'astd-staff-delete-button-7706-' + params.id}
           >
             <DELETE_OUTLINED_ICON
               fontSize="small"
@@ -297,6 +299,7 @@ const StaffTitle: FunctionComponent = () => {
               setDrawerOpen(true)
               setAction('add')
             }}
+            data-testid={'astd-staff-new-button-6981'}
           >
             <ADD_ICON /> {t('top_menu.add_new')}
           </Button>

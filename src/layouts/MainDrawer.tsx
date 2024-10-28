@@ -65,6 +65,7 @@ type DrawerItem = {
   collapseGroup?: boolean
   path?: string
   functionName: string
+  datatestId?: string
 }
 
 type subMenuItem = {
@@ -130,6 +131,7 @@ function MainDrawer() {
         onClick: () => navigate(`/${realm}/account`),
         collapse: false,
         path: `/${realm}/account`,
+        datatestId: 'astd-user-group-menu-list-6766',
         functionName: 'User account'
       },
       'Collection point': {
@@ -194,7 +196,8 @@ function MainDrawer() {
         onClick: () => navigate('/astd/setting'),
         collapse: false,
         path: '/astd/setting',
-        functionName: 'Settings'
+        functionName: 'Settings',
+        datatestId: 'astd-menu-list-settings-1869'
       },
       Reports: {
         name: t('reports'),
@@ -202,7 +205,8 @@ function MainDrawer() {
         onClick: () => navigate(`/${realm}/report`),
         collapse: false,
         path: `/${realm}/report`,
-        functionName: 'Reports'
+        functionName: 'Reports',
+        datatestId: 'astd-reports-menu-list-6697'
       },
       'Process out recyclables': {
         name: t('processRecord.processingRecords'),
@@ -490,6 +494,7 @@ function MainDrawer() {
                       index === drawerMenus.length - 1 ? '48px' : '0px'
                   }}
                   key={drawerMenu.name}
+                  data-testid={drawerMenu.datatestId || ""}
                   onClick={() => handleNavigateMenu(drawerMenu, index)}
                   disablePadding
                 >
@@ -553,6 +558,7 @@ function MainDrawer() {
                     index === drawerMenus.length - 1 ? '48px' : '0px'
                 }}
                 key={index}
+                data-testid={drawerMenu.datatestId || ""}
                 onClick={() => handleNavigateMenu(drawerMenu, index)}
                 disablePadding
               >

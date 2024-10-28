@@ -411,6 +411,7 @@ const DownloadArea = () => {
             })}}
             selectedItem={selectedRow}
             staffId={staffId}
+            userRole={role ?? undefined}
           />
         </LocalizationProvider>
       </div>
