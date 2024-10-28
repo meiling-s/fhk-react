@@ -10,6 +10,9 @@ import CustomTextField from '../../../../components/FormComponents/CustomTextFie
 import { Products, ProductPayload, ProductSubType } from '../../../../types/settings';
 import { createProductType, createProductSubtype, createProductAddonType, editProductType, editProductSubtype, editProductAddonType, getProductTypeList, getProductSubtypeList } from '../../../../APICalls/ASTD/settings/productType';
 import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg';
+import { STATUS_CODE,  } from '../../../../constants/constant'
+import { extractError, returnErrorMsg, showErrorToast } from '../../../../utils/utils'
+
 const StyledTab = styled(Tab)(({ theme }) => ({
   border: '1px solid',
   borderRadius: '24px',
@@ -182,61 +185,114 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
     const version =initialData?.version 
     let editPayload: ProductPayload = { ...payload, status: 0, version };
   
+    let toastMsg = '';
     switch (activeTab) {
       case 0:
         await editProductType(paramId, editPayload);
-        toast.success('Product type updated successfully!');
+        toastMsg = t(`notify.successDeleted`)
         break;
       case 1:
         editPayload = { ...editPayload, productTypeId: paramId };
         await editProductSubtype(paramId, editPayload);
-        toast.success('Product subtype updated successfully!');
+        toastMsg = t(`notify.successDeleted`)
         break;
       case 2:
         editPayload = { ...editPayload, productSubTypeId: paramId, };
         await editProductAddonType(paramId, editPayload);
-        toast.success('Product addon type updated successfully!');
+        toastMsg = t(`notify.successDeleted`)
         break;
       default:
         throw new Error('Invalid active tab selection.');
     }
   
     handleSubmit();
+
+    if (toastMsg) {
+      toast.info(toastMsg, {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light'
+      })
+    }
+
     handleClose();
+
+
   };
   
   const handleCreate = async (payload: ProductPayload): Promise<void> => {
-    let response;
-    switch (tabIndex) {
-      case 0:
-        response = await createProductType(payload);
-        toast.success('Product type created successfully!');
-        break;
-      case 1:
-        if (formik) {
-          response = await createProductSubtype(formik.values.category, payload);
-          toast.success('Product subtype created successfully!');
-        }
-        else {
-          throw new Error('Product SubType ID is missing. Cannot create addon.');
-        }
-        break;
-      case 2:
-        if (formik) {
-          response = await createProductAddonType(formik.values.subcategory, payload);
-          toast.success('Product addon created successfully!');
-        } else {
-          throw new Error('Product SubType ID is missing. Cannot create addon.');
-        }
-        break
-      default:
-        throw new Error('Invalid active tab selection for create.');
-    }
+    try {
+      let response;
+      let toastMsg = '';
   
-    console.log('API Response:', response.data);
-    handleSubmit();
-    handleClose();
+        switch (tabIndex) {
+          case 0:
+            response = await createProductType(payload);
+            toastMsg = t('notify.successCreated');
+            break;
+          case 1:
+            if (formik) {
+              response = await createProductSubtype(formik.values.category, payload);
+              toastMsg = response.status === 409 ? response.data.message : t('notify.successCreated');
+            } else {
+              throw new Error('Product SubType ID is missing. Cannot create addon.');
+            }
+            break;
+          case 2:
+            if (formik) {
+              response = await createProductAddonType(formik.values.subcategory, payload);
+              toastMsg = t('notify.successCreated');
+            } else {
+              throw new Error('Product SubType ID is missing. Cannot create addon.');
+            }
+            break;
+          default:
+            throw new Error('Invalid active tab selection for create.');
+        }
+  
+        if (response) {
+          handleSubmit();
+          toast.info(toastMsg, {
+            position: 'top-center',
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light'
+          });
+          handleClose();
+        } else {
+          throw new Error('Creation failed.');
+        }
+  
+  
+    } catch (error: any) {
+      const { state } = extractError(error);
+      if (state.code === STATUS_CODE[503]) {
+      
+      } else if (error?.response?.data?.status === STATUS_CODE[500] ||
+                 error?.response?.data?.status === STATUS_CODE[409]) {
+      toast.error(error?.response?.data?.message, {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light'
+      });
+      }
+    }
   };
+  
   useEffect(() => {
     setTabIndex(activeTab || 0);
   }, [activeTab]);

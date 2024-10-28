@@ -15,6 +15,7 @@ import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../../../themes/ico
 import SemiFinishProductForm from './SemiFinishProductForm';
 import { getProductType, getProductSubtype, getProductAddonType, editProductType, editProductSubtype, editProductAddonType } from '../../../../APICalls/ASTD/settings/productType';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
+import { useTranslation } from 'react-i18next';
 
 type NestedTableRowProps = {
   products: Products;
@@ -28,7 +29,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
   const [paramId, setParamId] = useState<string>('')
   const [openDelete, setOpenDelete] = useState(false);
   const [deleteItem, setDeleteItem] = useState<{data: any, id: string; type: string, payloadId?: string } | null>(null);
-
+  const {t} = useTranslation()
   const [initialData, setInitialData] = useState<any>({});
 
 
@@ -145,19 +146,19 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
       case 'product':
         console.log('Deleting Product:', id);
         editProductType(id, {...data});
-        toastMsg = 'Product deleted successfully';
+        toastMsg = t(`notify.SuccessEdited`)
         break;
   
       case 'subProduct':
         console.log('Deleting Sub-Product:', id);
         editProductSubtype(id, {...data, productSubTypeId: payloadId});
-        toastMsg = 'Sub-Product deleted successfully';
+        toastMsg =  t(`notify.SuccessEdited`)
         break;
   
       case 'addon':
         console.log('Deleting Product Addon:', id);
         editProductAddonType(id,{...data , productAddonTypeId: payloadId});
-        toastMsg = 'Product Addon deleted successfully';
+        toastMsg =  t(`notify.SuccessEdited`)
         break;
   
       default:
@@ -166,15 +167,15 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
   
     if (toastMsg) {
       toast.info(toastMsg, {
-        position: 'top-right',
+        position: 'top-center',
         autoClose: 3000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: 'light',
-      });
+        theme: 'light'
+      })
     }
   
     handleCloseDelete();
