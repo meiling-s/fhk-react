@@ -95,19 +95,21 @@ const Vehicles: FunctionComponent = () => {
   const [isSearching, setSearching] = useState(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
-
+  
   useEffect(() => {
     initVehicleList()
     //initAllVehicleList()
   }, [page])
+  
+  useEffect(() => {
+    initAllVehicleList()
+  }, [])
 
   const initVehicleList = useCallback(async () => {
     setIsLoading(true)
     setVehicleList([])
     const result = await getAllVehicles(page - 1, pageSize)
     const data = result?.data
-    const newPlateList: string[] = []
-    const newDeviceIdList: string[] = []
     const table = localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
   
     if (data) {
@@ -131,8 +133,6 @@ const Vehicles: FunctionComponent = () => {
               item?.updatedAt,
               item?.version,
             )
-            newPlateList.push(item?.plateNo)
-            newDeviceIdList.push(item?.deviceId)
             return vehicle
           }
           return null
@@ -150,38 +150,40 @@ const Vehicles: FunctionComponent = () => {
    
   }, [page, pageSize])
 
-  // const initAllVehicleList = useCallback(async () => {
-  //   setIsLoading(true)
-  //   const result = await getAllVehicles(0, 1000)
-  //   const data = result?.data
-  //   const newPlateList: string[] = []
-  //   if (data) {
-  //     var vehicleMapping: VehicleItem[] = []
-  //     data.content.map((item: any) => {
-  //       vehicleMapping.push(
-  //         createVehicles(
-  //           item?.vehicleId,
-  //           item?.vehicleTypeId,
-  //           item?.plateNo,
-  //           item?.photo,
-  //           item?.status,
-  //           item?.netWeight,
-  //           item?.createdBy,
-  //           item?.updatedBy,
-  //           item?.createdAt,
-  //           item?.updatedAt,
-  //           item?.version
-  //         )
-  //       )
+  const initAllVehicleList = useCallback(async () => {
+    const result = await getAllVehicles(0, 1000)
+    const data = result?.data
+    const newPlateList: string[] = []
+    const newDeviceIdList: string[] = []
+    if (data) {
+      var vehicleMapping: VehicleItem[] = []
+      data.content.map((item: any) => {
+        vehicleMapping.push(
+          createVehicles(
+            item?.vehicleId,
+            item?.vehicleTypeId,
+            item?.plateNo,
+            item?.photo,
+            item?.status,
+            item?.deviceId,
+            item?.netWeight,
+            item?.createdBy,
+            item?.updatedBy,
+            item?.createdAt,
+            item?.updatedAt,
+            item?.version
+          )
+        )
 
-  //       //mappping plate list
-  //       newPlateList.push(item?.plateNo)
-  //     })
-  //     // setVehicleList(vehicleMapping)
-  //     setPlateList(newPlateList)
-  //   }
-  //   setIsLoading(false)
-  // }, [])
+        //mappping plate list
+        newPlateList.push(item?.plateNo)
+        newDeviceIdList.push(item?.deviceId)
+      })
+      // setVehicleList(vehicleMapping)
+      setPlateList(newPlateList)
+      setDeviceIdList(newDeviceIdList)
+    }
+  }, [])
 
   const columns: GridColDef[] = [
     {
