@@ -115,12 +115,17 @@ export interface CreatePicoDetail {
     createdBy:       string;
     updatedBy:       string;
     pickupAt:        string;
-    recycType:    string;
-    recycSubType: string;
+    recycType?:    string;
+    recycSubType?: string;
     weight:       string;
     itemCategory?: string;
     version?: number;
     addon?: string;
+    productType?: string;
+    productSubType?: string;
+    productAddon?: string;
+    productSubtypeRemark?: string;
+    productAddonRemark?: string
     
 }
 

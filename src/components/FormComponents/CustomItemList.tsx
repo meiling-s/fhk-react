@@ -51,6 +51,7 @@ function CustomItemList({
     value,
     itemColor,
     needPrimaryColor,
+    dataTestId
 }: props){
 
     const triggerdItem = {
@@ -163,7 +164,7 @@ function CustomItemList({
                         style={{marginRight: '6px', marginBottom: '6px'}}
                         onClick={()=>{dbClickSelect? handleSingleClick(item.id) : handleSelect(item.id)}}
                         onDoubleClick={() => {dbClickSelect && handleSelect(item.id)}}
-                        data-testId={item.dataTestId !== undefined && item.dataTestId + index}
+                        data-testId={item.dataTestId !== undefined ? item.dataTestId + index : dataTestId !== undefined ? dataTestId + index : ''}
                         >
                         {item.name}
                     </Button>

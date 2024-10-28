@@ -185,6 +185,7 @@ const PickupOrderCreateForm = ({
     contractType,
     vehicleType,
     recycType,
+    productType,
     dateFormat,
     getLogisticlist,
     getContractList,
@@ -415,7 +416,7 @@ const PickupOrderCreateForm = ({
     {
       field: 'itemCategory',
       headerName: t('pick_up_order.recyclForm.item_category'),
-      width: 150
+      width: 150,
     },
     {
       field: 'recycType',
@@ -423,29 +424,44 @@ const PickupOrderCreateForm = ({
       width: 150,
       editable: true,
       valueGetter: ({ row }) => {
-        const matchingRecycType = recycType?.find(
-          (item) => item.recycTypeId === row.recycType
-        )
+        const typeField = row.recycType || row.productType;
+        const matchingRecycType = recycType?.find(item => item.recycTypeId === row.recycType);
+        const matchingProductType = productType?.find(item => item.productTypeId === row.productType);
         if (matchingRecycType) {
-          var name = ''
+          let name = '';
           switch (i18n.language) {
             case 'enus':
-              name = matchingRecycType.recyclableNameEng
-              break
+              name = matchingRecycType.recyclableNameEng;
+              break;
             case 'zhch':
-              name = matchingRecycType.recyclableNameSchi
-              break
+              name = matchingRecycType.recyclableNameSchi;
+              break;
             case 'zhhk':
-              name = matchingRecycType.recyclableNameTchi
-              break
+              name = matchingRecycType.recyclableNameTchi;
+              break;
             default:
-              name = matchingRecycType.recyclableNameTchi //default fallback language is zhhk
-              break
+              name = matchingRecycType.recyclableNameTchi;
           }
-          return name
-        } else {
-          return row.recycType
+          return name;
+        } else if (matchingProductType) {
+          let name = '';
+          switch (i18n.language) {
+            case 'enus':
+              name = matchingProductType.productNameEng;
+              break;
+            case 'zhch':
+              name = matchingProductType.productNameSchi;
+              break;
+            case 'zhhk':
+              name = matchingProductType.productNameTchi;
+              break;
+            default:
+              name = matchingProductType.productNameTchi;
+          }
+          return name;
         }
+        
+        return typeField;
       }
     },
     {
@@ -455,9 +471,9 @@ const PickupOrderCreateForm = ({
       width: 150,
       editable: true,
       valueGetter: ({ row }) => {
-        const matchingRecycType = recycType?.find(
-          (item) => item.recycTypeId === row.recycType
-        )
+        const matchingRecycType = recycType?.find((item) => item.recycTypeId === row.recycType)
+        const matchingProductType = productType?.find(item => item.productTypeId === row.productType);
+
         if (matchingRecycType) {
           const matchrecycSubType = matchingRecycType.recycSubType?.find(
             (subtype) => subtype.recycSubTypeId === row.recycSubType
@@ -480,9 +496,32 @@ const PickupOrderCreateForm = ({
             }
 
             return subName
+          } else {
+            return row.recycSubType
           }
-        } else {
-          return row.recycSubType
+        } else if (matchingProductType) {
+          const matchProductSubType = matchingProductType.productSubType?.find(
+            (subtype) => subtype.productSubTypeId === row.productSubType
+          )
+          if (matchProductSubType) {
+            var subName = ''
+            switch (i18n.language) {
+              case 'enus':
+                subName = matchProductSubType?.productNameEng ?? ''
+                break
+              case 'zhch':
+                subName = matchProductSubType?.productNameSchi ?? ''
+                break
+              case 'zhhk':
+                subName = matchProductSubType?.productNameTchi ?? ''
+                break
+              default:
+                subName = matchProductSubType?.productNameTchi ?? '' //default fallback language is zhhk
+                break
+            }
+
+            return subName
+          }
         }
       }
     },
@@ -491,7 +530,40 @@ const PickupOrderCreateForm = ({
       headerName: t('pick_up_order.product_type.add-on'),
       type: 'string',
       width: 150,
-      editable: true
+      editable: true,
+      valueGetter: ({ row }) => {
+        const typeField = row.productType;
+        const matchingProductType = productType?.find(item => item.productTypeId === row.productType)
+        if (matchingProductType) {
+          const matchProductSubType = matchingProductType.productSubType?.find(
+            (subtype) => subtype.productSubTypeId === row.productSubType
+          )
+          if (matchProductSubType) {
+            const matchProductAddon = matchProductSubType.productAddonType?.find(
+              (addon) => addon.productAddonTypeId === row.productAddon
+            )
+            if (matchProductAddon) {
+              var addonName = ''
+              switch (i18n.language) {
+                case 'enus':
+                  addonName = matchProductAddon?.productNameEng ?? ''
+                  break
+                case 'zhch':
+                  addonName = matchProductAddon?.productNameSchi ?? ''
+                  break
+                case 'zhhk':
+                  addonName = matchProductAddon?.productNameTchi ?? ''
+                  break
+                default:
+                  addonName = matchProductAddon?.productNameTchi ?? ''
+                  break
+              }
+
+              return addonName
+            }
+          }
+        }
+      }
     },
     {
       field: 'weight',
