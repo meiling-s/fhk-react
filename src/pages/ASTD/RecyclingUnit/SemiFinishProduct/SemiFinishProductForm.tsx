@@ -309,13 +309,12 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
               />
             </CustomField>
           </Box>
-          <CustomField label={ t('settings_page.recycling.category')} >
-
-          <Tabs value={tabIndex} onChange={handleTabChange} aria-label="form tabs" TabIndicatorProps={{ style: { display: 'none' } }} >
-            <StyledTab label={t('settings_page.recycling.main_category')} />
-            <StyledTab label={t('settings_page.recycling.sub_category')} />
-            <StyledTab label={t('settings_page.recycling.additional_category')} />
-          </Tabs>
+          <CustomField label={ t('settings_page.recycling.category')} mandatory>
+            <Tabs value={tabIndex} onChange={handleTabChange} aria-label="form tabs" TabIndicatorProps={{ style: { display: 'none' } }} >
+              <StyledTab label={t('settings_page.recycling.main_category')} />
+              <StyledTab label={t('settings_page.recycling.sub_category')} />
+              <StyledTab label={t('settings_page.recycling.additional_category')} />
+            </Tabs>
           </CustomField>
 
           <TabPanel value={tabIndex} index={0} data-testId="astd-semi-product-tabpanel-main-category-219">
@@ -364,7 +363,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                     onBlur={formik.handleBlur}
                     error={formik.touched.category && Boolean(formik.errors.category)}
                     label={t('settings_page.recycling.category')}
-                    disabled={isEditMode && activeTab !== 1}
+                    disabled={isEditMode}
                   >
                     {category &&
                       category?.map((item: Products) => (
@@ -420,7 +419,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                     onBlur={formik.handleBlur}
                     error={formik.touched.category && Boolean(formik.errors.category)}
                     label={t('settings_page.recycling.category')}
-                    disabled={isEditMode && activeTab !== 2}
+                    disabled={isEditMode}
                   >
                     {category &&
                       category.map((item: Products) => (
@@ -444,7 +443,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                       onBlur={formik.handleBlur}
                       error={formik.touched.subcategory && Boolean(formik.errors.subcategory)}
                       label={t('settings_page.recycling.sub_category')}
-                      disabled={isEditMode && activeTab !== 2}
+                      disabled={isEditMode}
                     >
                       {subCategory &&
                         subCategory.map((item: ProductSubType) => (
