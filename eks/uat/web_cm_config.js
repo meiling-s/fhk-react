@@ -5,7 +5,7 @@ window.baseURL = {
     // logistic: 'http://10.166.22.250/',
     // manufacturer: 'http://10.166.22.250/',
     // customer: 'http://10.166.22.250/'
-    // account: 'https://uat.greenhoopapp.com/',
+    account: 'https://uat.greenhoopapp.com/',
     administrator: 'https://uat.greenhoopapp.com/',
     collector: 'https://uat.greenhoopapp.com/',
     logistic: 'https://uat.greenhoopapp.com/',
