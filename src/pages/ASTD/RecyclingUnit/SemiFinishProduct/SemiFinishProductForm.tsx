@@ -7,8 +7,8 @@ import { Box, FormControl, InputLabel, Select, MenuItem, Tabs, Tab, Typography }
 import RightOverlayForm from '../../../../components/RightOverlayForm';
 import CustomField from '../../../../components/FormComponents/CustomField';
 import CustomTextField from '../../../../components/FormComponents/CustomTextField';
-import { Products, ProductPayload } from '../../../../types/settings';
-import { createProductType, editProductType, editProductSubtype, editProductAddonType } from '../../../../APICalls/ASTD/settings/productType';
+import { Products, ProductPayload, ProductSubType } from '../../../../types/settings';
+import { createProductType, createProductSubtype, createProductAddonType, editProductType, editProductSubtype, editProductAddonType, getProductTypeList, getProductSubtypeList } from '../../../../APICalls/ASTD/settings/productType';
 
 const validationSchema = Yup.object({
   traditionalName: Yup.string().required('Required'),
@@ -63,6 +63,8 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   }
 ) => {
   const [tabIndex, setTabIndex] = useState<number>(activeTab || 0);
+  const [category, setCategory] = useState<any>(null)
+  const [subCategory, setSubCategory] = useState<any>(null)
   const {t} = useTranslation()
   const handleTabChange = (event: React.ChangeEvent<{}>, newIndex: number) => {
     setTabIndex(newIndex);
@@ -73,8 +75,8 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       traditionalName: initialData?.productNameTchi || '',
       simplifiedName: initialData?.productNameSchi || '',
       englishName: initialData?.productNameEng || '',
-      category: '',
-      subcategory: '',
+      category: initialData?.productTypeId || '',
+      subcategory: initialData?.productSubTypeId || '',
       introduction: initialData?.description || '',
       remarks: initialData?.remark || '',
     },
@@ -149,18 +151,56 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   };
   
   const handleCreate = async (payload: ProductPayload): Promise<void> => {
-    const createPayload: ProductPayload = { ...payload };
-    const response = await createProductType(createPayload);
-    console.log('API Response:', response.data);
-    toast.success('Product type created successfully!');
+    let response;
+    switch (tabIndex) {
+      case 0:
+        response = await createProductType(payload);
+        toast.success('Product type created successfully!');
+        break;
+      case 1:
+        response = await createProductSubtype(payload);
+        toast.success('Product subtype created successfully!');
+        break;
+      case 2:
+        response = await createProductAddonType(payload);
+        toast.success('Product addon created successfully!');
+        break;
+      default:
+        throw new Error('Invalid active tab selection for create.');
+    }
   
+    console.log('API Response:', response.data);
     handleSubmit();
     handleClose();
   };
-
   useEffect(() => {
     setTabIndex(activeTab || 0);
   }, [activeTab]);
+
+
+  useEffect(() => {
+    async function fetchCategory() {
+      try {
+        const response = await getProductTypeList()
+        setCategory(response.data)
+      }catch(err) {
+        console.log(err)
+      }
+    }
+    fetchCategory()
+  },[])
+
+  useEffect(() => {
+    async function fetchSubCategory() {
+      try {
+        const response = await getProductSubtypeList()
+        setSubCategory(response.data)
+      }catch(err) {
+        console.log(err)
+      }
+    }
+    fetchSubCategory()
+  },[])
 
   return (
     <RightOverlayForm
@@ -267,28 +307,28 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
           <TabPanel value={tabIndex} index={1} data-testId="astd-semi-product-tabpanel-sub-category-308">
             <Box mb="16px">
               {/* 類別 - Category */}
-              <CustomField label={t('settings_page.recycling.category')} mandatory>
-                <FormControl fullWidth>
-                  <InputLabel id="category-label">{t('settings_page.recycling.category')}</InputLabel>
-                  <Select
-                    data-testId="astd-semi-product-sub-category-select-512"
-                    labelId="category-label"
-                    id="category"
-                    value={formik.values.category}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    error={formik.touched.category && Boolean(formik.errors.category)}
-                    label={t('settings_page.recycling.category')}
-                    disabled={isEditMode && activeTab !== 1}
-                  >
-                    <MenuItem value="1號膠">{t('settings_page.recycling.plastic_no_1')}</MenuItem>
-                    <MenuItem value="2號膠">{t('settings_page.recycling.plastic_no_2')}</MenuItem>
-                  </Select>
-                  {formik.touched.category && formik.errors.category && (
-                    <Typography color="error">{formik.errors.category}</Typography>
-                  )}
-                </FormControl>
-                </CustomField>
+              <FormControl fullWidth>
+                    <InputLabel id="category-label">{t('settings_page.recycling.category')}</InputLabel>
+                    <Select
+                      data-testId="astd-semi-product-category-select"
+                      labelId="category-label"
+                      id="category"
+                      value={formik.values.category}
+                      onChange={(event) => formik.setFieldValue('category', event.target.value)}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.category && Boolean(formik.errors.category)}
+                      label={t('settings_page.recycling.category')}
+                      disabled={isEditMode && activeTab !== 1}
+                    >
+                      {category &&
+                        category.map((item: Products) => (
+                          <MenuItem key={item.productTypeId} value={item.productTypeId}>
+                            {item.productNameEng}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </FormControl>
+
                 <Box mb="16px">
                 {/* 簡介 - Introduction */}
                 <CustomField  label={t('settings_page.recycling.introduction')}>
@@ -323,53 +363,54 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
 
           <TabPanel value={tabIndex} index={2} data-testId="astd-semi-product-tabpanel-additional-category-737">
             <Box mb="16px">
-              <CustomField label={t('settings_page.recycling.main_category')} mandatory>
-                <FormControl fullWidth>
-                    <InputLabel id="subcategory-label">{t('settings_page.recycling.category')}</InputLabel>
+            <FormControl fullWidth>
+                  <InputLabel id="category-label">{t('settings_page.recycling.category')}</InputLabel>
+                  <Select
+                    data-testId="astd-semi-product-category-select"
+                    labelId="category-label"
+                    id="category"
+                    value={formik.values.category}
+                    onChange={(event) => formik.setFieldValue('category', event.target.value)}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.category && Boolean(formik.errors.category)}
+                    label={t('settings_page.recycling.category')}
+                    disabled={isEditMode && activeTab !== 1}
+                  >
+                    {category &&
+                      category.map((item: Products) => (
+                        <MenuItem key={item.productTypeId} value={item.productTypeId}>
+                          {item.productNameEng}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              </Box>
+
+                <Box mb="16px">
+                  <FormControl fullWidth>
+                    <InputLabel id="subcategory-label">{t('settings_page.recycling.sub_category')}</InputLabel>
                     <Select
-                      data-testId="astd-semi-product-additional-category-select-831"
+                      data-testId="astd-semi-product-subcategory-select"
                       labelId="subcategory-label"
                       id="subcategory"
                       value={formik.values.subcategory}
-                      onChange={formik.handleChange}
+                      onChange={(event) => formik.setFieldValue('subcategory', event.target.value)}
                       onBlur={formik.handleBlur}
                       error={formik.touched.subcategory && Boolean(formik.errors.subcategory)}
                       label={t('settings_page.recycling.sub_category')}
                       disabled={isEditMode && activeTab !== 2}
                     >
-                      <MenuItem value="水樟">{t('settings_page.recycling.category')} 1</MenuItem>
-                      <MenuItem value="水樟">{t('settings_page.recycling.category')} 2</MenuItem>
+                      {subCategory &&
+                        subCategory.map((item: ProductSubType) => (
+                          <MenuItem key={item.productSubTypeId} value={item.productSubTypeId}>
+                            {item.productNameEng}
+                          </MenuItem>
+                        ))}
                     </Select>
                     {formik.touched.subcategory && formik.errors.subcategory && (
                       <Typography color="error">{formik.errors.subcategory}</Typography>
                     )}
                   </FormControl>
-                </CustomField>
-              </Box>
-
-                <Box mb="16px">
-                <CustomField label={t('settings_page.recycling.sub_category')}>
-                  <FormControl fullWidth>
-                    <InputLabel id="subcategory-label">{t('settings_page.recycling.sub_category')}</InputLabel>
-                    <Select
-                      data-testId="astd-semi-product-additional-category-sub-select-978"
-                      labelId="subcategory-label"
-                      id="subcategory"
-                      value={formik.values.subcategory}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      error={formik.touched.subcategory && Boolean(formik.errors.subcategory)}
-                      label={t('settings_page.recycling.sub_category')}
-                      disabled={isEditMode && activeTab !== 2}
-                      >
-                      <MenuItem value="water_bottle">{t('settings_page.recycling.water_bottle')}</MenuItem>
-                      <MenuItem value="film">{t('settings_page.recycling.film')}</MenuItem>
-                    </Select>
-                    {formik.touched.subcategory && formik.errors.subcategory && (
-                      <Typography color="error">{formik.errors.subcategory}</Typography>
-                    )}
-                  </FormControl>
-                  </CustomField>
                 </Box>
                 
               <Box mb="16px">
