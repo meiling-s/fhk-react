@@ -20,7 +20,13 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   padding: '8px 16px',
   minWidth: 'auto',
   textTransform: 'none',
-  '&.Mui-selected': {
+  '&.Mui-disabled': {
+    // backgroundColor: '#dbdbdb',
+    // '&:hover': {
+    //   cursor: 'not-allowed'
+    // }
+  },
+    '&.Mui-selected': {
     backgroundColor: 'rgb(121 202 37 / 21%)',
     color: '#79CA25',
     borderColor: '#79CA25',
@@ -84,6 +90,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   const {t} = useTranslation()
   const handleTabChange = (event: React.ChangeEvent<{}>, newIndex: number) => {
     setTabIndex(newIndex);
+    formik.resetForm()
   };
 
   const getValidationSchema = (tabIndex: number) => {
@@ -99,14 +106,20 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
         });
       case 1:
         return Yup.object({
-          category: Yup.string().required('Please select a category'),
+          traditionalName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
+          simplifiedName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
+          englishName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
+          category: Yup.string().required('form.error.shouldNotBeEmpty'),
           introduction: Yup.string(),
           remarks: Yup.string(),
         });
       case 2:
         return Yup.object({
-          category: Yup.string().required('Please select a category'),
-          subcategory: Yup.string().required('Please select a subcategory'),
+          traditionalName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
+          simplifiedName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
+          englishName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
+          category: Yup.string().required('form.error.shouldNotBeEmpty'),
+          subCategory: Yup.string().required('form.error.shouldNotBeEmpty'),
           introduction: Yup.string(),
           remarks: Yup.string(),
         });
@@ -127,6 +140,8 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
     },
     validationSchema: Yup.lazy(() => getValidationSchema(tabIndex)),
     enableReinitialize: true,
+    validateOnBlur: false,
+    validateOnChange: false,
     onSubmit: (values) => {
       const payload = {
         productNameTchi: values.traditionalName,
@@ -322,10 +337,29 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
     fetchSubCategory()
   },[])
 
+ const handleOnClose = () => {
+    handleClose()
+    formik.resetForm()
+  }
+
+
+  useEffect(() => {
+    if (!formik.values.category && category?.length > 0) {
+      formik.setFieldValue('category', category[0].productTypeId); 
+    }
+  }, [category, formik]);
+
+  useEffect(() => {
+    if (!formik.values?.subcategory && subCategory?.length > 0) {
+      formik.setFieldValue('subCategory', subCategory[0].productSubTypeId); 
+    }
+  }, [subCategory, formik]);
+
+
   return (
     <RightOverlayForm
       open={open}
-      onClose={handleClose}
+      onClose={() => handleOnClose()}
       anchor="right"
       showHeader={true}
       headerProps={{
@@ -387,9 +421,9 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
           </Box>
           <CustomField label={ t('settings_page.recycling.category')} mandatory>
             <Tabs value={tabIndex} onChange={handleTabChange} aria-label="form tabs" TabIndicatorProps={{ style: { display: 'none' } }} >
-              <StyledTab label={t('settings_page.recycling.main_category')}  disabled={tabIndex === 0 || tabIndex === 2}/>
-              <StyledTab label={t('settings_page.recycling.sub_category')} disabled={tabIndex === 0 || tabIndex === 2} />
-              <StyledTab label={t('settings_page.recycling.additional_category')} disabled={tabIndex === 0 || tabIndex === 1} />
+              <StyledTab label={t('settings_page.recycling.main_category')}  disabled={isEditMode && (tabIndex === 0 || tabIndex === 2)}/>
+              <StyledTab label={t('settings_page.recycling.sub_category')} disabled={isEditMode && (tabIndex === 0 || tabIndex === 2)} />
+              <StyledTab label={t('settings_page.recycling.additional_category')} disabled={isEditMode && (tabIndex === 0 || tabIndex === 1)} />
             </Tabs>
           </CustomField>
 
@@ -426,31 +460,34 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
           </TabPanel>
 
           <TabPanel value={tabIndex} index={1} data-testId="astd-semi-product-tabpanel-sub-category-308">
-            <Box mb="16px">
-              {/* 類別 - Category */}
-              <FormControl fullWidth>
-                  <InputLabel id="category-label">{t('settings_page.recycling.category')}</InputLabel>
-                  <Select
-                    data-testId="astd-semi-product-category-select"
-                    labelId="category-label"
-                    id="category"
-                    value={formik.values.category}
-                    onChange={(event) => formik.setFieldValue('category', event.target.value)}
-                    onBlur={formik.handleBlur}
-                    error={formik.touched.category && Boolean(formik.errors.category)}
-                    label={t('settings_page.recycling.category')}
-                    disabled={isEditMode}
-                  >
-                    {category &&
-                      category?.map((item: Products) => (
-                        <MenuItem key={item.productTypeId} value={item.productTypeId}>
-                          {item.productNameEng}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </FormControl>
+            <Box>
+              <Box mb="32px">
+              {/* Category Label Outside */}
+              <Typography variant="caption" component="label" color="#888" htmlFor="category" style={{ display: 'block', marginBottom: '4px' }}>
+                {t('settings_page.recycling.category')}
+                <span style={{ color: 'red'}}>*</span>
+              </Typography>
 
-                <Box mb="16px">
+              <FormControl fullWidth>
+                <Select
+                  data-testId="astd-semi-product-category-select"
+                  labelId="category-label"
+                  id="category"
+                  value={formik.values.category || ''} 
+                  onChange={(event) => formik.setFieldValue('category', event.target.value)}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.category && Boolean(formik.errors.category)}
+                  disabled={isEditMode}
+                >
+                  {category &&
+                    category.map((item: Products) => (
+                      <MenuItem key={item.productTypeId} value={item.productTypeId}>
+                        {item.productNameEng}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+              <Box my="32px">
                 {/* 簡介 - Introduction */}
                 <CustomField  label={t('settings_page.recycling.introduction')}>
                     <CustomTextField
@@ -480,12 +517,18 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                 </CustomField>
                 </Box>
             </Box>
+              </Box>
           </TabPanel>
 
           <TabPanel value={tabIndex} index={2} data-testId="astd-semi-product-tabpanel-additional-category-737">
-            <Box mb="16px">
-            <FormControl fullWidth>
-                  <InputLabel id="category-label">{t('settings_page.recycling.category')}</InputLabel>
+              <Box>
+                {/* Label outside the input */}
+                <Typography variant="caption" component="label" color="#999" htmlFor="category" style={{ display: 'block', marginBottom: '4px' }}>
+                  {t('settings_page.recycling.category')}
+                  <span style={{ color: 'red'}}>*</span>
+                </Typography>
+
+                <FormControl fullWidth>
                   <Select
                     data-testId="astd-semi-product-category-select"
                     labelId="category-label"
@@ -494,7 +537,6 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                     onChange={(event) => formik.setFieldValue('category', event.target.value)}
                     onBlur={formik.handleBlur}
                     error={formik.touched.category && Boolean(formik.errors.category)}
-                    label={t('settings_page.recycling.category')}
                     disabled={isEditMode}
                   >
                     {category &&
@@ -506,19 +548,22 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                   </Select>
                 </FormControl>
               </Box>
+              <Box mb="16px">
+                  {/* Subcategory Label Outside */}
+                  <Typography variant="caption" component="label" color="#999" htmlFor="category" style={{ display: 'block', marginBottom: '4px' }}>
+                    {t('settings_page.recycling.sub_category')}
+                    <span style={{ color: 'red'}}>*</span>
+                  </Typography>
 
-                <Box mb="16px">
                   <FormControl fullWidth>
-                    <InputLabel id="subcategory-label">{t('settings_page.recycling.sub_category')}</InputLabel>
                     <Select
                       data-testId="astd-semi-product-subcategory-select"
                       labelId="subcategory-label"
-                      id="subcategory"
+                      id="subCategory"
                       value={formik.values.subcategory}
-                      onChange={(event) => formik.setFieldValue('subcategory', event.target.value)}
+                      onChange={(event) => formik.setFieldValue('subCategory', event.target.value)}
                       onBlur={formik.handleBlur}
                       error={formik.touched.subcategory && Boolean(formik.errors.subcategory)}
-                      label={t('settings_page.recycling.sub_category')}
                       disabled={isEditMode}
                     >
                       {subCategory &&
@@ -528,12 +573,9 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                           </MenuItem>
                         ))}
                     </Select>
-                    {formik.touched.subcategory && formik.errors.subcategory && (
-                      <Typography color="error">{formik.errors.subcategory}</Typography>
-                    )}
                   </FormControl>
                 </Box>
-                
+
               <Box mb="16px">
               <CustomField label={t('settings_page.recycling.introduction')}>
                   <CustomTextField
@@ -577,14 +619,20 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
               formik.touched[key as keyof typeof formik.touched] && value ? (
                 <FormErrorMsg
                   key={index}
-                  field={t(`common.${key}`)}
+                  field={t(`common.${
+                    key === "traditionalName" 
+                      ? "traditionalChineseName" 
+                      : key === "simplifiedName" 
+                      ? "simplifiedChineseName" 
+                      : key
+                  }`)}
                   errorMsg={String(value)}
-                  type="error" // Assuming type is "error" here; adjust if needed.
+                  type="error"
                 />
               ) : null
             )
           }
-        </Box>
+                  </Box>
       </form>
     </RightOverlayForm>
   );
