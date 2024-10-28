@@ -634,6 +634,26 @@ export const SEARCH_LOGISTIC_VEHICLE = (
   url: `api/v1/logistic/vehicle/${table}/${vehicleId}`
 })
 
+export const NEW_SEARCH_LOGISTIC_VEHICLE = (
+  table: string,
+  vehicleId?: string,
+  deviceId?: string
+): AxiosRequestConfig => {
+  let url = `api/v1/logistic/vehicle/${table}/search`
+  // if (vehicleId !== undefined) {
+  //   url += `?vehicleId=${vehicleId}`;
+  // }
+
+  // if (deviceId) {
+  //   url += vehicleId ? `&deviceId=${deviceId}` : `?deviceId=${deviceId}`;
+  // }
+
+  return {
+    method: 'get',
+    url: `${url}`
+  }
+}
+
 export const CREATE_LOGISTIC_VEHICLE = (table: string): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/logistic/vehicle/${table}`

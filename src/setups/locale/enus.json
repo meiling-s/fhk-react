@@ -1064,6 +1064,7 @@
     },
     "vehicleMenu": {
       "vehicle_number": "Vehicle ID",
+      "imei":"IMEI Number",
       "license_plate_number": "License Plate No.",
       "vehicle_type": "Vehicle Type",
       "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
