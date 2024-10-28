@@ -102,11 +102,11 @@ export const getProductSubtype = async (productSubtypeId: string) => {
   }
 };
 
-export const createProductSubtype = async (data: any) => {
+export const createProductSubtype = async (productTypeId: string, data: any) => {
   try {
     const response = await axiosInstance({
       baseURL: window.baseURL.administrator,
-      ...CREATE_PRODUCT_SUBTYPE,
+      ...CREATE_PRODUCT_SUBTYPE(productTypeId),
       data: data,
     });
 
@@ -161,11 +161,11 @@ export const getProductAddonType = async (productAddonTypeId: string) => {
   }
 };
 
-export const createProductAddonType = async (data: any) => {
+export const createProductAddonType = async (productSubtypeId: string, data: any) => {
   try {
     const response = await axiosInstance({
       baseURL: window.baseURL.administrator,
-      ...CREATE_PRODUCT_ADDON_TYPE,
+      ...CREATE_PRODUCT_ADDON_TYPE(productSubtypeId),
       data: data,
     });
 
