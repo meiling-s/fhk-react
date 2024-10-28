@@ -120,6 +120,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       setTrySubmited(false)
       resetData()
     }
+    console.log("id list", deviceIdListExist)
   }, [drawerOpen])
 
   const getserviceList = () => {}
@@ -218,28 +219,21 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           type: 'error',
           dataTestId:"logistic-vehicles-form-plate-no-err-warning-5910"
         })
-      } else if (deviceId === '') {
-        tempV.push({
-          field: t('driver.vehicleMenu.imei'),
-          problem: formErr.empty,
-          type: 'error',
-          dataTestId: 'logistic-vehicles-form-imei-err-warning-7562'
-        })
-      } else if (plateListExist && action === 'add' && plateListExist.includes(licensePlate)) {
+      } if (plateListExist && action === 'add' && plateListExist.includes(licensePlate)) {
         tempV.push({
           field: t('driver.vehicleMenu.license_plate_number'),
           problem: formErr.alreadyExist,
           type: 'error',
           dataTestId: 'logistic-vehicles-form-plate-no-err-warning-5910'
         })
-      } else if (deviceIdListExist && action === 'add' && deviceIdListExist.includes(deviceId)) {
+      } if (deviceIdListExist && action === 'add' && deviceIdListExist.includes(deviceId)) {
         tempV.push({
           field: t('driver.vehicleMenu.imei'),
           problem: formErr.alreadyExist,
           type: 'error',
           dataTestId: 'logistic-vehicles-form-imei-err-warning-7562'
         })
-      } else if (plateListExist && action === 'edit' && selectedItem) {
+      } if (plateListExist && action === 'edit' && selectedItem) {
         // Check if the license plate has changed and if the new plate already exists
         if (licensePlate !== selectedItem.plateNo && plateListExist.includes(licensePlate)) {
           tempV.push({
@@ -249,11 +243,10 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
             dataTestId: 'logistic-vehicles-form-plate-no-err-warning-5910'
           })
         }
-      } else if (deviceIdListExist && action === 'edit' && selectedItem) {
-        // Check if the license plate has changed and if the new plate already exists
+      } if ( deviceIdListExist && action === 'edit' && selectedItem) {
         if (deviceId !== selectedItem.deviceId && deviceIdListExist.includes(deviceId)) {
           tempV.push({
-            field: t('driver.vehicleMenu.license_plate_number'),
+            field: t('driver.vehicleMenu.imei'),
             problem: formErr.alreadyExist,
             type: 'error',
             dataTestId: 'logistic-vehicles-form-imei-err-warning-7562'
@@ -289,7 +282,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     }
 
     validate()
-  }, [licensePlate, pictures, vehicleWeight, vehicleTypeId, i18n.language])
+  }, [licensePlate, pictures, vehicleWeight, vehicleTypeId, deviceId, i18n.language])
 
   const handleSubmit = () => {
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
@@ -481,7 +474,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
               </FormControl>
             </Grid>
             <Grid item>
-            <CustomField label={t('driver.vehicleMenu.imei')} mandatory>
+            <CustomField label={t('driver.vehicleMenu.imei')}>
               <CustomTextField
                   dataTestId='logistic-vehicles-form-imei-input-field-9942'
                   id="deviceId"
@@ -490,7 +483,6 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                     'driver.vehicleMenu.imei'
                   )}
                   onChange={(event) => setDeviceId(event.target.value)}
-                  error={checkString(deviceId)}
                 />
               </CustomField>
             </Grid>
