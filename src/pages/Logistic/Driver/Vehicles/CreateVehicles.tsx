@@ -42,6 +42,8 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import Switcher from '../../../../components/FormComponents/CustomSwitch'
+import LabelField from '../../../../components/FormComponents/CustomField'
 
 interface CreateVehicleProps {
   drawerOpen: boolean
@@ -77,6 +79,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [vehicleWeight, setVehicleWeight] = useState<string>('')
+  const [isCompactor, setIsCompactor] = useState<boolean>(false)
   const { vehicleType, imgSettings } = useContainer(CommonTypeContainer)
   const [vehicleTypeList, setVehicleType] = useState<il_item[]>([])
   const [version, setVersion] = useState<number>(0)
@@ -474,8 +477,22 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
               </FormControl>
             </Grid>
             <Grid item>
-            <CustomField label={t('driver.vehicleMenu.imei')}>
-              <CustomTextField
+              <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
+                <LabelField label={t('driver.vehicleMenu.isCompactor')} />
+                <Switcher
+                  onText={t('common.yes')}
+                  offText={t('common.no')}
+                  disabled={action === 'delete'}
+                  defaultValue={isCompactor}
+                  setState={(newValue) => {
+                    setIsCompactor(newValue)
+                  }}
+                />
+              </div>
+            </Grid>
+            <Grid item>
+              <CustomField label={t('driver.vehicleMenu.imei')}>
+                <CustomTextField
                   dataTestId='logistic-vehicles-form-imei-input-field-9942'
                   id="deviceId"
                   value={deviceId}

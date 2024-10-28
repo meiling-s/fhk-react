@@ -1062,6 +1062,7 @@
     "vehicleMenu": {
       "vehicle_number": "車輛編碼",
       "imei":"IMEI 號碼",
+      "isCompactor":"是否壓縮車",
       "license_plate_number": "車牌號碼",
       "vehicle_type": "車輛類型",
       "vehicle_cargo_capacity": "車輛載貨量",

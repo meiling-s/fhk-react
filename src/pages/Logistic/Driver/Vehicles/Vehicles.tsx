@@ -101,6 +101,10 @@ const Vehicles: FunctionComponent = () => {
     //initAllVehicleList()
   }, [page])
 
+  // useEffect(() => {
+  //   initAllVehicleList()
+  // }, [])
+
   const initVehicleList = useCallback(async () => {
     setIsLoading(true)
     setVehicleList([])
@@ -155,6 +159,7 @@ const Vehicles: FunctionComponent = () => {
   //   const result = await getAllVehicles(0, 1000)
   //   const data = result?.data
   //   const newPlateList: string[] = []
+  //   const newDeviceIdList: string[] = []
   //   if (data) {
   //     var vehicleMapping: VehicleItem[] = []
   //     data.content.map((item: any) => {
@@ -165,6 +170,7 @@ const Vehicles: FunctionComponent = () => {
   //           item?.plateNo,
   //           item?.photo,
   //           item?.status,
+  //           item?.deviceId,
   //           item?.netWeight,
   //           item?.createdBy,
   //           item?.updatedBy,
@@ -173,14 +179,12 @@ const Vehicles: FunctionComponent = () => {
   //           item?.version
   //         )
   //       )
-
-  //       //mappping plate list
   //       newPlateList.push(item?.plateNo)
+  //       newDeviceIdList.push(item?.deviceId)
   //     })
-  //     // setVehicleList(vehicleMapping)
   //     setPlateList(newPlateList)
+  //     setDeviceIdList(newDeviceIdList)
   //   }
-  //   setIsLoading(false)
   // }, [])
 
   const columns: GridColDef[] = [
@@ -227,6 +231,15 @@ const Vehicles: FunctionComponent = () => {
         }
 
         return <div>{vehicleName}</div>
+      }
+    },
+    {
+      field: 'isCompactor',
+      headerName: t('driver.vehicleMenu.isCompactor'),
+      width: 200,
+      type: 'string',
+      renderCell: (params) => {
+        return <div>{`NO`}</div>
       }
     },
     {
