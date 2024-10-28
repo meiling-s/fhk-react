@@ -58,7 +58,7 @@ const SemiFinishProduct = () => {
           startIcon={<ADD_ICON />}
           sx={{ textTransform: 'upercase', borderRadius: '24px', padding: "8px 24px", fontWeight: "bold" }}
         >
-          {t('settings_page.recycling.new')}
+          {t('top_menu.add_new')}
         </Button>
       </Box>
       <TableContainer>

@@ -253,7 +253,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       anchor="right"
       showHeader={true}
       headerProps={{
-        title:   isEditMode ? t('settings_page.recycling.add_new') : "",
+        title: !isEditMode ? t('top_menu.add_new') : '',
         subTitle: t('settings_page.recycling.product_category'),
         submitText:  t('common.save'),
         cancelText:  t('common.cancel'),
