@@ -42,7 +42,7 @@ export interface ProductAddon {
     description: string;
     remark: string;
     updatedBy: string;
-    status?: string;
+    status?: number;
     version?: number;
     productTypeId?: string;
     productSubTypeId?: string;
