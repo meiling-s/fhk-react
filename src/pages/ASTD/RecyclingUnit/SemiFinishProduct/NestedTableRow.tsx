@@ -110,8 +110,8 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
         <TableCell sx={{ padding: '4px 8px' }}>
           {products.productSubType && products.productSubType.length > 0 && (
             <IconButton
-              data-testId=""
-              aria-label="astd-semi-product-expand-icon-142"
+              data-testId={`astd-semi-product-expand-icon-142-${products.productTypeId}`}
+              aria-label="expand sub item"
               size="small"
               onClick={() => setOpen(!open)}
             >
@@ -126,10 +126,10 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
         <TableCell sx={{ padding: '4px 8px' }}>{products.remark || '-'}</TableCell>
         <TableCell sx={{ padding: '4px 8px', display: 'flex', justifyContent: 'flex-end'}} >
          <Box display="flex" alignItems="center" gap="8px">
-         <IconButton data-testId="astd-semi-product-edit-icon-876" aria-label="edit row" size="small" onClick={() => products && handleEditProduct(products.productTypeId)}>
+         <IconButton data-testId={`astd-semi-product-edit-icon-876-${products.productTypeId}`}aria-label="edit row" size="small" onClick={() => products && handleEditProduct(products.productTypeId)}>
             <EDIT_OUTLINED_ICON />
           </IconButton>
-          <IconButton data-testId="astd-semi-product-delete-icon-659" aria-label="delete row" size="small" onClick={() =>products &&  handleDeleteProduct(products.productTypeId)}>
+          <IconButton data-testId={`astd-semi-product-delete-icon-659-${products.productTypeId}`} aria-label="delete row" size="small" onClick={() =>products &&  handleDeleteProduct(products.productTypeId)}>
             <DELETE_OUTLINED_ICON />
           </IconButton>
          </Box>
@@ -148,7 +148,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
                         <TableCell sx={{ paddingLeft: 4 }}>
                           {subProduct.productAddonType && subProduct.productAddonType.length > 0 && (
                             <IconButton
-                              data-testId="astd-semi-product-subtype-expand-icon-934"
+                              data-testId={`astd-semi-product-subtype-expand-icon-934-${subProduct.productSubTypeId}`}
                               aria-label="expand row"
                               size="small"
                               onClick={() => toggleSubtypeOpen(subProduct.productSubTypeId)}
@@ -164,10 +164,10 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
                         <TableCell>{subProduct.remark || '-'}</TableCell>
                         <TableCell sx={{ padding: '4px 8px', display: 'flex', justifyContent: 'flex-end'}} >
                         <Box display="flex" alignItems="center" gap="8px">
-                        <IconButton data-testId="astd-semi-product-subtype-edit-icon-471" aria-label="edit row" size="small" onClick={() => handleEditSubProduct(subProduct.productSubTypeId)}>
+                        <IconButton data-testId={`astd-semi-product-subtype-edit-icon-471-${subProduct.productSubTypeId}`} aria-label="edit row" size="small" onClick={() => handleEditSubProduct(subProduct.productSubTypeId)}>
                             <EDIT_OUTLINED_ICON />
                           </IconButton>
-                          <IconButton data-testId="astd-semi-product-subtype-delete-icon-283" aria-label="delete row" size="small" onClick={() => handleDeleteSubProduct(subProduct.productSubTypeId)}>
+                          <IconButton data-testId={`astd-semi-product-subtype-delete-icon-283-${subProduct.productSubTypeId}`} aria-label="delete row" size="small" onClick={() => handleDeleteSubProduct(subProduct.productSubTypeId)}>
                             <DELETE_OUTLINED_ICON />
                           </IconButton>
                         </Box>
@@ -189,10 +189,10 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
                                       <TableCell>{addon.remark || '-'}</TableCell>
                                       <TableCell sx={{ padding: '4px 8px', display: 'flex', justifyContent: 'flex-end'}} >
                                         <Box display="flex" alignItems="center" gap="8px">
-                                        <IconButton data-testId="astd-semi-product-addon-edit-icon-708" aria-label="edit row" size="small" onClick={() => handleEditProductAddon(addon.productAddonTypeId)}>
+                                        <IconButton data-testId={`astd-semi-product-addon-edit-icon-708-${subProduct.productSubTypeId}`} aria-label="edit row" size="small" onClick={() => handleEditProductAddon(addon.productAddonTypeId)}>
                                             <EDIT_OUTLINED_ICON />
                                           </IconButton>
-                                          <IconButton data-testId="astd-semi-product-addon-delete-icon-525" aria-label="delete row" size="small" onClick={() => handleDeleteProductAddon(addon.productAddonTypeId)}>
+                                          <IconButton data-testId={`astd-semi-product-addon-delete-icon-525-${subProduct.productSubTypeId}`} aria-label="delete row" size="small" onClick={() => handleDeleteProductAddon(addon.productAddonTypeId)}>
                                             <DELETE_OUTLINED_ICON />
                                           </IconButton>
                                         </Box>
