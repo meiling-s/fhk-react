@@ -10,6 +10,7 @@ interface ButtonProps {
   color?: string;
   outlined?: Boolean;
   style?: object;
+  dataTestId?: string
 }
 
 const CustomButton: React.FC<ButtonProps> = ({
@@ -20,7 +21,8 @@ const CustomButton: React.FC<ButtonProps> = ({
   onClick,
   color = 'green',
   outlined = false,
-  style = {}
+  style = {},
+  dataTestId = ''
 }) => {
   const getStyle = () => {
     let style = {};
@@ -54,6 +56,7 @@ const CustomButton: React.FC<ButtonProps> = ({
         event.stopPropagation()
         onClick && onClick()
       }}
+      data-testid={dataTestId}
       variant={outlined ? 'outlined' : 'contained'}
       style={{...getStyle(), ...style}}
       sx={{

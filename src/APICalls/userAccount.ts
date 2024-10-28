@@ -1,4 +1,3 @@
-import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
 import {
   GET_USER_ACCOUNT_LIST,
   CREATE_USER_ACCOUNT,

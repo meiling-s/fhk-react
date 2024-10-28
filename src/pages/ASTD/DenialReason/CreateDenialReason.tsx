@@ -118,28 +118,32 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       placeholder: t('denial_reason.enter_name'),
       field: 'reasonNameTchi',
       type: 'text',
-      mandatory: true
+      mandatory: true,
+      dataTestId: 'astd-reject-form-tc-input-field-7235'
     },
     {
       label: t('denial_reason.reason_name_schi'),
       placeholder: t('denial_reason.enter_name'),
       field: 'reasonNameSchi',
       type: 'text',
-      mandatory: true
+      mandatory: true,
+      dataTestId: 'astd-reject-form-sc-input-field-1131'
     },
     {
       label: t('denial_reason.reason_name_eng'),
       placeholder: t('denial_reason.enter_name'),
       field: 'reasonNameEng',
       type: 'text',
-      mandatory: true
+      mandatory: true,
+      dataTestId: 'astd-reject-form-en-input-field-5444'
     },
     {
       label: t('denial_reason.corresponding_functions'),
       placeholder: t('denial_reason.select_function'),
       field: 'functionId',
       type: 'autocomplete',
-      mandatory: true
+      mandatory: true,
+      dataTestId: 'astd-reject-form-functions-select-menu-2551'
     },
     // {
     //   label: t('denial_reason.description'),
@@ -154,7 +158,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       field: 'remark',
       type: 'text-not-mandatory',
       textarea: true,
-      mandatory: false
+      mandatory: false,
+      dataTestId: 'astd-reject-form-remark-4898'
     }
     // {
     //   label: t('general_settings.state'),
@@ -214,6 +219,15 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     return s == ''
   }
 
+  const validationTestId: FormValues = {
+    functionId: 'astd-reject-form-functions-select-menu-err-warning-2779',
+    reasonNameTchi: 'astd-reject-form-tc-err-warning-2202',
+    reasonNameSchi: 'astd-reject-form-sc-err-warning-7800',
+    reasonNameEng: 'astd-reject-form-en-err-warning-5957',
+    description: 'astd-reject-form-description-err-warning',
+    remark: 'astd-reject-form-remark-err-warning'
+  }
+
   const validate = async () => {
     const tempV: formValidate[] = []
     let excludeFields = ['description', 'remark']
@@ -236,7 +250,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
           tempV.push({
             field: fieldMapping[fieldName as keyof FormValues],
             problem: formErr.empty,
-            type: 'error'
+            type: 'error',
+            dataTestId: validationTestId[fieldName],
           })
       }
     })
@@ -318,9 +333,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else {
-        setTrySubmited(true)
-        onSubmitData('error', t('common.saveFailed'))
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error.response.data.message);
       }
     }
   }
@@ -361,7 +375,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       const {state} = extractError(error);
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else if (state.code === STATUS_CODE[409]){
+      } else if (state.code === STATUS_CODE[409]) {
         showErrorToast(error.response.data.message);
       }
     }
@@ -463,6 +477,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                       error={checkString(
                         formData[item.field as keyof FormValues]
                       )}
+                      dataTestId={item.dataTestId}
                     />
                   </CustomField>
                 </Grid>
@@ -500,6 +515,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                         />
                       )}
                       noOptionsText={t('common.noOptions')}
+                      data-testid={item.dataTestId}
                     />
                   </CustomField>
                 </Grid>
@@ -519,6 +535,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                       }
                       textarea={item.textarea}
                       multiline={item.textarea}
+                      dataTestId={item.dataTestId}
                     />
                   </CustomField>
                 </Grid>
@@ -553,6 +570,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                         field={t(val.field)}
                         errorMsg={returnErrorMsg(val.problem, t)}
                         type={val.type}
+                        dataTestId={val.dataTestId}
                       />
                     )
                   }

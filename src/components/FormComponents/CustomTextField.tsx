@@ -20,6 +20,7 @@ type props = {
   textarea?: boolean;
   type?: string;
   maxLength?: number;
+  dataTestId?: string;
 };
 
 function CustomTextField({
@@ -39,7 +40,8 @@ function CustomTextField({
   disabled = false,
   textarea = false,
   type,
-  maxLength
+  maxLength,
+  dataTestId = ""
 }: props) {
   return (
     <TextField
@@ -48,6 +50,7 @@ function CustomTextField({
       className={className}
       hiddenLabel
       id={id}
+      data-testid={dataTestId}
       value={value}
       multiline={multiline}
       rows={multiline ? 4 : rows}

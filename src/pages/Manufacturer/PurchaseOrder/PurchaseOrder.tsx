@@ -30,7 +30,11 @@ import {
   queryPurchaseOrder
 } from '../../../interfaces/purchaseOrder'
 import i18n from '../../../setups/i18n'
-import { displayCreatedDate, extractError, debounce } from '../../../utils/utils'
+import {
+  displayCreatedDate,
+  extractError,
+  debounce
+} from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
 import {
   Languages,
@@ -774,17 +778,19 @@ const PurchaseOrder = () => {
         </Box>
         <Box />
         <Box sx={{ mt: 3, display: 'flex' }}>
-          {searchfield.map((s) => (
-            <CustomSearchField
-              key={s.field}
-              label={s.label}
-              inputType={s?.inputType}
-              placeholder={s?.placeholder}
-              field={s.field}
-              options={s.options || []}
-              onChange={handleSearch}
-            />
-          ))}
+          {searchfield
+            .filter((s) => role !== 'customer' || s.field !== 'receiverAddr') // Exclude 'place' if role is 'customer'
+            .map((s) => (
+              <CustomSearchField
+                key={s.field}
+                label={s.label}
+                inputType={s?.inputType}
+                placeholder={s?.placeholder}
+                field={s.field}
+                options={s.options || []}
+                onChange={handleSearch}
+              />
+            ))}
         </Box>
         <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
           {isLoading ? (

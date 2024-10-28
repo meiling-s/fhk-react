@@ -1,5 +1,5 @@
 import { useEffect, useState, FunctionComponent, useCallback } from 'react'
-import { Box, Button, Checkbox, Typography, Pagination } from '@mui/material'
+import { Box, Button, Typography, Pagination } from '@mui/material'
 import {
   DataGrid,
   GridColDef,
@@ -50,7 +50,8 @@ function createUserGroup(
   updatedBy: string,
   updatedAt: string,
   userAccount: object[],
-  functions: Functions[]
+  functions: Functions[],
+  isAdmin: boolean
 ): UserGroupItem {
   return {
     groupId,
@@ -63,7 +64,8 @@ function createUserGroup(
     updatedBy,
     updatedAt,
     userAccount,
-    functions
+    functions,
+    isAdmin
   }
 }
 
@@ -109,7 +111,7 @@ const UserGroup: FunctionComponent = () => {
       const data = result?.data
       let tempGroupList: string[] = []
       if (data) {
-        var userGroupMapping: UserGroupItem[] = []
+        let userGroupMapping: UserGroupItem[] = []
         data.content.map((item: any) => {
           userGroupMapping.push(
             createUserGroup(
@@ -123,7 +125,8 @@ const UserGroup: FunctionComponent = () => {
               item?.updatedBy,
               item?.updatedAt,
               item?.userAccount,
-              item?.functions
+              item?.functions,
+              item?.isAdmin
             )
           )
 
@@ -148,17 +151,20 @@ const UserGroup: FunctionComponent = () => {
       headerName: t('userGroup.groupName'),
       width: 200,
       type: 'string'
-      // renderCell: (params) => {
-      //   return (
-      //     <div>{params.row.serviceType}</div>
-      //   )
-      // }
     },
     {
       field: 'description',
       headerName: t('userGroup.description'),
       width: 200,
       type: 'string'
+    },
+    {
+      field: 'isAdmin',
+      headerName: t('userAccount.isAdmin'),
+      width: 250,
+      type: 'string',
+      valueGetter: (params) =>
+        params.row?.isAdmin ? t('common.yes') : t('common.no')
     },
     {
       field: 'functions',
@@ -190,6 +196,7 @@ const UserGroup: FunctionComponent = () => {
       renderCell: (params) => {
         return (
           <Button
+            data-testid="astd-user-group-edit-button-9924"
             onClick={(event) => {
               event.stopPropagation()
               handleAction(params, 'edit')
@@ -211,6 +218,7 @@ const UserGroup: FunctionComponent = () => {
       renderCell: (params) => {
         return (
           <Button
+          data-testid="astd-user-group-delete-button-7688"
             onClick={(event) => {
               event.stopPropagation()
               handleAction(params, 'delete')
@@ -323,6 +331,7 @@ const UserGroup: FunctionComponent = () => {
                 height: '40px'
               }
             ]}
+            data-testid="astd-user-group-new-button-8674"
             variant="outlined"
             onClick={() => {
               setDrawerOpen(true)

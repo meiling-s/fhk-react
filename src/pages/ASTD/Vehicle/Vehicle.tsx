@@ -127,7 +127,10 @@ const Vehicle: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div 
+            data-testid={`astd-vehicles-edit-button-9487` + params.id}
+            style={{ display: 'flex', gap: '8px' }}
+          >
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
@@ -147,7 +150,10 @@ const Vehicle: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div 
+            data-testid={`astd-vehicles-delete-button-8790` + params.id}
+            style={{ display: 'flex', gap: '8px' }}
+          >
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
@@ -252,6 +258,7 @@ const Vehicle: FunctionComponent = () => {
             setDrawerOpen(true)
             setAction('add')
           }}
+          data-testid={`astd-vehicles-new-button-7594`}
         >
           <ADD_ICON /> {t('top_menu.add_new')}
         </Button>
