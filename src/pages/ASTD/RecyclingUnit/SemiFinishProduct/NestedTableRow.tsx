@@ -8,12 +8,13 @@ import {
   Collapse,
   Box
 } from '@mui/material';
+import { toast } from 'react-toastify';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { ProductAddon, Products, ProductSubType } from '../../../../types/settings';
 import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../../../themes/icons';
 import SemiFinishProductForm from './SemiFinishProductForm';
-import { getProductType, getProductSubtype, getProductAddonType } from '../../../../APICalls/ASTD/settings/productType';
-
+import { getProductType, getProductSubtype, getProductAddonType, editProductType, editProductSubtype, editProductAddonType } from '../../../../APICalls/ASTD/settings/productType';
+import ConfirmDeleteModal from './ConfirmDeleteModal';
 
 type NestedTableRowProps = {
   products: Products;
@@ -25,8 +26,11 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
   const [isOpenForm, setIsOpenForm] = useState<boolean>(false);
   const [activetab, setActiveTab] = useState<number>(0)
   const [paramId, setParamId] = useState<string>('')
+  const [openDelete, setOpenDelete] = useState(false);
+  const [deleteItem, setDeleteItem] = useState<{data: any, id: string; type: string, payloadId?: string } | null>(null);
 
   const [initialData, setInitialData] = useState<any>({});
+
 
   const toggleSubtypeOpen = (id: string) => {
     setSubtypeOpen((prevState) => ({
@@ -69,7 +73,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
   };
 
   const handleEditProduct = (id: string) => {
-    setIsOpenForm(true);
+  setIsOpenForm(true);
     setActiveTab(0)
     handleFetchInitialData(id);
   };
@@ -86,18 +90,110 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     handleFetchAddonData(id);
   };
 
-  const handleDeleteProduct = (id: string) => {
-    console.log('Delete Product:', id);
-  };
 
-  const handleDeleteSubProduct = (id: string) => {
-    console.log('Delete Sub-Product:', id);
-  };
-
-  const handleDeleteProductAddon = (id: string) => {
-    console.log('Delete Product Addon:', id);
-  };
   
+
+
+  const handleDeleteProduct = async (id: string) => {
+    await handleFetchInitialData(id); 
+    const payload = {
+      productNameTchi: initialData?.traditionalName || '',
+      productNameSchi: initialData?.simplifiedName || '',
+      productNameEng: initialData?.englishName || '',
+      description: initialData?.introduction || '',
+      version:  initialData?.version || '',
+      remark: initialData?.remarks || '',
+      createdBy: localStorage.getItem('username') || '',
+      updatedBy: localStorage.getItem('username') || '',
+    };
+    setDeleteItem({ data: payload, id, type: 'product' });
+    setOpenDelete(true);
+};
+  const handleDeleteSubProduct =  async(id: string, productsId :string) => {
+   await handleFetchSubtypeData(id)
+
+    const payload = {
+      productNameTchi: initialData?.traditionalName || '',
+      productNameSchi: initialData?.simplifiedName || '',
+      productNameEng: initialData?.englishName || '',
+      description: initialData?.introduction || '',
+      version:  initialData?.version || '',
+      remark: initialData?.remarks || '',
+      createdBy: localStorage.getItem('username') || '',
+      updatedBy: localStorage.getItem('username') || '',
+    };
+    const payloadId = productsId
+    setDeleteItem({ data: payload, id, type: 'subProduct', payloadId });
+    setOpenDelete(true);
+  };
+
+  const handleDeleteProductAddon = async (id: string, subProductId :string) => {
+    
+    await handleFetchAddonData(id)
+    const payload = {
+      productNameTchi: initialData?.traditionalName || '',
+      productNameSchi: initialData?.simplifiedName || '',
+      productNameEng: initialData?.englishName || '',
+      description: initialData?.introduction || '',
+      version:  initialData?.version || '',
+      remark: initialData?.remarks || '',
+      createdBy: localStorage.getItem('username') || '',
+      updatedBy: localStorage.getItem('username') || '',
+    };
+
+    const payloadId = subProductId
+    setDeleteItem({ data: payload, id, type: 'addon', payloadId });
+    setOpenDelete(true);
+  };
+
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
+    setDeleteItem(null);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!deleteItem) return;
+  
+    const { data, id, type, payloadId } = deleteItem;
+    let toastMsg = '';
+    switch (type) {
+      case 'product':
+        console.log('Deleting Product:', id);
+        editProductType(id, {...data, status: 1});
+        toastMsg = 'Product deleted successfully';
+        break;
+  
+      case 'subProduct':
+        console.log('Deleting Sub-Product:', id);
+        editProductSubtype(id, {...data, status: 1, productSubTypeId: payloadId});
+        toastMsg = 'Sub-Product deleted successfully';
+        break;
+  
+      case 'addon':
+        console.log('Deleting Product Addon:', id);
+        editProductAddonType(id,{...data, status: 1 , productAddonTypeId: payloadId});
+        toastMsg = 'Product Addon deleted successfully';
+        break;
+  
+      default:
+        break;
+    }
+  
+    if (toastMsg) {
+      toast.info(toastMsg, {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
+    }
+  
+    handleCloseDelete();
+  };
   const handleClose = () => {
     setInitialData('')
     setIsOpenForm(false)
@@ -126,10 +222,10 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
         <TableCell sx={{ padding: '4px 8px' }}>{products.remark || '-'}</TableCell>
         <TableCell sx={{ padding: '4px 8px', display: 'flex', justifyContent: 'flex-end'}} >
          <Box display="flex" alignItems="center" gap="8px">
-         <IconButton data-testId={`astd-semi-product-edit-icon-876-${products.productTypeId}`}aria-label="edit row" size="small" onClick={() => products && handleEditProduct(products.productTypeId)}>
+         <IconButton data-testId={`astd-semi-product-edit-icon-876-${products.productTypeId}`}aria-label="edit row" size="small" onClick={() => handleEditProduct(products.productTypeId)}>
             <EDIT_OUTLINED_ICON />
           </IconButton>
-          <IconButton data-testId={`astd-semi-product-delete-icon-659-${products.productTypeId}`} aria-label="delete row" size="small" onClick={() =>products &&  handleDeleteProduct(products.productTypeId)}>
+          <IconButton data-testId={`astd-semi-product-delete-icon-659-${products.productTypeId}`} aria-label="delete row" size="small" onClick={() =>  handleDeleteProduct(products.productTypeId)}>
             <DELETE_OUTLINED_ICON />
           </IconButton>
          </Box>
@@ -167,7 +263,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
                         <IconButton data-testId={`astd-semi-product-subtype-edit-icon-471-${subProduct.productSubTypeId}`} aria-label="edit row" size="small" onClick={() => handleEditSubProduct(subProduct.productSubTypeId)}>
                             <EDIT_OUTLINED_ICON />
                           </IconButton>
-                          <IconButton data-testId={`astd-semi-product-subtype-delete-icon-283-${subProduct.productSubTypeId}`} aria-label="delete row" size="small" onClick={() => handleDeleteSubProduct(subProduct.productSubTypeId)}>
+                          <IconButton data-testId={`astd-semi-product-subtype-delete-icon-283-${subProduct.productSubTypeId}`} aria-label="delete row" size="small" onClick={() => handleDeleteSubProduct(subProduct.productSubTypeId, products.productTypeId)}>
                             <DELETE_OUTLINED_ICON />
                           </IconButton>
                         </Box>
@@ -192,7 +288,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
                                         <IconButton data-testId={`astd-semi-product-addon-edit-icon-708-${subProduct.productSubTypeId}`} aria-label="edit row" size="small" onClick={() => handleEditProductAddon(addon.productAddonTypeId)}>
                                             <EDIT_OUTLINED_ICON />
                                           </IconButton>
-                                          <IconButton data-testId={`astd-semi-product-addon-delete-icon-525-${subProduct.productSubTypeId}`} aria-label="delete row" size="small" onClick={() => handleDeleteProductAddon(addon.productAddonTypeId)}>
+                                          <IconButton data-testId={`astd-semi-product-addon-delete-icon-525-${subProduct.productSubTypeId}`} aria-label="delete row" size="small" onClick={() => handleDeleteProductAddon(addon.productAddonTypeId, subProduct.productSubTypeId)}>
                                             <DELETE_OUTLINED_ICON />
                                           </IconButton>
                                         </Box>
@@ -221,6 +317,11 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
         open={isOpenForm}
         handleClose={() => handleClose()}
         handleSubmit={() => {}}
+      />
+     <ConfirmDeleteModal
+        open={openDelete}
+        onClose={handleCloseDelete}
+        handleConfirmDelete={handleConfirmDelete}
       />
     </>
   );
