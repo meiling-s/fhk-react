@@ -3,12 +3,30 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { Box, FormControl, InputLabel, Select, MenuItem, Tabs, Tab, Typography } from '@mui/material';
+import { Box, FormControl, InputLabel, Select, MenuItem, Tabs, Tab, Typography,styled  } from '@mui/material';
 import RightOverlayForm from '../../../../components/RightOverlayForm';
 import CustomField from '../../../../components/FormComponents/CustomField';
 import CustomTextField from '../../../../components/FormComponents/CustomTextField';
 import { Products, ProductPayload, ProductSubType } from '../../../../types/settings';
 import { createProductType, createProductSubtype, createProductAddonType, editProductType, editProductSubtype, editProductAddonType, getProductTypeList, getProductSubtypeList } from '../../../../APICalls/ASTD/settings/productType';
+
+const StyledTab = styled(Tab)(({ theme }) => ({
+  border: '1px solid',
+  borderRadius: '24px',
+  margin: '0 4px',
+  padding: '8px 16px',
+  minWidth: 'auto',
+  textTransform: 'none',
+  '&.Mui-selected': {
+    backgroundColor: 'rgb(121 202 37 / 21%)',
+    color: '#79CA25',
+    borderColor: '#79CA25',
+  },
+  '&:not(.Mui-selected)': {
+    color: '#b0b0b0',
+  },
+}));
+
 
 const validationSchema = Yup.object({
   traditionalName: Yup.string().required('Required'),
@@ -96,7 +114,24 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       handleSubmit();
     },
   });
-  
+
+  const handleSave = async () => {
+    // Trigger validation manually
+    const isValid = await formik.validateForm();
+    formik.setTouched({
+      traditionalName: true,
+      simplifiedName: true,
+      englishName: true,
+      category: true,
+      subcategory: true,
+    });
+
+   
+    if (Object.keys(isValid).length === 0) {
+      await onSubmitForm(); 
+    }
+  };
+
   const onSubmitForm = async (): Promise<void> => {
     try {
       const payload: ProductPayload = {
@@ -218,12 +253,12 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       anchor="right"
       showHeader={true}
       headerProps={{
-        title:   t('settings_page.recycling.add_new'),
+        title:   isEditMode ? t('settings_page.recycling.add_new') : "",
         subTitle: t('settings_page.recycling.product_category'),
-        submitText: 'Save',
-        cancelText: 'Cancel',
+        submitText:  t('common.save'),
+        cancelText:  t('common.cancel'),
         onCloseHeader: handleClose,
-        onSubmit: () => onSubmitForm(),
+        onSubmit: () => handleSave(),
       }}
     >
       <form onSubmit={formik.handleSubmit} data-testId="astd-semi-product-form-564">
@@ -274,12 +309,14 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
               />
             </CustomField>
           </Box>
+          <CustomField label={ t('settings_page.recycling.category')} >
 
-          <Tabs value={tabIndex} onChange={handleTabChange} aria-label="form tabs">
-            <Tab label={t('settings_page.recycling.main_category')}/>
-            <Tab label={t('settings_page.recycling.sub_category')} />
-            <Tab label={t('settings_page.recycling.additional_category')}/>
+          <Tabs value={tabIndex} onChange={handleTabChange} aria-label="form tabs" TabIndicatorProps={{ style: { display: 'none' } }} >
+            <StyledTab label={t('settings_page.recycling.main_category')} />
+            <StyledTab label={t('settings_page.recycling.sub_category')} />
+            <StyledTab label={t('settings_page.recycling.additional_category')} />
           </Tabs>
+          </CustomField>
 
           <TabPanel value={tabIndex} index={0} data-testId="astd-semi-product-tabpanel-main-category-219">
             <Box mb="16px">
