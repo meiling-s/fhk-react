@@ -45,7 +45,8 @@
     "warehouseName": "仓库名称已存在",
     "vehicle": "车辆",
     "theNameAlreadyExist": "员工职位名称已存在",
-    "leaveConfirmMsg": "您确定要离开此页面吗？未保存的更改将会丢失"
+    "leaveConfirmMsg": "您确定要离开此页面吗？未保存的更改将会丢失",
+    "noData": "没有数据"
   },
   "col": {
     "createCP": "建立回收点",
@@ -142,6 +143,7 @@
   "noticeTemplate": "通知范本",
   "statistics": "数据",
   "recyclables": "回收物",
+  "product": "产品",
   "convoy": "车队",
   "recycleCompany": "回收公司",
   "recyclePlant": "回收厂",
@@ -161,6 +163,7 @@
   "top_menu": {
     "general_settings": "一般设定",
     "packaging_unit": "包装单位",
+    "process_type": "处理方式",
     "workshop": "工场",
     "vehicles": "车辆",
     "company": "公司",
@@ -487,7 +490,13 @@
       "recycling_location": "回收地点",
       "arrived": "到达地点",
       "placeholder": "请输入地点",
-      "select_po": "选择运单"
+      "select_po": "选择运单",
+      "item_category": "物品类别"
+    },
+    "product_type": {
+      "Product": "制成品类别",
+      "Subtype": "次类别",
+      "Add-on": "追加类别"
     },
     "select_po": "选择运单",
     "search_company_name": "输入发件人公司",
@@ -814,6 +823,7 @@
     "suspend": "暂停",
     "deleted": "已删除",
     "staffId": "员工编号",
+    "isAdmin": "是否管理员",
     "successCreatedUser": "成功创建用户",
     "failedCreatedUser": "创建用户失败",
     "successEditUser": "成功编辑用户",
@@ -1076,6 +1086,7 @@
     },
     "vehicleMenu": {
       "vehicle_number": "车辆编码",
+      "imei":"IMEI 号码",
       "license_plate_number": "车牌号码",
       "vehicle_type": "车辆种类",
       "vehicle_cargo_capacity": "车辆载货量",
@@ -1140,6 +1151,21 @@
     "additional_category": "追加类别",
     "plastic_no_1": "1号胶",
     "plastic_no_2": "2号胶"
+  },
+  "process_type": {
+    "process_type": "处理方式",
+    "new": "新的",
+    "traditional_chinese_name": "繁体中文名称",
+    "traditional_chinese_name_placeholder": "请输入繁体中文名称",
+    "simplified_chinese_name": "简体中文名称",
+    "simplified_chinese_name_placeholder": "请输入简体中文名称",
+    "english_name": "英文名称",
+    "english_name_placeholder": "请输入英文名称",
+    "introduction": "简介",
+    "introduction_placeholder": "请输入简介",
+    "remark": "备注",
+    "remark_placeholder": "请输入备注",
+    "time": "处理需时（时间/重量）"
   },
   "staffEnquiry": {
     "title": "員工查詢",

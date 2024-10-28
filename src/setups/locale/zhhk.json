@@ -45,7 +45,8 @@
     "warehouseName": "倉庫名稱已存在",
     "vehicle": "車輛",
     "theNameAlreadyExist": "員工職位名稱已存在",
-    "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失"
+    "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失",
+     "noData": "沒有數據"
   },
   "col": {
     "createCP": "建立回收點",
@@ -142,6 +143,7 @@
   "noticeTemplate": "通知範本",
   "statistics": "數據",
   "recyclables": "回收物",
+  "product": "產品",
   "convoy": "車隊",
   "recycleCompany": "回收公司",
   "recyclePlant": "回收廠",
@@ -161,6 +163,7 @@
   "top_menu": {
     "general_settings": "一般設定",
     "packaging_unit": "包裝單位",
+    "process_type": "處理方式",
     "workshop": "工場",
     "vehicles": "車輛",
     "company": "公司",
@@ -486,7 +489,13 @@
       "receiver": "收件公司",
       "arrived": "到達地點",
       "placeholder": "請輸入地點",
-      "select_po": "選擇運單"
+      "select_po": "選擇運單",
+      "item_category": "物品類別"
+    },
+    "product_type": {
+      "Product": "製成品類別",
+      "Subtype": "次類別",
+      "Add-on": "追加類別"
     },
     "select_po": "選擇運單",
     "search_company_name": "輸入寄件者公司",
@@ -812,6 +821,7 @@
     "suspend": "暫停",
     "deleted": "已刪除",
     "staffId": "員工編號",
+    "isAdmin": "是否管理員",
     "successCreatedUser": "成功創建用戶",
     "failedCreatedUser": "創建用戶失敗",
     "successEditUser": "成功編輯用戶",
@@ -1075,6 +1085,7 @@
     },
     "vehicleMenu": {
       "vehicle_number": "車輛編碼",
+      "imei":"IMEI 號碼",
       "license_plate_number": "車牌號碼",
       "vehicle_type": "車輛類型",
       "vehicle_cargo_capacity": "車輛載貨量",
@@ -1133,6 +1144,21 @@
     "introduction_placeholder": "請輸入簡介",
     "remark": "備注",
     "remark_placeholder": "請輸入備註"
+  },
+  "process_type": {
+    "process_type": "處理方式",
+    "new": "新的",
+    "traditional_chinese_name": "繁體中文名稱",
+    "traditional_chinese_name_placeholder": "請輸入繁體中文名稱",
+    "simplified_chinese_name": "簡體中文名稱",
+    "simplified_chinese_name_placeholder": "請輸入簡體中文名稱",
+    "english_name": "英文名稱",
+    "english_name_placeholder": "請輸入英文名稱",
+    "introduction": "簡介",
+    "introduction_placeholder": "請輸入簡介",
+    "remark": "備注",
+    "remark_placeholder": "請輸入備註",
+    "time": "處理需時（時間/重量）"
   },
   "staffEnquiry": {
     "title": "員工查詢",

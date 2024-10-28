@@ -31,6 +31,7 @@ export type LogisticVehicle = {
     plateNo: string
     photo: string[]
     status: string
+    deviceId: string
     netWeight: number
     createdBy: string
     updatedBy: string
@@ -45,6 +46,7 @@ export type CreateLogisticVehicle = {
     netWeight: number,
     photo: string[],
     status: string,
+    deviceId: string,
     createdBy: string,
     updatedBy: string
 }

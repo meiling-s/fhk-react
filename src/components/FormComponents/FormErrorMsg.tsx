@@ -21,7 +21,7 @@ export function FormErrorMsg({
     const warning = type? type == "warning"? true : false : false;
 
     return(
-        <Box sx={warning? localstyles.container_warning : localstyles.container} datatest-id={dataTestId}>
+        <Box sx={warning? localstyles.container_warning : localstyles.container} data-testid={dataTestId}>
             <Box sx={{display: "flex", flexDirection: "row", flex: 9, alignItems: "center"}}>
                 <Typography sx={warning? localstyles.txtField_warning : localstyles.txtField}>
                 {field}

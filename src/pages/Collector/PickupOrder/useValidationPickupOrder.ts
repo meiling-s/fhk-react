@@ -11,7 +11,6 @@ import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import { picoErrorMessages, fieldName, ErrorsField, initialErrors } from '../../../constants/picoErrorMessages'
 
-
 const useValidationPickupOrder = (
   pico: CreatePO | EditPo,
   state: CreatePicoDetail[]
@@ -190,14 +189,14 @@ const useValidationPickupOrder = (
       pico.routineType === 'specificDate' &&
       pico.routine.length >= 1
     ) {
-        const fromDate = dayjs(pico.effFrmDate, 'DD/MM/YY').startOf('day');
-        const toDate = dayjs(pico.effToDate, 'DD/MM/YY').startOf('day');
+        const fromDate = dayjs(pico.effFrmDate, dateFormat).startOf('day');
+        const toDate = dayjs(pico.effToDate, dateFormat).startOf('day');
        
         const outOfRangeDates: string[] = [];
 
         pico.routine.map((item: any) => {
           // Parse the item with the expected format
-          const date = dayjs(item, 'DD/MM/YY').startOf('day');
+          const date = dayjs(item, dateFormat).startOf('day');
 
           // Check if date is within the valid range
           if (date < fromDate || date > toDate) {
@@ -594,14 +593,14 @@ const useValidationPickupOrder = (
         pico.routine.length >= 1 &&
         errorsField.routine.touch
       ) {
-        const fromDate = dayjs(pico.effFrmDate, 'DD/MM/YY').startOf('day');
-        const toDate = dayjs(pico.effToDate, 'DD/MM/YY').startOf('day');
+        const fromDate = dayjs(pico.effFrmDate, dateFormat).startOf('day');
+        const toDate = dayjs(pico.effToDate, dateFormat).startOf('day');
         const invalidFormatDates: string[] = [];
         const outOfRangeDates: string[] = [];
 
         pico.routine.map((item: any) => {
           // Parse the item with the expected format
-          const date = dayjs(item, 'DD/MM/YY').startOf('day');
+          const date = dayjs(item, dateFormat).startOf('day');
 
           // Check if date is within the valid range
           if (date < fromDate || date > toDate) {

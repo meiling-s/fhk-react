@@ -45,7 +45,8 @@
     "warehouseName": "Warehouse Name already Exist",
     "vehicle": "Vehicle",
     "theNameAlreadyExist": "Staff position name already exist",
-    "leaveConfirmMsg": "Are you sure you want to leave this page? Unsaved changes will be lost"
+    "leaveConfirmMsg": "Are you sure you want to leave this page? Unsaved changes will be lost",
+    "noData": "No Data"
   },
   "col": {
     "createCP": "Create Collection Point",
@@ -142,6 +143,7 @@
   "noticeTemplate": "Notice template",
   "statistics": "Statistics",
   "recyclables": "Recyclables",
+  "product": "Product",
   "convoy": "Convoy",
   "recycleCompany": "Recycle company",
   "recyclePlant": "Recycle plant",
@@ -161,6 +163,7 @@
   "top_menu": {
     "general_settings": "General settings",
     "packaging_unit": "Packaging unit",
+    "process_type": "Process Type",
     "workshop": "Warehouse",
     "vehicles": "Vehicles",
     "company": "Company",
@@ -487,7 +490,13 @@
       "receiver": "Receiver Company",
       "recycling_location": "Sender Location",
       "arrived": "Receiver Location",
-      "placeholder": "Please Enter Location"
+      "placeholder": "Please Enter Location",
+      "item_category": "Item Category"
+    },
+    "product_type": {
+      "product": "Product type(s)",
+      "subtype": "Subtype",
+      "add-on": "Add-on type"
     },
     "select_po": "Choose pickup order",
     "search_company_name": "Enter sender company",
@@ -814,6 +823,7 @@
     "suspend": "Suspended",
     "deleted": "Deleted",
     "staffId": "Staff ID",
+    "isAdmin": "Is Administrator",
     "successCreatedUser": "Success created user",
     "failedCreatedUser": "Failed created user",
     "successEditUser": "Success edit user",
@@ -1078,6 +1088,7 @@
     },
     "vehicleMenu": {
       "vehicle_number": "Vehicle ID",
+      "imei":"IMEI Number",
       "license_plate_number": "License Plate No.",
       "vehicle_type": "Vehicle Type",
       "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
@@ -1136,6 +1147,21 @@
     "introduction_placeholder": "Please enter introduction",
     "remark": "Remark",
     "remark_placeholder": "Please enter remark"
+  },
+  "process_type": {
+    "process_type": "Process Type",
+    "new": "New",
+    "traditional_chinese_name": "Traditional Chinese Name",
+    "traditional_chinese_name_placeholder": "Please enter Traditional Chinese Name",
+    "simplified_chinese_name": "Simplified Chinese Name",
+    "simplified_chinese_name_placeholder": "Please enter Simplified Chinese Name",
+    "english_name": "English Name",
+    "english_name_placeholder": "Please enter English Name",
+    "introduction": "Introduction",
+    "introduction_placeholder": "Please enter introduction",
+    "remark": "Remark",
+    "remark_placeholder": "Please enter remark",
+    "time": "Processing time (time/weight)"
   },
   "staffEnquiry": {
     "title": "Staff Enquiry",
