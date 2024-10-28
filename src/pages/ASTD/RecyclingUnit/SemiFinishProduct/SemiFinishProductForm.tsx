@@ -63,8 +63,8 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   }
 ) => {
   const [tabIndex, setTabIndex] = useState<number>(activeTab || 0);
-  const [category, setCategory] = useState<any>(null)
-  const [subCategory, setSubCategory] = useState<any>(null)
+  const [category, setCategory] = useState<Products[] | []>([])
+  const [subCategory, setSubCategory] = useState<ProductSubType[]| []>([]);
   const {t} = useTranslation()
   const handleTabChange = (event: React.ChangeEvent<{}>, newIndex: number) => {
     setTabIndex(newIndex);
@@ -158,13 +158,22 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
         toast.success('Product type created successfully!');
         break;
       case 1:
-        response = await createProductSubtype(payload);
-        toast.success('Product subtype created successfully!');
+        if (formik) {
+          response = await createProductSubtype(formik.values.category, payload);
+          toast.success('Product subtype created successfully!');
+        }
+        else {
+          throw new Error('Product SubType ID is missing. Cannot create addon.');
+        }
         break;
       case 2:
-        response = await createProductAddonType(payload);
-        toast.success('Product addon created successfully!');
-        break;
+        if (formik) {
+          response = await createProductAddonType(formik.values.subcategory, payload);
+          toast.success('Product addon created successfully!');
+        } else {
+          throw new Error('Product SubType ID is missing. Cannot create addon.');
+        }
+        break
       default:
         throw new Error('Invalid active tab selection for create.');
     }
@@ -308,26 +317,26 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
             <Box mb="16px">
               {/* 類別 - Category */}
               <FormControl fullWidth>
-                    <InputLabel id="category-label">{t('settings_page.recycling.category')}</InputLabel>
-                    <Select
-                      data-testId="astd-semi-product-category-select"
-                      labelId="category-label"
-                      id="category"
-                      value={formik.values.category}
-                      onChange={(event) => formik.setFieldValue('category', event.target.value)}
-                      onBlur={formik.handleBlur}
-                      error={formik.touched.category && Boolean(formik.errors.category)}
-                      label={t('settings_page.recycling.category')}
-                      disabled={isEditMode && activeTab !== 1}
-                    >
-                      {category &&
-                        category.map((item: Products) => (
-                          <MenuItem key={item.productTypeId} value={item.productTypeId}>
-                            {item.productNameEng}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
+                  <InputLabel id="category-label">{t('settings_page.recycling.category')}</InputLabel>
+                  <Select
+                    data-testId="astd-semi-product-category-select"
+                    labelId="category-label"
+                    id="category"
+                    value={formik.values.category}
+                    onChange={(event) => formik.setFieldValue('category', event.target.value)}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.category && Boolean(formik.errors.category)}
+                    label={t('settings_page.recycling.category')}
+                    disabled={isEditMode && activeTab !== 1}
+                  >
+                    {category &&
+                      category?.map((item: Products) => (
+                        <MenuItem key={item.productTypeId} value={item.productTypeId}>
+                          {item.productNameEng}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
 
                 <Box mb="16px">
                 {/* 簡介 - Introduction */}
@@ -374,7 +383,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                     onBlur={formik.handleBlur}
                     error={formik.touched.category && Boolean(formik.errors.category)}
                     label={t('settings_page.recycling.category')}
-                    disabled={isEditMode && activeTab !== 1}
+                    disabled={isEditMode && activeTab !== 2}
                   >
                     {category &&
                       category.map((item: Products) => (
