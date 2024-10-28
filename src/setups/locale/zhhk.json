@@ -45,7 +45,8 @@
     "warehouseName": "倉庫名稱已存在",
     "vehicle": "車輛",
     "theNameAlreadyExist": "員工職位名稱已存在",
-    "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失"
+    "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失",
+     "noData": "沒有數據"
   },
   "col": {
     "createCP": "建立回收點",
@@ -796,6 +797,7 @@
     "suspend": "暫停",
     "deleted": "已刪除",
     "staffId": "員工編號",
+    "isAdmin": "是否管理員",
     "successCreatedUser": "成功創建用戶",
     "failedCreatedUser": "創建用戶失敗",
     "successEditUser": "成功編輯用戶",
@@ -1170,7 +1172,10 @@
     "report_of_user_management_list": "用户报表",
     "report_of_audit_trail": "审计追踪报表",
     "report_of_user_activity": "用戶活動報表",
-    "report_of_notification": "通知報表"
+    "report_of_notification": "通知報表",
+    "report_formula": "報表數據提取方式",
+    "formula_check_in": "以工廠入貨作準",
+    "formula_check_out": "以回收公司出貨作準"
   },
   "purchase_order": {
     "all_order": "所有訂單",

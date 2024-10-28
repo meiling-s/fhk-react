@@ -275,7 +275,7 @@ const CommonType = () => {
   
   const initWeightUnit = async () => {
    try {
-    const result = await getWeightUnit(page - 1, pageSize)
+    const result = await getWeightUnit(page - 1, 1000)
     const data = result?.data
     setWeightUnits(data)
    } catch (error) {

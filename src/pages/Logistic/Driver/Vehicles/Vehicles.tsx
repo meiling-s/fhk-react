@@ -94,7 +94,7 @@ const Vehicles: FunctionComponent = () => {
 
   useEffect(() => {
     initVehicleList()
-    initAllVehicleList()
+    //initAllVehicleList()
   }, [page])
 
   const initVehicleList = useCallback(async () => {
@@ -110,6 +110,7 @@ const Vehicles: FunctionComponent = () => {
         data.content.map(async (item: any) => {
           const result = await getVehicleImages(table, item.vehicleId)
           const vehicleImages = result?.data
+          
           if (result) {
             const vehicle = createVehicles(
               item?.vehicleId,
@@ -131,43 +132,49 @@ const Vehicles: FunctionComponent = () => {
         }).filter(Boolean)
       )
       setVehicleList(vehicleMapping)
+      //setIsLoading(false)
+
+      setTimeout(() => {
+        setVehicleList(vehicleMapping);
+        setIsLoading(false);
+      }, 1000); // Adjust the delay as necessary (100ms here)
     }
     setTotalData(data.totalPages)
-    setIsLoading(false)
+   
   }, [page, pageSize])
 
-  const initAllVehicleList = useCallback(async () => {
-    setIsLoading(true)
-    const result = await getAllVehicles(0, 1000)
-    const data = result?.data
-    const newPlateList: string[] = []
-    if (data) {
-      var vehicleMapping: VehicleItem[] = []
-      data.content.map((item: any) => {
-        vehicleMapping.push(
-          createVehicles(
-            item?.vehicleId,
-            item?.vehicleTypeId,
-            item?.plateNo,
-            item?.photo,
-            item?.status,
-            item?.netWeight,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt,
-            item?.version
-          )
-        )
+  // const initAllVehicleList = useCallback(async () => {
+  //   setIsLoading(true)
+  //   const result = await getAllVehicles(0, 1000)
+  //   const data = result?.data
+  //   const newPlateList: string[] = []
+  //   if (data) {
+  //     var vehicleMapping: VehicleItem[] = []
+  //     data.content.map((item: any) => {
+  //       vehicleMapping.push(
+  //         createVehicles(
+  //           item?.vehicleId,
+  //           item?.vehicleTypeId,
+  //           item?.plateNo,
+  //           item?.photo,
+  //           item?.status,
+  //           item?.netWeight,
+  //           item?.createdBy,
+  //           item?.updatedBy,
+  //           item?.createdAt,
+  //           item?.updatedAt,
+  //           item?.version
+  //         )
+  //       )
 
-        //mappping plate list
-        newPlateList.push(item?.plateNo)
-      })
-      // setVehicleList(vehicleMapping)
-      setPlateList(newPlateList)
-    }
-    setIsLoading(false)
-  }, [])
+  //       //mappping plate list
+  //       newPlateList.push(item?.plateNo)
+  //     })
+  //     // setVehicleList(vehicleMapping)
+  //     setPlateList(newPlateList)
+  //   }
+  //   setIsLoading(false)
+  // }, [])
 
   const columns: GridColDef[] = [
     {
@@ -240,6 +247,7 @@ const Vehicles: FunctionComponent = () => {
                   className="w-[30px] h-[30px]"
                   src={imgdata}
                   alt=""
+                     style={{ width: '50px', height: '50px', objectFit: 'cover' }}
                 />
               )
             })}
@@ -350,20 +358,24 @@ const Vehicles: FunctionComponent = () => {
 
   const handleSearch = async (value: string) => {
     if (value) {
+      setIsLoading(true)
       setVehicleList([])
       const result = await searchVehicle(value)
       const data = result?.data
       if (data) {
         var vehicleMapping: VehicleItem[] = []
         vehicleMapping.push(data)
+        setPage(1)
+        setTotalData(vehicleMapping.length)
         setVehicleList(vehicleMapping)
         setSearching(true)
       }
+      setIsLoading(false)
     }
   }
 
   const handleChange = async (keyName: string, value: string) => {
-    console.log('handleChange', value.length)
+    handleSearch(value)
     if (value.length == 0) {
       //setSearching(false)
       setVehicleList([])
@@ -375,7 +387,8 @@ const Vehicles: FunctionComponent = () => {
     <>
       <Box
         sx={{
-          width: '100%',
+          width: '1200px',
+          maxWidth: '100%',
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
@@ -413,7 +426,6 @@ const Vehicles: FunctionComponent = () => {
           width={'100%'}
           field={'searchValue'}
           placeholder={t('driver.vehicleMenu.vehicle_number')}
-          handleSearch={(value) => handleSearch(value)}
           onChange={handleChange}
         />
         <div className="table-vehicle">
@@ -427,6 +439,7 @@ const Vehicles: FunctionComponent = () => {
                   getRowId={(row) => row.vehicleId}
                   hideFooter
                   columns={columns}
+                  loading={isLoading}
                   onRowClick={handleSelectRow}
                   getRowSpacing={getRowSpacing}
                   localeText={localeTextDataGrid}
@@ -456,6 +469,9 @@ const Vehicles: FunctionComponent = () => {
                     '& .selected-row': {
                       backgroundColor: '#F6FDF2 !important',
                       border: '1px solid #79CA25'
+                    },
+                    '& .MuiDataGrid-overlayWrapper ':{
+                      height: '30px'
                     }
                   }}
                 />

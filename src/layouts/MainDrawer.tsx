@@ -131,6 +131,7 @@ function MainDrawer() {
         onClick: () => navigate(`/${realm}/account`),
         collapse: false,
         path: `/${realm}/account`,
+        datatestId: 'astd-user-group-menu-list-6766',
         functionName: 'User account'
       },
       'Collection point': {
@@ -204,7 +205,8 @@ function MainDrawer() {
         onClick: () => navigate(`/${realm}/report`),
         collapse: false,
         path: `/${realm}/report`,
-        functionName: 'Reports'
+        functionName: 'Reports',
+        datatestId: 'astd-reports-menu-list-6697'
       },
       'Process out recyclables': {
         name: t('processRecord.processingRecords'),

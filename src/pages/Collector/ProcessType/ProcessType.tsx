@@ -1,5 +1,13 @@
 import { useEffect, useState, FunctionComponent, useCallback } from 'react'
-import { Box, Button, Typography, Pagination } from '@mui/material'
+import {
+  Box,
+  Button,
+  Checkbox,
+  Typography,
+  Pagination,
+  Container,
+  IconButton
+} from '@mui/material'
 import {
   DataGrid,
   GridColDef,
@@ -12,91 +20,85 @@ import {
   EDIT_OUTLINED_ICON,
   DELETE_OUTLINED_ICON
 } from '../../../themes/icons'
+import EditIcon from '@mui/icons-material/Edit'
+import StatusCard from '../../../components/StatusCard'
 
 import { styles } from '../../../constants/styles'
-import CreateUserGroup from './CreateUserGroup'
-import {
-  UserGroup as UserGroupItem,
-  CreateUserGroupProps as UserGroupForm,
-  Functions
-} from '../../../interfaces/userGroup'
 import { ToastContainer, toast } from 'react-toastify'
 import CircularLoading from '../../../components/CircularLoading'
 import { useTranslation } from 'react-i18next'
-import {
-  getAllFunction,
-  getAllUserGroup
-} from '../../../APICalls/Collector/userGroup'
-import { IconButton } from '@mui/joy'
-import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
-import i18n from '../../../setups/i18n'
-import { extractError } from '../../../utils/utils'
+import { extractError, returnApiToken } from '../../../utils/utils'
+import { STATUS_CODE } from '../../../constants/constant'
 import { useNavigate } from 'react-router-dom'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import { ProcessTypeData, ProcessTypeItem } from '../../../interfaces/processType'
+import CreateProcessType from './CreateProcessType'
+import { getWeightUnit } from '../../../APICalls/ASTD/recycling'
+import { WeightUnit } from '../../../interfaces/weightUnit'
+import { getProcessTypeData } from '../../../APICalls/Collector/processType'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
-type TableRow = {
-  id: number
-  [key: string]: any
-}
 
-function createUserGroup(
-  groupId: number,
-  tenantId: string,
-  roleName: string,
-  description: string,
-  status: string,
-  createdBy: string,
-  createdAt: string,
-  updatedBy: string,
-  updatedAt: string,
-  userAccount: object[],
-  functions: Functions[],
-  isAdmin: boolean
-): UserGroupItem {
-  return {
-    groupId,
-    tenantId,
-    roleName,
-    description,
-    status,
-    createdBy,
-    createdAt,
-    updatedBy,
-    updatedAt,
-    userAccount,
-    functions,
-    isAdmin
-  }
-}
-
-const UserGroup: FunctionComponent = () => {
-  const { t } = useTranslation()
+const ProcessType: FunctionComponent = () => {
+  const { t, i18n } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [userGroupList, setUserGroupList] = useState<UserGroupItem[]>([])
-  const [selectedRow, setSelectedRow] = useState<UserGroupItem | null>(null)
+  const {weightUnits} = useContainer(CommonTypeContainer)
+  const [processTypeData, setProcessTypeData] = useState<ProcessTypeData[]>(
+    []
+  )
+  const [selectedRow, setSelectedRow] = useState<ProcessTypeData | null>(null)
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
-  const [functionList, setFunctionList] = useState<Functions[]>([])
-  const [groupNameList, setGroupNameList] = useState<string[]>([])
-  const role = localStorage.getItem(localStorgeKeyName.role)
-  const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
+  const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [weightUnit, setWeightUnit] = useState<WeightUnit[]>([])
 
   useEffect(() => {
-    initFunctionList()
-    initUserGroupList()
+    initProcessTypeData()
+    initWeightUnit()
   }, [page])
 
-  const initFunctionList = async () => {
+  const initProcessTypeData = async () => {
     try {
-      const result = await getAllFunction()
-      const data = result?.data.filter((item: any) => item.tenantTypeId == role)
-      setFunctionList(data)
-    } catch (error: any) {
+      const result = await getProcessTypeData(page - 1, pageSize)
+      const data = result?.data
+      if (data) {
+        var processTypeMapping: ProcessTypeData[] = []
+  
+        data.content.map((item: ProcessTypeData) => {
+          const selectedWeightUnit = weightUnits.find(value => value.unitId === item?.processingWeightUnitId)
+          const weightUnitLang = i18n.language === 'enus' ? selectedWeightUnit?.unitNameEng : i18n.language === 'zhhk' ? selectedWeightUnit?.unitNameTchi : selectedWeightUnit?.unitNameSchi
+          const selectedTimeUnit = item?.processingTimeUnit === 'D' ? 'Day' : item?.processingTimeUnit === 'h' ? 'Hour' : item?.processingTimeUnit === 'm' ? 'Minute' : 'Second'
+          processTypeMapping.push({
+            processTypeNameEng: item?.processTypeNameEng,
+            processTypeNameSchi: item?.processTypeNameSchi,
+            processTypeNameTchi: item?.processTypeNameTchi,
+            processTypeId: item?.processTypeId,
+            description: item?.description,
+            remark: item?.remark,
+            createdAt: item?.createdAt,
+            createdBy: item?.createdBy,
+            updatedAt: item?.updatedAt,
+            updatedBy: item?.updatedBy,
+            processingTime: item?.processingTime,
+            processingTimeUnit: item?.processingTimeUnit,
+            processingWeightUnitId: item?.processingWeightUnitId,
+            status: item?.status,
+            processingStructure: `${item?.processingTime} ${selectedTimeUnit} / ${weightUnitLang}`,
+            version: item?.version
+          })
+        })
+
+        setProcessTypeData(processTypeMapping)
+        setTotalData(data.totalPages)
+      }
+
+    } catch (error) {
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
@@ -104,110 +106,75 @@ const UserGroup: FunctionComponent = () => {
     }
   }
 
-  const initUserGroupList = async () => {
-    setIsLoading(true)
+  const initWeightUnit = async () => {
     try {
-      const result = await getAllUserGroup(page - 1, pageSize)
+      const result = await getWeightUnit(0, 1000)
       const data = result?.data
-      let tempGroupList: string[] = []
-      if (data) {
-        let userGroupMapping: UserGroupItem[] = []
-        data.content.map((item: any) => {
-          userGroupMapping.push(
-            createUserGroup(
-              item?.groupId,
-              item?.tenantId,
-              item?.roleName,
-              item?.description,
-              item?.status,
-              item?.createdBy,
-              item?.createdAt,
-              item?.updatedBy,
-              item?.updatedAt,
-              item?.userAccount,
-              item?.functions,
-              item?.isAdmin
-            )
-          )
 
-          tempGroupList.push(item?.roleName)
-        })
-        setUserGroupList(userGroupMapping)
-        setGroupNameList(tempGroupList)
-        setTotalData(result.data.totalPages)
-      }
+      setWeightUnit(data)
     } catch (error: any) {
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
-    setIsLoading(false)
   }
 
   const columns: GridColDef[] = [
     {
-      field: 'roleName',
-      headerName: t('userGroup.groupName'),
+      field: 'processTypeNameTchi',
+      headerName: t('process_type.traditional_chinese_name'),
       width: 200,
+      type: 'string'
+    },
+    {
+      field: 'processTypeNameSchi',
+      headerName: t('process_type.simplified_chinese_name'),
+      width: 200,
+      type: 'string'
+    },
+    {
+      field: 'processTypeNameEng',
+      headerName: t('process_type.english_name'),
+      width: 200,
+      type: 'string'
+    },
+    {
+      field: 'processingStructure',
+      headerName: t('process_type.time'),
+      width: 300,
       type: 'string'
     },
     {
       field: 'description',
-      headerName: t('userGroup.description'),
-      width: 200,
+      headerName: t('common.description'),
+      width: 250,
       type: 'string'
     },
     {
-      field: 'isAdmin',
-      headerName: t('userAccount.isAdmin'),
-      width: 250,
-      type: 'string',
-      valueGetter: (params) =>
-        params.row?.isAdmin ? t('common.yes') : t('common.no')
+      field: 'remark',
+      headerName: t('common.remark'),
+      width: 170,
+      type: 'string'
     },
-    {
-      field: 'functions',
-      headerName: t('userGroup.availableFeatures'),
-      width: 600,
-      type: 'string',
-      renderCell: (params) => {
-        return (
-          <div>
-            {params.row.functions.map((item: any, key: number) => (
-              <span key={key}>
-                {key > 0 ? ' , ' : ''}
-                {i18n.language == 'zhch'
-                  ? item.functionNameSChi
-                  : i18n.language == 'zhhk'
-                  ? item.functionNameTChi
-                  : item.functionNameEng}
-              </span>
-            ))}
-          </div>
-        )
-      }
-    },
-
     {
       field: 'edit',
       headerName: t('pick_up_order.item.edit'),
       filterable: false,
       renderCell: (params) => {
         return (
-          <Button
-            data-testid="astd-user-group-edit-button-9924"
-            onClick={(event) => {
-              event.stopPropagation()
-              handleAction(params, 'edit')
-            }}
-          >
+          <div style={{ display: 'flex', gap: '8px' }}>
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
+              onClick={(event) => {
+                event.stopPropagation()
+                handleAction(params, 'edit')
+              }}
               style={{ cursor: 'pointer' }}
+              data-testId='astd-product-type-edit-button-4166'
             />
-          </Button>
+          </div>
         )
       }
     },
@@ -217,19 +184,18 @@ const UserGroup: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <Button
-          data-testid="astd-user-group-delete-button-7688"
-            onClick={(event) => {
-              event.stopPropagation()
-              handleAction(params, 'delete')
-            }}
-          >
+          <div style={{ display: 'flex', gap: '8px' }}>
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
+              onClick={(event) => {
+                event.stopPropagation()
+                handleAction(params, 'delete')
+              }}
               style={{ cursor: 'pointer' }}
+              data-testId='astd-product-type-delete-button-4927'
             />
-          </Button>
+          </div>
         )
       }
     }
@@ -251,6 +217,22 @@ const UserGroup: FunctionComponent = () => {
     setSelectedRow(params.row)
     setDrawerOpen(true)
   }
+
+  const onSubmitData = (type: string, msg: string) => {
+    initProcessTypeData()
+    if (type == 'success') {
+      showSuccessToast(msg)
+    } else {
+      showErrorToast(msg)
+    }
+  }
+
+  useEffect(() => {
+    if (processTypeData.length === 0 && page > 1) {
+      // move backward to previous page once data deleted from last page (no data left on last page)
+      setPage((prev) => prev - 1)
+    }
+  }, [processTypeData])
 
   const showErrorToast = (msg: string) => {
     toast.error(msg, {
@@ -278,27 +260,11 @@ const UserGroup: FunctionComponent = () => {
     })
   }
 
-  const onSubmitData = (type: string, msg: string) => {
-    initUserGroupList()
-    if (type == 'success') {
-      showSuccessToast(msg)
-    } else {
-      showErrorToast(msg)
-    }
-  }
-
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10
     }
   }, [])
-
-  useEffect(() => {
-    if (userGroupList.length === 0 && page > 1) {
-      // move backward to previous page once data deleted from last page (no data left on last page)
-      setPage((prev) => prev - 1)
-    }
-  }, [userGroupList])
 
   return (
     <>
@@ -320,8 +286,8 @@ const UserGroup: FunctionComponent = () => {
             marginY: 4
           }}
         >
-          <Typography fontSize={16} color="grey" fontWeight="600">
-            {t('staffManagement.userGroup')}
+          <Typography fontSize={16} color="black" fontWeight="bold">
+            {t('process_type.process_type')}
           </Typography>
           <Button
             sx={[
@@ -331,36 +297,36 @@ const UserGroup: FunctionComponent = () => {
                 height: '40px'
               }
             ]}
-            data-testid="astd-user-group-new-button-8674"
             variant="outlined"
             onClick={() => {
               setDrawerOpen(true)
               setAction('add')
             }}
+            data-testid='astd-product-type-new-button-4297'
           >
             <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
         </Box>
         <div className="table-vehicle">
-          <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
+          <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
             {isLoading ? (
               <CircularLoading />
             ) : (
               <Box>
-                {' '}
                 <DataGrid
-                  rows={userGroupList}
-                  getRowId={(row) => row.groupId}
+                  rows={processTypeData}
+                  getRowId={(row) => row.processTypeId}
                   hideFooter
                   columns={columns}
                   onRowClick={handleSelectRow}
                   getRowSpacing={getRowSpacing}
                   localeText={localeTextDataGrid}
-                  getRowClassName={(params) =>
-                    selectedRow && params.id === selectedRow.groupId
-                      ? 'selected-row'
-                      : ''
-                  }
+                  getRowClassName={(params) =>{
+                    if (selectedRow && params.id === selectedRow.processTypeId) {
+                      return 'selectedRow'
+                    }
+                    return ''
+                  }}
                   sx={{
                     border: 'none',
                     '& .MuiDataGrid-cell': {
@@ -397,24 +363,21 @@ const UserGroup: FunctionComponent = () => {
             )}
           </Box>
         </div>
-        {rowId != 0 && (
-          <CreateUserGroup
-            drawerOpen={drawerOpen}
-            handleDrawerClose={() => {
-              setDrawerOpen(false)
-              setSelectedRow(null)
-            }}
-            action={action}
-            rowId={rowId}
-            selectedItem={selectedRow}
-            functionList={functionList}
-            onSubmitData={onSubmitData}
-            groupNameList={groupNameList}
-          />
-        )}
+        <CreateProcessType
+          drawerOpen={drawerOpen}
+          handleDrawerClose={() => {
+            setDrawerOpen(false)
+            setSelectedRow(null)
+          }}
+          action={action}
+          rowId={rowId}
+          onSubmitData={onSubmitData}
+          weightUnit={weightUnit}
+          selectedItem={selectedRow}
+        />
       </Box>
     </>
   )
 }
 
-export default UserGroup
+export default ProcessType

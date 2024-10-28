@@ -91,6 +91,14 @@ const UserAccount: FunctionComponent = () => {
       valueGetter: (params) => params.row?.userGroup.roleName
     },
     {
+      field: 'isAdmin',
+      headerName: t('userAccount.isAdmin'),
+      width: 250,
+      type: 'string',
+      valueGetter: (params) =>
+        params.row?.userGroup.isAdmin ? t('common.yes') : t('common.no')
+    },
+    {
       field: 'status',
       headerName: t('col.status'),
       width: 300,
@@ -104,9 +112,12 @@ const UserAccount: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div
+            style={{ display: 'flex', gap: '8px' }}
+          >
             <EDIT_OUTLINED_ICON
               fontSize="small"
+              data-testid="astd-user-edit-button-6669"
               className="cursor-pointer text-grey-dark mr-2"
               onClick={(event) => {
                 event.stopPropagation()
@@ -116,6 +127,7 @@ const UserAccount: FunctionComponent = () => {
             />
             <DELETE_OUTLINED_ICON
               fontSize="small"
+              data-testid="astd-user-delete-button-6844"
               className="cursor-pointer text-grey-dark"
               onClick={(event) => {
                 event.stopPropagation()
@@ -326,6 +338,7 @@ const UserAccount: FunctionComponent = () => {
                           height: '40px'
                         }
                       ]}
+                      data-testid="astd-user-new-button-9059"
                       variant="outlined"
                       onClick={() => {
                         addDataWarehouse()
