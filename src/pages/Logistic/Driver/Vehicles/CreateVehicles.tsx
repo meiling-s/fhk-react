@@ -65,7 +65,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   deviceIdListExist
 }) => {
   const { t } = useTranslation()
-  console.log('selected', selectedItem)
+  // console.log('selected', selectedItem)
   const [vehicleTypeId, setVehicleTypeId] = useState<string>('')
   const [selectedVehicle, setSelectedVehicle] = useState<il_item>({
     id: '1',
