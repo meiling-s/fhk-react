@@ -1489,5 +1489,23 @@
     "createdAt": "Checkout/in Datetime",
     "shippingCompany": "Sender Company",
     "inventoryLocation": "Sender Location"
+  },
+  "compactor": {
+    "compactorTruckHandling": "Compression truck handling",
+    "unloadRecord": "Unloading records",
+    "processingDate": "Processing Date",
+    "plateNumber": "license plate number",
+    "show": "Show",
+    "table": {
+      "date": "Date",
+      "itemCategory": "Item Category",
+      "mainCategory": "main category",
+      "subcategory": "subcategory",
+      "addCategory": "Add category",
+      "package": "Package",
+      "itemNumber": "Item number",
+      "inStock": "in stock",
+      "weight": "weight"
+    }
   }
 }

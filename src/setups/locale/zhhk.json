@@ -46,7 +46,7 @@
     "vehicle": "車輛",
     "theNameAlreadyExist": "員工職位名稱已存在",
     "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失",
-     "noData": "沒有數據"
+    "noData": "沒有數據"
   },
   "col": {
     "createCP": "建立回收點",
@@ -1483,5 +1483,23 @@
     "createdAt": "送出入日期及時間",
     "shippingCompany": "狀態",
     "inventoryLocation": "送出地點"
+  },
+  "compactor": {
+    "compactorTruckHandling": "壓縮車處理",
+    "unloadRecord": "卸貨紀錄",
+    "processingDate": "處理日期",
+    "plateNumber": "車牌號碼",
+    "show": "顯示",
+    "table": {
+      "date": "顯示",
+      "itemCategory": "日期",
+      "mainCategory": "物品類別",
+      "subcategory": "主類別",
+      "addCategory": "追加類別",
+      "package": "包裝",
+      "itemNumber": "物品編號",
+      "inStock": "庫存",
+      "weight": "重量"
+    }
   }
 }

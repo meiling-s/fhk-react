@@ -58,6 +58,7 @@ import Notice from './pages/ASTD/Notice/Index'
 import UpdateTemplate from './pages/ASTD/Notice/UpdateTemplate'
 import StaffEnquiry from './pages/Collector/StaffEnquiry/StaffEnquiry'
 import LogisticVehicleDashboard from './pages/Logistic/Dashboard/dashboard'
+import CompactorDashboard from './pages/GeneralModule/CompactorDashboard/CompactorDashboard'
 
 //manufacturer
 import PurchaseOrder from './pages/Manufacturer/PurchaseOrder/PurchaseOrder'
@@ -151,6 +152,7 @@ const Router = () => {
               path="/collector/warehouse"
               element={<WarehouseDashboard />}
             />
+             <Route path="/collector/compactorDashboard" element={<CompactorDashboard />} />
           </Route>
 
           <Route element={<MainLayout />}>
@@ -274,6 +276,7 @@ const Router = () => {
               element={<CheckInAndCheckOut />}
             />
             <Route path="/manufacturer/report" element={<Report />} />
+            <Route path="/manufacturer/compactorDashboard" element={<CompactorDashboard />} />
           </Route>
 
           <Route element={<MainLayout />}>
