@@ -16,11 +16,11 @@ import { ADD_ICON } from '../../../../themes/icons';
 import SemiFinishProductForm from './SemiFinishProductForm';
 import NestedTableRow from './NestedTableRow';
 import CircularLoading from '../../../../components/CircularLoading';
-import useFetchProducts from './useFetchProduct';
+import { ProductProvider, useProductContext } from './ProductContext';
 
-const SemiFinishProduct = () => {
+const SemifinishProductTable = () => {
   const { t } = useTranslation();
-  const { products, loading, error, refetch } = useFetchProducts();
+  const { state: { products, loading, error }, refetch } = useProductContext();
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   if (loading) return <CircularLoading />;
@@ -37,7 +37,10 @@ const SemiFinishProduct = () => {
             data-testId="astd-semi-product-new-button-001"
             variant="outlined"
             color="primary"
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              setIsOpen(true)
+              refetch()
+            }}
             startIcon={<ADD_ICON />}
             sx={{ textTransform: 'uppercase', borderRadius: '24px', padding: '8px 24px', fontWeight: 'bold' }}
           >
@@ -67,10 +70,16 @@ const SemiFinishProduct = () => {
       <SemiFinishProductForm
         open={isOpen}
         handleClose={() => setIsOpen(false)}
-        handleSubmit={() => {}}
+        handleSubmit={() => refetch()}
       />
     </>
   );
 };
+
+const SemiFinishProduct = () => (
+  <ProductProvider>
+    <SemifinishProductTable />
+  </ProductProvider>
+);
 
 export default SemiFinishProduct;

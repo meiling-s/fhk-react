@@ -13,7 +13,7 @@ import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg
 import { STATUS_CODE,  } from '../../../../constants/constant'
 import { extractError } from '../../../../utils/utils'
 import { localStorgeKeyName } from '../../../../constants/constant'
-import useFetchProducts from './useFetchProduct';
+import { useProductContext } from './ProductContext'; 
 
 const StyledTab = styled(Tab)(({ theme }) => ({
   border: '1px solid',
@@ -100,7 +100,8 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   const [selectedLanguage, setSelectedLanguage] = useState(language);
   const [productCategoryId, setProductCategoryId] = useState<string>('')
   const [selectedProductCategory, setSelectedProductCategory] = useState<any>([])
-  const {refetch}  = useFetchProducts()
+  const { dispatch, refetch } = useProductContext();
+
   const handleTabChange = (event: React.ChangeEvent<{}>, newIndex: number) => {
     setTabIndex(newIndex);
     formik.resetForm()
@@ -122,7 +123,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
           traditionalName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
           simplifiedName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
           englishName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
-          category: Yup.string().required('form.error.shouldNotBeEmpty'),
+          category: Yup.string().required(t('form.error.shouldNotBeEmpty')),
           introduction: Yup.string(),
           remarks: Yup.string(),
         });
@@ -131,8 +132,8 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
           traditionalName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
           simplifiedName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
           englishName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
-          category: Yup.string().required('form.error.shouldNotBeEmpty'),
-          subCategory: Yup.string().required('form.error.shouldNotBeEmpty'),
+          category: Yup.string().required(t('form.error.shouldNotBeEmpty')),
+          subCategory: Yup.string().required(t('form.error.shouldNotBeEmpty')),
           introduction: Yup.string(),
           remarks: Yup.string(),
         });
@@ -165,7 +166,6 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
         createdBy: localStorage.getItem('username') || '',
         updatedBy: localStorage.getItem('username') || '',
       };
-      console.log(payload);
       handleSubmit();
     },
   });
@@ -196,7 +196,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       };
   
       if (isEditMode && initialData) {
-        const response = await handleEdit(payload);
+        await handleEdit(payload);
       } else {
         await handleCreate(payload);
       }
@@ -213,20 +213,23 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
     const version =initialData?.version 
     let editPayload: ProductPayload = { ...payload, status: 0, version };
   
+    
     let toastMsg = '';
+    let response;
+
     switch (activeTab) {
       case 0:
-       await editProductType(paramId, editPayload);
+       response = await editProductType(paramId, editPayload);
         toastMsg = t(`notify.SuccessEdited`)
         break;
       case 1:
         editPayload = { ...editPayload, productTypeId: paramId };
-        await editProductSubtype(paramId, editPayload);
+        response = await editProductSubtype(paramId, editPayload);
         toastMsg = t(`notify.SuccessEdited`)
         break;
       case 2:
         editPayload = { ...editPayload, productSubTypeId: paramId, };
-        await editProductAddonType(paramId, editPayload);
+        response = await editProductAddonType(paramId, editPayload);
         toastMsg = t(`notify.SuccessEdited`)
         break;
       default:
@@ -234,7 +237,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
     }
   
     handleSubmit();
-
+    refetch()
     if (toastMsg) {
       toast.info(toastMsg, {
         position: 'top-center',
@@ -247,7 +250,6 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
         theme: 'light'
       })
     }
-
     handleClose();
 
 
@@ -285,6 +287,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   
         if (response) {
           handleSubmit();
+          refetch()
           toast.info(toastMsg, {
             position: 'top-center',
             autoClose: 3000,
@@ -295,7 +298,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
             progress: undefined,
             theme: 'light'
           });
-          refetch();
+         
           handleClose();
         } else {
           throw new Error('Creation failed.');
@@ -352,8 +355,9 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   },[])
 
  const handleOnClose = () => {
-    handleClose()
     formik.resetForm()
+    handleClose()
+    
   }
 
   useEffect(() => {
@@ -388,7 +392,6 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       const categoryId = category.find((item) => item.productTypeId === productCategoryId)
      if(categoryId ) {
        setSelectedProductCategory(categoryId.productSubType)  
-       console.log('TST', categoryId, productCategoryId)
       }
     }
     
@@ -523,7 +526,6 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                 >
                  {category.length > 0 &&
                     category.map((item: Products) => {
-                      
                       const selectedLanguage = i18n.language === 'enus' ? item.productNameEng : i18n.language === 'zhhk' ? item.productNameTchi : item.productNameSchi;
                       return  (
                         <MenuItem key={item.productTypeId} value={item.productTypeId}>
@@ -584,7 +586,6 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                     onChange={(event) => {
                       formik.setFieldValue('category', event.target.value)
                       setProductCategoryId(event.target.value)
-                      console.log(event.target.value)
                     }}
                     onBlur={formik.handleBlur}
                     error={formik.touched.category && Boolean(formik.errors.category)}
@@ -592,6 +593,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                   >
                     {category.length > 0 &&
                       category.map((item: Products) => {
+                        
                         const selectedLanguage = i18n.language === 'enus' ? item.productNameEng : i18n.language === 'zhhk' ? item.productNameTchi : item.productNameSchi;
                         return  (
                           <MenuItem key={item.productTypeId} value={item.productTypeId}>
@@ -640,7 +642,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
 
                         selectedProductCategory.length > 0 &&
                           selectedProductCategory.map((item: ProductSubType) => {
-                            console.log('TST', item)
+                           
                             const selectedLanguage = i18n.language === 'enus' ? item.productNameEng : i18n.language === 'zhhk' ? item.productNameTchi : item.productNameSchi;
                             return (
                               <MenuItem key={item.productSubTypeId} value={item.productSubTypeId}>
@@ -659,7 +661,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
               <CustomField label={t('settings_page.recycling.introduction')}>
                   <CustomTextField
                       dataTestId="astd-semi-product-additional-category-introduction-211"
-                      id="addonIntroduction"
+                      id="introduction"
                       value={formik.values.introduction}
                       placeholder={t('settings_page.recycling.enter_text')}
                       onChange={formik.handleChange}
@@ -673,7 +675,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
               <CustomField label={t('settings_page.recycling.remarks')}>
                 <CustomTextField
                   dataTestId="astd-semi-product-additional-category-remarks-789"
-                  id="addOnRemarks"
+                  id="remarks"
                   value={formik.values.remarks}
                   placeholder={t('settings_page.recycling.enter_text')}
                   onChange={formik.handleChange}

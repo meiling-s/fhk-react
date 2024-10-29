@@ -46,7 +46,9 @@
     "vehicle": "車輛",
     "theNameAlreadyExist": "員工職位名稱已存在",
     "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失",
-     "noData": "沒有數據"
+     "noData": "沒有數據",
+     "category": "類別",
+    "subCategory": "次類別"
   },
   "col": {
     "createCP": "建立回收點",

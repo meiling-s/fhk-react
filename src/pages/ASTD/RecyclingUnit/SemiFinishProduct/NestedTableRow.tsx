@@ -16,7 +16,7 @@ import SemiFinishProductForm from './SemiFinishProductForm';
 import { getProductType, getProductSubtype, getProductAddonType, editProductType, editProductSubtype, editProductAddonType, getProductSubtypesByProductType, getProductAddonTypesByProductSubtype, getProductTypeList } from '../../../../APICalls/ASTD/settings/productType';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
 import { useTranslation } from 'react-i18next';
-import useFetchProducts from './useFetchProduct'
+import { useProductContext } from './ProductContext';
 type NestedTableRowProps = {
   products: Products;
 };
@@ -34,8 +34,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
   const [initialCategory, setInitialCategory] = useState<any>([]);
   const [initialSubCategory, setInitialSubCategory] = useState<any>([]);
   const [productId, setProductId] = useState<string>('')
-   const { refetch } = useFetchProducts();
-
+  const {dispatch, refetch} = useProductContext()
   const toggleSubtypeOpen = (id: string) => {
     setSubtypeOpen((prevState) => ({
       ...prevState,
@@ -79,7 +78,6 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     try {
       const response = await getProductSubtypesByProductType(id);
       setInitialSubCategory(response.data); 
-      console.log(response.data)
       // setParamId(id)
       
     } catch (error) {
@@ -93,10 +91,12 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     handleFetchInitialData(id);
   };
 
-  const handleEditSubProduct = (id: string) => {
+  const handleEditSubProduct = (id: string, productId: string) => {
     setIsOpenForm(true);
     setActiveTab(1)
     handleFetchSubtypeData(id);
+    setProductId(productId)
+   
   };
 
   const handleEditProductAddon = (productId: string, subTypeId: string, addOnId: string) => {
@@ -104,7 +104,6 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     setActiveTab(2)
     handleFetchAddonData(addOnId);
     handleFetchProductSubTypeByProductType(productId)
-    console.log('TEST', productId, subTypeId, addOnId)
     setProductId(productId)
   };
 
@@ -122,14 +121,14 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     setOpenDelete(true);
    }
 };
-  const handleDeleteSubProduct = async(id: string) => {
+  const handleDeleteSubProduct = async(id: string, productId: string) => {
     const response = await getProductSubtype(id);
     
     if(response.data) {
       const payload = {
         version:  response?.data?.version,
         status: 'INACTIVE',
-        createdBy: localStorage.getItem('username') || '',
+        productTypeId: productId,
         updatedBy: localStorage.getItem('username') || '',
       };
       setDeleteItem({ data: payload, id, type: 'subProduct'});
@@ -171,22 +170,31 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
       switch (type) {
         case 'product':
           response = await editProductType(id, data);
-          toastMsg = t('notify.successDeleted');
+          if (response?.status === 200) {
+            refetch()
+            toastMsg = t('notify.successDeleted');
+          }
           break;
         case 'subProduct':
           response = await editProductSubtype(id, data);
-          toastMsg = t('notify.successDeleted');
+          if (response?.status === 200) {
+            refetch()
+            toastMsg = t('notify.successDeleted');
+          }
           break;
         case 'addon':
           response = await editProductAddonType(id, data);
+          
+          if (response?.status === 200) {
+            refetch()
           toastMsg = t('notify.successDeleted');
+          }
           break;
         default:
           throw new Error("Invalid delete type");
       }
 
       if (response?.status === 200) {
-        refetch();
         if (toastMsg) {
           toast.info(toastMsg, {
             position: 'top-center',
@@ -277,10 +285,10 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
                         <TableCell>{subProduct.remark || '-'}</TableCell>
                         <TableCell sx={{ padding: '4px 8px', display: 'flex', justifyContent: 'flex-end'}} >
                         <Box display="flex" alignItems="center" gap="8px">
-                        <IconButton data-testId={`astd-semi-product-subtype-edit-icon-471-${subProduct.productSubTypeId}`} aria-label="edit row" size="small" onClick={() => handleEditSubProduct(subProduct.productSubTypeId)}>
+                        <IconButton data-testId={`astd-semi-product-subtype-edit-icon-471-${subProduct.productSubTypeId}`} aria-label="edit row" size="small" onClick={() => handleEditSubProduct(subProduct.productSubTypeId, products.productTypeId)}>
                             <EDIT_OUTLINED_ICON />
                           </IconButton>
-                          <IconButton data-testId={`astd-semi-product-subtype-delete-icon-283-${subProduct.productSubTypeId}`} aria-label="delete row" size="small" onClick={() => handleDeleteSubProduct(subProduct.productSubTypeId)}>
+                          <IconButton data-testId={`astd-semi-product-subtype-delete-icon-283-${subProduct.productSubTypeId}`} aria-label="delete row" size="small" onClick={() => handleDeleteSubProduct(subProduct.productSubTypeId, products.productTypeId)}>
                             <DELETE_OUTLINED_ICON />
                           </IconButton>
                         </Box>

@@ -46,7 +46,9 @@
     "vehicle": "Vehicle",
     "theNameAlreadyExist": "Staff position name already exist",
     "leaveConfirmMsg": "Are you sure you want to leave this page? Unsaved changes will be lost",
-    "noData": "No Data"
+    "noData": "No Data",
+    "category": "Category",
+    "subCategory": "Sub Category"
   },
   "col": {
     "createCP": "Create Collection Point",
