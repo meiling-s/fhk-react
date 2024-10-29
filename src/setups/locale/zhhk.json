@@ -469,9 +469,9 @@
       "item_category": "物品類別"
     },
     "product_type": {
-      "Product": "製成品類別",
-      "Subtype": "次類別",
-      "Add-on": "追加類別"
+      "product": "製成品類別",
+      "subtype": "次類別",
+      "add-on": "追加類別"
     },
     "select_po": "選擇運單",
     "search_company_name": "輸入寄件者公司",
@@ -495,6 +495,9 @@
       "receiverAddr": "此接收者位址 不應留白",
       "recycType": "此可回收類型 不應留白",
       "recycSubType": "此可回收子類型 不應留白",
+      "productType": "該產品類型不能為空",
+      "productSubType": "此產品子類型不應為空",
+      "productAddon": "該產品插件不應為空",
       "weight": "該重量 不應留白",
       "weightGreaterThanZero": "這個權重應該大於零",
       "invalid_date": "失效日期",
