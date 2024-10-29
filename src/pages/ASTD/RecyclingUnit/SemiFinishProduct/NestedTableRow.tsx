@@ -13,10 +13,10 @@ import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { ProductAddon, Products, ProductSubType } from '../../../../types/settings';
 import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../../../themes/icons';
 import SemiFinishProductForm from './SemiFinishProductForm';
-import { getProductType, getProductSubtype, getProductAddonType, editProductType, editProductSubtype, editProductAddonType, getProductSubtypesByProductType, getProductAddonTypesByProductSubtype } from '../../../../APICalls/ASTD/settings/productType';
+import { getProductType, getProductSubtype, getProductAddonType, editProductType, editProductSubtype, editProductAddonType, getProductSubtypesByProductType, getProductAddonTypesByProductSubtype, getProductTypeList } from '../../../../APICalls/ASTD/settings/productType';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
 import { useTranslation } from 'react-i18next';
-
+import useFetchProducts from './useFetchProduct'
 type NestedTableRowProps = {
   products: Products;
 };
@@ -34,6 +34,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
   const [initialCategory, setInitialCategory] = useState<any>([]);
   const [initialSubCategory, setInitialSubCategory] = useState<any>([]);
   const [productId, setProductId] = useState<string>('')
+   const { refetch } = useFetchProducts();
 
   const toggleSubtypeOpen = (id: string) => {
     setSubtypeOpen((prevState) => ({
@@ -109,15 +110,17 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
 
 
   const handleDeleteProduct = async (id: string) => {
-    await handleFetchInitialData(id); 
+    const response = await getProductType(id); 
+   if(response.data) {
     const payload = {
-      version:  initialData?.version,
+      version:  response?.data?.version,
       status: 'INACTIVE',
       createdBy: localStorage.getItem('username'),
       updatedBy: localStorage.getItem('username'),
     };
     setDeleteItem({ data: payload, id, type: 'product' });
     setOpenDelete(true);
+   }
 };
   const handleDeleteSubProduct = async(id: string) => {
     const response = await getProductSubtype(id);
@@ -156,52 +159,58 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     setDeleteItem(null);
   };
 
-  const handleConfirmDelete = () => {
- 
-    if (!deleteItem) return;
-  
-    const { data, id, type } = deleteItem;
 
-    let toastMsg = '';
+  const handleConfirmDelete = async () => {
+    if (!deleteItem) return;
     
-    switch (type) {
-      case 'product':
-  
-        editProductType(id, {...data});
-        toastMsg = t(`notify.SuccessEdited`)
-        break;
-  
-      case 'subProduct':
-        console.log(id, data)
-        editProductSubtype(id, {...data, });
-        toastMsg =  t(`notify.SuccessEdited`)
-        break;
-  
-      case 'addon':
-        console.log('Deleting Product Addon:', id);
-        editProductAddonType(id,{...data });
-        toastMsg =  t(`notify.SuccessEdited`)
-        break;
-  
-      default:
-        break;
+    const { data, id, type } = deleteItem;
+    let response;
+    let toastMsg = '';
+
+    try {
+      switch (type) {
+        case 'product':
+          response = await editProductType(id, data);
+          toastMsg = t('notify.successDeleted');
+          break;
+        case 'subProduct':
+          response = await editProductSubtype(id, data);
+          toastMsg = t('notify.successDeleted');
+          break;
+        case 'addon':
+          response = await editProductAddonType(id, data);
+          toastMsg = t('notify.successDeleted');
+          break;
+        default:
+          throw new Error("Invalid delete type");
+      }
+
+      if (response?.status === 200) {
+        refetch();
+        if (toastMsg) {
+          toast.info(toastMsg, {
+            position: 'top-center',
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light'
+          })
+        }
+      } else {
+        throw new Error("Unexpected response status");
+      }
+    } catch (error) {
+      console.error("Error in handleConfirmDelete:", error);
+      toast.error(t('notify.ErrorOccurred'), { autoClose: 3000 });
+    } finally {
+      handleCloseDelete();
     }
-  
-    if (toastMsg) {
-      toast.info(toastMsg, {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'light'
-      })
-    }
-  
-    handleCloseDelete();
   };
+
+  
   const handleClose = () => {
     setInitialData('')
     setIsOpenForm(false)
@@ -296,7 +305,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
                                         <IconButton data-testId={`astd-semi-product-addon-edit-icon-708-${subProduct.productSubTypeId}`} aria-label="edit row" size="small" onClick={() => handleEditProductAddon(products.productTypeId, subProduct.productSubTypeId ,addon.productAddonTypeId, )}>
                                             <EDIT_OUTLINED_ICON />
                                           </IconButton>
-                                          <IconButton data-testId={`astd-semi-product-addon-delete-icon-525-${subProduct.productSubTypeId}`} aria-label="delete row" size="small" onClick={() => handleDeleteProductAddon(addon.productAddonTypeId, subProduct.productSubTypeId)}>
+                                          <IconButton data-testId={`astd-semi-product-addon-delete-icon-525-${subProduct.productSubTypeId}`} aria-label="delete row" size="small" onClick={() => handleDeleteProductAddon(addon.productAddonTypeId)}>
                                             <DELETE_OUTLINED_ICON />
                                           </IconButton>
                                         </Box>

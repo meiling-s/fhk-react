@@ -13,6 +13,7 @@ import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg
 import { STATUS_CODE,  } from '../../../../constants/constant'
 import { extractError } from '../../../../utils/utils'
 import { localStorgeKeyName } from '../../../../constants/constant'
+import useFetchProducts from './useFetchProduct';
 
 const StyledTab = styled(Tab)(({ theme }) => ({
   border: '1px solid',
@@ -54,7 +55,7 @@ type SemiFinishProductProps = {
   handleClose: () => void;
   handleSubmit: () => void;
   open: boolean;
-  onSuccess?: () => void;
+  onSuccess?: (data: any) => void;
 };
 
 function TabPanel(props: { children: React.ReactNode; value: number; index: number }) {
@@ -101,7 +102,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   const [selectedLanguage, setSelectedLanguage] = useState(language);
   const [productCategoryId, setProductCategoryId] = useState<string>('')
   const [selectedProductCategory, setSelectedProductCategory] = useState<any>([])
-
+  const {refetch}  = useFetchProducts()
   const handleTabChange = (event: React.ChangeEvent<{}>, newIndex: number) => {
     setTabIndex(newIndex);
     formik.resetForm()
@@ -197,7 +198,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       };
   
       if (isEditMode && initialData) {
-        await handleEdit(payload);
+        const response = await handleEdit(payload);
       } else {
         await handleCreate(payload);
       }
@@ -205,7 +206,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       console.error('Error during form submission:', error);
     }
   };
-  
+ 
   const handleEdit = async (payload: ProductPayload): Promise<void> => {
     if (!paramId) {
       throw new Error('Missing parameter ID for edit operation.');
@@ -263,7 +264,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
           case 0:
             response = await createProductType(payload);
             if(response.status === 200 && onSuccess) {
-              onSuccess()
+              onSuccess(response.data)
             }
             toastMsg = t('notify.successCreated');
             break;
@@ -271,7 +272,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
             if (formik) {
               response = await createProductSubtype(formik.values.category, payload);
               if(response.status === 200 && onSuccess) {
-                onSuccess()
+                onSuccess(response.data)
               }
               toastMsg = response.status === 409 ? response.data.message : t('notify.successCreated');
             } else {
@@ -282,7 +283,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
             if (formik) {
               response = await createProductAddonType(formik.values.subCategory, payload);
               if(response.status === 200 && onSuccess) {
-                onSuccess()
+                onSuccess(response.data)
               }
               toastMsg = t('notify.successCreated');
             } else {
@@ -305,6 +306,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
             progress: undefined,
             theme: 'light'
           });
+          refetch();
           handleClose();
         } else {
           throw new Error('Creation failed.');
