@@ -1506,6 +1506,10 @@
       "itemNumber": "Item number",
       "inStock": "in stock",
       "weight": "weight"
-    }
+    },
+    "selectedItems":"Items selected for compression",
+    "processCompress":"Processed compressed material",
+    "ask": "Ask",
+    "clickToAddItem": "Click Add to enter data for the compressed product"
   }
 }

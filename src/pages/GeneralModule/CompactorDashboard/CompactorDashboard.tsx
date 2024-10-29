@@ -89,19 +89,19 @@ const CompactorDashboard: FunctionComponent = () => {
     {
       field: 'itemCategory',
       headerName: t('compactor.table.itemCategory'),
-      width: 100,
+      width: 150,
       type: 'string'
     },
     {
       field: 'mainCategory',
       headerName: t('compactor.table.mainCategory'),
-      width: 100,
+      width: 150,
       type: 'string'
     },
     {
       field: 'subcategory',
       headerName: t('compactor.table.subcategory'),
-      width: 100,
+      width: 150,
       type: 'string'
     },
     {
@@ -171,7 +171,6 @@ const CompactorDashboard: FunctionComponent = () => {
     <>
       <Box
         sx={{
-          // width: '1200px',
           maxWidth: '100%',
           height: '100%',
           display: 'flex',
@@ -298,7 +297,7 @@ const CompactorDashboard: FunctionComponent = () => {
         {/* SECTION 2 */}
         <Box sx={{ marginBottom: 10 }}>
           <div className="bg-[#7CE495] w-max px-[20px] py-[10px] text-white font-bold rounded-t-xl">
-            {t('compactor.unloadRecord')}
+            {t('compactor.selectedItems')} {`(` + selectedItem.join(', ') + `)`}
           </div>
           <Box
             sx={{
@@ -343,7 +342,7 @@ const CompactorDashboard: FunctionComponent = () => {
         {/* SECTION 3 */}
         <Box>
           <div className="bg-[#7CE495] w-max px-[20px] py-[10px] text-white font-bold rounded-t-xl">
-            {t('compactor.處理後的壓縮物')}
+            {t('compactor.processCompress')}
           </div>
           <Box
             sx={{

@@ -1500,6 +1500,10 @@
       "itemNumber": "物品編號",
       "inStock": "庫存",
       "weight": "重量"
-    }
+    },
+    "selectedItems":"已選擇壓縮的物品",
+    "processCompress":"處理後的壓縮物",
+    "ask": "請求",
+    "clickToAddItem": "按新增為壓縮品輸入資料"
   }
 }
