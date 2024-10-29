@@ -26,21 +26,26 @@ const SemiFinishProduct = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchProducts = async () => {
+    try {
+      const response = await getProductTypeList();
+      const fetchedProducts = response.data; 
+      setProducts(fetchedProducts);
+    } catch (err) {
+      console.error('Error fetching product types:', err);
+      setError('Failed to load product types.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getProductTypeList();
-        const fetchedProducts = response.data; 
-        setProducts(fetchedProducts);
-      } catch (err) {
-        console.error('Error fetching product types:', err);
-        setError('Failed to load product types.');
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchProducts();
   }, []); 
+
+  const onSuccess = () => {
+    fetchProducts()
+  }
  
   if (loading) return <CircularLoading/>
   if (error) return <p>{error}</p>;
@@ -81,7 +86,7 @@ const SemiFinishProduct = () => {
         </Table>
       </TableContainer>
     </Box>
-      <SemiFinishProductForm open={isOpen} handleClose={() => setIsOpen(false)} handleSubmit={() => {}}/>
+      <SemiFinishProductForm onSuccess={() => onSuccess()} open={isOpen} handleClose={() => setIsOpen(false)} handleSubmit={() => {}}/>
     </>
   );
 };

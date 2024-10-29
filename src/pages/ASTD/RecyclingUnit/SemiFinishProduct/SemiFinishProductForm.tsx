@@ -11,7 +11,8 @@ import { Products, ProductPayload, ProductSubType } from '../../../../types/sett
 import { createProductType, createProductSubtype, createProductAddonType, editProductType, editProductSubtype, editProductAddonType, getProductTypeList, getProductSubtypeList } from '../../../../APICalls/ASTD/settings/productType';
 import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg';
 import { STATUS_CODE,  } from '../../../../constants/constant'
-import { extractError, returnErrorMsg, showErrorToast } from '../../../../utils/utils'
+import { extractError } from '../../../../utils/utils'
+import { localStorgeKeyName } from '../../../../constants/constant'
 
 const StyledTab = styled(Tab)(({ theme }) => ({
   border: '1px solid',
@@ -44,12 +45,16 @@ const StyledTab = styled(Tab)(({ theme }) => ({
 
 type SemiFinishProductProps = {
   isEditMode?: boolean;
+  productId?: string;
   initialData?: Products;
+  initialCategory?: any;
+  initialSubCategory?: any;
   paramId?: string;
   activeTab?: number;
   handleClose: () => void;
   handleSubmit: () => void;
   open: boolean;
+  onSuccess?: () => void;
 };
 
 function TabPanel(props: { children: React.ReactNode; value: number; index: number }) {
@@ -76,18 +81,27 @@ function TabPanel(props: { children: React.ReactNode; value: number; index: numb
 const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   {
     isEditMode = false, 
-    initialData, 
+    initialData,
+    productId,
+    initialCategory,
+    initialSubCategory,
     open, 
     activeTab, 
     paramId, 
     handleClose, 
-    handleSubmit
+    handleSubmit,
+    onSuccess
   }
 ) => {
   const [tabIndex, setTabIndex] = useState<number>(activeTab || 0);
   const [category, setCategory] = useState<Products[] | []>([])
   const [subCategory, setSubCategory] = useState<ProductSubType[]| []>([]);
-  const {t} = useTranslation()
+  const {t, i18n} = useTranslation()
+  const language = localStorage.getItem('selectedLanguage')
+  const [selectedLanguage, setSelectedLanguage] = useState(language);
+  const [productCategoryId, setProductCategoryId] = useState<string>('')
+  const [selectedProductCategory, setSelectedProductCategory] = useState<any>([])
+
   const handleTabChange = (event: React.ChangeEvent<{}>, newIndex: number) => {
     setTabIndex(newIndex);
     formik.resetForm()
@@ -133,10 +147,10 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       traditionalName: initialData?.productNameTchi || '',
       simplifiedName: initialData?.productNameSchi || '',
       englishName: initialData?.productNameEng || '',
-      category: initialData?.productTypeId || '',
-      subcategory: initialData?.productSubTypeId || '',
+      category: productId || '',
+      subCategory:'',
       introduction: initialData?.description || '',
-      remarks: initialData?.remark || '',
+      remarks: initialData?.remark || ''
     },
     validationSchema: Yup.lazy(() => getValidationSchema(tabIndex)),
     enableReinitialize: true,
@@ -203,18 +217,18 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
     let toastMsg = '';
     switch (activeTab) {
       case 0:
-        await editProductType(paramId, editPayload);
-        toastMsg = t(`notify.successDeleted`)
+       await editProductType(paramId, editPayload);
+        toastMsg = t(`notify.SuccessEdited`)
         break;
       case 1:
         editPayload = { ...editPayload, productTypeId: paramId };
         await editProductSubtype(paramId, editPayload);
-        toastMsg = t(`notify.successDeleted`)
+        toastMsg = t(`notify.SuccessEdited`)
         break;
       case 2:
         editPayload = { ...editPayload, productSubTypeId: paramId, };
         await editProductAddonType(paramId, editPayload);
-        toastMsg = t(`notify.successDeleted`)
+        toastMsg = t(`notify.SuccessEdited`)
         break;
       default:
         throw new Error('Invalid active tab selection.');
@@ -248,11 +262,17 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
         switch (tabIndex) {
           case 0:
             response = await createProductType(payload);
+            if(response.status === 200 && onSuccess) {
+              onSuccess()
+            }
             toastMsg = t('notify.successCreated');
             break;
           case 1:
             if (formik) {
               response = await createProductSubtype(formik.values.category, payload);
+              if(response.status === 200 && onSuccess) {
+                onSuccess()
+              }
               toastMsg = response.status === 409 ? response.data.message : t('notify.successCreated');
             } else {
               throw new Error('Product SubType ID is missing. Cannot create addon.');
@@ -260,7 +280,10 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
             break;
           case 2:
             if (formik) {
-              response = await createProductAddonType(formik.values.subcategory, payload);
+              response = await createProductAddonType(formik.values.subCategory, payload);
+              if(response.status === 200 && onSuccess) {
+                onSuccess()
+              }
               toastMsg = t('notify.successCreated');
             } else {
               throw new Error('Product SubType ID is missing. Cannot create addon.');
@@ -342,19 +365,68 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
     formik.resetForm()
   }
 
+  // useEffect(() => {
+  //   if (isEditMode && initialData?.productTypeId) {
+  //     // formik.setFieldValue('category', initialCategory); 
+  //     console.log('CAT', initialCategory)
+  //   }
+    
+  //   // if (!formik.values.category && category?.length > 0) {
+  //   //   formik.setFieldValue('category', category[0].productTypeId); 
+  //   // }
+
+  // }, [isEditMode, initialData, category, formik]);
+  
+  
+  // useEffect(() => {
+  //   if (isEditMode && initialData?.productSubTypeId) {
+  //     formik.setFieldValue('subcategory', initialData.productSubTypeId); 
+  //   }
+    
+  //   if (!formik.values.subcategory && subCategory?.length > 0) {
+  //     formik.setFieldValue('subcategory', subCategory[0].productSubTypeId); 
+  //   }
+
+  // }, [isEditMode, subCategory, formik]);
+  
 
   useEffect(() => {
-    if (!formik.values.category && category?.length > 0) {
-      formik.setFieldValue('category', category[0].productTypeId); 
+    
+    if(initialSubCategory && !isEditMode) {
+      setSubCategory(initialSubCategory)
     }
-  }, [category, formik]);
+
+    if(initialSubCategory ) {
+      formik.setValues({
+        traditionalName: initialData?.productNameTchi || '',
+        simplifiedName: initialData?.productNameSchi || '',
+        englishName: initialData?.productNameEng || '',
+        category: productId || '',
+        subCategory: initialSubCategory !== 'undefined' && initialSubCategory[0]?.productSubTypeId ||'',
+        introduction: initialData?.description || '',
+        remarks: initialData?.remark || '',
+      })
+
+    }
+  },[category,initialSubCategory, isEditMode, ])
+
 
   useEffect(() => {
-    if (!formik.values?.subcategory && subCategory?.length > 0) {
-      formik.setFieldValue('subCategory', subCategory[0].productSubTypeId); 
+    const language = localStorage.getItem(localStorgeKeyName.selectedLanguage);
+    if (language) setSelectedLanguage(language);
+  }, [selectedLanguage]);
+ 
+  useEffect(() => {
+    
+    if(productCategoryId) {
+      const categoryId = category.find((item) => item.productTypeId === productCategoryId)
+     if(categoryId ) {
+       setSelectedProductCategory(categoryId.productSubType)  
+       console.log('TST', categoryId, productCategoryId)
+      }
     }
-  }, [subCategory, formik]);
-
+    
+  }, [productCategoryId])
 
   return (
     <RightOverlayForm
@@ -424,6 +496,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
               <StyledTab label={t('settings_page.recycling.main_category')}  disabled={isEditMode && (tabIndex === 0 || tabIndex === 2)}/>
               <StyledTab label={t('settings_page.recycling.sub_category')} disabled={isEditMode && (tabIndex === 0 || tabIndex === 2)} />
               <StyledTab label={t('settings_page.recycling.additional_category')} disabled={isEditMode && (tabIndex === 0 || tabIndex === 1)} />
+              
             </Tabs>
           </CustomField>
 
@@ -473,18 +546,26 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                   data-testId="astd-semi-product-category-select"
                   labelId="category-label"
                   id="category"
-                  value={formik.values.category || ''} 
-                  onChange={(event) => formik.setFieldValue('category', event.target.value)}
+                  value={formik.values.category}
+                  onChange={(event) => {
+                    formik.setFieldValue('category', event.target.value)
+                   
+                  }}
                   onBlur={formik.handleBlur}
                   error={formik.touched.category && Boolean(formik.errors.category)}
                   disabled={isEditMode}
                 >
-                  {category &&
-                    category.map((item: Products) => (
-                      <MenuItem key={item.productTypeId} value={item.productTypeId}>
-                        {item.productNameEng}
-                      </MenuItem>
-                    ))}
+                 {category.length > 0 &&
+                    category.map((item: Products) => {
+                      
+                      const selectedLanguage = i18n.language === 'enus' ? item.productNameEng : i18n.language === 'zhhk' ? item.productNameTchi : item.productNameSchi;
+                      return  (
+                        <MenuItem key={item.productTypeId} value={item.productTypeId}>
+                          {selectedLanguage}
+                        </MenuItem>
+                      )
+                    }
+                  )}
                 </Select>
               </FormControl>
               <Box my="32px">
@@ -534,17 +615,25 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                     labelId="category-label"
                     id="category"
                     value={formik.values.category}
-                    onChange={(event) => formik.setFieldValue('category', event.target.value)}
+                    onChange={(event) => {
+                      formik.setFieldValue('category', event.target.value)
+                      setProductCategoryId(event.target.value)
+                      console.log(event.target.value)
+                    }}
                     onBlur={formik.handleBlur}
                     error={formik.touched.category && Boolean(formik.errors.category)}
-                    disabled={isEditMode}
+                    disabled={isEditMode }
                   >
-                    {category &&
-                      category.map((item: Products) => (
-                        <MenuItem key={item.productTypeId} value={item.productTypeId}>
-                          {item.productNameEng}
-                        </MenuItem>
-                      ))}
+                    {category.length > 0 &&
+                      category.map((item: Products) => {
+                        const selectedLanguage = i18n.language === 'enus' ? item.productNameEng : i18n.language === 'zhhk' ? item.productNameTchi : item.productNameSchi;
+                        return  (
+                          <MenuItem key={item.productTypeId} value={item.productTypeId}>
+                            {selectedLanguage}
+                          </MenuItem>
+                        )
+                      }
+                      )}
                   </Select>
                 </FormControl>
               </Box>
@@ -560,18 +649,42 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                       data-testId="astd-semi-product-subcategory-select"
                       labelId="subcategory-label"
                       id="subCategory"
-                      value={formik.values.subcategory}
+                      value={formik.values.subCategory}
                       onChange={(event) => formik.setFieldValue('subCategory', event.target.value)}
                       onBlur={formik.handleBlur}
-                      error={formik.touched.subcategory && Boolean(formik.errors.subcategory)}
-                      disabled={isEditMode}
+                      error={formik.touched.subCategory && Boolean(formik.errors.subCategory)}
+                      disabled={isEditMode || formik.values.category === '' }
                     >
-                      {subCategory &&
-                        subCategory.map((item: ProductSubType) => (
-                          <MenuItem key={item.productSubTypeId} value={item.productSubTypeId}>
-                            {item.productNameEng}
-                          </MenuItem>
-                        ))}
+                     
+                     {
+
+                      isEditMode ? (
+                       subCategory.length > 0 &&
+                          subCategory.map((item: ProductSubType) => {
+                            
+                            const selectedLanguage = i18n.language === 'enus' ? item.productNameEng : i18n.language === 'zhhk' ? item.productNameTchi : item.productNameSchi;
+                            return (
+                              <MenuItem key={item.productSubTypeId} value={item.productSubTypeId}>
+                                {selectedLanguage}
+                              </MenuItem>
+                            )
+                          } 
+                         )
+                      ) : (
+
+                        selectedProductCategory.length > 0 &&
+                          selectedProductCategory.map((item: ProductSubType) => {
+                            console.log('TST', item)
+                            const selectedLanguage = i18n.language === 'enus' ? item.productNameEng : i18n.language === 'zhhk' ? item.productNameTchi : item.productNameSchi;
+                            return (
+                              <MenuItem key={item.productSubTypeId} value={item.productSubTypeId}>
+                                {selectedLanguage}
+                              </MenuItem>
+                            )
+                          } 
+                         )
+                      )
+                     }
                     </Select>
                   </FormControl>
                 </Box>

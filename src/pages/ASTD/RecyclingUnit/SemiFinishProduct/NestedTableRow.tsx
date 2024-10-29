@@ -13,7 +13,7 @@ import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { ProductAddon, Products, ProductSubType } from '../../../../types/settings';
 import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../../../themes/icons';
 import SemiFinishProductForm from './SemiFinishProductForm';
-import { getProductType, getProductSubtype, getProductAddonType, editProductType, editProductSubtype, editProductAddonType } from '../../../../APICalls/ASTD/settings/productType';
+import { getProductType, getProductSubtype, getProductAddonType, editProductType, editProductSubtype, editProductAddonType, getProductSubtypesByProductType, getProductAddonTypesByProductSubtype } from '../../../../APICalls/ASTD/settings/productType';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
 import { useTranslation } from 'react-i18next';
 
@@ -31,7 +31,9 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
   const [deleteItem, setDeleteItem] = useState<{data: any, id: string; type: string, payloadId?: string } | null>(null);
   const {t} = useTranslation()
   const [initialData, setInitialData] = useState<any>({});
-
+  const [initialCategory, setInitialCategory] = useState<any>([]);
+  const [initialSubCategory, setInitialSubCategory] = useState<any>([]);
+  const [productId, setProductId] = useState<string>('')
 
   const toggleSubtypeOpen = (id: string) => {
     setSubtypeOpen((prevState) => ({
@@ -72,6 +74,17 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
       console.error('Failed to fetch addon data:', error);
     }
   };
+  const handleFetchProductSubTypeByProductType = async (id: string) => {
+    try {
+      const response = await getProductSubtypesByProductType(id);
+      setInitialSubCategory(response.data); 
+      console.log(response.data)
+      // setParamId(id)
+      
+    } catch (error) {
+      console.error('Failed to fetch addon data:', error);
+    }
+  };
 
   const handleEditProduct = (id: string) => {
   setIsOpenForm(true);
@@ -85,10 +98,13 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     handleFetchSubtypeData(id);
   };
 
-  const handleEditProductAddon = (id: string) => {
+  const handleEditProductAddon = (productId: string, subTypeId: string, addOnId: string) => {
     setIsOpenForm(true);
     setActiveTab(2)
-    handleFetchAddonData(id);
+    handleFetchAddonData(addOnId);
+    handleFetchProductSubTypeByProductType(productId)
+    console.log('TEST', productId, subTypeId, addOnId)
+    setProductId(productId)
   };
 
 
@@ -104,32 +120,38 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     setOpenDelete(true);
 };
   const handleDeleteSubProduct =  async(id: string, productsId :string) => {
-   await handleFetchSubtypeData(id)
+    const response = await getProductSubtype(id);
+    
+    if(response.data) {
+      const payload = {
+        version:  response?.data?.version,
+        status: 'INACTIVE',
+        createdBy: localStorage.getItem('username') || '',
+        updatedBy: localStorage.getItem('username') || '',
+      };
+      const payloadId = productsId
+      setDeleteItem({ data: payload, id, type: 'subProduct', payloadId });
+      setOpenDelete(true);
 
-    const payload = {
-      version:  initialData?.version,
-      status: 'INACTIVE',
-      createdBy: localStorage.getItem('username') || '',
-      updatedBy: localStorage.getItem('username') || '',
-    };
-    const payloadId = productsId
-    setDeleteItem({ data: payload, id, type: 'subProduct', payloadId });
-    setOpenDelete(true);
+    }
   };
 
   const handleDeleteProductAddon = async (id: string, subProductId :string) => {
-    
-    await handleFetchAddonData(id)
-    const payload = {
-      version:  initialData?.version,
-      status: 'INACTIVE',
-      createdBy: localStorage.getItem('username') || '',
-      updatedBy: localStorage.getItem('username') || '',
-    };
+  
+    const response = await getProductAddonType(id);
+    if(response.data) {
 
-    const payloadId = subProductId
-    setDeleteItem({ data: payload, id, type: 'addon', payloadId });
-    setOpenDelete(true);
+      const payload = {
+        version:  response.data?.version,
+        status: 'INACTIVE',
+        createdBy: localStorage.getItem('username') || '',
+        updatedBy: localStorage.getItem('username') || '',
+      };
+  
+      const payloadId = subProductId
+      setDeleteItem({ data: payload, id, type: 'addon', payloadId });
+      setOpenDelete(true);
+    }
   };
 
   const handleCloseDelete = () => {
@@ -138,13 +160,16 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
   };
 
   const handleConfirmDelete = () => {
+ 
     if (!deleteItem) return;
   
     const { data, id, type, payloadId } = deleteItem;
+
     let toastMsg = '';
+    
     switch (type) {
       case 'product':
-        console.log('Deleting Product:', id);
+  
         editProductType(id, {...data});
         toastMsg = t(`notify.SuccessEdited`)
         break;
@@ -271,7 +296,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
                                       <TableCell>{addon.remark || '-'}</TableCell>
                                       <TableCell sx={{ padding: '4px 8px', display: 'flex', justifyContent: 'flex-end'}} >
                                         <Box display="flex" alignItems="center" gap="8px">
-                                        <IconButton data-testId={`astd-semi-product-addon-edit-icon-708-${subProduct.productSubTypeId}`} aria-label="edit row" size="small" onClick={() => handleEditProductAddon(addon.productAddonTypeId)}>
+                                        <IconButton data-testId={`astd-semi-product-addon-edit-icon-708-${subProduct.productSubTypeId}`} aria-label="edit row" size="small" onClick={() => handleEditProductAddon(products.productTypeId, subProduct.productSubTypeId ,addon.productAddonTypeId, )}>
                                             <EDIT_OUTLINED_ICON />
                                           </IconButton>
                                           <IconButton data-testId={`astd-semi-product-addon-delete-icon-525-${subProduct.productSubTypeId}`} aria-label="delete row" size="small" onClick={() => handleDeleteProductAddon(addon.productAddonTypeId, subProduct.productSubTypeId)}>
@@ -297,6 +322,9 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
       )}
       <SemiFinishProductForm
         activeTab={activetab}
+        productId={productId}
+        initialCategory={initialCategory}
+        initialSubCategory={initialSubCategory}
         isEditMode
         initialData={initialData}
         paramId={paramId}

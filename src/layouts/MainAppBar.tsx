@@ -63,6 +63,8 @@ const MainAppBar = () => {
     console.log('change language: ', lng)
     i18n.changeLanguage(lng)
     setLanguage(lng)
+
+    localStorage.setItem(localStorgeKeyName.selectedLanguage, lng);
   }
 
   const open = Boolean(anchorEl)
