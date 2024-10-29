@@ -185,6 +185,7 @@ const PickupOrderCreateForm = ({
     contractType,
     vehicleType,
     recycType,
+    productType,
     dateFormat,
     getLogisticlist,
     getContractList,
@@ -413,32 +414,54 @@ const PickupOrderCreateForm = ({
       width: 150
     },
     {
+      field: 'itemCategory',
+      headerName: t('pick_up_order.recyclForm.item_category'),
+      width: 150,
+    },
+    {
       field: 'recycType',
       headerName: t('pick_up_order.detail.main_category'),
       width: 150,
       editable: true,
       valueGetter: ({ row }) => {
-        const matchingRecycType = recycType?.find(
-          (item) => item.recycTypeId === row.recycType
-        )
+        const typeField = row.recycType || row.productType;
+        const matchingRecycType = recycType?.find(item => item.recycTypeId === row.recycType);
+        const matchingProductType = productType?.find(item => item.productTypeId === row.productType);
         if (matchingRecycType) {
-          var name = ''
+          let name = '';
           switch (i18n.language) {
             case 'enus':
-              name = matchingRecycType.recyclableNameEng
-              break
+              name = matchingRecycType.recyclableNameEng;
+              break;
             case 'zhch':
-              name = matchingRecycType.recyclableNameSchi
-              break
+              name = matchingRecycType.recyclableNameSchi;
+              break;
             case 'zhhk':
-              name = matchingRecycType.recyclableNameTchi
-              break
+              name = matchingRecycType.recyclableNameTchi;
+              break;
             default:
-              name = matchingRecycType.recyclableNameTchi //default fallback language is zhhk
-              break
+              name = matchingRecycType.recyclableNameTchi;
           }
-          return name
+          return name;
+        } else if (matchingProductType) {
+          let name = '';
+          switch (i18n.language) {
+            case 'enus':
+              name = matchingProductType.productNameEng;
+              break;
+            case 'zhch':
+              name = matchingProductType.productNameSchi;
+              break;
+            case 'zhhk':
+              name = matchingProductType.productNameTchi;
+              break;
+            default:
+              name = matchingProductType.productNameTchi;
+          }
+          return name;
         }
+        
+        return typeField;
       }
     },
     {
@@ -448,9 +471,9 @@ const PickupOrderCreateForm = ({
       width: 150,
       editable: true,
       valueGetter: ({ row }) => {
-        const matchingRecycType = recycType?.find(
-          (item) => item.recycTypeId === row.recycType
-        )
+        const matchingRecycType = recycType?.find((item) => item.recycTypeId === row.recycType)
+        const matchingProductType = productType?.find(item => item.productTypeId === row.productType);
+
         if (matchingRecycType) {
           const matchrecycSubType = matchingRecycType.recycSubType?.find(
             (subtype) => subtype.recycSubTypeId === row.recycSubType
@@ -473,6 +496,71 @@ const PickupOrderCreateForm = ({
             }
 
             return subName
+          } else {
+            return row.recycSubType
+          }
+        } else if (matchingProductType) {
+          const matchProductSubType = matchingProductType.productSubType?.find(
+            (subtype) => subtype.productSubTypeId === row.productSubType
+          )
+          if (matchProductSubType) {
+            var subName = ''
+            switch (i18n.language) {
+              case 'enus':
+                subName = matchProductSubType?.productNameEng ?? ''
+                break
+              case 'zhch':
+                subName = matchProductSubType?.productNameSchi ?? ''
+                break
+              case 'zhhk':
+                subName = matchProductSubType?.productNameTchi ?? ''
+                break
+              default:
+                subName = matchProductSubType?.productNameTchi ?? '' //default fallback language is zhhk
+                break
+            }
+
+            return subName
+          }
+        }
+      }
+    },
+    {
+      field: 'addon',
+      headerName: t('pick_up_order.product_type.add-on'),
+      type: 'string',
+      width: 150,
+      editable: true,
+      valueGetter: ({ row }) => {
+        const typeField = row.productType;
+        const matchingProductType = productType?.find(item => item.productTypeId === row.productType)
+        if (matchingProductType) {
+          const matchProductSubType = matchingProductType.productSubType?.find(
+            (subtype) => subtype.productSubTypeId === row.productSubType
+          )
+          if (matchProductSubType) {
+            const matchProductAddon = matchProductSubType.productAddonType?.find(
+              (addon) => addon.productAddonTypeId === row.productAddon
+            )
+            if (matchProductAddon) {
+              var addonName = ''
+              switch (i18n.language) {
+                case 'enus':
+                  addonName = matchProductAddon?.productNameEng ?? ''
+                  break
+                case 'zhch':
+                  addonName = matchProductAddon?.productNameSchi ?? ''
+                  break
+                case 'zhhk':
+                  addonName = matchProductAddon?.productNameTchi ?? ''
+                  break
+                default:
+                  addonName = matchProductAddon?.productNameTchi ?? ''
+                  break
+              }
+
+              return addonName
+            }
           }
         }
       }
@@ -524,6 +612,7 @@ const PickupOrderCreateForm = ({
               setIndex(params.row.id)
               handleEditRow(params.row.picoDtlId)
             }}
+            data-testId={'astd-create-edit-pickup-order-edit-recycling-3943' + params.row.id}
           />
         </IconButton>
       )
@@ -542,6 +631,7 @@ const PickupOrderCreateForm = ({
             setOpenDelete(true)
             setRecycbleLocId(params.row)
           }}
+          data-testId={'astd-create-edit-pickup-order-delete-recycling-4671' + params.row.id}
         >
           <DELETE_OUTLINED_ICON />
         </IconButton>
@@ -674,6 +764,7 @@ const PickupOrderCreateForm = ({
                     )
                   }
                   value={formik.values.picoType}
+                  dataTestId='astd-create-edit-pickup-order-type-select-button-2449'
                 />
               </CustomField>
             </Grid>
@@ -765,6 +856,7 @@ const PickupOrderCreateForm = ({
                     errorsField.logisticName.status
                     //formik.errors.logisticName && formik.touched.logisticName
                   }
+                  dataTestId={'astd-create-edit-pickup-order-choose-logistic-select-button-6878'}
                 />
               </CustomField>
               {/* {errorsField.logisticName.status ? (
@@ -795,6 +887,7 @@ const PickupOrderCreateForm = ({
                       ? customListTheme.border
                       : '#79CA25'
                   }}
+                  dataTestId='astd-create-edit-pickup-order-vehicle-type-select-button-9679'
                 />
               </CustomField>
               {/* {errorsField.vehicleTypeId.status ? (
@@ -818,6 +911,7 @@ const PickupOrderCreateForm = ({
                   value={formik.values.platNo}
                   sx={{ width: '400px' }}
                   error={formik.errors.platNo && formik.touched.platNo}
+                  dataTestId='astd-create-edit-pickup-order-vehicle-plate-input-field-9795'
                 />
               </CustomField>
               {/* {errorsField.platNo.status ? (
@@ -842,6 +936,7 @@ const PickupOrderCreateForm = ({
                   value={formik.values.contactNo}
                   sx={{ width: '400px' }}
                   error={formik.errors.contactNo && formik.touched.contactNo}
+                  dataTestId='astd-create-edit-pickup-order-contact-no-input-field-6429'
                 />
                 {/* {errorsField.contactNo.status ? (
                   <ErrorMessage message={errorsField.contactNo.message} />
@@ -877,6 +972,7 @@ const PickupOrderCreateForm = ({
                             ...params.InputProps,
                             sx: styles.inputProps
                           }}
+                          data-testId='astd-create-edit-pickup-order-contract-no-select-button-3176'
                         />
                       )}
                       noOptionsText={t('common.noOptions')}
@@ -908,6 +1004,7 @@ const PickupOrderCreateForm = ({
                         ? customListTheme.border
                         : '#79CA25'
                     }}
+                    dataTestId='astd-create-edit-pickup-order-ad-hoc-reason-select-button-5199'
                   />
                 </CustomField>
                 {/* {errorsField.AD_HOC.status ? (
@@ -930,6 +1027,7 @@ const PickupOrderCreateForm = ({
                     <div
                       className={`text-mini cursor-pointer text-[${colorTheme}]`}
                       onClick={resetPicoId}
+                      data-testId='astd-create-edit-pickup-order-related-po-change-menu-button-5755'
                     >
                       {t('pick_up_order.change')}
                     </div>
@@ -939,6 +1037,7 @@ const PickupOrderCreateForm = ({
                     <Button
                       sx={[picoIdButton]}
                       onClick={() => setOpenPico(true)}
+                      data-testId='astd-create-edit-pickup-order-related-po-select-menu-button-7503'
                     >
                       <AddCircleIcon sx={{ ...endAdornmentIcon, pr: 1 }} />
                       {t('pick_up_order.choose')}
@@ -1024,6 +1123,7 @@ const PickupOrderCreateForm = ({
                     setOpenModal(true)
                     changeTouchField('createPicoDetail')
                   }}
+                  data-testId='astd-create-edit-pickup-order-new-recycling-9199'
                   sx={{
                     height: '40px',
                     width: '100%',
@@ -1074,6 +1174,7 @@ const PickupOrderCreateForm = ({
                 type="submit"
                 sx={[buttonFilledCustom, localstyles.localButton]}
                 onClick={onhandleSubmit}
+                disabled={state.find(value => value.itemCategory === 'Product') ? true : false}
               >
                 {t('pick_up_order.finish')}
               </Button>
