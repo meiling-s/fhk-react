@@ -365,31 +365,6 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
     formik.resetForm()
   }
 
-  // useEffect(() => {
-  //   if (isEditMode && initialData?.productTypeId) {
-  //     // formik.setFieldValue('category', initialCategory); 
-  //     console.log('CAT', initialCategory)
-  //   }
-    
-  //   // if (!formik.values.category && category?.length > 0) {
-  //   //   formik.setFieldValue('category', category[0].productTypeId); 
-  //   // }
-
-  // }, [isEditMode, initialData, category, formik]);
-  
-  
-  // useEffect(() => {
-  //   if (isEditMode && initialData?.productSubTypeId) {
-  //     formik.setFieldValue('subcategory', initialData.productSubTypeId); 
-  //   }
-    
-  //   if (!formik.values.subcategory && subCategory?.length > 0) {
-  //     formik.setFieldValue('subcategory', subCategory[0].productSubTypeId); 
-  //   }
-
-  // }, [isEditMode, subCategory, formik]);
-  
-
   useEffect(() => {
     
     if(initialSubCategory && !isEditMode) {
