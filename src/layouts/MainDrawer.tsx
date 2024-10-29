@@ -39,6 +39,7 @@ import {
 } from '../constants/constant'
 import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
+import VerticalAlignCenterRoundedIcon from '@mui/icons-material/VerticalAlignCenterRounded';
 import InventoryIcon from '@mui/icons-material/Inventory'
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
 import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined'
@@ -256,6 +257,14 @@ function MainDrawer() {
         collapseGroup: dashboardGroup,
         path: 'dashboard_recyclables.data',
         functionName: 'Dashboard'
+      },
+      'Compactor Dashboard': {
+        name: t('compactor.compactorTruckHandling'),
+        icon: <VerticalAlignCenterRoundedIcon />,
+        onClick: () => navigate(`/${realm}/compactorDashboard`),
+        collapse: false,
+        path: `/${realm}/compactorDashboard`,
+        functionName: 'Compactor Dashboard'
       }
     }
   ]
@@ -494,7 +503,7 @@ function MainDrawer() {
                       index === drawerMenus.length - 1 ? '48px' : '0px'
                   }}
                   key={drawerMenu.name}
-                  data-testid={drawerMenu.datatestId || ""}
+                  data-testid={drawerMenu.datatestId || ''}
                   onClick={() => handleNavigateMenu(drawerMenu, index)}
                   disablePadding
                 >
@@ -558,7 +567,7 @@ function MainDrawer() {
                     index === drawerMenus.length - 1 ? '48px' : '0px'
                 }}
                 key={index}
-                data-testid={drawerMenu.datatestId || ""}
+                data-testid={drawerMenu.datatestId || ''}
                 onClick={() => handleNavigateMenu(drawerMenu, index)}
                 disablePadding
               >
