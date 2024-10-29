@@ -12,6 +12,8 @@ import {
   EDIT_PRODUCT_ADDON_TYPE,
   GET_PRODUCT_ADDON_TYPE_LIST,
   GET_PRODUCT_ADDON_TYPE,
+  GET_PRODUCT_SUBTYPES_BY_PRODUCT_TYPE,
+  GET_PRODUCT_ADDON_TYPES_BY_PRODUCT_SUBTYPE
 } from '../../../constants/settingsRequest';
 
 // Product Type APIs
@@ -188,5 +190,33 @@ export const editProductAddonType = async (productAddonTypeId: string, data: any
   } catch (error) {
     console.error('Edit Product Addon Type Failed:', error);
     throw error;
+  }
+};
+
+export const getProductSubtypesByProductType = async (productTypeId: string) => {
+  try {
+    const response = await axiosInstance({
+      baseURL: window.baseURL.administrator,
+      ...GET_PRODUCT_SUBTYPES_BY_PRODUCT_TYPE(productTypeId),
+    });
+
+    return response;
+  } catch (e: any) {
+    console.error('Get Product Subtypes by Product Type Failed:', e);
+    throw e;
+  }
+};
+
+export const getProductAddonTypesByProductSubtype = async (productSubtypeId: string) => {
+  try {
+    const response = await axiosInstance({
+      baseURL: window.baseURL.administrator,
+      ...GET_PRODUCT_ADDON_TYPES_BY_PRODUCT_SUBTYPE(productSubtypeId),
+    });
+
+    return response;
+  } catch (e: any) {
+    console.error('Get Product Addon Types by Product Subtype Failed:', e);
+    throw e;
   }
 };
