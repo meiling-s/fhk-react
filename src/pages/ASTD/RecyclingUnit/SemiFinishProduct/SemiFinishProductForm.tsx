@@ -55,7 +55,6 @@ type SemiFinishProductProps = {
   handleClose: () => void;
   handleSubmit: () => void;
   open: boolean;
-  onSuccess?: (data: any) => void;
 };
 
 function TabPanel(props: { children: React.ReactNode; value: number; index: number }) {
@@ -91,7 +90,6 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
     paramId, 
     handleClose, 
     handleSubmit,
-    onSuccess
   }
 ) => {
   const [tabIndex, setTabIndex] = useState<number>(activeTab || 0);
@@ -263,17 +261,11 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
         switch (tabIndex) {
           case 0:
             response = await createProductType(payload);
-            if(response.status === 200 && onSuccess) {
-              onSuccess(response.data)
-            }
-            toastMsg = t('notify.successCreated');
+              toastMsg = t('notify.successCreated');
             break;
           case 1:
             if (formik) {
               response = await createProductSubtype(formik.values.category, payload);
-              if(response.status === 200 && onSuccess) {
-                onSuccess(response.data)
-              }
               toastMsg = response.status === 409 ? response.data.message : t('notify.successCreated');
             } else {
               throw new Error('Product SubType ID is missing. Cannot create addon.');
@@ -282,9 +274,6 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
           case 2:
             if (formik) {
               response = await createProductAddonType(formik.values.subCategory, payload);
-              if(response.status === 200 && onSuccess) {
-                onSuccess(response.data)
-              }
               toastMsg = t('notify.successCreated');
             } else {
               throw new Error('Product SubType ID is missing. Cannot create addon.');
