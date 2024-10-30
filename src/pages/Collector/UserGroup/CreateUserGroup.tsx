@@ -86,7 +86,11 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       console.log('allFunctionIds', functionList)
       setFunctions(allFunctionIds)
     } else {
-      setFunctions([])
+      let prevItem: number[] = []
+      selectedItem?.functions.forEach((item) => {
+        prevItem.push(item.functionId)
+      })
+      setFunctions(prevItem)
     }
   }, [isAdmin, functionList])
 
@@ -133,7 +137,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         tempV.push({
           field: t('userGroup.groupName'),
           problem: formErr.empty,
-          dataTestId: "astd-user-group-form-group-name-err-warning-3882",
+          dataTestId: 'astd-user-group-form-group-name-err-warning-3882',
           type: 'error'
         })
       groupList.some((item) => item.toLowerCase() == roleName.toLowerCase()) &&
@@ -146,14 +150,14 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         tempV.push({
           field: t('userGroup.description'),
           problem: formErr.empty,
-          dataTestId: "astd-user-group-form-desc-err-warning-1635",
+          dataTestId: 'astd-user-group-form-desc-err-warning-1635',
           type: 'error'
         })
       functions.length == 0 &&
         tempV.push({
           field: t('userGroup.availableFeatures'),
           problem: formErr.empty,
-          dataTestId: "astd-user-group-form-available-feature-err-warning-6315",
+          dataTestId: 'astd-user-group-form-available-feature-err-warning-6315',
           type: 'error'
         })
       // console.log("tempV", tempV)
