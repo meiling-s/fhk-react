@@ -31,9 +31,9 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
   const [deleteItem, setDeleteItem] = useState<{data: any, id: string; type: string,} | null>(null);
   const {t} = useTranslation()
   const [initialData, setInitialData] = useState<any>({});
-  const [initialCategory, setInitialCategory] = useState<any>([]);
   const [initialSubCategory, setInitialSubCategory] = useState<any>([]);
   const [productId, setProductId] = useState<string>('')
+  const [productSubId, setProductSubId] = useState<string>('')
   const {dispatch, refetch} = useProductContext()
   const toggleSubtypeOpen = (id: string) => {
     setSubtypeOpen((prevState) => ({
@@ -105,6 +105,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     handleFetchAddonData(addOnId);
     handleFetchProductSubTypeByProductType(productId)
     setProductId(productId)
+    setProductSubId(subTypeId)
   };
 
 
@@ -226,8 +227,8 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
 
   return (
     <>
-      <TableRow sx={{ '& td': { padding: '8px 24px', verticalAlign: 'middle' } }}>
-        <TableCell sx={{ padding: '4px 8px' }}>
+      <TableRow sx={{ '& td': { padding: '8px', verticalAlign: 'middle', width: '19.30%' } }}>
+        <TableCell sx={{ padding: '4px 24px' }}>
           {products.productSubType && products.productSubType.length > 0 && (
             <IconButton
               data-testId={`astd-semi-product-expand-icon-142-${products.productTypeId}`}
@@ -244,7 +245,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
         <TableCell sx={{ padding: '4px 8px' }}>{products.productNameEng || '-'}</TableCell>
         <TableCell sx={{ padding: '4px 8px' }}>{products.description || '-'}</TableCell>
         <TableCell sx={{ padding: '4px 8px' }}>{products.remark || '-'}</TableCell>
-        <TableCell sx={{ padding: '4px 8px', display: 'flex', justifyContent: 'flex-end'}} >
+        <TableCell sx={{ width: '12%', display: 'flex', justifyContent: 'flex-end'}} >
          <Box display="flex" alignItems="center" gap="8px">
          <IconButton data-testId={`astd-semi-product-edit-icon-876-${products.productTypeId}`}aria-label="edit row" size="small" onClick={() => handleEditProduct(products.productTypeId)}>
             <EDIT_OUTLINED_ICON />
@@ -258,39 +259,39 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
 
       {products.productSubType && products.productSubType.length > 0 && (
         <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+           <TableCell colSpan={6} style={{ paddingBottom: 0, paddingTop: 0 }}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Table size="small" aria-label="sub-product table" padding="none">
                 <TableBody sx={{ backgroundColor: 'white' }}>
                   {products.productSubType.map((subProduct: ProductSubType) => (
                     <React.Fragment key={subProduct.productSubTypeId}>
                       <TableRow>
-                        <TableCell sx={{ paddingLeft: 4 }}>
-                          {subProduct.productAddonType && subProduct.productAddonType.length > 0 && (
-                            <IconButton
-                              data-testId={`astd-semi-product-subtype-expand-icon-934-${subProduct.productSubTypeId}`}
-                              aria-label="expand row"
-                              size="small"
-                              onClick={() => toggleSubtypeOpen(subProduct.productSubTypeId)}
-                            >
-                              {subtypeOpen[subProduct.productSubTypeId] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-                            </IconButton>
-                          )}
-                          {subProduct.productNameTchi || '-'}
+                        <TableCell sx={{width: '19.30%', paddingLeft: 4 }}>
+                            {subProduct.productAddonType && subProduct.productAddonType.length > 0 && (
+                              <IconButton
+                                data-testId={`astd-semi-product-subtype-expand-icon-934-${subProduct.productSubTypeId}`}
+                                aria-label="expand row"
+                                size="small"
+                                onClick={() => toggleSubtypeOpen(subProduct.productSubTypeId)}
+                              >
+                                {subtypeOpen[subProduct.productSubTypeId] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                              </IconButton>
+                            )}
+                            {subProduct.productNameTchi || '-'}
                         </TableCell>
-                        <TableCell>{subProduct.productNameSchi || '-'}</TableCell>
-                        <TableCell>{subProduct.productNameEng || '-'}</TableCell>
-                        <TableCell>{subProduct.description || '-'}</TableCell>
-                        <TableCell>{subProduct.remark || '-'}</TableCell>
-                        <TableCell sx={{ padding: '4px 8px', display: 'flex', justifyContent: 'flex-end'}} >
-                        <Box display="flex" alignItems="center" gap="8px">
-                        <IconButton data-testId={`astd-semi-product-subtype-edit-icon-471-${subProduct.productSubTypeId}`} aria-label="edit row" size="small" onClick={() => handleEditSubProduct(subProduct.productSubTypeId, products.productTypeId)}>
-                            <EDIT_OUTLINED_ICON />
-                          </IconButton>
-                          <IconButton data-testId={`astd-semi-product-subtype-delete-icon-283-${subProduct.productSubTypeId}`} aria-label="delete row" size="small" onClick={() => handleDeleteSubProduct(subProduct.productSubTypeId, products.productTypeId)}>
-                            <DELETE_OUTLINED_ICON />
-                          </IconButton>
-                        </Box>
+                        <TableCell sx={{ width: '19.30%', }} >{subProduct.productNameSchi || '-'}</TableCell>
+                        <TableCell sx={{ width: '19.30%', }} >{subProduct.productNameEng || '-'}</TableCell>
+                        <TableCell sx={{ width: '19.30%', }} >{subProduct.description || '-'}</TableCell>
+                        <TableCell sx={{ width: '19.30%', }} >{subProduct.remark || '-'}</TableCell>
+                        <TableCell sx={{ width: '12%', display: 'flex', justifyContent: 'flex-end'}} >
+                          <Box display="flex" alignItems="center" gap="8px">
+                            <IconButton data-testId={`astd-semi-product-subtype-edit-icon-471-${subProduct.productSubTypeId}`} aria-label="edit row" size="small" onClick={() => handleEditSubProduct(subProduct.productSubTypeId, products.productTypeId)}>
+                              <EDIT_OUTLINED_ICON />
+                            </IconButton>
+                            <IconButton data-testId={`astd-semi-product-subtype-delete-icon-283-${subProduct.productSubTypeId}`} aria-label="delete row" size="small" onClick={() => handleDeleteSubProduct(subProduct.productSubTypeId, products.productTypeId)}>
+                              <DELETE_OUTLINED_ICON />
+                            </IconButton>
+                          </Box>
                         </TableCell>
                       </TableRow>
 
@@ -299,15 +300,15 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
                           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                             <Collapse in={subtypeOpen[subProduct.productSubTypeId]} timeout="auto" unmountOnExit>
                               <Table size="small" aria-label="addon table" padding="none">
-                                <TableBody sx={{ backgroundColor: '#f9f9f9' }}>
+                                <TableBody sx={{borderBottom: 0, backgroundColor: 'white' }}>
                                   {subProduct.productAddonType.map((addon: ProductAddon) => (
                                     <TableRow key={addon.productAddonTypeId}>
-                                      <TableCell sx={{ paddingLeft: 8 }}>{addon.productNameTchi || '-'}</TableCell>
-                                      <TableCell>{addon.productNameSchi || '-'}</TableCell>
-                                      <TableCell>{addon.productNameEng || '-'}</TableCell>
-                                      <TableCell>{addon.description || '-'}</TableCell>
-                                      <TableCell>{addon.remark || '-'}</TableCell>
-                                      <TableCell sx={{ padding: '4px 8px', display: 'flex', justifyContent: 'flex-end'}} >
+                                      <TableCell sx={{ borderBottom: 0, width: '19.30%', paddingLeft: 8 }}>{addon.productNameTchi || '-'}</TableCell>
+                                      <TableCell sx={{ borderBottom: 0, width: '19.30%', }}>{addon.productNameSchi || '-'}</TableCell>
+                                      <TableCell sx={{ borderBottom: 0, width: '19.30%', }}>{addon.productNameEng || '-'}</TableCell>
+                                      <TableCell sx={{ borderBottom: 0, width: '19.30%', }}>{addon.description || '-'}</TableCell>
+                                      <TableCell sx={{ borderBottom: 0, width: '19.30%', }}>{addon.remark || '-'}</TableCell>
+                                      <TableCell sx={{ borderBottom: 0, width: '12%', display: 'flex', justifyContent: 'flex-end'}} >
                                         <Box display="flex" alignItems="center" gap="8px">
                                         <IconButton data-testId={`astd-semi-product-addon-edit-icon-708-${subProduct.productSubTypeId}`} aria-label="edit row" size="small" onClick={() => handleEditProductAddon(products.productTypeId, subProduct.productSubTypeId ,addon.productAddonTypeId )}>
                                             <EDIT_OUTLINED_ICON />
@@ -337,6 +338,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
         activeTab={activetab}
         productId={productId}
         initialSubCategory={initialSubCategory}
+        productSubId={productSubId}
         isEditMode
         initialData={initialData}
         paramId={paramId}

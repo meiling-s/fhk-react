@@ -46,7 +46,9 @@ const StyledTab = styled(Tab)(({ theme }) => ({
 
 type SemiFinishProductProps = {
   isEditMode?: boolean;
+  isAddMode?: boolean;
   productId?: string;
+  productSubId?:string;
   initialData?: Products;
   initialCategory?: any;
   initialSubCategory?: any;
@@ -69,7 +71,7 @@ function TabPanel(props: { children: React.ReactNode; value: number; index: numb
       {...other}
     >
       {value === index && (
-        <Box p={3}>
+        <Box mb="16px" pb="16px">
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -81,8 +83,10 @@ function TabPanel(props: { children: React.ReactNode; value: number; index: numb
 const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   {
     isEditMode = false, 
+    isAddMode = false, 
     initialData,
     productId,
+    productSubId,
     initialCategory,
     initialSubCategory,
     open, 
@@ -100,11 +104,10 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   const [selectedLanguage, setSelectedLanguage] = useState(language);
   const [productCategoryId, setProductCategoryId] = useState<string>('')
   const [selectedProductCategory, setSelectedProductCategory] = useState<any>([])
-  const { dispatch, refetch } = useProductContext();
+  const {refetch } = useProductContext();
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newIndex: number) => {
     setTabIndex(newIndex);
-    formik.resetForm()
   };
 
   const getValidationSchema = (tabIndex: number) => {
@@ -409,19 +412,72 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
     
   }, [productCategoryId])
 
+  const handleDelete = async () => {
+    try {
+      let response;
+      let toastMsg
+      const commonPayload = {
+        version: initialData?.version,
+        status: 'INACTIVE',
+        updatedBy: localStorage.getItem('username'),
+      };
+  
+      if (initialData?.productTypeId) {
+        response = await editProductType(initialData.productTypeId, commonPayload);
+        toastMsg = t('notify.successDeleted');
+      } else if (initialData?.productSubTypeId) {
+        const subPayload = { ...commonPayload, productTypeId: productId };
+        response = await editProductSubtype(initialData.productSubTypeId, subPayload);
+        toastMsg = t('notify.successDeleted');
+      } else if (initialData?.productAddonTypeId && productSubId) {
+        const addOnPayload = { ...commonPayload, productSubTypeId: productSubId };
+        response = await editProductSubtype(initialData.productAddonTypeId, addOnPayload);
+        toastMsg = t('notify.successDeleted');
+
+      }
+  
+      if (response?.status === 200) {
+        refetch();
+        if (toastMsg) {
+          toast.info(toastMsg, {
+            position: 'top-center',
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light'
+          })
+        }
+        
+      } else {
+        throw new Error("Unexpected response status");
+      }
+    } catch (error) {
+      handleError(error);
+    } finally {
+      handleOnClose();
+    }
+  };
+  
+
   return (
     <RightOverlayForm
       open={open}
       onClose={() => handleOnClose()}
       anchor="right"
+      action={isEditMode ? 'edit' : !isAddMode ? 'add' : 'delete'}
       showHeader={true}
       headerProps={{
-        title: !isEditMode ? t('top_menu.add_new') : '',
+        title: !isEditMode ? t('top_menu.add_new') : 'Edit',
         subTitle: t('settings_page.recycling.product_category'),
         submitText:  t('common.save'),
-        cancelText:  t('common.cancel'),
+        cancelText:  'delete',
         onCloseHeader: handleClose,
         onSubmit: () => handleSave(),
+        onDelete: handleDelete,
+        deleteText: t('common.deleteMessage')
       }}
     >
       <form onSubmit={formik.handleSubmit} data-testId="astd-semi-product-form-564">
@@ -474,10 +530,18 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
           </Box>
           <CustomField label={ t('settings_page.recycling.category')} mandatory>
             <Tabs value={tabIndex} onChange={handleTabChange} aria-label="form tabs" TabIndicatorProps={{ style: { display: 'none' } }} >
-              <StyledTab label={t('settings_page.recycling.main_category')}  disabled={isEditMode && (tabIndex === 0 || tabIndex === 2)}/>
-              <StyledTab label={t('settings_page.recycling.sub_category')} disabled={isEditMode && (tabIndex === 0 || tabIndex === 2)} />
-              <StyledTab label={t('settings_page.recycling.additional_category')} disabled={isEditMode && (tabIndex === 0 || tabIndex === 1)} />
-              
+            <StyledTab 
+              label={t('settings_page.recycling.main_category')}  
+              disabled={isEditMode && (tabIndex === 1 || tabIndex === 2)} 
+            />
+            <StyledTab 
+              label={t('settings_page.recycling.sub_category')} 
+              disabled={isEditMode && (tabIndex === 0 || tabIndex === 2)} 
+            />
+            <StyledTab 
+              label={t('settings_page.recycling.additional_category')} 
+              disabled={isEditMode && (tabIndex === 0 || tabIndex === 1)} 
+            />
             </Tabs>
           </CustomField>
 
@@ -489,7 +553,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                   data-testId="astd-semi-product-main-category-introduction-625"
                   id="introduction"
                   value={formik.values.introduction}
-                  placeholder={t('settings_page.recycling.enter_text')}
+                  placeholder={t('settings_page.recycling.introduction_placeholder')}
                   onChange={formik.handleChange}
                   multiline
                   rows={4}
@@ -504,7 +568,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                   dataTestId="astd-semi-product-main-category-remarks-904"
                   id="remarks"
                   value={formik.values.remarks}
-                  placeholder={t('settings_page.recycling.enter_text')}
+                  placeholder={t('settings_page.recycling.remark_placeholder')}
                   onChange={formik.handleChange}
                   multiline
                   rows={4}
@@ -518,7 +582,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
               <Box mb="32px">
               {/* Category Label Outside */}
               <Typography variant="caption" component="label" color="#888" htmlFor="category" style={{ display: 'block', marginBottom: '4px' }}>
-                {t('settings_page.recycling.category')}
+                {t('settings_page.recycling.main_category')}
                 <span style={{ color: 'red'}}>*</span>
               </Typography>
 
@@ -555,7 +619,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                     dataTestId="astd-semi-product-sub-category-introduction-123"
                     id="introduction"
                     value={formik.values.introduction}
-                    placeholder={t('settings_page.recycling.enter_text')}
+                    placeholder={t('settings_page.recycling.introduction_placeholder')}
                     onChange={formik.handleChange}
                     multiline
                     rows={4}
@@ -570,7 +634,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                       dataTestId="astd-semi-product-sub-category-remarks-654"
                       id="remarks"
                       value={formik.values.remarks}
-                      placeholder={t('settings_page.recycling.enter_text')}
+                      placeholder={t('settings_page.recycling.remark_placeholder')}
                       onChange={formik.handleChange}
                       multiline
                       rows={4}
@@ -585,7 +649,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
               <Box>
                 {/* Label outside the input */}
                 <Typography variant="caption" component="label" color="#999" htmlFor="category" style={{ display: 'block', marginBottom: '4px' }}>
-                  {t('settings_page.recycling.category')}
+                  {t('settings_page.recycling.main_category')}
                   <span style={{ color: 'red'}}>*</span>
                 </Typography>
 
@@ -675,7 +739,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                       dataTestId="astd-semi-product-additional-category-introduction-211"
                       id="introduction"
                       value={formik.values.introduction}
-                      placeholder={t('settings_page.recycling.enter_text')}
+                      placeholder={t('settings_page.recycling.introduction_placeholder')}
                       onChange={formik.handleChange}
                       multiline
                       rows={4}
@@ -689,7 +753,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
                   dataTestId="astd-semi-product-additional-category-remarks-789"
                   id="remarks"
                   value={formik.values.remarks}
-                  placeholder={t('settings_page.recycling.enter_text')}
+                  placeholder={t('settings_page.recycling.remark_placeholder')}
                   onChange={formik.handleChange}
                   multiline
                   rows={4}

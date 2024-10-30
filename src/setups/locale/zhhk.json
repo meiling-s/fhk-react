@@ -180,6 +180,7 @@
     "recycling": {
       "semi_finish_product": "半成品 ・ 產品類別",
       "remarks": "備註",
+      "remark_placeholder": "請輸入備註",
       "add_new": "新增",
       "product_category": "產品類別",
       "traditional_chinese_name": "繁體中文名稱",
