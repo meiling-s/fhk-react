@@ -114,7 +114,6 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     const payload = {
       version:  response?.data?.version,
       status: 'INACTIVE',
-      createdBy: localStorage.getItem('username'),
       updatedBy: localStorage.getItem('username'),
     };
     setDeleteItem({ data: payload, id, type: 'product' });
@@ -136,7 +135,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     setOpenDelete(true);
   };
 
-  const handleDeleteProductAddon = async (id: string) => {
+  const handleDeleteProductAddon = async (id: string, subProductId: string) => {
   
     const response = await getProductAddonType(id);
     if(response.data) {
@@ -144,7 +143,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
       const payload = {
         version:  response.data?.version,
         status: 'INACTIVE',
-        createdBy: localStorage.getItem('username') || '',
+        productSubTypeId: subProductId,
         updatedBy: localStorage.getItem('username') || '',
       };
   
@@ -310,10 +309,10 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
                                       <TableCell>{addon.remark || '-'}</TableCell>
                                       <TableCell sx={{ padding: '4px 8px', display: 'flex', justifyContent: 'flex-end'}} >
                                         <Box display="flex" alignItems="center" gap="8px">
-                                        <IconButton data-testId={`astd-semi-product-addon-edit-icon-708-${subProduct.productSubTypeId}`} aria-label="edit row" size="small" onClick={() => handleEditProductAddon(products.productTypeId, subProduct.productSubTypeId ,addon.productAddonTypeId, )}>
+                                        <IconButton data-testId={`astd-semi-product-addon-edit-icon-708-${subProduct.productSubTypeId}`} aria-label="edit row" size="small" onClick={() => handleEditProductAddon(products.productTypeId, subProduct.productSubTypeId ,addon.productAddonTypeId )}>
                                             <EDIT_OUTLINED_ICON />
                                           </IconButton>
-                                          <IconButton data-testId={`astd-semi-product-addon-delete-icon-525-${subProduct.productSubTypeId}`} aria-label="delete row" size="small" onClick={() => handleDeleteProductAddon(addon.productAddonTypeId)}>
+                                          <IconButton data-testId={`astd-semi-product-addon-delete-icon-525-${subProduct.productSubTypeId}`} aria-label="delete row" size="small" onClick={() => handleDeleteProductAddon(addon.productAddonTypeId, subProduct.productSubTypeId)}>
                                             <DELETE_OUTLINED_ICON />
                                           </IconButton>
                                         </Box>
