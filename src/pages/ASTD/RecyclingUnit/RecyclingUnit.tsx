@@ -71,6 +71,7 @@ import CustomButton from '../../../components/FormComponents/CustomButton'
 import { useNavigate } from 'react-router-dom'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import DeleteModalSub from '../../../components/FormComponents/deleteModal'
+import SemiFinishProduct from './SemiFinishProduct'
 interface CodeFormatProps {
   createdAt: string
   createdBy: string
@@ -719,6 +720,7 @@ const RecyclingUnit: FunctionComponent = () => {
             />
           </Box>
         </div>
+        <SemiFinishProduct />
         <Box
           sx={{
             display: 'flex',
@@ -957,6 +959,9 @@ const RecyclingUnit: FunctionComponent = () => {
         mainCategory={isMainCategory}
         setDeleteModal={setDeleteModal}
       />
+
+ 
+
       <CodeFormat
         drawerOpen={codeDrawerOpen}
         handleDrawerClose={() => {

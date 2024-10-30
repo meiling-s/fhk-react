@@ -12,6 +12,8 @@ import {
   EDIT_PRODUCT_ADDON_TYPE,
   GET_PRODUCT_ADDON_TYPE_LIST,
   GET_PRODUCT_ADDON_TYPE,
+  GET_PRODUCT_SUBTYPES_BY_PRODUCT_TYPE,
+  GET_PRODUCT_ADDON_TYPES_BY_PRODUCT_SUBTYPE
 } from '../../../constants/settingsRequest';
 
 // Product Type APIs
@@ -102,11 +104,11 @@ export const getProductSubtype = async (productSubtypeId: string) => {
   }
 };
 
-export const createProductSubtype = async (data: any) => {
+export const createProductSubtype = async (productTypeId: string, data: any) => {
   try {
     const response = await axiosInstance({
       baseURL: window.baseURL.administrator,
-      ...CREATE_PRODUCT_SUBTYPE,
+      ...CREATE_PRODUCT_SUBTYPE(productTypeId),
       data: data,
     });
 
@@ -161,11 +163,11 @@ export const getProductAddonType = async (productAddonTypeId: string) => {
   }
 };
 
-export const createProductAddonType = async (data: any) => {
+export const createProductAddonType = async (productSubtypeId: string, data: any) => {
   try {
     const response = await axiosInstance({
       baseURL: window.baseURL.administrator,
-      ...CREATE_PRODUCT_ADDON_TYPE,
+      ...CREATE_PRODUCT_ADDON_TYPE(productSubtypeId),
       data: data,
     });
 
@@ -188,5 +190,33 @@ export const editProductAddonType = async (productAddonTypeId: string, data: any
   } catch (error) {
     console.error('Edit Product Addon Type Failed:', error);
     throw error;
+  }
+};
+
+export const getProductSubtypesByProductType = async (productTypeId: string) => {
+  try {
+    const response = await axiosInstance({
+      baseURL: window.baseURL.administrator,
+      ...GET_PRODUCT_SUBTYPES_BY_PRODUCT_TYPE(productTypeId),
+    });
+
+    return response;
+  } catch (e: any) {
+    console.error('Get Product Subtypes by Product Type Failed:', e);
+    throw e;
+  }
+};
+
+export const getProductAddonTypesByProductSubtype = async (productSubtypeId: string) => {
+  try {
+    const response = await axiosInstance({
+      baseURL: window.baseURL.administrator,
+      ...GET_PRODUCT_ADDON_TYPES_BY_PRODUCT_SUBTYPE(productSubtypeId),
+    });
+
+    return response;
+  } catch (e: any) {
+    console.error('Get Product Addon Types by Product Subtype Failed:', e);
+    throw e;
   }
 };
