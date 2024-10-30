@@ -1,4 +1,4 @@
-import { Button } from '@mui/joy'
+import { Button } from '@mui/material'
 import { SetStateAction, useEffect, useState } from 'react'
 import { Functions } from '../../../interfaces/userGroup'
 import { styles } from '../../../constants/styles'
@@ -47,9 +47,9 @@ export default function FunctionList({
       datatest-id="astd-user-group-form-available-feature-select-button-9031"
       value={item.functionId}
       color="success"
-      variant={selected ? 'soft' : 'outlined'}
+      //variant={selected ? 'soft' : 'outlined'}
       sx={[
-       selected ? styles.tagOutlineActive : styles.tagOutlineDefault,
+        selected ? styles.tagOutlineActive : styles.tagOutlineDefault,
         {
           width: 'max-content',
           height: '40px',
