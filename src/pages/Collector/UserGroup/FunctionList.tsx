@@ -16,7 +16,7 @@ export default function FunctionList({
   keyId: number
   item: Functions
   functions: number[]
-  disabled: boolean,
+  disabled: boolean
   readOnly?: boolean
   setFunctions: (value: SetStateAction<number[]>) => void
 }) {
@@ -24,7 +24,7 @@ export default function FunctionList({
 
   const handleClick = () => {
     const index = functions.indexOf(item.functionId)
-    if(readOnly) return
+    if (readOnly) return
     let newValue
     if (index !== -1) {
       // Remove the functionId from the array
@@ -49,7 +49,7 @@ export default function FunctionList({
       color="success"
       variant={selected ? 'soft' : 'outlined'}
       sx={[
-        selected ? styles.tagOutlineActive : styles.tagOutlineDefault,
+       selected ? styles.tagOutlineActive : styles.tagOutlineDefault,
         {
           width: 'max-content',
           height: '40px',
