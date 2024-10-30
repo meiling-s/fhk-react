@@ -204,42 +204,16 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       console.error('Error during form submission:', error);
     }
   };
- 
-  const handleEdit = async (payload: ProductPayload): Promise<void> => {
-    if (!paramId) {
-      throw new Error('Missing parameter ID for edit operation.');
-    }
-  
-    const version =initialData?.version 
-    let editPayload: ProductPayload = { ...payload, status: 0, version };
-  
-    
-    let toastMsg = '';
-    let response;
 
-    switch (activeTab) {
-      case 0:
-       response = await editProductType(paramId, editPayload);
-        toastMsg = t(`notify.SuccessEdited`)
-        break;
-      case 1:
-        editPayload = { ...editPayload, productTypeId: paramId };
-        response = await editProductSubtype(paramId, editPayload);
-        toastMsg = t(`notify.SuccessEdited`)
-        break;
-      case 2:
-        editPayload = { ...editPayload, productSubTypeId: paramId, };
-        response = await editProductAddonType(paramId, editPayload);
-        toastMsg = t(`notify.SuccessEdited`)
-        break;
-      default:
-        throw new Error('Invalid active tab selection.');
-    }
-  
-    handleSubmit();
-    refetch()
-    if (toastMsg) {
-      toast.info(toastMsg, {
+  const handleError = (error: any): void => {
+    const { state } = extractError(error);
+    if (state.code === STATUS_CODE[503]) {
+      // Handle service unavailable error specifically if needed
+    } else if (
+      error?.response?.data?.status === STATUS_CODE[500] ||
+      error?.response?.data?.status === STATUS_CODE[409]
+    ) {
+      toast.error(error?.response?.data?.message, {
         position: 'top-center',
         autoClose: 3000,
         hideProgressBar: true,
@@ -248,12 +222,65 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
         draggable: true,
         progress: undefined,
         theme: 'light'
-      })
+      });
     }
-    handleClose();
-
-
   };
+  
+ 
+  const handleEdit = async (payload: ProductPayload): Promise<void> => {
+    try {
+      if (!paramId) {
+        throw new Error('Missing parameter ID for edit operation.');
+      }
+  
+      const version = initialData?.version;
+      let editPayload: ProductPayload = { ...payload, status: 0, version };
+      let toastMsg = '';
+      let response;
+  
+      switch (activeTab) {
+        case 0:
+          response = await editProductType(paramId, editPayload);
+          toastMsg = t('notify.SuccessEdited');
+          break;
+        case 1:
+          editPayload = { ...editPayload, productTypeId: paramId };
+          response = await editProductSubtype(paramId, editPayload);
+          toastMsg = t('notify.SuccessEdited');
+          break;
+        case 2:
+          editPayload = { ...editPayload, productSubTypeId: paramId };
+          response = await editProductAddonType(paramId, editPayload);
+          toastMsg = t('notify.SuccessEdited');
+          break;
+        default:
+          throw new Error('Invalid active tab selection.');
+      }
+  
+      if (response) {
+        handleSubmit();
+        refetch();
+        if (toastMsg) {
+          toast.info(toastMsg, {
+            position: 'top-center',
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light'
+          });
+        }
+        handleClose();
+      } else {
+        throw new Error('Edit failed.');
+      }
+    } catch (error: any) {
+      handleError(error);
+    }
+  };
+  
   
   const handleCreate = async (payload: ProductPayload): Promise<void> => {
     try {
@@ -306,22 +333,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   
   
     } catch (error: any) {
-      const { state } = extractError(error);
-      if (state.code === STATUS_CODE[503]) {
-      
-      } else if (error?.response?.data?.status === STATUS_CODE[500] ||
-                 error?.response?.data?.status === STATUS_CODE[409]) {
-      toast.error(error?.response?.data?.message, {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'light'
-      });
-      }
+      handleError(error)
     }
   };
   
