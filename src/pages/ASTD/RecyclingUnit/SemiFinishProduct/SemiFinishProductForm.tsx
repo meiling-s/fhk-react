@@ -431,7 +431,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
         toastMsg = t('notify.successDeleted');
       } else if (initialData?.productAddonTypeId && productSubId) {
         const addOnPayload = { ...commonPayload, productSubTypeId: productSubId };
-        response = await editProductSubtype(initialData.productAddonTypeId, addOnPayload);
+        response = await editProductAddonType(initialData.productAddonTypeId, addOnPayload);
         toastMsg = t('notify.successDeleted');
 
       }
@@ -452,7 +452,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
         }
         
       } else {
-        throw new Error("Unexpected response status");
+        toastMsg = t('common.deleteFailed');
       }
     } catch (error) {
       handleError(error);
@@ -470,10 +470,10 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       action={isEditMode ? 'edit' : !isAddMode ? 'add' : 'delete'}
       showHeader={true}
       headerProps={{
-        title: !isEditMode ? t('top_menu.add_new') : 'Edit',
+        title: !isEditMode ? t('top_menu.add_new') :  t('top_menu.add_new'),
         subTitle: t('settings_page.recycling.product_category'),
         submitText:  t('common.save'),
-        cancelText:  'delete',
+        cancelText:  T('common.delete'),
         onCloseHeader: handleClose,
         onSubmit: () => handleSave(),
         onDelete: handleDelete,

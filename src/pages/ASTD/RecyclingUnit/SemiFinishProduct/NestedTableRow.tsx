@@ -16,7 +16,10 @@ import SemiFinishProductForm from './SemiFinishProductForm';
 import { getProductType, getProductSubtype, getProductAddonType, editProductType, editProductSubtype, editProductAddonType, getProductSubtypesByProductType, getProductAddonTypesByProductSubtype, getProductTypeList } from '../../../../APICalls/ASTD/settings/productType';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
 import { useTranslation } from 'react-i18next';
+import { STATUS_CODE,  } from '../../../../constants/constant'
+import { extractError } from '../../../../utils/utils'
 import { useProductContext } from './ProductContext';
+import DeleteModal from '../../../../components/FormComponents/deleteModal'
 type NestedTableRowProps = {
   products: Products;
 };
@@ -153,6 +156,27 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     setOpenDelete(true);
   };
 
+  const handleError = (error: any): void => {
+    const { state } = extractError(error);
+    if (state.code === STATUS_CODE[503]) {
+      
+    } else if (
+      error?.response?.data?.status === STATUS_CODE[500] ||
+      error?.response?.data?.status === STATUS_CODE[409]
+    ) {
+      toast.error(error?.response?.data?.message, {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light'
+      });
+    }
+  };
+  
   const handleCloseDelete = () => {
     setOpenDelete(false);
     setDeleteItem(null);
@@ -195,6 +219,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
       }
 
       if (response?.status === 200) {
+        refetch()
         if (toastMsg) {
           toast.info(toastMsg, {
             position: 'top-center',
@@ -211,8 +236,7 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
         throw new Error("Unexpected response status");
       }
     } catch (error) {
-      console.error("Error in handleConfirmDelete:", error);
-      toast.error(t('notify.ErrorOccurred'), { autoClose: 3000 });
+      handleError(error)
     } finally {
       handleCloseDelete();
     }
@@ -346,10 +370,10 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
         handleClose={() => handleClose()}
         handleSubmit={() => {}}
       />
-     <ConfirmDeleteModal
+     <DeleteModal
         open={openDelete}
         onClose={handleCloseDelete}
-        handleConfirmDelete={handleConfirmDelete}
+        onDelete={handleConfirmDelete}
       />
     </>
   );
