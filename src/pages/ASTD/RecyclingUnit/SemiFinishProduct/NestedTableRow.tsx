@@ -102,7 +102,6 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     setActiveTab(1)
     handleFetchSubtypeData(id);
     setProductId(productId)
-   
   };
 
   const handleEditProductAddon = (productId: string, subTypeId: string, addOnId: string) => {
@@ -161,9 +160,9 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
 
   const handleDuplicateErrorMessage = (input: string) => {
     const replacements: { [key: string]: string } = {
-      '[tchi]': 'Traditional Chinese Name',
-      '[eng]': 'English Name',
-      '[schi]': 'Simplified Chinese Name'
+      '[tchi]': 'Traditional Chinese Name ' + ' ',
+      '[eng]': 'English Name ' + ' ',
+      '[schi]': 'Simplified Chinese Name' + ' '
     };
 
     let result = input.replace(/\[productNameDuplicate\]/, '');

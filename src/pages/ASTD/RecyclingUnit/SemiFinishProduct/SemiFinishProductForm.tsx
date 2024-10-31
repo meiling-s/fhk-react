@@ -212,9 +212,9 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
 
   const handleDuplicateErrorMessage = (input: string) => {
     const replacements: { [key: string]: string } = {
-      '[tchi]': 'Traditional Chinese Name',
-      '[eng]': 'English Name',
-      '[schi]': 'Simplified Chinese Name'
+      '[tchi]': 'Traditional Chinese Name' + ' ',
+      '[eng]': 'English Name' + ' ',
+      '[schi]': 'Simplified Chinese Name' + ' '
     };
 
     let result = input.replace(/\[productNameDuplicate\]/, '');
@@ -275,12 +275,12 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
           toastMsg = t('notify.SuccessEdited');
           break;
         case 1:
-          editPayload = { ...editPayload, productTypeId: paramId };
+          editPayload = { ...editPayload, productTypeId: productId };
           response = await editProductSubtype(paramId, editPayload);
           toastMsg = t('notify.SuccessEdited');
           break;
         case 2:
-          editPayload = { ...editPayload, productSubTypeId: paramId };
+          editPayload = { ...editPayload, productSubTypeId: productSubId };
           response = await editProductAddonType(paramId, editPayload);
           toastMsg = t('notify.SuccessEdited');
           break;
@@ -500,7 +500,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       headerProps={{
         title: !isEditMode ? t('top_menu.add_new') :  t('top_menu.add_new'),
         subTitle: t('settings_page.recycling.product_category'),
-        submitText:  t('common.save'),
+        submitText:  t('add_warehouse_page.save'),
         cancelText:  t('common.delete'),
         onCloseHeader: handleClose,
         onSubmit: () => handleSave(),
