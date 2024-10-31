@@ -473,7 +473,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
         title: !isEditMode ? t('top_menu.add_new') :  t('top_menu.add_new'),
         subTitle: t('settings_page.recycling.product_category'),
         submitText:  t('common.save'),
-        cancelText:  T('common.delete'),
+        cancelText:  t('common.delete'),
         onCloseHeader: handleClose,
         onSubmit: () => handleSave(),
         onDelete: handleDelete,
