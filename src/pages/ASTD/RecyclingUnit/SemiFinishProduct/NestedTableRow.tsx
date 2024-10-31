@@ -17,9 +17,10 @@ import { getProductType, getProductSubtype, getProductAddonType, editProductType
 import ConfirmDeleteModal from './ConfirmDeleteModal';
 import { useTranslation } from 'react-i18next';
 import { STATUS_CODE,  } from '../../../../constants/constant'
-import { extractError } from '../../../../utils/utils'
+import { extractError, showErrorToast } from '../../../../utils/utils'
 import { useProductContext } from './ProductContext';
 import DeleteModal from '../../../../components/FormComponents/deleteModal'
+import { useNavigate } from 'react-router-dom';
 type NestedTableRowProps = {
   products: Products;
 };
@@ -38,6 +39,8 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
   const [productId, setProductId] = useState<string>('')
   const [productSubId, setProductSubId] = useState<string>('')
   const {dispatch, refetch} = useProductContext()
+  const navigate = useNavigate()
+
   const toggleSubtypeOpen = (id: string) => {
     setSubtypeOpen((prevState) => ({
       ...prevState,
@@ -156,26 +159,53 @@ const NestedTableRow: React.FC<NestedTableRowProps> = ({ products }) => {
     setOpenDelete(true);
   };
 
+  const handleDuplicateErrorMessage = (input: string) => {
+    const replacements: { [key: string]: string } = {
+      '[tchi]': 'Traditional Chinese Name',
+      '[eng]': 'English Name',
+      '[schi]': 'Simplified Chinese Name'
+    };
+
+    let result = input.replace(/\[productNameDuplicate\]/, '');
+
+    const matches = result.match(/\[(tchi|eng|schi)\]/g);
+
+    if (matches) {
+      const replaced = matches.map(match => replacements[match as keyof typeof replacements]);
+
+      let formatted: string;
+      if (replaced.length === 1) {
+        formatted = replaced[0];
+      } else if (replaced.length === 2) {
+        formatted = replaced.join(' and ');
+      } else if (replaced.length === 3) {
+        formatted = `${replaced[0]}, ${replaced[1]} and ${replaced[2]}`;
+      }
+
+      result = result.replace(/\[(tchi|eng|schi)\]+/, formatted!);
+
+      result = result.replace(/\[(tchi|eng|schi)\]/g, '');
+    }
+
+    return result.trim();
+  };
+  
   const handleError = (error: any): void => {
     const { state } = extractError(error);
     if (state.code === STATUS_CODE[503]) {
-      
+      navigate('/maintenance')
     } else if (
-      error?.response?.data?.status === STATUS_CODE[500] ||
       error?.response?.data?.status === STATUS_CODE[409]
     ) {
-      toast.error(error?.response?.data?.message, {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'light'
-      });
+      const errorMessage = error.response.data.message
+      if (errorMessage.includes('productNameDuplicate')) {
+        showErrorToast(handleDuplicateErrorMessage(errorMessage))
+      } else {
+        showErrorToast(error.response.data.message);
+      }
     }
   };
+  
   
   const handleCloseDelete = () => {
     setOpenDelete(false);

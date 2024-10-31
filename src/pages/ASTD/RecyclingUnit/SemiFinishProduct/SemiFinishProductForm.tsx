@@ -14,7 +14,7 @@ import { STATUS_CODE,  } from '../../../../constants/constant'
 import { extractError, showErrorToast } from '../../../../utils/utils'
 import { localStorgeKeyName } from '../../../../constants/constant'
 import { useProductContext } from './ProductContext'; 
-
+import { useNavigate } from 'react-router-dom';
 const StyledTab = styled(Tab)(({ theme }) => ({
   border: '1px solid',
   borderRadius: '24px',
@@ -105,7 +105,8 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   const [productCategoryId, setProductCategoryId] = useState<string>('')
   const [selectedProductCategory, setSelectedProductCategory] = useState<any>([])
   const {refetch } = useProductContext();
-
+  const navigate = useNavigate();
+  
   const handleTabChange = (event: React.ChangeEvent<{}>, newIndex: number) => {
     setTabIndex(newIndex);
   };
@@ -243,7 +244,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
   const handleError = (error: any): void => {
     const { state } = extractError(error);
     if (state.code === STATUS_CODE[503]) {
-      // Handle service unavailable error specifically if needed
+      navigate('/maintenance')
     } else if (
       error?.response?.data?.status === STATUS_CODE[409]
     ) {
@@ -253,16 +254,6 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = (
       } else {
         showErrorToast(error.response.data.message);
       }
-      toast.error(error?.response?.data?.message, {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'light'
-      });
     }
   };
   
