@@ -31,6 +31,7 @@ export interface ProductAddon {
     remark: string;
     status: string;
     productSubType?: ProductSubType[];
+    productAddonTypeId?: string;
     version?: number;
   };
 
