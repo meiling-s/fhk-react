@@ -1092,7 +1092,7 @@
     },
     "vehicleMenu": {
       "vehicle_number": "Vehicle ID",
-      "imei":"IMEI Number",
+      "imei": "IMEI Number",
       "license_plate_number": "License Plate No.",
       "vehicle_type": "Vehicle Type",
       "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
@@ -1518,5 +1518,27 @@
     "createdAt": "Checkout/in Datetime",
     "shippingCompany": "Sender Company",
     "inventoryLocation": "Sender Location"
+  },
+  "processOrder": {
+    "processOrder": "Process an order",
+    "enterOrderNumber": "Enter Order Number",
+    "porDatetime": "Processing date and time",
+    "porCategory": "Processing category",
+    "orderNumber": "Order number",
+    "workshop": "Workshop",
+    "createdate": "Date and place of processing",
+    "create": {
+      "classification": "Classification",
+      "sol": "Sol",
+      "package": "Package",
+      "itemToProcess": "Items expected to be processed",
+      "itemCategory": "Item category (click a category to display subcategories, double-click",
+      "recycling": "Recycling",
+      "product": "Product",
+      "manuProduct": "Manufactured goods category",
+      "plasticCategory": "No. 1 plastic category",
+      "waterBottle": "Water Bottle Category",
+      "warehouse": "warehouse"
+    }
   }
 }

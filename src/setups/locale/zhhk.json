@@ -46,8 +46,8 @@
     "vehicle": "車輛",
     "theNameAlreadyExist": "員工職位名稱已存在",
     "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失",
-     "noData": "沒有數據",
-     "category": "類別",
+    "noData": "沒有數據",
+    "category": "類別",
     "subCategory": "次類別"
   },
   "col": {
@@ -1089,7 +1089,7 @@
     },
     "vehicleMenu": {
       "vehicle_number": "車輛編碼",
-      "imei":"IMEI 號碼",
+      "imei": "IMEI 號碼",
       "license_plate_number": "車牌號碼",
       "vehicle_type": "車輛類型",
       "vehicle_cargo_capacity": "車輛載貨量",
@@ -1512,5 +1512,27 @@
     "createdAt": "送出入日期及時間",
     "shippingCompany": "狀態",
     "inventoryLocation": "送出地點"
+  },
+  "processOrder": {
+    "processOrder": "處理訂單",
+    "enterOrderNumber": "輸入訂單編號",
+    "porDatetime": "處理日期及時間",
+    "porCategory": "處理類別",
+    "orderNumber": "訂單編號",
+    "workshop": "工場",
+    "createdate": "處理日期及地點",
+    "create": {
+      "classification": "分類",
+      "sol": "溶膠",
+      "package": "包裝",
+      "itemToProcess": "預計待處理物品",
+      "itemCategory": "物品類別 (按一下類別顯示子類別，按兩下取消選擇)",
+      "recycling": "回收物",
+      "product": "產品",
+      "manuProduct": "製成品類別",
+      "plasticCategory": "1號膠類別",
+      "waterBottle": "水樽類別",
+      "warehouse": "貨倉"
+    }
   }
 }

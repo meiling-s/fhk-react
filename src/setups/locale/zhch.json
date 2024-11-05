@@ -1090,7 +1090,7 @@
     },
     "vehicleMenu": {
       "vehicle_number": "车辆编码",
-      "imei":"IMEI 号码",
+      "imei": "IMEI 号码",
       "license_plate_number": "车牌号码",
       "vehicle_type": "车辆种类",
       "vehicle_cargo_capacity": "车辆载货量",
@@ -1518,5 +1518,27 @@
     "createdAt": "送出入日期及时间",
     "shippingCompany": "状态",
     "inventoryLocation": "送出地点"
+  },
+  "processOrder": {
+    "processOrder": "处理订单",
+    "enterOrderNumber": "输入订单编号",
+    "porDatetime": "处理日期及时间",
+    "porCategory": "处理类别",
+    "orderNumber": "订单编号",
+    "workshop": "工场",
+    "createdate": "处理日期及地点",
+    "create": {
+      "classification": "分类",
+      "sol": "溶胶",
+      "package": "包装",
+      "itemToProcess": "预计处理的物品",
+      "itemCategory": "物品类别（点选类别显示子类别，双击取消选择）",
+      "recycling": "回收",
+      "product": "产品",
+      "manuProduct": "制成品类别",
+      "plasticCategory": "1号塑胶类别",
+      "waterBottle": "水瓶类别",
+      "warehouse": "仓库"
+    }
   }
 }
