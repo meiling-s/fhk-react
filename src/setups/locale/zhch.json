@@ -180,6 +180,7 @@
     "recycling": {
       "semi_finish_product": "半成品 ・ 产品类别",
       "remarks": "备注",
+      "remark_placeholder": "请输入备注",
       "add_new": "新增",
       "product_category": "产品类别",
       "traditional_chinese_name": "繁体中文名称",
@@ -198,7 +199,8 @@
       "plastic_no_2": "2号塑料",
       "enter_text": "请输入文字",
       "water_bottle": "水瓶",
-      "film": "胶片"
+      "film": "胶片",
+      "edit": "修改"
     }
   },
   "warehouse_page": {

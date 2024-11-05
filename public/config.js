@@ -17,4 +17,4 @@ window.baseURL = {
   // logistic: 'https://www.greenhoopapp.com/',
   // manufacturer: 'https://www.greenhoopapp.com/',
   // customer: 'https://www.greenhoopapp.com/'
-};
+}
