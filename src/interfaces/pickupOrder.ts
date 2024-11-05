@@ -97,6 +97,7 @@ export interface CreatePO {
     createdBy:        string;
     updatedBy:        string;
     createPicoDetail: CreatePicoDetail[];
+    specificDates: string[];
 }
 
 export interface CreatePicoDetail {
@@ -179,6 +180,7 @@ export interface Row {
     refPicoId:     string ;
     updatePicoDetail: CreatePicoDetail[]
     version?: number;
+    specificDates: string[];
     
 }
 

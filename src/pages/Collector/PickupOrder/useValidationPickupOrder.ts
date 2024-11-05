@@ -582,7 +582,7 @@ const useValidationPickupOrder = (
     if (pico.picoType !== 'AD_HOC') {
       if (
         pico.routineType === 'specificDate' &&
-        pico.routine.length === 0 &&
+        pico.routine.length >= 1 &&
         errorsField.routine.touch
       ) {
         setErrorsField((prev) => {
@@ -590,17 +590,12 @@ const useValidationPickupOrder = (
             ...prev,
             routine: {
               ...prev.routine,
-              status: true,
-              messages: picoErrorMessages['specificDate'],
-              message: getTranslationMessage('specificDate')
+              status: false,
+              messages: {},
+              message: ''
             }
           }
         })
-      } else if (
-        pico.routineType === 'specificDate' &&
-        pico.routine.length >= 1 &&
-        errorsField.routine.touch
-      ) {
         // const fromDate = dayjs(pico.effFrmDate, dateFormat).startOf('day')
         // const toDate = dayjs(pico.effToDate, dateFormat).startOf('day')
         const fromDate = dayjs(pico.effFrmDate).startOf('day')
@@ -623,8 +618,6 @@ const useValidationPickupOrder = (
             return false
           }
         })
-
-        console.log('outOfRangeDates', outOfRangeDates)
 
         const originalLength = pico?.routine?.length
         const isDuplicatedDate = new Set([...pico?.routine]).size
