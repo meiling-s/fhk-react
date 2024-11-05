@@ -27,7 +27,6 @@ import {
   getAllFunction,
   getAllUserGroup
 } from '../../../APICalls/Collector/userGroup'
-import { IconButton } from '@mui/joy'
 import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
 import { extractError } from '../../../utils/utils'
@@ -218,7 +217,7 @@ const UserGroup: FunctionComponent = () => {
       renderCell: (params) => {
         return (
           <Button
-          data-testid="astd-user-group-delete-button-7688"
+            data-testid="astd-user-group-delete-button-7688"
             onClick={(event) => {
               event.stopPropagation()
               handleAction(params, 'delete')
