@@ -1541,6 +1541,11 @@
       "plasticCategory": "1号塑胶类别",
       "waterBottle": "水瓶类别",
       "warehouse": "仓库"
+    },
+    "details": {
+      "oderDetail": "订单详情",
+      "cancelTitle": "确认取消处理订单吗？",
+      "cancelSubTitle": "取消原因（可多选）"
     }
   }
 }

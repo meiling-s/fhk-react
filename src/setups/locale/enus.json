@@ -1541,6 +1541,11 @@
       "plasticCategory": "No. 1 plastic category",
       "waterBottle": "Water Bottle Category",
       "warehouse": "warehouse"
+    },
+    "details": {
+      "oderDetail": "Order Details",
+      "cancelTitle": "Are you sure you want to cancel the order?",
+      "cancelSubTitle": "Reason for cancellation (multiple choices available)"
     }
   }
 }

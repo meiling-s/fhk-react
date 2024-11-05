@@ -1535,6 +1535,11 @@
       "plasticCategory": "1號膠類別",
       "waterBottle": "水樽類別",
       "warehouse": "貨倉"
+    },
+    "details": {
+      "oderDetail": "訂單詳情",
+      "cancelTitle": "確認取消處理訂單嗎？",
+      "cancelSubTitle": "取消原因（可多選）"
     }
   }
 }

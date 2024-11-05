@@ -17,6 +17,7 @@ import { localStorgeKeyName, Languages } from '../../../constants/constant'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { getPrimaryColor, statusList } from '../../../utils/utils'
+import DetailProcessOrder from './DetailProcessOrder'
 
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
@@ -48,6 +49,7 @@ const ProcessOrder = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [detailDrawer, setDetailDrawer] = useState<boolean>(false)
   const [selectedRow, setSelectedRow] = useState<ProcessOrderRow | null>(null)
   //   const [processOrderList, setProcessOrderList] = useState<ProcessOrderRow[]>(
   //     []
@@ -164,7 +166,9 @@ const ProcessOrder = () => {
 
   const handleSearch = () => {}
 
-  const handleRowClick = () => {}
+  const handleRowClick = () => {
+    setDetailDrawer(true)
+  }
 
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
@@ -262,6 +266,10 @@ const ProcessOrder = () => {
             </Box>
           )}
         </Box>
+        <DetailProcessOrder
+          drawerOpen={detailDrawer}
+          handleDrawerClose={() => setDetailDrawer(false)}
+        ></DetailProcessOrder>
       </Box>
     </>
   )
