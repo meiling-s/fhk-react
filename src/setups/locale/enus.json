@@ -1520,5 +1520,10 @@
     "createdAt": "Checkout/in Datetime",
     "shippingCompany": "Sender Company",
     "inventoryLocation": "Sender Location"
+  },
+  "factory": {
+    "factory": "Factory",
+    "warehouse": "Warehouse",
+    "introduction": "Introduction"
   }
 }
