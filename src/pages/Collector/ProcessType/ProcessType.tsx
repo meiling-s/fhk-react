@@ -57,7 +57,32 @@ const ProcessType: FunctionComponent = () => {
   const { localeTextDataGrid } = useLocaleTextDataGrid()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [weightUnit, setWeightUnit] = useState<WeightUnit[]>([])
-
+  const time = [
+    {
+      id: 'D',
+      nameEn: 'Day',
+      nameTchi: '日',
+      nameSchi: '日',
+    },
+    {
+      id: 'h',
+      nameEn: 'Hour',
+      nameTchi: '小時',
+      nameSchi: '小时',
+    },
+    {
+      id: 'm',
+      nameEn: 'Minute',
+      nameTchi: '分鐘',
+      nameSchi: '分钟'
+    },
+    {
+      id: 's',
+      nameEn: 'Second',
+      nameTchi: '秒',
+      nameSchi: '秒'
+    }
+  ]
   useEffect(() => {
     initProcessTypeData()
     initWeightUnit()
@@ -120,6 +145,31 @@ const ProcessType: FunctionComponent = () => {
     }
   }
 
+  const getProcessingStructure = useCallback(
+    (processTypeId: string) => {
+      const processType = processTypeData.find(
+        (v) => v.processTypeId === processTypeId
+      )
+      const selectedProcessingTimeUnit = time.find((v) => v.id === processType?.processingTimeUnit)
+      const selectedWeightUnit = weightUnits.find(value => value.unitId === processType?.processingWeightUnitId)
+
+      if (!processType) return ''
+      switch (i18n.language) {
+        case 'enus':
+          return `${processType.processingTime} ${selectedProcessingTimeUnit?.nameEn} / ${selectedWeightUnit?.unitNameEng}`
+        case 'zhhk':
+          return `${processType.processingTime} ${selectedProcessingTimeUnit?.nameTchi} / ${selectedWeightUnit?.unitNameTchi}`
+        case 'zhch':
+          return `${processType.processingTime} ${selectedProcessingTimeUnit?.nameSchi} / ${selectedWeightUnit?.unitNameSchi}`
+        default:
+          return `${processType.processingTime} ${selectedProcessingTimeUnit?.nameEn} / ${selectedWeightUnit?.unitNameEng}`
+      }
+    },
+    [i18n, processTypeData]
+  )
+
+
+
   const columns: GridColDef[] = [
     {
       field: 'processTypeNameTchi',
@@ -143,7 +193,10 @@ const ProcessType: FunctionComponent = () => {
       field: 'processingStructure',
       headerName: t('process_type.time'),
       width: 300,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        return <div>{getProcessingStructure(params.row.processTypeId)}</div>
+      }
     },
     {
       field: 'description',
