@@ -147,7 +147,8 @@ const CreatePickupOrder = () => {
       contractNo: '',
       createdBy: loginId,
       updatedBy: loginId,
-      createPicoDetail: []
+      createPicoDetail: [],
+      specificDates: []
     },
     validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
@@ -232,7 +233,8 @@ const CreatePickupOrder = () => {
         contractNo: '',
         createdBy: loginId,
         updatedBy: loginId,
-        createPicoDetail: []
+        createPicoDetail: [],
+        specificDates: []
       })
     }
   }, [poInfo])
