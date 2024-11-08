@@ -82,7 +82,7 @@ const ErrorMessage: React.FC<{ message: string }> = ({ message }) => {
 const WarningMessage: React.FC<{ message: string, setContinue: () => void }> = ({ message, setContinue }) => {
   return (
     <div className="bg-[#F6F4B7] p-3 rounded-xl w-1/4">
-      <Box sx={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+      <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
         <Typography
           style={{
             color: '#ec942c',
@@ -91,8 +91,8 @@ const WarningMessage: React.FC<{ message: string, setContinue: () => void }> = (
         >
           {t('col.contractNo')} {message}
         </Typography>
-        <Button sx={{...styles.buttonFilledGreen, marginLeft: 'auto'}} onClick={() => setContinue && setContinue()}>
-            {t("continue")}
+        <Button sx={{ ...styles.buttonFilledGreen, marginLeft: 'auto' }} onClick={() => setContinue && setContinue()}>
+          {t("continue")}
         </Button>
       </Box>
     </div>
@@ -170,6 +170,8 @@ const PickupOrderCreateForm = ({
   state: CreatePicoDetail[]
   editMode: boolean
 }) => {
+  console.log("🚀 ~ file: PickupOrderCreateForm.tsx ~ line 173 ~ state", state)
+
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [openDelete, setOpenDelete] = useState<boolean>(false)
   const [editRowId, setEditRowId] = useState<number | null>(null)
@@ -179,7 +181,7 @@ const PickupOrderCreateForm = ({
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [skipValidation, setSkipValidation] = useState<string[]>([])
-  const {t, i18n} = useTranslation()
+  const { t, i18n } = useTranslation()
   const {
     logisticList,
     contractType,
@@ -201,10 +203,10 @@ const PickupOrderCreateForm = ({
 
   const unexpiredContracts = contractRole
     ? contractRole?.filter((contract) => {
-        const currentDate = new Date()
-        const contractDate = new Date(contract.contractToDate)
-        return contractDate > currentDate
-      })
+      const currentDate = new Date()
+      const contractDate = new Date(contract.contractToDate)
+      return contractDate > currentDate
+    })
     : []
   const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(
     null
@@ -302,20 +304,20 @@ const PickupOrderCreateForm = ({
 
   const createdDate = selectedPo
     ? dayjs
-        .utc(selectedPo.createdAt)
-        .tz('Asia/Hong_Kong')
-        .format(`${dateFormat} HH:mm`)
+      .utc(selectedPo.createdAt)
+      .tz('Asia/Hong_Kong')
+      .format(`${dateFormat} HH:mm`)
     : dayjs.utc(new Date()).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
 
   const approveAt = selectedPo?.approvedAt
     ? dayjs
-        .utc(selectedPo?.approvedAt)
-        .tz('Asia/Hong_Kong')
-        .format(`${dateFormat} HH:mm`)
+      .utc(selectedPo?.approvedAt)
+      .tz('Asia/Hong_Kong')
+      .format(`${dateFormat} HH:mm`)
     : dayjs
-        .utc(selectedPo?.updatedAt)
-        .tz('Asia/Hong_Kong')
-        .format(`${dateFormat} HH:mm`)
+      .utc(selectedPo?.updatedAt)
+      .tz('Asia/Hong_Kong')
+      .format(`${dateFormat} HH:mm`)
 
   const handleHeaderOnClick = () => {
     //console.log('Header click')
@@ -416,6 +418,14 @@ const PickupOrderCreateForm = ({
     {
       field: 'itemCategory',
       headerName: t('pick_up_order.recyclForm.item_category'),
+      valueGetter: ({ row }) => {
+        console.log("🚀 ~ file: PickupOrderCreateForm.tsx ~ line 422 ~ row", row)
+
+        const itemCategory = row?.productType ? t('product') : t('recyclables')
+        console.log("🚀 ~ file: PickupOrderCreateForm.tsx ~ line 425 ~ itemCategory", itemCategory)
+
+        return itemCategory
+      },
       width: 150,
     },
     {
@@ -426,7 +436,8 @@ const PickupOrderCreateForm = ({
       valueGetter: ({ row }) => {
         const typeField = row.recycType || row.productType;
         const matchingRecycType = recycType?.find(item => item.recycTypeId === row.recycType);
-        const matchingProductType = productType?.find(item => item.productTypeId === row.productType);
+        const matchingProductType = Boolean(row.productType)
+
         if (matchingRecycType) {
           let name = '';
           switch (i18n.language) {
@@ -447,20 +458,20 @@ const PickupOrderCreateForm = ({
           let name = '';
           switch (i18n.language) {
             case 'enus':
-              name = matchingProductType.productNameEng;
+              name = row.productType?.productNameEng
               break;
             case 'zhch':
-              name = matchingProductType.productNameSchi;
+              name = row.productType?.productNameSchi
               break;
             case 'zhhk':
-              name = matchingProductType.productNameTchi;
+              name = row.productType?.productNameTchi
               break;
             default:
-              name = matchingProductType.productNameTchi;
+              name = row.productType?.productNameTchi
           }
           return name;
         }
-        
+
         return typeField;
       }
     },
@@ -472,7 +483,12 @@ const PickupOrderCreateForm = ({
       editable: true,
       valueGetter: ({ row }) => {
         const matchingRecycType = recycType?.find((item) => item.recycTypeId === row.recycType)
-        const matchingProductType = productType?.find(item => item.productTypeId === row.productType);
+        console.log("🚀 ~ file: PickupOrderCreateForm.tsx ~ line 486 ~ matchingRecycType", matchingRecycType)
+        
+        const matchingProductType = Boolean(row?.productType)
+        console.log("🚀 ~ file: PickupOrderCreateForm.tsx ~ line 486 ~ row?.productType", row?.productType)
+        
+        console.log("🚀 ~ file: PickupOrderCreateForm.tsx ~ line 486 ~ matchingProductType", matchingProductType)
 
         if (matchingRecycType) {
           const matchrecycSubType = matchingRecycType.recycSubType?.find(
@@ -499,29 +515,25 @@ const PickupOrderCreateForm = ({
           } else {
             return row.recycSubType
           }
-        } else if (matchingProductType) {
-          const matchProductSubType = matchingProductType.productSubType?.find(
-            (subtype) => subtype.productSubTypeId === row.productSubType
-          )
-          if (matchProductSubType) {
-            var subName = ''
-            switch (i18n.language) {
-              case 'enus':
-                subName = matchProductSubType?.productNameEng ?? ''
-                break
-              case 'zhch':
-                subName = matchProductSubType?.productNameSchi ?? ''
-                break
-              case 'zhhk':
-                subName = matchProductSubType?.productNameTchi ?? ''
-                break
-              default:
-                subName = matchProductSubType?.productNameTchi ?? '' //default fallback language is zhhk
-                break
-            }
-
-            return subName
+        }
+        else if (matchingProductType) {
+          var subName = ''
+          switch (i18n.language) {
+            case 'enus':
+              subName = row?.productSubType?.productNameEng || ''
+              break
+            case 'zhch':
+              subName = row?.productSubType?.productNameSchi || ''
+              break
+            case 'zhhk':
+              subName = row?.productSubType?.productNameTchi || ''
+              break
+            default:
+              subName = row?.productSubType?.productNameTchi || '' //default fallback language is zhhk
+              break
           }
+
+          return subName
         }
       }
     },
@@ -532,37 +544,23 @@ const PickupOrderCreateForm = ({
       width: 150,
       editable: true,
       valueGetter: ({ row }) => {
-        const typeField = row.productType;
-        const matchingProductType = productType?.find(item => item.productTypeId === row.productType)
-        if (matchingProductType) {
-          const matchProductSubType = matchingProductType.productSubType?.find(
-            (subtype) => subtype.productSubTypeId === row.productSubType
-          )
-          if (matchProductSubType) {
-            const matchProductAddon = matchProductSubType.productAddonType?.find(
-              (addon) => addon.productAddonTypeId === row.productAddon
-            )
-            if (matchProductAddon) {
-              var addonName = ''
-              switch (i18n.language) {
-                case 'enus':
-                  addonName = matchProductAddon?.productNameEng ?? ''
-                  break
-                case 'zhch':
-                  addonName = matchProductAddon?.productNameSchi ?? ''
-                  break
-                case 'zhhk':
-                  addonName = matchProductAddon?.productNameTchi ?? ''
-                  break
-                default:
-                  addonName = matchProductAddon?.productNameTchi ?? ''
-                  break
-              }
-
-              return addonName
-            }
-          }
+        var addonName = ''
+        switch (i18n.language) {
+          case 'enus':
+            addonName = row?.productAddonType?.productNameEng ?? ''
+            break
+          case 'zhch':
+            addonName = row?.productAddonType?.productNameSchi ?? ''
+            break
+          case 'zhhk':
+            addonName = row?.productAddonType?.productNameTchi ?? ''
+            break
+          default:
+            addonName = row?.productAddonType?.productNameTchi ?? ''
+            break
         }
+
+        return addonName
       }
     },
     {
@@ -709,6 +707,7 @@ const PickupOrderCreateForm = ({
     }
   }
 
+  console.log("🚀 ~ file: PickupOrderCreateForm.tsx ~ line 709 ~ onhandleSubmit ~ formik", formik)
   return (
     <>
       {/* <form onSubmit={formik.handleSubmit}> */}
@@ -754,8 +753,8 @@ const PickupOrderCreateForm = ({
                     selectedPo?.picoType === 'AD_HOC'
                       ? false
                       : selectedPo?.picoType === 'ROUTINE'
-                      ? true
-                      : true
+                        ? true
+                        : true
                   }
                   setState={(value) =>
                     formik.setFieldValue(
@@ -1174,7 +1173,6 @@ const PickupOrderCreateForm = ({
                 type="submit"
                 sx={[buttonFilledCustom, localstyles.localButton]}
                 onClick={onhandleSubmit}
-                disabled={state.find(value => value.itemCategory === 'Product') ? true : false}
               >
                 {t('pick_up_order.finish')}
               </Button>
@@ -1214,7 +1212,7 @@ const PickupOrderCreateForm = ({
               <ErrorMessage message={errorsField.createPicoDetail.message} />
             )}
             {errorsField.contractNo.status && (
-              <WarningMessage message={errorsField.contractNo.message} setContinue={() => addSkipValidation('contractNo')}/>
+              <WarningMessage message={errorsField.contractNo.message} setContinue={() => addSkipValidation('contractNo')} />
             )}
           </Stack>
           <DeleteModal

@@ -227,6 +227,7 @@ const CreateRecycleForm = ({
       // Set the form field values based on the editRow data
 
       const index = data.indexOf(editRow)
+      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 230 ~ useEffect ~ editRow", editRow)
 
       formik.setValues({
         id: editRow.id,

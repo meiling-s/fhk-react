@@ -98,7 +98,7 @@ const PickupOrderCard = ({
                 >
                   <Typography sx={localstyles.typo_fieldContent}>
                     {recyc?.length != 0 && recyc
-                      ? recyc[index].recycSubType
+                      ? recyc[index]?.recycSubType
                       : '-'}
                   </Typography>
                 </CustomField>

@@ -151,6 +151,9 @@ const EditPickupOrder = () => {
         pickupAt: item.pickupAt,
         recycType: item.recycType,
         recycSubType: item.recycSubType,
+        productType: item.productType,
+        productSubType: item.productSubType,
+        productAddonType: item.productAddonType,
         weight: formatWeight(item.weight, decimalVal),
         newDetail: false,
         version: poInfo.version

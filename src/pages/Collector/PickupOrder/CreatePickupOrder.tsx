@@ -16,6 +16,7 @@ import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { refactorPickUpOrderDetail } from './utils'
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -50,8 +51,11 @@ const CreatePickupOrder = () => {
 
 
   const submitPickUpOrder = async (values: CreatePO) => {
+
     try {
+
       return await createPickUpOrder(values)
+
     } catch (error) {
       const { state, realm } = extractError(error);
       if (state.code == STATUS_CODE[503]) {
@@ -88,7 +92,11 @@ const CreatePickupOrder = () => {
 
     // validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
-      values.createPicoDetail = addRow;
+      console.log("🚀 ~ file: CreatePickupOrder.tsx ~ line 92 ~ onSubmit: ~ values", JSON.stringify(values || {}))
+      const refactorPicoDetail: any = refactorPickUpOrderDetail(addRow)
+      values.createPicoDetail = refactorPicoDetail
+      console.log("🚀 ~ file: CreatePickupOrder.tsx ~ line 126 ~ onSubmit: ~ refactorPicoDetail", refactorPicoDetail)
+
 
       if (picoTypeValue === 'AD_HOC') {
         values.routine = [];
@@ -121,15 +129,18 @@ const CreatePickupOrder = () => {
         }
       }
 
-      console.log(values, 'values');
+      console.log("🚀 ~ file: CreatePickupOrder.tsx ~ line 161 ~ onSubmit: ~ values", values)
       const result = await submitPickUpOrder(values);
-      const data = result?.data;
-      if (data) {
-          const routeName = role;
-          navigate(`/${routeName}/PickupOrder`, { state: 'created' });
-      } else {
-          showErrorToast('fail to create pickup order');
-      }
+      
+      console.log("🚀 ~ file: CreatePickupOrder.tsx ~ line 161 ~ onSubmit: ~ result", result)
+
+      // const data = result?.data;
+      // if (data) {
+      //     const routeName = role;
+      //     navigate(`/${routeName}/PickupOrder`, { state: 'created' });
+      // } else {
+      //     showErrorToast('fail to create pickup order');
+      // }
     }
   })
 
