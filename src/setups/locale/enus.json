@@ -398,6 +398,9 @@
     "card_detail": {
       "main_category": "Recyclable Type",
       "subcategory": "Recyclable Subtype",
+      "product_type_label": "Product Type",
+      "sub_product_type_label": "Product SubType",
+      "addon_product_type_label": "Product Addon",
       "shipping_time": "Estimated Shipping Time",
       "weight": "Established Weight",
       "shipping_receiver": "Shipping and Receiving Companies",
@@ -494,6 +497,9 @@
       "recycling_location": "Sender Location",
       "arrived": "Receiver Location",
       "placeholder": "Please Enter Location",
+      "placeholder_shipping_company": "Please enter sender company",
+      "placeholder_receiver_company": "Please enter receiver company",
+      "select_po": "Select PO",
       "item_category": "Item Category"
     },
     "product_type": {

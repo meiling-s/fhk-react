@@ -19,6 +19,7 @@ import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { refactorPickUpOrderDetail } from './utils'
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -89,7 +90,10 @@ const EditPickupOrder = () => {
     },
     // validationSchema: validateSchema,
     onSubmit: async (values: EditPo) => {
-      values.updatePicoDetail = addRow
+
+      const refactorPicoDetail: any = refactorPickUpOrderDetail(addRow)
+      values.updatePicoDetail = refactorPicoDetail
+
       if (values.picoType === 'AD_HOC') {
         values.routine = [];
       } else if (values.picoType === 'ROUTINE') {

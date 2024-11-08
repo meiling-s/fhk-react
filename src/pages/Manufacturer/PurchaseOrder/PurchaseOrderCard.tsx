@@ -6,7 +6,6 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import MonitorWeightOutlinedIcon from '@mui/icons-material/MonitorWeightOutlined'
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined'
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
-import LocalizeRecyctype from '../../../components/TableComponents/LocalizeRecyctype'
 import {
   PurChaseOrder,
   PurchaseOrderDetail

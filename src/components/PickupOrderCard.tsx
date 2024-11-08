@@ -19,6 +19,75 @@ import timezone from 'dayjs/plugin/timezone'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
+const CardItem = ({
+  index,
+  localstyles,
+  dataPico,
+  type,
+}: any) => {
+
+  const { t } = useTranslation()
+
+  let label = {
+    typeLabel: '',
+    subTypeLabel: '',
+    addonTypeLabel: '',
+  }
+
+  switch (type) {
+
+    case 'recyclable': {
+      label.typeLabel = t('pick_up_order.card_detail.main_category')
+      label.subTypeLabel = t('pick_up_order.card_detail.subcategory')
+    } break
+    case 'product': {
+      label.typeLabel = t('pick_up_order.card_detail.product_type_label')
+      label.subTypeLabel = t('pick_up_order.card_detail.sub_product_type_label')
+      label.addonTypeLabel = t('pick_up_order.card_detail.addon_product_type_label')
+    } break
+
+  }
+
+  const addonTypeName = dataPico?.length>0 && dataPico[index] && dataPico[index]?.addonTypeName
+
+  return (
+    <Box key={index}>
+      <CustomField
+        label={label?.typeLabel}
+      >
+        <Typography sx={localstyles.typo_fieldContent}>
+          {dataPico?.length != 0 && dataPico
+            ? dataPico[index]?.typeName
+            : '-'}
+        </Typography>
+      </CustomField>
+      <CustomField
+        label={label?.subTypeLabel}
+        style={{ marginTop: '12px' }}
+      >
+        <Typography sx={localstyles.typo_fieldContent}>
+          {dataPico?.length != 0 && dataPico
+            ? dataPico[index]?.subTypeName
+            : '-'}
+        </Typography>
+      </CustomField>
+      {
+        addonTypeName &&
+        <CustomField
+          label={label?.addonTypeLabel}
+          style={{ marginTop: '12px' }}
+        >
+          <Typography sx={localstyles.typo_fieldContent}>
+            {dataPico?.length != 0 && dataPico
+              ? addonTypeName
+              : '-'}
+          </Typography>
+        </CustomField>
+      }
+    </Box>
+  )
+}
+
 const PickupOrderCard = ({
   pickupOrderDetail,
   status
@@ -28,7 +97,8 @@ const PickupOrderCard = ({
 }) => {
   const { t, i18n } = useTranslation()
 
-  const recyc = LocalizeRecyctype(pickupOrderDetail)
+  const dataPico = LocalizeRecyctype(pickupOrderDetail)
+
   const { decimalVal, dateFormat } = useContainer(CommonTypeContainer)
 
   pickupOrderDetail = pickupOrderDetail.sort((prevItem, nextItem) => prevItem.pickupAt.localeCompare(nextItem.pickupAt));
@@ -57,269 +127,247 @@ const PickupOrderCard = ({
     }
   }
 
+
+
   return (
     <>
-      {pickupOrderDetail.map((podetail, index) => (
-        <Stack
-          key={index}
-          borderColor="#e2e2e2"
-          p={2}
-          borderRadius="12px"
-          sx={{ borderWidth: '1px', borderStyle: 'solid' }}
-          spacing={1}
-        >
-          <Box display="flex" justifyContent="space-between">
-            <Box>
-              {/* {recyc
-                ?.filter(
-                  (item, index, self) =>
-                    index ===
-                    self.findIndex(
-                      (t) =>
-                        t.recycType === item.recycType &&
-                        t.recycSubType === item.recycSubType
-                    )
-                )
-                .map((a, index) => ( */}
-              {/* {recyc?.length != 0 && recyc && ( */}
-              <Box key={index}>
-                <CustomField
-                  label={t('pick_up_order.card_detail.main_category')}
-                >
-                  <Typography sx={localstyles.typo_fieldContent}>
-                    {recyc?.length != 0 && recyc
-                      ? recyc[index]?.recycType
-                      : '-'}
-                  </Typography>
-                </CustomField>
-                <CustomField
-                  label={t('pick_up_order.card_detail.subcategory')}
-                  style={{ marginTop: '12px' }}
-                >
-                  <Typography sx={localstyles.typo_fieldContent}>
-                    {recyc?.length != 0 && recyc
-                      ? recyc[index]?.recycSubType
-                      : '-'}
-                  </Typography>
-                </CustomField>
+      {pickupOrderDetail.map((podetail, index) => {
+
+        return (
+          <Stack
+            key={index}
+            borderColor="#e2e2e2"
+            p={2}
+            borderRadius="12px"
+            sx={{ borderWidth: '1px', borderStyle: 'solid' }}
+            spacing={1}
+          >
+            <Box display="flex" justifyContent="space-between">
+              <Box>
+                <CardItem
+                  index={index}
+                  localstyles={localstyles}
+                  dataPico={dataPico}
+                  type={podetail?.productType ? 'product' : 'recyclable'}
+                />
+              </Box>
+              <Box>
+                <StatusCard status={podetail.status} />
               </Box>
             </Box>
-            <Box>
-              <StatusCard status={podetail.status} />
-            </Box>
-          </Box>
-          <Box display="flex" mt={'15px !important'}>
-            <Box display="flex" width={'150px'}>
-              <Icon
-                sx={{
-                  justifySelf: 'center',
-                  display: 'flex',
-                  mr: '5px',
-                  color: '#acacac'
-                }}
-              >
-                <AccessTimeIcon />
-              </Icon>
-              <Typography style={localstyles.mini_title}>
-                {t('pick_up_order.card_detail.shipping_time')}
+            <Box display="flex" mt={'15px !important'}>
+              <Box display="flex" width={'150px'}>
+                <Icon
+                  sx={{
+                    justifySelf: 'center',
+                    display: 'flex',
+                    mr: '5px',
+                    color: '#acacac'
+                  }}
+                >
+                  <AccessTimeIcon />
+                </Icon>
+                <Typography style={localstyles.mini_title}>
+                  {t('pick_up_order.card_detail.shipping_time')}
+                </Typography>
+              </Box>
+              <Typography ml="60px" style={localstyles.mini_value}>
+                {podetail.pickupAt}
               </Typography>
             </Box>
-            <Typography ml="60px" style={localstyles.mini_value}>
-              {podetail.pickupAt}
-            </Typography>
-          </Box>
-          <Box display="flex">
-            <Box display="flex" width={'150px'}>
-              <Icon
-                sx={{
-                  justifySelf: 'center',
-                  display: 'flex',
-                  mr: '5px',
-                  color: '#acacac'
-                }}
-              >
-                <MonitorWeightOutlinedIcon />
-              </Icon>
-              <Typography style={localstyles.mini_title}>
-                {t('pick_up_order.card_detail.weight')}
+            <Box display="flex">
+              <Box display="flex" width={'150px'}>
+                <Icon
+                  sx={{
+                    justifySelf: 'center',
+                    display: 'flex',
+                    mr: '5px',
+                    color: '#acacac'
+                  }}
+                >
+                  <MonitorWeightOutlinedIcon />
+                </Icon>
+                <Typography style={localstyles.mini_title}>
+                  {t('pick_up_order.card_detail.weight')}
+                </Typography>
+              </Box>
+              <Typography ml="60px" style={localstyles.mini_value}>
+                {formatWeight(podetail.weight, decimalVal)} kg
               </Typography>
             </Box>
-            <Typography ml="60px" style={localstyles.mini_value}>
-              {formatWeight(podetail.weight, decimalVal)} kg
-            </Typography>
-          </Box>
-          <Box display="flex">
-            <Box display="flex" width={'150px'} flexShrink={0}>
-              <Icon
-                sx={{
-                  justifySelf: 'center',
-                  display: 'flex',
-                  mr: '5px',
-                  color: '#acacac'
-                }}
-              >
-                <Inventory2OutlinedIcon />
-              </Icon>
-              <Typography style={localstyles.mini_title}>
-                {t('pick_up_order.card_detail.sender_and_receiver_company')}
-              </Typography>
-            </Box>
-            <Box
-              ml={'60px'}
-              width={'400px'}
-              sx={{ overflowWrap: 'break-word' }}
-            >
-              <Typography
+            <Box display="flex">
+              <Box display="flex" width={'150px'} flexShrink={0}>
+                <Icon
+                  sx={{
+                    justifySelf: 'center',
+                    display: 'flex',
+                    mr: '5px',
+                    color: '#acacac'
+                  }}
+                >
+                  <Inventory2OutlinedIcon />
+                </Icon>
+                <Typography style={localstyles.mini_title}>
+                  {t('pick_up_order.card_detail.sender_and_receiver_company')}
+                </Typography>
+              </Box>
+              <Box
+                ml={'60px'}
+                width={'400px'}
                 sx={{ overflowWrap: 'break-word' }}
-                style={localstyles.mini_value}
               >
-                {podetail?.senderName} → {podetail?.receiverName}
-              </Typography>
+                <Typography
+                  sx={{ overflowWrap: 'break-word' }}
+                  style={localstyles.mini_value}
+                >
+                  {podetail?.senderName} → {podetail?.receiverName}
+                </Typography>
+              </Box>
             </Box>
-          </Box>
-          <Box display="flex">
-            <Box display="flex" width={'150px'} height={'30px'} flexShrink={0}>
-              <Icon
-                sx={{
-                  justifySelf: 'center',
-                  display: 'flex',
-                  mr: '5px',
-                  color: '#acacac'
-                }}
+            <Box display="flex">
+              <Box display="flex" width={'150px'} height={'30px'} flexShrink={0}>
+                <Icon
+                  sx={{
+                    justifySelf: 'center',
+                    display: 'flex',
+                    mr: '5px',
+                    color: '#acacac'
+                  }}
+                >
+                  <PlaceOutlinedIcon />
+                </Icon>
+                <Typography style={localstyles.mini_title}>
+                  {t('pick_up_order.card_detail.sender_and_receiver_location')}
+                </Typography>
+              </Box>
+              <Box
+                ml={'60px'}
+                width={'400px'}
+                sx={{ overflowWrap: 'break-word' }}
               >
-                <PlaceOutlinedIcon />
-              </Icon>
-              <Typography style={localstyles.mini_title}>
-                {t('pick_up_order.card_detail.sender_and_receiver_location')}
-              </Typography>
+                <Typography style={localstyles.mini_value}>
+                  {podetail?.senderAddr} → {podetail.receiverAddr}
+                </Typography>
+              </Box>
             </Box>
-            <Box
-              ml={'60px'}
-              width={'400px'}
-              sx={{ overflowWrap: 'break-word' }}
-            >
-              <Typography style={localstyles.mini_value}>
-                {podetail?.senderAddr} → {podetail.receiverAddr}
-              </Typography>
-            </Box>
-          </Box>
-          {(podetail.checkInBy || podetail.checkOutBy) &&
-            <Box
-              p={'10px'}
-              bgcolor={'#FBFBFB'}
-            >
-              {podetail.checkOutAt &&
-                <Box display="flex">
-                  <Box display="flex" width={'150px'} alignItems={"center"}>
-                  <Icon
-                      sx={{
-                        justifySelf: 'center',
-                        display: 'flex',
-                        mr: '5px',
-                        color: '#79CA25'
-                      }}
-                    >
-                      <AccessTimeIcon />
-                    </Icon>
-                    <Typography style={localstyles.mini_title_green}>
-                      {t('pick_up_order.card_detail.checkout_time')}
+            {(podetail.checkInBy || podetail.checkOutBy) &&
+              <Box
+                p={'10px'}
+                bgcolor={'#FBFBFB'}
+              >
+                {podetail.checkOutAt &&
+                  <Box display="flex">
+                    <Box display="flex" width={'150px'} alignItems={"center"}>
+                      <Icon
+                        sx={{
+                          justifySelf: 'center',
+                          display: 'flex',
+                          mr: '5px',
+                          color: '#79CA25'
+                        }}
+                      >
+                        <AccessTimeIcon />
+                      </Icon>
+                      <Typography style={localstyles.mini_title_green}>
+                        {t('pick_up_order.card_detail.checkout_time')}
+                      </Typography>
+                    </Box>
+                    <Typography ml="60px" style={localstyles.mini_value}>
+                      {formattedTime(podetail.checkOutAt)}
                     </Typography>
                   </Box>
-                  <Typography ml="60px" style={localstyles.mini_value}>
-                    {formattedTime(podetail.checkOutAt)}
-                  </Typography>
-                </Box>
-              }
-              {podetail.checkInAt &&
-                <Box display="flex">
-                  <Box display="flex" width={'150px'} alignItems={"center"}>
-                    
-                    <Typography style={localstyles.mini_title_green} ml={"30px"}>
-                      {t('pick_up_order.card_detail.checkin_time')}
-                    </Typography>
-                  </Box>
-                  <Typography ml="60px" style={localstyles.mini_value}>
-                    {formattedTime(podetail.checkInAt)}
-                  </Typography>
-                </Box>
-              }
-              
-              {podetail.checkOutWeight &&
-                <Box display="flex">
-                  <Box display="flex" width={'150px'} alignItems={"center"}>
-                  <Icon
-                      sx={{
-                        justifySelf: 'center',
-                        display: 'flex',
-                        mr: '5px',
-                        color: '#79CA25'
-                      }}
-                    >
-                      <MonitorWeightOutlinedIcon />
-                    </Icon>
-                    <Typography style={localstyles.mini_title_green} >
-                      {t('pick_up_order.card_detail.checkout_weight')}
-                    </Typography>
-                  </Box>
-                  <Typography ml="60px" style={localstyles.mini_value}>
-                    {formatWeight(podetail.checkOutWeight, decimalVal)} kg
-                  </Typography>
-                </Box>
-              }
+                }
+                {podetail.checkInAt &&
+                  <Box display="flex">
+                    <Box display="flex" width={'150px'} alignItems={"center"}>
 
-              {podetail.checkInWeight &&
+                      <Typography style={localstyles.mini_title_green} ml={"30px"}>
+                        {t('pick_up_order.card_detail.checkin_time')}
+                      </Typography>
+                    </Box>
+                    <Typography ml="60px" style={localstyles.mini_value}>
+                      {formattedTime(podetail.checkInAt)}
+                    </Typography>
+                  </Box>
+                }
 
-                <Box display="flex">
-                  <Box display="flex" width={'150px'} alignItems={"center"}>
-                    <Typography style={localstyles.mini_title_green} ml={"30px"}>
-                      {t('pick_up_order.card_detail.checkin_weight')}
+                {podetail.checkOutWeight &&
+                  <Box display="flex">
+                    <Box display="flex" width={'150px'} alignItems={"center"}>
+                      <Icon
+                        sx={{
+                          justifySelf: 'center',
+                          display: 'flex',
+                          mr: '5px',
+                          color: '#79CA25'
+                        }}
+                      >
+                        <MonitorWeightOutlinedIcon />
+                      </Icon>
+                      <Typography style={localstyles.mini_title_green} >
+                        {t('pick_up_order.card_detail.checkout_weight')}
+                      </Typography>
+                    </Box>
+                    <Typography ml="60px" style={localstyles.mini_value}>
+                      {formatWeight(podetail.checkOutWeight, decimalVal)} kg
                     </Typography>
                   </Box>
-                  <Typography ml="60px" style={localstyles.mini_value}>
-                    {formatWeight(podetail.checkInWeight, decimalVal)} kg
-                  </Typography>
-                </Box>
-              }
-              {podetail.checkOutBy &&
-                <Box display="flex">
-                  <Box display="flex" width={'150px'} alignItems={"center"}>
-                  <Icon
-                      sx={{
-                        justifySelf: 'center',
-                        display: 'flex',
-                        mr: '5px',
-                        color: '#79CA25'
-                      }}
-                    >
-                      <PersonOutlineIcon />
-                    </Icon>
-                    <Typography style={localstyles.mini_title_green} >
-                      {t('pick_up_order.card_detail.checkout_by')}
+                }
+
+                {podetail.checkInWeight &&
+
+                  <Box display="flex">
+                    <Box display="flex" width={'150px'} alignItems={"center"}>
+                      <Typography style={localstyles.mini_title_green} ml={"30px"}>
+                        {t('pick_up_order.card_detail.checkin_weight')}
+                      </Typography>
+                    </Box>
+                    <Typography ml="60px" style={localstyles.mini_value}>
+                      {formatWeight(podetail.checkInWeight, decimalVal)} kg
                     </Typography>
                   </Box>
-                  <Typography ml="60px" style={localstyles.mini_value}>
-                    {checkOutUsername(podetail)}
-                  </Typography>
-                </Box>
-              }
-              {podetail.checkInBy &&
-              
-                <Box display="flex">
-                  <Box display="flex" width={'150px'} alignItems={"center"}>
-                    
-                    <Typography style={localstyles.mini_title_green} ml={"30px"}>
-                      {t('pick_up_order.card_detail.checkin_by')}
+                }
+                {podetail.checkOutBy &&
+                  <Box display="flex">
+                    <Box display="flex" width={'150px'} alignItems={"center"}>
+                      <Icon
+                        sx={{
+                          justifySelf: 'center',
+                          display: 'flex',
+                          mr: '5px',
+                          color: '#79CA25'
+                        }}
+                      >
+                        <PersonOutlineIcon />
+                      </Icon>
+                      <Typography style={localstyles.mini_title_green} >
+                        {t('pick_up_order.card_detail.checkout_by')}
+                      </Typography>
+                    </Box>
+                    <Typography ml="60px" style={localstyles.mini_value}>
+                      {checkOutUsername(podetail)}
                     </Typography>
                   </Box>
-                  <Typography ml="60px" style={localstyles.mini_value}>
-                    {checkInUsername(podetail)}
-                  </Typography>
-                </Box>
-              }
-            </Box>
-          }
-        </Stack>
-      ))}
+                }
+                {podetail.checkInBy &&
+
+                  <Box display="flex">
+                    <Box display="flex" width={'150px'} alignItems={"center"}>
+
+                      <Typography style={localstyles.mini_title_green} ml={"30px"}>
+                        {t('pick_up_order.card_detail.checkin_by')}
+                      </Typography>
+                    </Box>
+                    <Typography ml="60px" style={localstyles.mini_value}>
+                      {checkInUsername(podetail)}
+                    </Typography>
+                  </Box>
+                }
+              </Box>
+            }
+          </Stack>
+        )
+      })}
     </>
   )
 }

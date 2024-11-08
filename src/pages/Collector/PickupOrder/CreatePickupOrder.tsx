@@ -92,10 +92,8 @@ const CreatePickupOrder = () => {
 
     // validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
-      console.log("🚀 ~ file: CreatePickupOrder.tsx ~ line 92 ~ onSubmit: ~ values", JSON.stringify(values || {}))
       const refactorPicoDetail: any = refactorPickUpOrderDetail(addRow)
       values.createPicoDetail = refactorPicoDetail
-      console.log("🚀 ~ file: CreatePickupOrder.tsx ~ line 126 ~ onSubmit: ~ refactorPicoDetail", refactorPicoDetail)
 
 
       if (picoTypeValue === 'AD_HOC') {
@@ -129,18 +127,16 @@ const CreatePickupOrder = () => {
         }
       }
 
-      console.log("🚀 ~ file: CreatePickupOrder.tsx ~ line 161 ~ onSubmit: ~ values", values)
       const result = await submitPickUpOrder(values);
       
-      console.log("🚀 ~ file: CreatePickupOrder.tsx ~ line 161 ~ onSubmit: ~ result", result)
 
-      // const data = result?.data;
-      // if (data) {
-      //     const routeName = role;
-      //     navigate(`/${routeName}/PickupOrder`, { state: 'created' });
-      // } else {
-      //     showErrorToast('fail to create pickup order');
-      // }
+      const data = result?.data;
+      if (data) {
+          const routeName = role;
+          navigate(`/${routeName}/PickupOrder`, { state: 'created' });
+      } else {
+          showErrorToast('fail to create pickup order');
+      }
     }
   })
 

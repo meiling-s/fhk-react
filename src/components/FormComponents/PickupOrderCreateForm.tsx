@@ -52,6 +52,11 @@ import timezone from 'dayjs/plugin/timezone'
 import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
 import useValidationPickupOrder from '../../pages/Collector/PickupOrder/useValidationPickupOrder'
 import { t } from 'i18next'
+import {
+  getProductAddonFromDataRow,
+  getProductTypeFromDataRow,
+  getProductSubTypeFromDataRow,
+} from 'src/pages/Collector/PickupOrder/utils'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -170,7 +175,6 @@ const PickupOrderCreateForm = ({
   state: CreatePicoDetail[]
   editMode: boolean
 }) => {
-  console.log("🚀 ~ file: PickupOrderCreateForm.tsx ~ line 173 ~ state", state)
 
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [openDelete, setOpenDelete] = useState<boolean>(false)
@@ -419,10 +423,8 @@ const PickupOrderCreateForm = ({
       field: 'itemCategory',
       headerName: t('pick_up_order.recyclForm.item_category'),
       valueGetter: ({ row }) => {
-        console.log("🚀 ~ file: PickupOrderCreateForm.tsx ~ line 422 ~ row", row)
 
         const itemCategory = row?.productType ? t('product') : t('recyclables')
-        console.log("🚀 ~ file: PickupOrderCreateForm.tsx ~ line 425 ~ itemCategory", itemCategory)
 
         return itemCategory
       },
@@ -436,7 +438,7 @@ const PickupOrderCreateForm = ({
       valueGetter: ({ row }) => {
         const typeField = row.recycType || row.productType;
         const matchingRecycType = recycType?.find(item => item.recycTypeId === row.recycType);
-        const matchingProductType = Boolean(row.productType)
+        const matchingProductType = getProductTypeFromDataRow({ row, dataProductType: productType })
 
         if (matchingRecycType) {
           let name = '';
@@ -458,16 +460,16 @@ const PickupOrderCreateForm = ({
           let name = '';
           switch (i18n.language) {
             case 'enus':
-              name = row.productType?.productNameEng
+              name = matchingProductType?.productNameEng
               break;
             case 'zhch':
-              name = row.productType?.productNameSchi
+              name = matchingProductType?.productNameSchi
               break;
             case 'zhhk':
-              name = row.productType?.productNameTchi
+              name = matchingProductType?.productNameTchi
               break;
             default:
-              name = row.productType?.productNameTchi
+              name = matchingProductType?.productNameTchi
           }
           return name;
         }
@@ -482,13 +484,10 @@ const PickupOrderCreateForm = ({
       width: 150,
       editable: true,
       valueGetter: ({ row }) => {
+
         const matchingRecycType = recycType?.find((item) => item.recycTypeId === row.recycType)
-        console.log("🚀 ~ file: PickupOrderCreateForm.tsx ~ line 486 ~ matchingRecycType", matchingRecycType)
-        
-        const matchingProductType = Boolean(row?.productType)
-        console.log("🚀 ~ file: PickupOrderCreateForm.tsx ~ line 486 ~ row?.productType", row?.productType)
-        
-        console.log("🚀 ~ file: PickupOrderCreateForm.tsx ~ line 486 ~ matchingProductType", matchingProductType)
+
+        const matchingProductSubType = getProductSubTypeFromDataRow({ row, dataProductType: productType })
 
         if (matchingRecycType) {
           const matchrecycSubType = matchingRecycType.recycSubType?.find(
@@ -516,20 +515,20 @@ const PickupOrderCreateForm = ({
             return row.recycSubType
           }
         }
-        else if (matchingProductType) {
+        else if (matchingProductSubType) {
           var subName = ''
           switch (i18n.language) {
             case 'enus':
-              subName = row?.productSubType?.productNameEng || ''
+              subName = matchingProductSubType?.productNameEng || ''
               break
             case 'zhch':
-              subName = row?.productSubType?.productNameSchi || ''
+              subName = matchingProductSubType?.productNameSchi || ''
               break
             case 'zhhk':
-              subName = row?.productSubType?.productNameTchi || ''
+              subName = matchingProductSubType?.productNameTchi || ''
               break
             default:
-              subName = row?.productSubType?.productNameTchi || '' //default fallback language is zhhk
+              subName = matchingProductSubType?.productNameTchi || '' //default fallback language is zhhk
               break
           }
 
@@ -544,19 +543,21 @@ const PickupOrderCreateForm = ({
       width: 150,
       editable: true,
       valueGetter: ({ row }) => {
+        const matchingProductAddon = getProductAddonFromDataRow({ row, dataProductType: productType })
+
         var addonName = ''
         switch (i18n.language) {
           case 'enus':
-            addonName = row?.productAddonType?.productNameEng ?? ''
+            addonName = matchingProductAddon?.productNameEng || ''
             break
           case 'zhch':
-            addonName = row?.productAddonType?.productNameSchi ?? ''
+            addonName = matchingProductAddon?.productNameSchi || ''
             break
           case 'zhhk':
-            addonName = row?.productAddonType?.productNameTchi ?? ''
+            addonName = matchingProductAddon?.productNameTchi || ''
             break
           default:
-            addonName = row?.productAddonType?.productNameTchi ?? ''
+            addonName = matchingProductAddon?.productNameTchi || ''
             break
         }
 
@@ -707,7 +708,6 @@ const PickupOrderCreateForm = ({
     }
   }
 
-  console.log("🚀 ~ file: PickupOrderCreateForm.tsx ~ line 709 ~ onhandleSubmit ~ formik", formik)
   return (
     <>
       {/* <form onSubmit={formik.handleSubmit}> */}

@@ -397,6 +397,9 @@
     "card_detail": {
       "main_category": "回收物主类别",
       "subcategory": "回收物次类别",
+      "product_type_label": "产品类型",
+      "sub_product_type_label": "产品子类型",
+      "addon_product_type_label": "产品插件",
       "shipping_time": "预计运送时间",
       "weight": "预计重量",
       "shipping_receiver": "寄件及收件公司",
@@ -493,6 +496,8 @@
       "recycling_location": "回收地点",
       "arrived": "到达地点",
       "placeholder": "请输入地点",
+      "placeholder_shipping_company": "请输入发件人公司",
+      "placeholder_receiver_company": "请输入收货公司",
       "select_po": "选择运单",
       "item_category": "物品类别"
     },

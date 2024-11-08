@@ -34,6 +34,7 @@ export interface PickupOrderDetail {
     checkOutByNameEng?: string | null,
     checkOutByNameSchi?: string | null,
     checkOutByNameTchi?: string | null,
+    productType?: any,
 }
 
 export interface PickupOrder {

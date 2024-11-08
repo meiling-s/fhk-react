@@ -89,7 +89,7 @@ export interface InitValue {
   createdBy: string
   updatedBy: string
   pickupAt: string
-recycType?: string
+  recycType?: string
   recycSubType?: string
   weight: string
   newDetail?: boolean
@@ -150,6 +150,8 @@ const CreateRecycleForm = ({
     getManuList,
     getCollectorList
   } = useContainer(CommonTypeContainer)
+  console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 153 ~ productType", productType)
+
   const [editRow, setEditRow] = useState<CreatePicoDetail | null>(null)
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
   const [defaultProduct, setDefaultProduct] = useState<singleProduct>()
@@ -227,7 +229,6 @@ const CreateRecycleForm = ({
       // Set the form field values based on the editRow data
 
       const index = data.indexOf(editRow)
-      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 230 ~ useEffect ~ editRow", editRow)
 
       formik.setValues({
         id: editRow.id,
@@ -271,7 +272,7 @@ const CreateRecycleForm = ({
     } else {
       prevData = data
     }
-    
+
     if (isRecyc) {
       return Yup.object().shape({
         pickupAt: Yup.string()
@@ -293,7 +294,7 @@ const CreateRecycleForm = ({
         //     return !prevData.some((item) => item.pickupAt === value)
         //   }
         // ),
-  
+
         senderName: Yup.string().required(t('pick_up_order.error.senderName')),
         senderAddr: Yup.string()
           .required(t('pick_up_order.error.senderAddr'))
@@ -333,7 +334,7 @@ const CreateRecycleForm = ({
         //   }
         // ),
         recycType: Yup.string().required(t('pick_up_order.error.recycType')),
-          
+
         recycSubType: Yup.string().when(
           'recycTypeName',
           (recycTypeName, schema) => {
@@ -367,7 +368,7 @@ const CreateRecycleForm = ({
         //     return !prevData.some((item) => item.pickupAt === value)
         //   }
         // ),
-  
+
         senderName: Yup.string().required(t('pick_up_order.error.senderName')),
         senderAddr: Yup.string()
           .required(t('pick_up_order.error.senderAddr'))
@@ -400,8 +401,36 @@ const CreateRecycleForm = ({
             }
           ),
         productType: Yup.string().required(t('pick_up_order.error.productType')),
-        productSubType: Yup.string().required(t('pick_up_order.error.productSubType')),
-        productAddon: Yup.string().required(t('pick_up_order.error.productAddon')),
+        productSubType: Yup.string()
+          .when('productType', {
+            is: (value: string) => {
+              console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 423 ~ returnYup.object ~ value", value)
+
+              const item: any = productType && productType?.length > 0 && productType?.find((item: any) => item.productTypeId == value)
+              const isValid = item?.productSubType?.length > 0
+              return isValid
+            },
+            then: (schema) =>
+              schema
+                .required(t('pick_up_order.error.productSubType')),
+          })
+        ,
+        productAddon: Yup.string()
+          .when(['productType', 'productSubType'], {
+            is: (value: string, value2: string) => {
+              console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 423 ~ returnYup.object ~ value", value)
+
+              const itemProductType: any = productType && productType?.length > 0 && productType?.find((item: any) => item.productTypeId == value)
+              const itemSubProductType: any = itemProductType?.productSubType?.length > 0 && itemProductType?.productSubType?.find((item: any) => item.productSubTypeId == value2)
+              const isValid = itemSubProductType?.productAddonType?.length > 0
+              return isValid
+
+            },
+            then: (schema) =>
+              schema
+                .required(t('pick_up_order.error.productAddon')),
+          })
+        ,
         weight: Yup.number()
           .moreThan(0, t('pick_up_order.error.weightGreaterThanZero'))
           .required(t('pick_up_order.error.weight'))
@@ -585,9 +614,8 @@ const CreateRecycleForm = ({
     >
       <Divider></Divider>
       <div
-        className={`border-b-[1px] border-grey-line h-full ${
-          openModal ? `md:w-[700px] w-[100vw] mt-[${marginTop}]` : 'hidden'
-        }`}
+        className={`border-b-[1px] border-grey-line h-full ${openModal ? `md:w-[700px] w-[100vw] mt-[${marginTop}]` : 'hidden'
+          }`}
       >
         <form onSubmit={formik.handleSubmit}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -709,7 +737,7 @@ const CreateRecycleForm = ({
                       key={formik.values.picoDtlId}
                     />
                   </CustomField>
-                ) : 
+                ) :
                   <CustomField label={t('pick_up_order.product_type.product')} mandatory>
                     <ProductListSingleSelect
                       showError={(formik.errors?.productType && formik.touched?.productType) || undefined}
@@ -738,7 +766,7 @@ const CreateRecycleForm = ({
                     />
                   </CustomField>
                 }
-                
+
                 <CustomField
                   label={t('pick_up_order.recyclForm.weight')}
                   mandatory
