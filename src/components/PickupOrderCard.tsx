@@ -48,7 +48,11 @@ const CardItem = ({
 
   }
 
-  const addonTypeName = dataPico?.length>0 && dataPico[index] && dataPico[index]?.addonTypeName
+  const dataPicoValid = dataPico?.length > 0 && dataPico[index]
+  console.log("🚀 ~ file: PickupOrderCard.tsx ~ line 52 ~ dataPicoValid", dataPicoValid)
+
+  const subtType = dataPicoValid?.subTypeName
+  const addonTypeName = dataPicoValid?.addonTypeName
 
   return (
     <Box key={index}>
@@ -66,9 +70,7 @@ const CardItem = ({
         style={{ marginTop: '12px' }}
       >
         <Typography sx={localstyles.typo_fieldContent}>
-          {dataPico?.length != 0 && dataPico
-            ? dataPico[index]?.subTypeName
-            : '-'}
+          {subtType || '-'}
         </Typography>
       </CustomField>
       {
@@ -78,9 +80,7 @@ const CardItem = ({
           style={{ marginTop: '12px' }}
         >
           <Typography sx={localstyles.typo_fieldContent}>
-            {dataPico?.length != 0 && dataPico
-              ? addonTypeName
-              : '-'}
+            {addonTypeName || '-'}
           </Typography>
         </CustomField>
       }

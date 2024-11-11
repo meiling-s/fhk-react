@@ -2,6 +2,21 @@ import { CreatePicoDetail } from 'src/interfaces/pickupOrder'
 import { cloneData } from 'src/utils/utils'
 
 
+const removeEmptyItem = ({ item, id }: { item: any, id: string }) => {
+  if (item.hasOwnProperty(id) && !item[id]) {
+    delete item[id]
+  }
+}
+
+const arrStrictId = [
+  'productTypeId',
+  'productSubTypeId',
+  'productAddonTypeId',
+  'productSubTypeRemark',
+  'productAddonTypeRemark',
+]
+
+
 export const refactorPickUpOrderDetail = (data: CreatePicoDetail[]) => {
 
   try {
@@ -9,17 +24,13 @@ export const refactorPickUpOrderDetail = (data: CreatePicoDetail[]) => {
     const result = cloneData(data)?.map((item: any) => {
 
       if (item?.productType) {
-        
+
         if (item.productType?.productTypeId) {
 
           item['productTypeId'] = item.productType?.productTypeId
           item['productSubTypeId'] = item.productSubType?.productSubTypeId
           item['productAddonTypeId'] = item.productAddonType?.productAddonTypeId
-          console.log("🚀 ~ file: utils.ts ~ line 18 ~ result ~ item", item)
-          
-          delete item.productAddonType
-          
-      
+
         }
         else {
 
@@ -28,22 +39,23 @@ export const refactorPickUpOrderDetail = (data: CreatePicoDetail[]) => {
           item['productAddonTypeId'] = item.productAddon
 
         }
-
-        delete item.productType
-        delete item.productSubType
-        delete item.productAddon
-
-        if(!item['productTypeId']){
-          delete item.productTypeId
-        }
-        if(!item['productSubTypeId']){
-          delete item.productSubTypeId
-        }
-        if(!item['productAddonTypeId']){
-          delete item.productAddonTypeId
-        }
-
+        
       }
+
+      // === Remove unused Front End Data ===
+
+      delete item.productType
+      delete item.productSubType
+      delete item.productAddonType
+      delete item.productAddon
+
+
+      // === Remove empty data for Body API ===
+
+      arrStrictId.forEach(i => {
+        removeEmptyItem({ item, id: i })
+      })
+      
       return item
 
     })
