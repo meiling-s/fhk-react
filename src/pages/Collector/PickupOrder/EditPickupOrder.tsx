@@ -19,6 +19,7 @@ import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { refactorPickUpOrderDetail } from './utils'
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -89,7 +90,10 @@ const EditPickupOrder = () => {
     },
     // validationSchema: validateSchema,
     onSubmit: async (values: EditPo) => {
-      values.updatePicoDetail = addRow
+
+      const refactorPicoDetail: any = refactorPickUpOrderDetail(addRow)
+      values.updatePicoDetail = refactorPicoDetail
+
       if (values.picoType === 'AD_HOC') {
         values.routine = [];
       } else if (values.picoType === 'ROUTINE') {
@@ -120,6 +124,7 @@ const EditPickupOrder = () => {
           values.specificDates = []
         }
       }
+      console.log("🚀 ~ file: EditPickupOrder.tsx ~ line 128 ~ onSubmit: ~ values", values)
       const result = await submitEditPickUpOrder(poInfo.picoId, values)
 
       const data = result?.data
@@ -151,6 +156,11 @@ const EditPickupOrder = () => {
         pickupAt: item.pickupAt,
         recycType: item.recycType,
         recycSubType: item.recycSubType,
+        productType: item.productType,
+        productSubType: item.productSubType,
+        productAddonType: item.productAddonType,
+        productSubTypeRemark: item.productSubTypeRemark,
+        productAddonTypeRemark: item.productAddonTypeRemark,
         weight: formatWeight(item.weight, decimalVal),
         newDetail: false,
         version: poInfo.version

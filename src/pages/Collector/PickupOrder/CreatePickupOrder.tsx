@@ -16,6 +16,7 @@ import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { refactorPickUpOrderDetail } from './utils'
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -50,8 +51,11 @@ const CreatePickupOrder = () => {
 
 
   const submitPickUpOrder = async (values: CreatePO) => {
+
     try {
+
       return await createPickUpOrder(values)
+
     } catch (error) {
       const { state, realm } = extractError(error);
       if (state.code == STATUS_CODE[503]) {
@@ -88,7 +92,9 @@ const CreatePickupOrder = () => {
 
     // validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
-      values.createPicoDetail = addRow;
+      const refactorPicoDetail: any = refactorPickUpOrderDetail(addRow)
+      values.createPicoDetail = refactorPicoDetail
+
 
       if (picoTypeValue === 'AD_HOC') {
         values.routine = [];
@@ -121,8 +127,9 @@ const CreatePickupOrder = () => {
         }
       }
 
-      console.log(values, 'values');
       const result = await submitPickUpOrder(values);
+      
+
       const data = result?.data;
       if (data) {
           const routeName = role;

@@ -34,6 +34,7 @@ export interface PickupOrderDetail {
     checkOutByNameEng?: string | null,
     checkOutByNameSchi?: string | null,
     checkOutByNameTchi?: string | null,
+    productType?: any,
 }
 
 export interface PickupOrder {
@@ -122,11 +123,12 @@ export interface CreatePicoDetail {
     itemCategory?: string;
     version?: number;
     addon?: string;
-    productType?: string;
-    productSubType?: string;
-    productAddon?: string;
-    productSubtypeRemark?: string;
-    productAddonRemark?: string
+    productType?: any | string;
+    productSubType?: any | string;
+    productAddon?: any | string;
+    productAddonType?: any;
+    productSubTypeRemark?: string;
+    productAddonTypeRemark?: string
     
 }
 

@@ -19,76 +19,85 @@ const JobOrderCard = ({
   pickupOrderDetail: PickupOrderDetail[];
   driverDetail: DriverDetail | undefined;
 }) => {
-  const recyc = LocalizeRecyctype(pickupOrderDetail);
+  const dataPicoDetail = LocalizeRecyctype(pickupOrderDetail)
   const { decimalVal } = useContainer(CommonTypeContainer)
-  const {i18n} = useTranslation()
+  const { i18n } = useTranslation()
   return (
     <>
-      {pickupOrderDetail.map((podetail, index) => (
-        <Stack
-          key={index}
-          borderColor="#e2e2e2"
-          p={2}
-          borderRadius="12px"
-          sx={{ borderWidth: "1px", borderStyle: "solid" }}
-          spacing={1}
-        >
-          <Box width='100%'>
-            <Typography style={localstyles.pickup_at}>{podetail.pickupAt}</Typography>
-            {recyc && (
-              <Box width={'100%'} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                <Box key={index}>
-                  <Typography sx={localstyles.title}>{recyc[index].recycType}</Typography>
-                  <Typography sx={localstyles.mini_value}>{recyc[index].recycSubType}</Typography>
+      {pickupOrderDetail.map((podetail, index) => {
+
+        const item = dataPicoDetail && dataPicoDetail[index as keyof object]
+
+        return (
+          <Stack
+            key={index}
+            borderColor="#e2e2e2"
+            p={2}
+            borderRadius="12px"
+            sx={{ borderWidth: "1px", borderStyle: "solid" }}
+            spacing={1}
+          >
+            <Box width='100%'>
+              <Typography style={localstyles.pickup_at}>{podetail.pickupAt}</Typography>
+              {dataPicoDetail && (
+                <Box width={'100%'} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+                  <Box key={index}>
+                    <Typography sx={localstyles.title}>{item?.typeName}</Typography>
+                    <Typography sx={localstyles.mini_value}>{item?.subTypeName}</Typography>
+                    {
+                      item?.addonTypeName &&
+                      <Typography sx={localstyles.mini_value}>{item?.addonTypeName}</Typography>
+                    }
+                  </Box>
+                  <Typography sx={localstyles.title}>{formatWeight(podetail.weight, decimalVal)}kg</Typography>
                 </Box>
-                <Typography sx={localstyles.title}>{formatWeight(podetail.weight, decimalVal)}kg</Typography>
+              )}
+            </Box>
+            <Box display="flex">
+              <Box display="flex" flexShrink={0}>
+                <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px", color: '#acacac' }}>
+                  <Inventory2OutlinedIcon />
+                </Icon>
               </Box>
-            )}
-          </Box>
-          <Box display="flex">
-            <Box display="flex" flexShrink={0}>
-              <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px", color: '#acacac' }}>
-                <Inventory2OutlinedIcon />
-              </Icon>
-            </Box>
-            <Box
-              sx={{ overflowWrap: "break-word" }}
-            >
-              <Typography sx={{ overflowWrap: "break-word" }} style={localstyles.mini_value}>
-                {podetail?.senderName} - {podetail?.receiverName}
-              </Typography>
-            </Box>
-          </Box>
-          <Box display="flex">
-            <Box display="flex" height={"30px"} flexShrink={0}>
-              <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px", color: '#acacac' }}>
-                <PlaceOutlinedIcon />
-              </Icon>
-            </Box>
-            <Box
-              sx={{ overflowWrap: "break-word" }}
-            >
-              <Typography style={localstyles.mini_value}>
-                {podetail?.senderAddr} --- {podetail.receiverAddr}
-              </Typography>
-            </Box>
-          </Box>
-          <Box display={"flex"} justifyContent={"space-between"} borderRadius={'12px'} borderColor={"#8AF3A3"} border={1} bgcolor={"#F4FBF6"} paddingInline={"20px"} paddingTop={"12px"} paddingBottom={"12px"}>
-            <Box display={"flex"} alignItems={"center"}>
-              <img src={driverDetail?.photo[0]} alt="" />
-              <Box display={"flex"} flexDirection={"column"}>
-                <Typography style={localstyles.driver_name}>
-                  {i18n.language === 'enus' ? driverDetail?.driverNameEng : i18n.language === 'zhch' ? driverDetail?.driverNameSchi : driverDetail?.driverNameTchi}
-                </Typography>
-                <Typography style={localstyles.plate_no}>
-                  {plateNo}
+              <Box
+                sx={{ overflowWrap: "break-word" }}
+              >
+                <Typography sx={{ overflowWrap: "break-word" }} style={localstyles.mini_value}>
+                  {podetail?.senderName} - {podetail?.receiverName}
                 </Typography>
               </Box>
             </Box>
-            <BorderColorIcon style={{color: '#acacac'}} />
-          </Box>
-        </Stack>
-      ))}
+            <Box display="flex">
+              <Box display="flex" height={"30px"} flexShrink={0}>
+                <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px", color: '#acacac' }}>
+                  <PlaceOutlinedIcon />
+                </Icon>
+              </Box>
+              <Box
+                sx={{ overflowWrap: "break-word" }}
+              >
+                <Typography style={localstyles.mini_value}>
+                  {podetail?.senderAddr} --- {podetail.receiverAddr}
+                </Typography>
+              </Box>
+            </Box>
+            <Box display={"flex"} justifyContent={"space-between"} borderRadius={'12px'} borderColor={"#8AF3A3"} border={1} bgcolor={"#F4FBF6"} paddingInline={"20px"} paddingTop={"12px"} paddingBottom={"12px"}>
+              <Box display={"flex"} alignItems={"center"}>
+                <img src={driverDetail?.photo[0]} alt="" />
+                <Box display={"flex"} flexDirection={"column"}>
+                  <Typography style={localstyles.driver_name}>
+                    {i18n.language === 'enus' ? driverDetail?.driverNameEng : i18n.language === 'zhch' ? driverDetail?.driverNameSchi : driverDetail?.driverNameTchi}
+                  </Typography>
+                  <Typography style={localstyles.plate_no}>
+                    {plateNo}
+                  </Typography>
+                </Box>
+              </Box>
+              <BorderColorIcon style={{ color: '#acacac' }} />
+            </Box>
+          </Stack>
+        )
+      })}
     </>
   );
 };
