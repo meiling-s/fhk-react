@@ -583,3 +583,7 @@ export const porStatusList: StatusPickUpOrder[] = [
     labelTchi: '已刪除'
   }
 ]
+
+export const cloneData = (data: any) => {
+  return JSON.parse(JSON.stringify(data))
+}

@@ -395,6 +395,9 @@
     },
     "card_detail": {
       "main_category": "回收物主類別",
+      "product_type_label": "產品類型",
+      "sub_product_type_label": "產品子類型",
+      "addon_product_type_label": "產品插件",
       "subcategory": "回收物次類別",
       "shipping_time": "預計運送時間",
       "weight": "預計重量",
@@ -492,6 +495,8 @@
       "receiver": "收件公司",
       "arrived": "到達地點",
       "placeholder": "請輸入地點",
+      "placeholder_shipping_company": "請輸入寄件公司",
+      "placeholder_receiver_company": "請輸入收貨公司",
       "select_po": "選擇運單",
       "item_category": "物品類別"
     },
@@ -507,6 +512,7 @@
     "confirm_reject": "確認拒絕",
     "confirm_approve_title": "確認接受嗎？",
     "confirm_reject_title": "確認拒絕嗎？",
+    "confirm_empty_remarks": "確認備註為空白嗎？",
     "approved_success": "接受成功",
     "rejected_success": "拒絕成功",
     "reject_reasons": "拒絕原因",

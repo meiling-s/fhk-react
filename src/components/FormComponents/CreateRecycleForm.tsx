@@ -27,7 +27,7 @@ import * as Yup from 'yup'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import CustomTextField from './CustomTextField'
-import { useFormik } from 'formik'
+import { FormikHelpers, useFormik } from 'formik'
 import { CreatePicoDetail } from '../../interfaces/pickupOrder'
 import RecyclablesListSingleSelect from '../SpecializeComponents/RecyclablesListSingleSelect'
 import { collectorList, manuList } from '../../interfaces/common'
@@ -47,6 +47,7 @@ import Switcher from './CustomSwitch'
 import ProductListSingleSelect from '../SpecializeComponents/ProductListSingleSelect'
 import { getProductTypeList } from '../../APICalls/ASTD/settings/productType'
 import { Products } from '../../interfaces/productType'
+import ConfirmModal from '../SpecializeComponents/ConfirmationModal'
 
 type props = {
   openModal: boolean
@@ -71,8 +72,10 @@ export type singleProduct = {
   productTypeId: string
   productSubTypeId: string
   productAddonId: string
-  productSubtypeRemark: string
-  productAddonRemark: string
+  productSubTypeRemark: string
+  productAddonTypeRemark: string
+  isProductSubTypeOthers?: boolean
+  isProductAddonTypeOthers?: boolean
 }
 export interface InitValue {
   picoDtlId?: any
@@ -89,7 +92,7 @@ export interface InitValue {
   createdBy: string
   updatedBy: string
   pickupAt: string
-recycType?: string
+  recycType?: string
   recycSubType?: string
   weight: string
   newDetail?: boolean
@@ -100,6 +103,8 @@ recycType?: string
   productType?: string
   productSubType?: string
   productAddon?: string
+  productSubTypeRemark?: string
+  productAddonTypeRemark?: string
 }
 
 const initValue: InitValue = {
@@ -126,7 +131,20 @@ const initValue: InitValue = {
   addon: '',
   productType: '',
   productSubType: '',
-  productAddon: ''
+  productAddon: '',
+  productSubTypeRemark: undefined,
+  productAddonTypeRemark: undefined,
+}
+
+const initialState = {
+  openConfirmModal: {
+    isOpen: false,
+    tempData: {
+      isConfirmed: false,
+      isProductSubTypeOthers: false,
+      isProductAddonTypeOthers: false,
+    }
+  }
 }
 
 const CreateRecycleForm = ({
@@ -150,9 +168,21 @@ const CreateRecycleForm = ({
     getManuList,
     getCollectorList
   } = useContainer(CommonTypeContainer)
+
+  const [openConfirmModal, setOpenConfirmModal] = useState<{
+    isOpen: boolean,
+    tempData: {
+      isConfirmed: boolean,
+      isProductSubTypeOthers: boolean
+      isProductAddonTypeOthers: boolean
+    }
+  }>(initialState.openConfirmModal)
+
   const [editRow, setEditRow] = useState<CreatePicoDetail | null>(null)
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
   const [defaultProduct, setDefaultProduct] = useState<singleProduct>()
+  console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 157 ~ defaultProduct", defaultProduct)
+
   const { marginTop } = useContainer(NotifContainer)
   const [isDetailDouble, setIsDetailDouble] = useState(false)
   const [isRecyc, setRecycType] = useState<boolean>(true)
@@ -171,18 +201,20 @@ const CreateRecycleForm = ({
   }
   const setDefProd = (picoDtl: CreatePicoDetail) => {
     const defProd: singleProduct = {
-      productTypeId: picoDtl.productType ?? '',
-      productSubTypeId: picoDtl.productSubType ?? '',
-      productAddonId: picoDtl.productAddon ?? '',
-      productAddonRemark: picoDtl.productAddonRemark ?? '',
-      productSubtypeRemark: picoDtl.productSubtypeRemark ?? ''
+      productTypeId: picoDtl?.productType?.productTypeId || picoDtl?.productType || '',
+      productSubTypeId: picoDtl?.productSubType?.productSubTypeId || picoDtl?.productSubType || '',
+      productAddonId: picoDtl?.productAddonType?.productAddonTypeId || picoDtl?.productAddon || '',
+      productAddonTypeRemark: picoDtl.productAddonTypeRemark || '',
+      productSubTypeRemark: picoDtl.productSubTypeRemark || '',
     }
+    console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 206 ~ setDefProd ~ defProd", defProd)
+
     setDefaultProduct(defProd)
   }
 
 
   useEffect(() => {
-    if (editRowId && editRowId) {
+    if (editRowId) {
       const editR = data.find((item) => item.picoDtlId === editRowId)
       if (editR) {
         setDefRecyc(editR)
@@ -205,6 +237,7 @@ const CreateRecycleForm = ({
 
     if (!editMode && index !== null && index !== undefined) {
       const edit = data.find((item) => item.id === index)
+
       if (edit) {
         setDefRecyc(edit)
         setDefProd(edit)
@@ -224,11 +257,10 @@ const CreateRecycleForm = ({
 
   useEffect(() => {
     if (editRow) {
+      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 230 ~ useEffect ~ editRow", editRow)
       // Set the form field values based on the editRow data
 
-      const index = data.indexOf(editRow)
-
-      formik.setValues({
+      const refactorDataFormik = {
         id: editRow.id,
         picoDtlId: editRowId === editRow.picoDtlId ? editRow.picoDtlId : 0,
         picoHisId: picoHisId ?? '',
@@ -249,11 +281,17 @@ const CreateRecycleForm = ({
         weight: formatWeight(editRow.weight, decimalVal),
         itemCategory: editRow.itemCategory,
         addon: editRow.addon,
-        productType: editRow.productType,
-        productSubType: editRow.productSubType,
-        productAddon: editRow.productAddon,
-      })
-      setRecycType(editRow.itemCategory === 'Recyclables' ? true : false)
+        productType: editRow?.productType?.productTypeId || editRow.productType, // => first value for edit from API , second value from create data row
+        productSubType: editRow?.productSubType?.productSubTypeId || editRow.productSubType,
+        productSubTypeRemark: editRow?.productSubTypeRemark,
+        productAddonTypeRemark: editRow?.productAddonTypeRemark,
+        productAddon: editRow?.productAddonType?.productAddonTypeId || editRow.productAddon,
+      }
+      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 264 ~ useEffect ~ refactorDataFormik", refactorDataFormik)
+
+      formik.setValues(refactorDataFormik)
+      setRecycType((editRow.itemCategory === 'Recyclables' || (!refactorDataFormik?.productType)) ? true : false)
+
     }
   }, [editRow])
 
@@ -270,7 +308,7 @@ const CreateRecycleForm = ({
     } else {
       prevData = data
     }
-    
+
     if (isRecyc) {
       return Yup.object().shape({
         pickupAt: Yup.string()
@@ -292,7 +330,7 @@ const CreateRecycleForm = ({
         //     return !prevData.some((item) => item.pickupAt === value)
         //   }
         // ),
-  
+
         senderName: Yup.string().required(t('pick_up_order.error.senderName')),
         senderAddr: Yup.string()
           .required(t('pick_up_order.error.senderAddr'))
@@ -331,16 +369,23 @@ const CreateRecycleForm = ({
         //     return !prevData.some((item) => item.receiverAddr === value)
         //   }
         // ),
-        recycType: Yup.string().required(t('pick_up_order.error.recycType')),
-          
-        recycSubType: Yup.string().when(
-          'recycTypeName',
-          (recycTypeName, schema) => {
-            if (recycTypeName[0] !== 'Non-recyclable')
-              return schema.required(t('pick_up_order.error.recycSubType'))
-            return schema
-          }
-        ),
+        recycType: Yup.string()
+          .typeError(t('pick_up_order.error.recycType'))
+          .required(t('pick_up_order.error.recycType'))
+        ,
+        recycSubType: Yup.string()
+          .typeError(t('pick_up_order.error.recycSubType'))
+          .when('recycType', {
+            is: (value: string) => {
+              const item: any = recycType && recycType?.length > 0 && recycType?.find((item: any) => item.recycTypeId == value)
+              const isValid = item?.recycSubType?.length > 0
+              return isValid
+            },
+            then: (schema) =>
+              schema
+                .required(t('pick_up_order.error.recycSubType')),
+          })
+        ,
         weight: Yup.number()
           .moreThan(0, t('pick_up_order.error.weightGreaterThanZero'))
           .required(t('pick_up_order.error.weight'))
@@ -366,7 +411,7 @@ const CreateRecycleForm = ({
         //     return !prevData.some((item) => item.pickupAt === value)
         //   }
         // ),
-  
+
         senderName: Yup.string().required(t('pick_up_order.error.senderName')),
         senderAddr: Yup.string()
           .required(t('pick_up_order.error.senderAddr'))
@@ -398,9 +443,37 @@ const CreateRecycleForm = ({
               return value !== senderAddr
             }
           ),
-        productType: Yup.string().required(t('pick_up_order.error.productType')),
-        productSubType: Yup.string().required(t('pick_up_order.error.productSubType')),
-        productAddon: Yup.string().required(t('pick_up_order.error.productAddon')),
+        productType: Yup.string()
+          .required(t('pick_up_order.error.productType'))
+          .typeError(t('pick_up_order.error.productType'))
+        ,
+        productSubType: Yup.string()
+          .typeError(t('pick_up_order.error.productSubType'))
+          .when('productType', {
+            is: (value: string) => {
+              const item: any = productType && productType?.length > 0 && productType?.find((item: any) => item.productTypeId == value)
+              const isValid = item?.productSubType?.length > 0
+              return isValid
+            },
+            then: (schema) =>
+              schema
+                .required(t('pick_up_order.error.productSubType')),
+          })
+        ,
+        productAddon: Yup.string()
+          .when(['productType', 'productSubType'], {
+            is: (value: string, value2: string) => {
+              const itemProductType: any = productType && productType?.length > 0 && productType?.find((item: any) => item.productTypeId == value)
+              const itemSubProductType: any = itemProductType?.productSubType?.length > 0 && itemProductType?.productSubType?.find((item: any) => item.productSubTypeId == value2)
+              const isValid = itemSubProductType?.productAddonType?.length > 0
+              return isValid
+
+            },
+            then: (schema) =>
+              schema
+                .required(t('pick_up_order.error.productAddon')),
+          })
+        ,
         weight: Yup.number()
           .moreThan(0, t('pick_up_order.error.weightGreaterThanZero'))
           .required(t('pick_up_order.error.weight'))
@@ -408,11 +481,60 @@ const CreateRecycleForm = ({
     }
   })
 
+  const validateRemarks = (): boolean => {
+
+    try {
+
+      let isValid = true
+
+      const {
+        isProductSubTypeOthers,
+        isProductAddonTypeOthers,
+        isConfirmed,
+      } = openConfirmModal?.tempData
+
+      const isTypeOthers = (isProductSubTypeOthers || isProductAddonTypeOthers)
+
+      let isRemarksMissing = false
+
+      if (isProductSubTypeOthers) {
+        isRemarksMissing = !Boolean(formik?.values?.productSubTypeRemark)
+      }
+      if (isProductAddonTypeOthers) {
+        isRemarksMissing = !Boolean(formik?.values?.productAddonTypeRemark)
+      }
+
+      if (isTypeOthers && !isConfirmed && isRemarksMissing) {
+
+        isValid = false
+        setOpenConfirmModal({
+          ...openConfirmModal,
+          isOpen: true,
+        })
+
+      }
+      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 491 ~ validateRemarks ~ isTypeOthers", isTypeOthers)
+      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 494 ~ validateRemarks ~ isRemarksMissing", isRemarksMissing)
+      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 513 ~ validateRemarks ~ isValid", isValid)
+      return isValid
+
+    }
+    catch (err) {
+
+      return true
+
+    }
+
+  }
+
   const formik = useFormik({
     initialValues: initValue,
     validationSchema: validateSchema,
 
     onSubmit: (values, { resetForm }) => {
+
+      if (!validateRemarks()) return
+
       if (isDetailDouble) return
       if (isEditing) {
         //editing row
@@ -462,6 +584,7 @@ const CreateRecycleForm = ({
       setDefaultRecyc(undefined)
       setDefaultProduct(undefined)
       resetForm()
+      setOpenConfirmModal(initialState.openConfirmModal)
       onClose && onClose()
     }
   })
@@ -506,6 +629,7 @@ const CreateRecycleForm = ({
     setEditRow(null)
     setDefaultRecyc(undefined)
     setDefaultProduct(undefined)
+    setOpenConfirmModal(initialState.openConfirmModal)
     formik.resetForm()
   }
 
@@ -584,9 +708,8 @@ const CreateRecycleForm = ({
     >
       <Divider></Divider>
       <div
-        className={`border-b-[1px] border-grey-line h-full ${
-          openModal ? `md:w-[700px] w-[100vw] mt-[${marginTop}]` : 'hidden'
-        }`}
+        className={`border-b-[1px] border-grey-line h-full ${openModal ? `md:w-[700px] w-[100vw] mt-[${marginTop}]` : 'hidden'
+          }`}
       >
         <form onSubmit={formik.handleSubmit}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -708,19 +831,28 @@ const CreateRecycleForm = ({
                       key={formik.values.picoDtlId}
                     />
                   </CustomField>
-                ) : 
+                ) :
                   <CustomField label={t('pick_up_order.product_type.product')} mandatory>
                     <ProductListSingleSelect
                       showError={(formik.errors?.productType && formik.touched?.productType) || undefined}
                       label={t('pick_up_order.product_type.product')}
                       options={productType ?? []}
                       setState={(values) => {
+                        console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 756 ~ values", values)
+                        setOpenConfirmModal({
+                          ...openConfirmModal,
+                          tempData: {
+                            ...openConfirmModal.tempData,
+                            isProductSubTypeOthers: Boolean(values?.isProductSubTypeOthers),
+                            isProductAddonTypeOthers: Boolean(values?.isProductAddonTypeOthers),
+                          }
+                        })
                         formik.setFieldValue('itemCategory', Boolean(isRecyc) === true ? 'Recyclables' : 'Product')
                         formik.setFieldValue('productType', values?.productTypeId)
                         formik.setFieldValue('productSubType', values?.productSubTypeId)
                         formik.setFieldValue('productAddon', values?.productAddonId)
-                        formik.setFieldValue('productSubtypeRemark', values?.productSubtypeRemark)
-                        formik.setFieldValue('productAddonRemark', values?.productAddonRemark)
+                        formik.setFieldValue('productSubTypeRemark', values?.productSubTypeRemark)
+                        formik.setFieldValue('productAddonTypeRemark', values?.productAddonTypeRemark)
                         formik.setFieldValue('recycType', '')
                         formik.setFieldValue('recycSubType', '')
                       }}
@@ -737,7 +869,7 @@ const CreateRecycleForm = ({
                     />
                   </CustomField>
                 }
-                
+
                 <CustomField
                   label={t('pick_up_order.recyclForm.weight')}
                   mandatory
@@ -897,6 +1029,24 @@ const CreateRecycleForm = ({
                     )}
                 </Stack>
               </Stack>
+              <ConfirmModal
+                isOpen={openConfirmModal?.isOpen}
+                message={t('pick_up_order.confirm_empty_remarks')}
+                onConfirm={async () => {
+                  setOpenConfirmModal({
+                    isOpen: false,
+                    tempData: {
+                      ...openConfirmModal.tempData,
+                      isConfirmed: true,
+                    }
+                  })
+                  formik.handleSubmit()
+                }}
+                onCancel={() => setOpenConfirmModal({
+                  ...openConfirmModal,
+                  isOpen: false,
+                })}
+              />
             </Box>
             {/* </Box> */}
           </LocalizationProvider>

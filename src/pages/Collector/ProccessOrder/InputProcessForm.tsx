@@ -77,8 +77,8 @@ const InputProcessForm = ({
         productTypeId: '',
         productSubTypeId: '',
         productAddonId: '',
-        productSubtypeRemark: '',
-        productAddonRemark: ''
+        productSubTypeRemark: '',
+        productAddonTypeRemark: ''
       },
       processOrderDetailRecyc: {
         recycTypeId: '',
@@ -97,8 +97,8 @@ const InputProcessForm = ({
         productTypeId: '',
         productSubTypeId: '',
         productAddonId: '',
-        productSubtypeRemark: '',
-        productAddonRemark: ''
+        productSubTypeRemark: '',
+        productAddonTypeRemark: ''
       },
       processOrderDetailRecyc: {
         recycTypeId: '',
