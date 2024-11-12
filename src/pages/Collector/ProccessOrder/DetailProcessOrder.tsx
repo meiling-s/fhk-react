@@ -1,14 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import {
-  Box,
-  Divider,
-  Grid,
-  InputAdornment,
-  Modal,
-  Stack,
-  Typography
-} from '@mui/material'
+import { Box, Divider, Grid, Modal, Stack, Typography } from '@mui/material'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import { ToastContainer } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
@@ -20,12 +12,14 @@ import WarehouseIcon from '@mui/icons-material/Warehouse'
 import ScaleIcon from '@mui/icons-material/Scale'
 import RecyclingIcon from '@mui/icons-material/Recycling'
 
+import { ProcessOrderItem } from '../../../interfaces/processOrderQuery'
 import { getPrimaryColor } from '../../../utils/utils'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import { styles } from '../../../constants/styles'
 import CustomButton from '../../../components/FormComponents/CustomButton'
 import CustomItemList from '../../../components/FormComponents/CustomItemList'
+import dayjs from 'dayjs'
 
 type CancelForm = {
   open: boolean
@@ -114,19 +108,51 @@ const CancelModal: React.FC<CancelForm> = ({
 
 const DetailProcessOrder = ({
   drawerOpen,
-  handleDrawerClose
+  handleDrawerClose,
+  selectedRow
 }: {
   drawerOpen: boolean
   handleDrawerClose: () => void
+  selectedRow: ProcessOrderItem | null
 }) => {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [cancelModalOpen, setCancelModalOpen] = useState<boolean>(false)
+  const { dateFormat } = useContainer(CommonTypeContainer)
+  const warehouselist = selectedRow?.processOrderDetail
+    .flatMap((detail: any) => detail.processOrderDetailWarehouse)
+    .map((warehouse: any) => warehouse.warehouseId)
+    .join(', ')
 
   const onDeleteData = () => {
     setCancelModalOpen(true)
   }
 
   const handleDelete = () => {}
+
+  let porDetails: any = []
+
+  selectedRow?.processOrderDetail.map((item) => {
+    porDetails.push({
+      category: item.processAction,
+      startTime: item.plannedStartAt,
+      weight: item.estInWeight,
+      warehouse: item.processOrderDetailWarehouse
+        .map((item) => item)
+        .join(', '),
+      items: [
+        {
+          status: selectedRow.status,
+          details: {
+            itemCategory: 'Recycling product',
+            mainCategory: 'productTypeId, recycTypeId',
+            subcategory: 'productSubTypeId, recycSubTypeId'
+          }
+        }
+      ]
+    })
+  })
+
+  useEffect(()=> {})
 
   const dummyData = [
     {
@@ -203,13 +229,20 @@ const DetailProcessOrder = ({
               <Grid item>
                 <CustomField label={t('processOrder.porDatetime')}>
                   <Typography sx={localStyles.textField}>
-                    現在 (2023/09/20 6:00pm)
+                    {selectedRow?.processStartAt
+                      ? dayjs
+                          .utc(selectedRow?.processStartAt)
+                          .tz('Asia/Hong_Kong')
+                          .format(`${dateFormat} HH:mm`)
+                      : ''}
                   </Typography>
                 </CustomField>
               </Grid>
               <Grid item>
                 <CustomField label={t('processOrder.workshop')}>
-                  <Typography sx={localStyles.textField}>火炭工場</Typography>
+                  <Typography sx={localStyles.textField}>
+                    {warehouselist}
+                  </Typography>
                 </CustomField>
               </Grid>
               <Grid item>
@@ -220,8 +253,8 @@ const DetailProcessOrder = ({
                 </Box>
               </Grid>
               {/* //box item */}
-              {dummyData.map((it) => (
-                <Grid item>
+              {porDetails.map((it: any, idx: number) => (
+                <Grid item key={idx}>
                   <Box
                     sx={{
                       background: '#FBFBFB',
@@ -235,8 +268,8 @@ const DetailProcessOrder = ({
                       {it.category}
                     </Typography>
                     <Divider></Divider>
-                    {it.items.map((item) => (
-                      <Box>
+                    {it.items.map((item: any, index: number) => (
+                      <Box key={index}>
                         <Typography sx={localStyles.header2}>
                           {item.status}
                         </Typography>
@@ -245,37 +278,43 @@ const DetailProcessOrder = ({
                           <div className="flex items-normal w-44">
                             <CalendarTodayIcon sx={localStyles.labelIcon} />
                             <Typography sx={localStyles.label}>
-                              開始日期及時間
+                              {t('processOrder.details.startdateTime')}
                             </Typography>
                           </div>
                           <Typography sx={localStyles.value}>
-                            2023/09/18 18:00
+                            {item.startTime}
                           </Typography>
                         </Box>
 
                         <Box sx={localStyles.label}>
                           <div className="flex items-normal w-44">
                             <WarehouseIcon sx={localStyles.labelIcon} />
-                            <Typography sx={localStyles.label}>貨倉</Typography>
+                            <Typography sx={localStyles.label}>
+                              {t('processOrder.create.warehouse')}
+                            </Typography>
                           </div>
                           <Typography sx={localStyles.value}>
-                            貨倉 1、貨倉 2
+                            {item.warehouse}
                           </Typography>
                         </Box>
 
                         <Box sx={localStyles.label}>
                           <div className="flex items-normal w-44">
                             <ScaleIcon sx={localStyles.labelIcon} />
-                            <Typography sx={localStyles.label}>重量</Typography>
+                            <Typography sx={localStyles.label}>
+                              {t('jobOrder.weight')}
+                            </Typography>
                           </div>
-                          <Typography sx={localStyles.value}>20kg</Typography>
+                          <Typography sx={localStyles.value}>
+                            {item.weight}kg
+                          </Typography>
                         </Box>
 
                         <Box sx={localStyles.label}>
                           <div className="flex items-normal w-44">
                             <RecyclingIcon sx={localStyles.labelIcon} />
                             <Typography sx={localStyles.label}>
-                              物品類別
+                              {t('processOrder.details.itemCategory')}
                             </Typography>
                           </div>
                           <Box>
@@ -293,7 +332,7 @@ const DetailProcessOrder = ({
                             <Typography
                               sx={{ ...localStyles.label, marginLeft: '18px' }}
                             >
-                              主類別
+                              {t('settings_page.recycling.main_category')}
                             </Typography>
                           </div>
                           <Box>
@@ -313,7 +352,7 @@ const DetailProcessOrder = ({
                             <Typography
                               sx={{ ...localStyles.label, marginLeft: '18px' }}
                             >
-                              次類別
+                              {t('settings_page.recycling.sub_category')}
                             </Typography>
                           </div>
                           <Box>

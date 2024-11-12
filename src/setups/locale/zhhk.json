@@ -1516,6 +1516,7 @@
     "inventoryLocation": "送出地點"
   },
   "processOrder": {
+    "title": "Process Order",
     "processOrder": "處理訂單",
     "enterOrderNumber": "輸入訂單編號",
     "porDatetime": "處理日期及時間",
@@ -1530,16 +1531,18 @@
       "itemToProcess": "預計待處理物品",
       "itemCategory": "物品類別 (按一下類別顯示子類別，按兩下取消選擇)",
       "recycling": "回收物",
-      "product": "產品",
-      "manuProduct": "製成品類別",
-      "plasticCategory": "1號膠類別",
-      "waterBottle": "水樽類別",
       "warehouse": "貨倉"
     },
     "details": {
       "oderDetail": "訂單詳情",
       "cancelTitle": "確認取消處理訂單嗎？",
-      "cancelSubTitle": "取消原因（可多選）"
+      "cancelSubTitle": "取消原因（可多選）",
+      "startdateTime": "開始日期和時間",
+      "itemCategory": "項目類別"
+    },
+    "table": {
+      "startOrFinishDate": "開始/結束日期",
+      "processIn": "處理輸入"
     }
   }
 }

@@ -1522,6 +1522,7 @@
     "inventoryLocation": "Sender Location"
   },
   "processOrder": {
+    "title": "Process Order",
     "processOrder": "Process an order",
     "enterOrderNumber": "Enter Order Number",
     "porDatetime": "Processing date and time",
@@ -1537,15 +1538,18 @@
       "itemCategory": "Item category (click a category to display subcategories, double-click",
       "recycling": "Recycling",
       "product": "Product",
-      "manuProduct": "Manufactured goods category",
-      "plasticCategory": "No. 1 plastic category",
-      "waterBottle": "Water Bottle Category",
-      "warehouse": "warehouse"
+      "warehouse": "Warehouse"
     },
     "details": {
       "oderDetail": "Order Details",
       "cancelTitle": "Are you sure you want to cancel the order?",
-      "cancelSubTitle": "Reason for cancellation (multiple choices available)"
+      "cancelSubTitle": "Reason for cancellation (multiple choices available)",
+      "startdateTime": "Start date and time",
+      "itemCategory": "Item Category"
+    },
+    "table": {
+      "startOrFinishDate": "Start / Finish date",
+      "processIn": "Processin"
     }
   }
 }

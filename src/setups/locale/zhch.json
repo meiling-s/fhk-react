@@ -1522,6 +1522,7 @@
     "inventoryLocation": "送出地点"
   },
   "processOrder": {
+    "title": "Process Order",
     "processOrder": "处理订单",
     "enterOrderNumber": "输入订单编号",
     "porDatetime": "处理日期及时间",
@@ -1537,15 +1538,18 @@
       "itemCategory": "物品类别（点选类别显示子类别，双击取消选择）",
       "recycling": "回收",
       "product": "产品",
-      "manuProduct": "制成品类别",
-      "plasticCategory": "1号塑胶类别",
-      "waterBottle": "水瓶类别",
       "warehouse": "仓库"
     },
     "details": {
       "oderDetail": "订单详情",
       "cancelTitle": "确认取消处理订单吗？",
-      "cancelSubTitle": "取消原因（可多选）"
+      "cancelSubTitle": "取消原因（可多选）",
+      "startdateTime": "開始日期和時間",
+      "itemCategory": "項目類別"
+    },
+    "table": {
+      "startOrFinishDate": "開始/結束日期",
+      "processIn": "进程"
     }
   }
 }

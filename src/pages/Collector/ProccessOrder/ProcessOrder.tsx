@@ -13,17 +13,33 @@ import StatusCard from '../../../components/StatusCard'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import CircularLoading from '../../../components/CircularLoading'
 
-import { localStorgeKeyName, Languages } from '../../../constants/constant'
+import {
+  localStorgeKeyName,
+  Languages,
+  STATUS_CODE
+} from '../../../constants/constant'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { getPrimaryColor, statusList } from '../../../utils/utils'
+import {
+  getPrimaryColor,
+  porStatusList,
+  debounce,
+  extractError
+} from '../../../utils/utils'
 import DetailProcessOrder from './DetailProcessOrder'
+import { getProcessOrder } from '../../../APICalls/processOrder'
+import {
+  PorQuery,
+  ProcessOrderItem
+} from '../../../interfaces/processOrderQuery'
 
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import { getAllWarehouse } from '../../../APICalls/warehouseManage'
+import { il_item } from '../../../components/FormComponents/CustomItemList'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -31,15 +47,6 @@ dayjs.extend(timezone)
 interface Option {
   value: string
   label: string
-}
-
-interface ProcessOrderRow {
-  id: number
-  createdAt: string
-  porId: string
-  category: string
-  workshop: string
-  status: string
 }
 
 const ProcessOrder = () => {
@@ -50,41 +57,29 @@ const ProcessOrder = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [detailDrawer, setDetailDrawer] = useState<boolean>(false)
-  const [selectedRow, setSelectedRow] = useState<ProcessOrderRow | null>(null)
-  //   const [processOrderList, setProcessOrderList] = useState<ProcessOrderRow[]>(
-  //     []
-  //   )
+  const [selectedRow, setSelectedRow] = useState<ProcessOrderItem | null>(null)
+  const [processOrderList, setProcessOrderList] = useState<ProcessOrderItem[]>(
+    []
+  )
+  const [warehouseList, setWarehouseList] = useState<il_item[]>([])
+  const [searchQuery, setSearchQuery] = useState<PorQuery | null>({
+    labelId: '',
+    frmCreatedDate: '',
+    toCreatedDate: '',
+    status: ''
+  } as PorQuery)
+
   const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
-
-  const { dateFormat } = useContainer(CommonTypeContainer)
-
-  const dummyPOR: ProcessOrderRow[] = [
-    {
-      id: 1,
-      createdAt: '2023/09/18 18:00',
-      porId: 'POR12345678',
-      category: '分類、溶膠',
-      workshop: '工場1',
-      status: 'CREATED'
-    },
-    {
-      id: 2,
-      createdAt: '2023/09/18 18:00',
-      porId: 'POR123456763',
-      category: '分類、溶膠',
-      workshop: '工場1',
-      status: 'CREATED'
-    }
-  ]
+  const { dateFormat, processType } = useContainer(CommonTypeContainer)
 
   let columns: GridColDef[] = [
     {
-      field: 'createdAt',
+      field: 'processStartAt',
       headerName: t('processOrder.porDatetime'),
       width: 200,
       renderCell: (params) => {
         return dayjs
-          .utc(params.row.createdAt)
+          .utc(params.row.processStartAt)
           .tz('Asia/Hong_Kong')
           .format(`${dateFormat} HH:mm`)
       }
@@ -93,21 +88,34 @@ const ProcessOrder = () => {
       field: 'category',
       headerName: t('processOrder.porCategory'),
       width: 250,
-      editable: true
+      renderCell: (params) => {
+        return '-'
+      }
     },
     {
-      field: 'porId',
+      field: 'labelId',
       headerName: t('processOrder.orderNumber'),
       type: 'string',
-      width: 250,
-      editable: true
+      width: 250
     },
     {
       field: 'workshop',
       headerName: t('processOrder.workshop'),
       type: 'string',
       width: 200,
-      editable: true
+      renderCell: (params) => {
+        const warehouseIds = params.row.processOrderDetail
+          .flatMap((detail: any) => detail.processOrderDetailWarehouse)
+          .map((warehouse: any) => warehouse.warehouseId)
+          .join(', ')
+        return (
+          <div>
+            {params.row.processOrderDetail.length > 0 && (
+              <div>{warehouseIds ? `${warehouseIds}` : '-'}</div>
+            )}
+          </div>
+        )
+      }
     },
     {
       field: 'status',
@@ -123,16 +131,16 @@ const ProcessOrder = () => {
     {
       label: t('job_order.filter.search'),
       placeholder: t('processOrder.enterOrderNumber'),
-      field: 'picoId'
+      field: 'labelId'
     },
     {
       label: t('pick_up_order.filter.dateby'),
-      field: 'effFromDate',
+      field: 'frmCreatedDate',
       inputType: 'date'
     },
     {
       label: t('pick_up_order.filter.to'),
-      field: 'effToDate',
+      field: 'toCreatedDate',
       inputType: 'date'
     },
     {
@@ -143,7 +151,7 @@ const ProcessOrder = () => {
   ]
 
   function getStatusOpion() {
-    const options: Option[] = statusList.map((item) => {
+    const options: Option[] = porStatusList.map((item) => {
       if (i18n.language === Languages.ENUS) {
         return {
           value: item.value,
@@ -164,9 +172,72 @@ const ProcessOrder = () => {
     return options
   }
 
-  const handleSearch = () => {}
+  const initWarehouse = async () => {
+    try {
+      const result = await getAllWarehouse(0, 1000)
+      if (result) {
+        let warehouse: il_item[] = []
+        const data = result.data.content
+        data.forEach((item: any) => {
+          var warehouseName =
+            i18n.language === 'zhhk'
+              ? item.warehouseNameTchi
+              : i18n.language === 'zhch'
+              ? item.warehouseNameSchi
+              : item.warehouseNameTchi
 
-  const handleRowClick = () => {
+          warehouse.push({
+            id: item.warehouseId.toString(),
+            name: warehouseName
+          })
+        })
+        warehouse.push({
+          id: '',
+          name: t('check_in.any')
+        })
+        setWarehouseList(warehouse)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+    }
+  }
+
+  const initProcessOrderList = async () => {
+    setIsLoading(true)
+    const result = await getProcessOrder(page - 1, pageSize, searchQuery)
+    const data = result?.data.content
+    if (data && data.length > 0) {
+      setProcessOrderList(data)
+    } else {
+      setProcessOrderList([])
+    }
+    setTotalData(result?.data.totalPages)
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
+    initProcessOrderList()
+  }, [page, searchQuery])
+
+  useEffect(() => {
+    initWarehouse()
+  }, [])
+
+  const updateQuery = (newQuery: Partial<PorQuery>) => {
+    setSearchQuery({ ...searchQuery, ...newQuery } as PorQuery)
+  }
+
+  const handleSearch = debounce((keyName: string, value: string) => {
+    setPage(1)
+    updateQuery({ [keyName]: value })
+  }, 1000)
+
+  const handleRowClick = (params: GridRowParams) => {
+    const row = params.row as ProcessOrderItem
+    setSelectedRow(row)
     setDetailDrawer(true)
   }
 
@@ -197,7 +268,6 @@ const ProcessOrder = () => {
               marginLeft: '20px'
             }}
             variant="contained"
-            data-testId={'astd-pickup-order-new-button-5743'}
           >
             + {t('col.create')}
           </Button>
@@ -221,14 +291,15 @@ const ProcessOrder = () => {
           ) : (
             <Box>
               <DataGrid
-                rows={dummyPOR}
+                rows={processOrderList}
                 columns={columns}
+                getRowId={(row) => row.processOrderId}
                 disableRowSelectionOnClick
                 onRowClick={handleRowClick}
                 getRowSpacing={getRowSpacing}
                 hideFooter
                 getRowClassName={(params) =>
-                  selectedRow && params.id === selectedRow.porId
+                  selectedRow && params.id === selectedRow.processOrderId
                     ? 'selected-row'
                     : ''
                 }
@@ -236,6 +307,9 @@ const ProcessOrder = () => {
                   border: 'none',
                   '& .MuiDataGrid-cell': {
                     border: 'none'
+                  },
+                  '& .MuiDataGrid-virtualScroller': {
+                    height: processOrderList.length > 0 ? '0' : '50px'
                   },
                   '& .MuiDataGrid-row': {
                     bgcolor: 'white',
@@ -269,6 +343,7 @@ const ProcessOrder = () => {
         <DetailProcessOrder
           drawerOpen={detailDrawer}
           handleDrawerClose={() => setDetailDrawer(false)}
+          selectedRow={selectedRow}
         ></DetailProcessOrder>
       </Box>
     </>

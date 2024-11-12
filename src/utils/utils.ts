@@ -562,3 +562,24 @@ export const statusList: StatusPickUpOrder[] = [
     labelTchi: '任何'
   }
 ]
+
+export const porStatusList: StatusPickUpOrder[] = [
+  {
+    value: 'CREATED',
+    labelEng: 'CREATED',
+    labelSchi: '待处理',
+    labelTchi: '待處理'
+  },
+  {
+    value: 'COMPLETED',
+    labelEng: 'COMPLETED',
+    labelSchi: '已完成',
+    labelTchi: '已完成'
+  },
+  {
+    value: 'DELETED',
+    labelEng: 'DELETED',
+    labelSchi: '已刪除',
+    labelTchi: '已刪除'
+  }
+]
