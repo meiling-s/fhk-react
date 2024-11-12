@@ -1535,7 +1535,7 @@
     "porDatetime": "Processing date and time",
     "porCategory": "Processing category",
     "orderNumber": "Order number",
-    "workshop": "Workshop",
+    "workshop": "Factory",
     "createdate": "Date and place of processing",
     "create": {
       "classification": "Classification",

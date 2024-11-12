@@ -45,8 +45,14 @@ const InputProcessForm = ({
 }) => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  const { processType, recycType, productType, decimalVal } =
-    useContainer(CommonTypeContainer)
+  const {
+    getProcessTypeList,
+    processTypeListData,
+    recycType,
+    getProductType,
+    productType,
+    decimalVal
+  } = useContainer(CommonTypeContainer)
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
   const customListTheme = getThemeCustomList(role) || '#E4F6DC'
   const [warehouseOption, setWarehouseOption] = useState<il_item[]>([])
@@ -145,9 +151,9 @@ const InputProcessForm = ({
 
   const initProcessType = async () => {
     let processList: il_item[] = []
-
-    if (processType) {
-      processType?.forEach((item: any) => {
+    console.log('processTypeListData222', processTypeListData)
+    if (processTypeListData) {
+      processTypeListData?.forEach((item: any) => {
         var name =
           i18n.language === 'zhhk'
             ? item.processTypeNameTchi
@@ -165,6 +171,8 @@ const InputProcessForm = ({
   }
 
   useEffect(() => {
+    getProcessTypeList()
+    getProductType()
     initWarehouse()
     initProcessType()
   }, [])

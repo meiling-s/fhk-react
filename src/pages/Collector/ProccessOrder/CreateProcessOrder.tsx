@@ -77,7 +77,8 @@ const CreateProcessOrder = ({}: {}) => {
 
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
   const colorTheme: string = getThemeColorRole(role)
-  const { dateFormat, processType } = useContainer(CommonTypeContainer)
+  const { dateFormat, getProcessTypeList, processTypeListData } =
+    useContainer(CommonTypeContainer)
   const [processTypeList, setProcessTypeList] = useState<il_item[]>([])
 
   const buttonFilledCustom = {
@@ -171,8 +172,8 @@ const CreateProcessOrder = ({}: {}) => {
   const initProcessType = async () => {
     let processList: il_item[] = []
 
-    if (processType) {
-      processType?.forEach((item: any) => {
+    if (processTypeListData) {
+      processTypeListData?.forEach((item: any) => {
         var name =
           i18n.language === 'zhhk'
             ? item.processTypeNameTchi
@@ -224,6 +225,7 @@ const CreateProcessOrder = ({}: {}) => {
   }
 
   useEffect(() => {
+    getProcessTypeList()
     initWarehouse()
     initProcessType()
   }, [])
@@ -323,7 +325,7 @@ const CreateProcessOrder = ({}: {}) => {
     const result = await createProcessOrder(formData)
     console.log('result', result)
     if (result) {
-      showSuccessToast(t('common.saveFailed'))
+      showSuccessToast(t('common.saveSuccess'))
       navigate(-1)
     } else {
       showErrorToast(t('common.saveFailed'))
@@ -402,17 +404,17 @@ const CreateProcessOrder = ({}: {}) => {
                     }
                   }}
                 >
-                  {warehouseList?.length > 0 ? (
+                  {/* {warehouseList?.length > 0 ? (
                     warehouseList?.map((item, index) => (
                       <MenuItem value={item?.id} key={index}>
                         {item?.name}
                       </MenuItem>
                     ))
-                  ) : (
-                    <MenuItem disabled value="">
-                      <em>{t('common.noOptions')}</em>
-                    </MenuItem>
-                  )}
+                  ) : ( */}
+                  <MenuItem disabled value="">
+                    <em>{t('common.noOptions')}</em>
+                  </MenuItem>
+                  {/* )} */}
                 </Select>
               </FormControl>
             </Grid>
