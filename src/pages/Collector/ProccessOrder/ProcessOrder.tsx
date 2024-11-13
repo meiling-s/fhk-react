@@ -24,7 +24,8 @@ import {
   getPrimaryColor,
   porStatusList,
   debounce,
-  extractError
+  extractError,
+  showSuccessToast
 } from '../../../utils/utils'
 import DetailProcessOrder from './DetailProcessOrder'
 import { getProcessOrder } from '../../../APICalls/processOrder'
@@ -70,7 +71,8 @@ const ProcessOrder = () => {
   } as PorQuery)
 
   const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
-  const { dateFormat, processType } = useContainer(CommonTypeContainer)
+  const { dateFormat, getProcessTypeList, processTypeListData } =
+    useContainer(CommonTypeContainer)
 
   let columns: GridColDef[] = [
     {
@@ -224,6 +226,7 @@ const ProcessOrder = () => {
 
   useEffect(() => {
     initWarehouse()
+    getProcessTypeList()
   }, [])
 
   const updateQuery = (newQuery: Partial<PorQuery>) => {
@@ -239,6 +242,11 @@ const ProcessOrder = () => {
     const row = params.row as ProcessOrderItem
     setSelectedRow(row)
     setDetailDrawer(true)
+  }
+
+  const onSubmitReason = () => {
+    showSuccessToast(t('common.deletedSuccessfully'))
+    initProcessOrderList()
   }
 
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
@@ -344,6 +352,8 @@ const ProcessOrder = () => {
           drawerOpen={detailDrawer}
           handleDrawerClose={() => setDetailDrawer(false)}
           selectedRow={selectedRow}
+          onSubmitReason={onSubmitReason}
+          processTypeListData={processTypeListData}
         ></DetailProcessOrder>
       </Box>
     </>

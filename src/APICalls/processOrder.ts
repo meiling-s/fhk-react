@@ -6,7 +6,7 @@ import {
 } from '../constants/processOrder'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
-import { PorQuery, DeleteOrCancelForm } from '../interfaces/processOrderQuery'
+import { PorQuery, CancelFormPor } from '../interfaces/processOrderQuery'
 
 export const getProcessOrder = async (
   page: number,
@@ -71,7 +71,7 @@ export const createProcessOrder = async (data: any) => {
 }
 
 export const deleteProcessOrder = async (
-  data: DeleteOrCancelForm,
+  data: CancelFormPor,
   processOrderId: number
 ) => {
   try {

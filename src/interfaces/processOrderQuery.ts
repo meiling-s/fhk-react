@@ -13,11 +13,11 @@ export type PorReason = {
   remark: string
 }
 
-export type DeleteOrCancelForm = {
+export type CancelFormPor = {
   status: string
   updatedBy: string
   processOrderRejectReason: PorReason[]
-  version: 0
+  version: number
 }
 
 type ProcessOrderDetailWarehouse = {
@@ -37,6 +37,7 @@ type ProcessOrderDetailProduct = {
 
 type ProcessOrderDetail = {
   processOrderDtlId: number
+  processTypeId: string
   processAction: string
   estInWeight: number
   estOutWeight: number
@@ -57,6 +58,7 @@ type ProcessOrderRejectReason = {
 
 export type ProcessOrderItem = {
   processOrderId: number
+  processTypeId: string
   labelId: string
   tenantId: number
   factoryId: number

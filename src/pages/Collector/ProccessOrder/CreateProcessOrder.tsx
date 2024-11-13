@@ -42,6 +42,7 @@ import { il_item } from '../../../components/FormComponents/CustomItemList'
 import dayjs from 'dayjs'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
+import { DELETE_OUTLINED_ICON, EDIT_OUTLINED_ICON } from 'src/themes/icons'
 
 type rowPorDtl = {
   id: number
@@ -80,6 +81,10 @@ const CreateProcessOrder = ({}: {}) => {
   const { dateFormat, getProcessTypeList, processTypeListData } =
     useContainer(CommonTypeContainer)
   const [processTypeList, setProcessTypeList] = useState<il_item[]>([])
+  //const [rows, setRows] = useState<rowPorDtl[]>([])
+  const [processInDetailData, setProcessInDetailData] = useState<
+    ProcessInDtlData[]
+  >([])
 
   const buttonFilledCustom = {
     borderRadius: '40px',
@@ -164,11 +169,6 @@ const CreateProcessOrder = ({}: {}) => {
     }
   ]
 
-  const [rows, setRows] = useState<rowPorDtl[]>([])
-  const [processInDetailData, setProcessInDetailData] = useState<
-    ProcessInDtlData[]
-  >([])
-
   const initProcessType = async () => {
     let processList: il_item[] = []
 
@@ -252,7 +252,7 @@ const CreateProcessOrder = ({}: {}) => {
         additionalInfo: item.processOrderDetailProduct.productAddonId
       })
     })
-    setRows(rowData)
+    //setRows(rowData)
 
     let rawProcessOrderInDtl: ProcessInDtlData[] = []
     processTypeList.map((item) => {
@@ -325,7 +325,7 @@ const CreateProcessOrder = ({}: {}) => {
     const result = await createProcessOrder(formData)
     console.log('result', result)
     if (result) {
-      showSuccessToast(t('common.saveSuccess'))
+      showSuccessToast(t('common.saveSuccessfully'))
       navigate(-1)
     } else {
       showErrorToast(t('common.saveFailed'))
@@ -334,6 +334,20 @@ const CreateProcessOrder = ({}: {}) => {
 
   const formattedDate = (dateData: dayjs.Dayjs) => {
     return dateData.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+  }
+
+  const handleEdit = (item: ProcessInDtlData) => {}
+
+  const handleDelete = (item: ProcessInDtlData) => {
+    let updateDeleteRow = processInDetailData.filter(
+      (row) => row.id !== item.id
+    )
+    debugger
+    let updateDeleteSource = processOrderDtlSource.filter(
+      (it) => it.processTypeId === item.id
+    )
+    setProcessInDetailData(updateDeleteRow)
+    setProcessOrderDtlSource(updateDeleteSource)
   }
 
   return (
@@ -389,7 +403,7 @@ const CreateProcessOrder = ({}: {}) => {
                   labelId="workshop"
                   id="workshop"
                   placeholder="Select warehouse"
-                  value={selectedWarehouse?.id || ''}
+                  value={''}
                   sx={{
                     borderRadius: '12px',
                     width: '309px',
@@ -404,17 +418,9 @@ const CreateProcessOrder = ({}: {}) => {
                     }
                   }}
                 >
-                  {/* {warehouseList?.length > 0 ? (
-                    warehouseList?.map((item, index) => (
-                      <MenuItem value={item?.id} key={index}>
-                        {item?.name}
-                      </MenuItem>
-                    ))
-                  ) : ( */}
                   <MenuItem disabled value="">
                     <em>{t('common.noOptions')}</em>
                   </MenuItem>
-                  {/* )} */}
                 </Select>
               </FormControl>
             </Grid>
@@ -434,17 +440,42 @@ const CreateProcessOrder = ({}: {}) => {
                   key={index}
                   sx={{
                     height: 'max-content',
-                    width: '100%',
+                    width: 'max-content',
                     background: 'white',
                     padding: 2,
                     borderRadius: '16px',
                     marginBottom: 4
                   }}
                 >
-                  <div>
+                  <div className="flex justify-between items-center">
                     <Typography variant="h6" gutterBottom>
                       {item.name}
                     </Typography>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '8px',
+                        marginBottom: '8px'
+                      }}
+                    >
+                      <EDIT_OUTLINED_ICON
+                        fontSize="small"
+                        className="cursor-pointer text-grey-dark mr-2"
+                        onClick={(event) => {
+                          handleEdit(item)
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <DELETE_OUTLINED_ICON
+                        fontSize="small"
+                        className="cursor-pointer text-grey-dark"
+                        onClick={(event) => {
+                          handleDelete(item)
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    </div>
                   </div>
                   <Divider></Divider>
                   <DataGrid

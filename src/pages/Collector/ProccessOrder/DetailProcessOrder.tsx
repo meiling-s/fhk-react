@@ -12,41 +12,133 @@ import WarehouseIcon from '@mui/icons-material/Warehouse'
 import ScaleIcon from '@mui/icons-material/Scale'
 import RecyclingIcon from '@mui/icons-material/Recycling'
 
-import { ProcessOrderItem } from '../../../interfaces/processOrderQuery'
-import { getPrimaryColor } from '../../../utils/utils'
+import {
+  ProcessOrderItem,
+  CancelFormPor,
+  PorReason
+} from '../../../interfaces/processOrderQuery'
+import {
+  getPrimaryColor,
+  showErrorToast,
+  showSuccessToast
+} from '../../../utils/utils'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import { styles } from '../../../constants/styles'
 import CustomButton from '../../../components/FormComponents/CustomButton'
 import CustomItemList from '../../../components/FormComponents/CustomItemList'
 import dayjs from 'dayjs'
+import {
+  DenialReason,
+  DenialReasonCollectors
+} from 'src/interfaces/denialReason'
+import { localStorgeKeyName } from 'src/constants/constant'
+import { getDenialReasonCollectors } from 'src/APICalls/Collector/denialReasonCollectors'
+import { getAllDenialReason } from 'src/APICalls/Collector/denialReason'
+import { deleteProcessOrder } from 'src/APICalls/processOrder'
+import { il_item } from 'src/components/FormComponents/CustomItemListRecyble'
+import i18n from 'src/setups/i18n'
+import { common } from '@mui/material/colors'
+import CustomTextField from 'src/components/FormComponents/CustomTextField'
+import { ProcessType } from 'src/interfaces/common'
 
 type CancelForm = {
   open: boolean
   onClose: () => void
-  onRejected?: () => void
-  reasonList: any
+  onRejected: () => void
+  processOrderId: number | undefined
 }
 
 const CancelModal: React.FC<CancelForm> = ({
   open,
   onClose,
   onRejected,
-  reasonList
+  processOrderId
 }) => {
   const { t } = useTranslation()
+  const role = localStorage.getItem(localStorgeKeyName.role) || ''
+  const isCollectors = () => {
+    return role === 'collector'
+  }
+  const [reasonList, setReasonList] = useState<il_item[]>([])
   const [rejectReasonId, setRejectReasonId] = useState<string[]>([])
-  const reasons = [
-    {
-      id: '1',
-      name: t('check_out.reason_1')
-    },
-    {
-      id: '1',
-      name: t('check_out.reason_2')
+  const [otherReason, setOtherReason] = useState<il_item | undefined>(undefined)
+  const [showRemark, setShowRemark] = useState<boolean>(false)
+  const [remarkVal, setRemarkVal] = useState<string>('')
+  const [trySubmited, setTrySubmited] = useState<boolean>(false)
+
+  const initDenialReasonList = async () => {
+    let result = null
+    if (isCollectors()) {
+      result = await getDenialReasonCollectors(0, 1000)
+    } else {
+      result = await getAllDenialReason(0, 1000)
     }
-  ]
-  const handleRejectRequest = async (rejectReasonId: string[]) => {}
+    const data = result?.data
+    if (data.content.length > 0) {
+      let reason: il_item[] = []
+      data.content.map((item: DenialReasonCollectors | DenialReason) => {
+        const reasonLabel =
+          i18n.language === 'zhhk'
+            ? item.reasonNameTchi
+            : i18n.language === 'zhch'
+            ? item.reasonNameSchi
+            : item.reasonNameEng
+
+        reason.push({
+          id: item.reasonId.toString(),
+          name: reasonLabel
+        })
+      })
+      setReasonList(reason)
+      const otherRegex = /^(others?|其他的|其它的)$/i
+      setOtherReason(reason.find((re) => otherRegex.test(re.name)))
+    }
+  }
+
+  useEffect(() => {
+    initDenialReasonList()
+  }, [i18n.language])
+
+  const handleSelectReason = (rejectReasonIdList: string[]) => {
+    setRejectReasonId(rejectReasonIdList)
+    if (otherReason) {
+      setShowRemark(rejectReasonIdList.includes(otherReason.id))
+    }
+  }
+
+  const handleDeleteRequest = async () => {
+    setTrySubmited(true)
+    let reasonData: PorReason[] = []
+    rejectReasonId.map((item) => {
+      reasonData.push({
+        reasonId: parseInt(item),
+        remark: ''
+      })
+    })
+
+    const form: CancelFormPor = {
+      status: 'DELETED',
+      updatedBy: role,
+      version: 1,
+      processOrderRejectReason: reasonData
+    }
+
+    if (showRemark && remarkVal === '') {
+      showErrorToast(
+        t('common.remark') + ' ' + t('purchase_order.create.is_required')
+      )
+      return
+    }
+
+    const result = await deleteProcessOrder(form, processOrderId!!)
+    if (result) {
+      onClose()
+      onRejected()
+    } else {
+      showErrorToast(t('common.deleteFailed'))
+    }
+  }
 
   return (
     <Modal
@@ -74,10 +166,25 @@ const CancelModal: React.FC<CancelForm> = ({
             </Typography>
 
             <CustomItemList
-              items={reasons}
-              multiSelect={setRejectReasonId}
+              items={reasonList}
+              multiSelect={handleSelectReason}
               itemColor={{ bgColor: '#F0F9FF', borderColor: getPrimaryColor() }}
             />
+            {showRemark && (
+              <Box>
+                <CustomField label={t('common.remark')} mandatory>
+                  <CustomTextField
+                    id="remark"
+                    value={remarkVal}
+                    placeholder={t(
+                      'settings_page.recycling.remark_placeholder'
+                    )}
+                    onChange={(event) => setRemarkVal(event.target.value)}
+                    error={showRemark && remarkVal === '' && trySubmited}
+                  />
+                </CustomField>
+              </Box>
+            )}
           </Box>
 
           <Box sx={{ alignSelf: 'center' }}>
@@ -85,10 +192,7 @@ const CancelModal: React.FC<CancelForm> = ({
               text={t('check_in.confirm')}
               color="blue"
               style={{ width: '175px', marginRight: '10px' }}
-              onClick={() => {
-                handleRejectRequest(rejectReasonId)
-                onClose()
-              }}
+              onClick={handleDeleteRequest}
             />
             <CustomButton
               text={t('check_in.cancel')}
@@ -106,82 +210,130 @@ const CancelModal: React.FC<CancelForm> = ({
   )
 }
 
+type DetailPORItem = {
+  procesAction: string
+  startTime: string
+  warehouse: string
+  weight: string
+  porItem: {
+    productTypeId: string
+    productSubTypeId: string
+    productAddonTypeId: string
+    recycTypeId: string
+    recycSubTypeId: string
+  }
+}
+
+type DetailPOR = {
+  processTypeId: string
+  processTypeLabel: string
+  item: DetailPORItem[]
+}
+
 const DetailProcessOrder = ({
   drawerOpen,
   handleDrawerClose,
-  selectedRow
+  selectedRow,
+  onSubmitReason,
+  processTypeListData
 }: {
   drawerOpen: boolean
   handleDrawerClose: () => void
   selectedRow: ProcessOrderItem | null
+  onSubmitReason: () => void
+  processTypeListData: ProcessType[] | undefined
 }) => {
   const { t } = useTranslation()
   const [cancelModalOpen, setCancelModalOpen] = useState<boolean>(false)
   const { dateFormat } = useContainer(CommonTypeContainer)
-  const warehouselist = selectedRow?.processOrderDetail
-    .flatMap((detail: any) => detail.processOrderDetailWarehouse)
-    .map((warehouse: any) => warehouse.warehouseId)
-    .join(', ')
+  const [processTypeList, setProcessTypeList] = useState<il_item[]>([])
+  //const [rows, setRows] = useState<rowPorDtl[]>([])
+  const [porDetails, setPorDetails] = useState<DetailPOR[]>([])
 
   const onDeleteData = () => {
     setCancelModalOpen(true)
   }
 
-  const handleDelete = () => {}
+  const initProcessType = async () => {
+    let processList: il_item[] = []
 
-  let porDetails: any = []
+    if (processTypeListData) {
+      processTypeListData?.forEach((item: any) => {
+        var name =
+          i18n.language === 'zhhk'
+            ? item.processTypeNameTchi
+            : i18n.language === 'zhch'
+            ? item.processTypeNameSchi
+            : item.processTypeNameEng
 
-  selectedRow?.processOrderDetail.map((item) => {
-    porDetails.push({
-      category: item.processAction,
-      startTime: item.plannedStartAt,
-      weight: item.estInWeight,
-      warehouse: item.processOrderDetailWarehouse
-        .map((item) => item)
-        .join(', '),
-      items: [
-        {
-          status: selectedRow.status,
-          details: {
-            itemCategory: 'Recycling product',
-            mainCategory: 'productTypeId, recycTypeId',
-            subcategory: 'productSubTypeId, recycSubTypeId'
-          }
-        }
-      ]
-    })
-  })
-
-  useEffect(()=> {})
-
-  const dummyData = [
-    {
-      category: '分類 1',
-      items: [
-        {
-          status: '待處理',
-          details: []
-        },
-        {
-          status: '處理後',
-          details: []
-        }
-      ]
-    },
-    {
-      category: '溶膠 2',
-      items: [
-        {
-          status: '待處理',
-          details: []
-        },
-        {
-          status: '處理後',
-          details: []
-        }
-      ]
+        processList.push({
+          id: item.processTypeId.toString(),
+          name: name
+        })
+      })
+      setProcessTypeList(processList)
+      mappingDetail()
     }
-  ]
+  }
+
+  const mappingDetail = () => {
+    setPorDetails([])
+    let rawPorDetails: DetailPOR[] = []
+    processTypeList.map((type) => {
+      let selectedItem = selectedRow?.processOrderDetail.filter(
+        (it) => type.id === it.processTypeId
+      )
+      let rawItem: DetailPORItem[] = []
+
+      if (selectedItem && selectedItem?.length > 0) {
+        selectedItem.map((it) => {
+          const warehouselist = selectedRow?.processOrderDetail
+            .flatMap((detail: any) => detail.processOrderDetailWarehouse)
+            .map((warehouse: any) => warehouse.warehouseId)
+            .join(', ')
+
+          rawItem.push({
+            procesAction: it.processAction,
+            startTime: it.plannedStartAt,
+            warehouse: warehouselist ?? '-',
+            weight: it.estInWeight.toString(),
+            porItem: {
+              productTypeId:
+                it.processOrderDetailProduct[0]?.productTypeId ?? '-',
+              productSubTypeId:
+                it.processOrderDetailProduct[0]?.productTypeId ?? '-',
+              productAddonTypeId:
+                it.processOrderDetailProduct[0]?.productTypeId ?? '-',
+              recycTypeId: it.processOrderDetailRecyc[0]?.recycTypeId ?? '-',
+              recycSubTypeId: it.processOrderDetailRecyc[0]?.recycTypeId ?? '-'
+            }
+          })
+        })
+        rawPorDetails.push({
+          processTypeId: type.id,
+          processTypeLabel: type.name,
+          item: rawItem
+        })
+      }
+    })
+    setPorDetails(rawPorDetails)
+
+    console.log('rawPorDetails', rawPorDetails)
+  }
+
+  useEffect(() => {
+    //getProcessTypeList()
+    initProcessType()
+  }, [])
+
+  useEffect(() => {
+    mappingDetail()
+  }, [drawerOpen])
+
+  const onDeleteReason = () => {
+    handleDrawerClose()
+    onSubmitReason()
+  }
 
   return (
     <>
@@ -194,13 +346,13 @@ const DetailProcessOrder = ({
           action={'edit'}
           headerProps={{
             title: t('processOrder.details.oderDetail'),
-            subTitle: 'POR12333333',
+            subTitle: selectedRow?.labelId,
             onSubmit: onDeleteData,
             onDelete: handleDrawerClose,
             onCloseHeader: handleDrawerClose,
             submitText: t('common.delete'),
             cancelText: '',
-            statusLabel: 'STARTED'
+            statusLabel: selectedRow?.status
           }}
         >
           <Divider></Divider>
@@ -240,9 +392,7 @@ const DetailProcessOrder = ({
               </Grid>
               <Grid item>
                 <CustomField label={t('processOrder.workshop')}>
-                  <Typography sx={localStyles.textField}>
-                    {warehouselist}
-                  </Typography>
+                  <Typography sx={localStyles.textField}>{'-'}</Typography>
                 </CustomField>
               </Grid>
               <Grid item>
@@ -253,7 +403,7 @@ const DetailProcessOrder = ({
                 </Box>
               </Grid>
               {/* //box item */}
-              {porDetails.map((it: any, idx: number) => (
+              {porDetails.map((it: DetailPOR, idx: number) => (
                 <Grid item key={idx}>
                   <Box
                     sx={{
@@ -265,13 +415,13 @@ const DetailProcessOrder = ({
                     }}
                   >
                     <Typography sx={localStyles.header2}>
-                      {it.category}
+                      {it.processTypeLabel}
                     </Typography>
                     <Divider></Divider>
-                    {it.items.map((item: any, index: number) => (
+                    {it.item.map((item: DetailPORItem, index: number) => (
                       <Box key={index}>
                         <Typography sx={localStyles.header2}>
-                          {item.status}
+                          {t('processOrder.table.processIn')}
                         </Typography>
 
                         <Box sx={localStyles.label}>
@@ -282,7 +432,12 @@ const DetailProcessOrder = ({
                             </Typography>
                           </div>
                           <Typography sx={localStyles.value}>
-                            {item.startTime}
+                            {item.startTime
+                              ? dayjs
+                                  .utc(selectedRow?.processStartAt)
+                                  .tz('Asia/Hong_Kong')
+                                  .format(`${dateFormat} HH:mm`)
+                              : ''}
                           </Typography>
                         </Box>
 
@@ -369,8 +524,12 @@ const DetailProcessOrder = ({
           </Box>
           <CancelModal
             open={cancelModalOpen}
-            onClose={handleDrawerClose}
-            reasonList={[]}
+            onClose={() => {
+              setCancelModalOpen(false)
+              handleDrawerClose()
+            }}
+            onRejected={onDeleteReason}
+            processOrderId={selectedRow?.processOrderId}
           ></CancelModal>
         </RightOverlayForm>
       </Box>

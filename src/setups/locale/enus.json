@@ -1556,7 +1556,7 @@
     },
     "table": {
       "startOrFinishDate": "Start / Finish date",
-      "processIn": "Processin"
+      "processIn": "Process In"
     }
   }
 }
