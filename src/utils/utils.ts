@@ -491,3 +491,20 @@ export function debounce<T extends (...args: any[]) => void>(
     }, delay)
   }
 }
+
+export const getFormatId = (id: string): string => {
+  let initId: string = '000000';
+
+  if (id?.length === 0 || !id) {
+    initId = '';
+  } else if (id?.length < 6) {
+    initId = initId.slice(id?.length, initId?.length) + id
+  } else {
+    initId = id;
+  }
+  return initId
+};
+
+export const cloneData = (data: any) => {
+  return JSON.parse(JSON.stringify(data))
+}

@@ -45,7 +45,10 @@
     "warehouseName": "Warehouse Name already Exist",
     "vehicle": "Vehicle",
     "theNameAlreadyExist": "Staff position name already exist",
-    "leaveConfirmMsg": "Are you sure you want to leave this page? Unsaved changes will be lost"
+    "leaveConfirmMsg": "Are you sure you want to leave this page? Unsaved changes will be lost",
+    "noData": "No Data",
+    "category": "Category",
+    "subCategory": "Sub Category"
   },
   "col": {
     "createCP": "Create Collection Point",
@@ -173,7 +176,32 @@
     "add_new_vehicle": "Add New Vehicle"
   },
   "settings_page": {
-    "title": "Settings"
+    "title": "Settings",
+    "recycling": {
+      "semi_finish_product": "Semi-finished Products ・ Product Categories",
+      "remarks": "Remarks",
+      "remark_placeholder": "Please enter remark",
+      "add_new": "Add New",
+      "product_category": "Product Category",
+      "traditional_chinese_name": "Traditional Chinese Name",
+      "traditional_chinese_name_placeholder": "Please enter Traditional Chinese Name",
+      "simplified_chinese_name": "Simplified Chinese Name",
+      "simplified_chinese_name_placeholder": "Please enter Simplified Chinese Name",
+      "english_name": "English Name",
+      "english_name_placeholder": "Please enter English Name",
+      "introduction": "Introduction",
+      "introduction_placeholder": "Please enter introduction",
+      "category": "Category",
+      "main_category": "Main Category",
+      "sub_category": "Sub Category",
+      "additional_category": "Add-on Category",
+      "plastic_no_1": "Plastic 1",
+      "plastic_no_2": "Plastic 2",
+      "enter_text": "Please enter text",
+      "water_bottle": "Water Bottle",
+      "film": "Film",
+      "edit": "Edit"
+    }
   },
   "warehouse_page": {
     "trad_name": "Traditional Name",
@@ -370,6 +398,9 @@
     "card_detail": {
       "main_category": "Recyclable Type",
       "subcategory": "Recyclable Subtype",
+      "product_type_label": "Product Type",
+      "sub_product_type_label": "Product SubType",
+      "addon_product_type_label": "Product Addon",
       "shipping_time": "Estimated Shipping Time",
       "weight": "Established Weight",
       "shipping_receiver": "Shipping and Receiving Companies",
@@ -466,6 +497,9 @@
       "recycling_location": "Sender Location",
       "arrived": "Receiver Location",
       "placeholder": "Please Enter Location",
+      "placeholder_shipping_company": "Please enter sender company",
+      "placeholder_receiver_company": "Please enter receiver company",
+      "select_po": "Select PO",
       "item_category": "Item Category"
     },
     "product_type": {
@@ -480,6 +514,7 @@
     "confirm_reject": "Confirm reject",
     "confirm_approve_title": "Confirm approve?",
     "confirm_reject_title": "Confirm reject?",
+    "confirm_empty_remarks": "The remark is empty, are you sure to save?",
     "approved_success": "Approved successfully",
     "rejected_success": "Rejected successfully",
     "reject_reasons": "Reasons for rejection",
@@ -493,8 +528,11 @@
       "senderAddr": "This sender address should not be empty",
       "receiverName": "This receiver Name should not be empty",
       "receiverAddr": "This receiver address should not be empty",
-      "recycType": "This recycType should not be empty",
-      "recycSubType": "This recycSubType should not be empty",
+      "recycType": "This recyclable type should not be empty",
+      "recycSubType": "This recyclable sub type should not be empty",
+      "productType": "This product type should not be empty",
+      "productSubType": "This product sub type should not be empty",
+      "productAddon": "This product addon should not be empty",
       "weight": "This weight should not be empty",
       "weightGreaterThanZero": "This weight should greater than zero",
       "invalid_date": "invalid-date",
@@ -798,6 +836,7 @@
     "suspend": "Suspended",
     "deleted": "Deleted",
     "staffId": "Staff ID",
+    "isAdmin": "Is Administrator",
     "successCreatedUser": "Success created user",
     "failedCreatedUser": "Failed created user",
     "successEditUser": "Success edit user",
@@ -1062,6 +1101,7 @@
     },
     "vehicleMenu": {
       "vehicle_number": "Vehicle ID",
+      "imei":"IMEI Number",
       "license_plate_number": "License Plate No.",
       "vehicle_type": "Vehicle Type",
       "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
@@ -1173,7 +1213,10 @@
     "report_of_user_management_list": "The Report of User Management List",
     "report_of_audit_trail": "The Report of Audit Trail",
     "report_of_user_activity": "The Report of User Activity",
-    "report_of_notification": "The Report of Notification"
+    "report_of_notification": "The Report of Notification",
+    "report_formula": "Report Formula",
+    "formula_check_in": "Check In",
+    "formula_check_out": "Check Out"
   },
   "purchase_order": {
     "all_order": "All Orders",

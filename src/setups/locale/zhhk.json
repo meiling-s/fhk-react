@@ -45,7 +45,10 @@
     "warehouseName": "倉庫名稱已存在",
     "vehicle": "車輛",
     "theNameAlreadyExist": "員工職位名稱已存在",
-    "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失"
+    "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失",
+     "noData": "沒有數據",
+     "category": "類別",
+    "subCategory": "次類別"
   },
   "col": {
     "createCP": "建立回收點",
@@ -173,7 +176,32 @@
     "add_new_vehicle": "新增車輛"
   },
   "settings_page": {
-    "title": "設定"
+    "title": "設定",
+    "recycling": {
+      "semi_finish_product": "半成品 ・ 產品類別",
+      "remarks": "備註",
+      "remark_placeholder": "請輸入備註",
+      "add_new": "新增",
+      "product_category": "產品類別",
+      "traditional_chinese_name": "繁體中文名稱",
+      "traditional_chinese_name_placeholder": "請輸入繁體中文名稱",
+      "simplified_chinese_name": "簡體中文名稱",
+      "simplified_chinese_name_placeholder": "請輸入簡體中文名稱",
+      "english_name": "英文名稱",
+      "english_name_placeholder": "請輸入英文名稱",
+      "introduction": "簡介",
+      "introduction_placeholder": "請輸入簡介",
+      "category": "類別",
+      "main_category": "主類別",
+      "sub_category": "次類別",
+      "additional_category": "追加類別",
+      "plastic_no_1": "1號膠",
+      "plastic_no_2": "2號膠",
+      "enter_text": "請輸入文字",
+      "water_bottle": "水",
+      "film": "菲林",
+      "edit": "修改"
+    }
   },
   "warehouse_page": {
     "trad_name": "繁體中文名稱",
@@ -367,6 +395,9 @@
     },
     "card_detail": {
       "main_category": "回收物主類別",
+      "product_type_label": "產品類型",
+      "sub_product_type_label": "產品子類型",
+      "addon_product_type_label": "產品插件",
       "subcategory": "回收物次類別",
       "shipping_time": "預計運送時間",
       "weight": "預計重量",
@@ -464,13 +495,15 @@
       "receiver": "收件公司",
       "arrived": "到達地點",
       "placeholder": "請輸入地點",
+      "placeholder_shipping_company": "請輸入寄件公司",
+      "placeholder_receiver_company": "請輸入收貨公司",
       "select_po": "選擇運單",
       "item_category": "物品類別"
     },
     "product_type": {
-      "Product": "製成品類別",
-      "Subtype": "次類別",
-      "Add-on": "追加類別"
+      "product": "製成品類別",
+      "subtype": "次類別",
+      "add-on": "追加類別"
     },
     "select_po": "選擇運單",
     "search_company_name": "輸入寄件者公司",
@@ -479,6 +512,7 @@
     "confirm_reject": "確認拒絕",
     "confirm_approve_title": "確認接受嗎？",
     "confirm_reject_title": "確認拒絕嗎？",
+    "confirm_empty_remarks": "確認備註為空白嗎？",
     "approved_success": "接受成功",
     "rejected_success": "拒絕成功",
     "reject_reasons": "拒絕原因",
@@ -494,6 +528,9 @@
       "receiverAddr": "此接收者位址 不應留白",
       "recycType": "此可回收類型 不應留白",
       "recycSubType": "此可回收子類型 不應留白",
+      "productType": "該產品類型不能為空",
+      "productSubType": "此產品子類型不應為空",
+      "productAddon": "該產品插件不應為空",
       "weight": "該重量 不應留白",
       "weightGreaterThanZero": "這個權重應該大於零",
       "invalid_date": "失效日期",
@@ -796,6 +833,7 @@
     "suspend": "暫停",
     "deleted": "已刪除",
     "staffId": "員工編號",
+    "isAdmin": "是否管理員",
     "successCreatedUser": "成功創建用戶",
     "failedCreatedUser": "創建用戶失敗",
     "successEditUser": "成功編輯用戶",
@@ -1059,6 +1097,7 @@
     },
     "vehicleMenu": {
       "vehicle_number": "車輛編碼",
+      "imei":"IMEI 號碼",
       "license_plate_number": "車牌號碼",
       "vehicle_type": "車輛類型",
       "vehicle_cargo_capacity": "車輛載貨量",
@@ -1170,7 +1209,10 @@
     "report_of_user_management_list": "用户报表",
     "report_of_audit_trail": "审计追踪报表",
     "report_of_user_activity": "用戶活動報表",
-    "report_of_notification": "通知報表"
+    "report_of_notification": "通知報表",
+    "report_formula": "報表數據提取方式",
+    "formula_check_in": "以工廠入貨作準",
+    "formula_check_out": "以回收公司出貨作準"
   },
   "purchase_order": {
     "all_order": "所有訂單",

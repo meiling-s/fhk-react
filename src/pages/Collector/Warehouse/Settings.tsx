@@ -21,6 +21,7 @@ import ASTDDenialReason from '../../ASTD/DenialReason/DenialReason'
 import CustomerGeneralSettings from '../../Customer/GeneralSettings/GeneralSettings'
 import { useNavigate } from "react-router-dom";
 import { extractError } from "../../../utils/utils";
+import ProcessType from "../ProcessType/ProcessType";
 
 const Settings: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -33,6 +34,7 @@ const Settings: FunctionComponent = () => {
   const defaultTabList = [
     t("top_menu.general_settings"),
     t("top_menu.packaging_unit"),
+    t("top_menu.process_type"),
     t("top_menu.workshop"),
     t("top_menu.vehicles"),
     t("top_menu.company"),
@@ -58,13 +60,13 @@ const Settings: FunctionComponent = () => {
     let updatedTabList = [...defaultTabList]
 
     if (role === 'logistic') {
-      const hideTabIndexArr = [2, 3, 5]
+      const hideTabIndexArr = [2, 3, 4, 6]
       updatedTabList = updatedTabList.filter((_, index) => !hideTabIndexArr.includes(index))
     } else if (role === 'customer') {
-      const hideTabIndexArr = [1,2,3,5,7]
+      const hideTabIndexArr = [1,2,3,4,6,8]
       updatedTabList = updatedTabList.filter((_,index) => !hideTabIndexArr.includes(index))
     } else if(role === 'manufacturer') {
-      const hideTabIndexArr = [3]
+      const hideTabIndexArr = [4]
       updatedTabList = updatedTabList.filter((_, index) => !hideTabIndexArr.includes(index))
     }
 
@@ -94,16 +96,18 @@ const Settings: FunctionComponent = () => {
       ) : selectedTab === 1 ? (
         <PackagingUnit/> 
       ) : selectedTab === 2 ? (
-        <Warehouse /> 
+          <ProcessType />
       ) : selectedTab === 3 ? (
-        <Vehicle /> 
+          <Warehouse /> 
       ) : selectedTab === 4 ? (
-        <Company /> 
+        <Vehicle /> 
       ) : selectedTab === 5 ? (
-        <DisposalLocation /> 
+        <Company /> 
       ) : selectedTab === 6 ? (
-        <StaffTitle /> 
+        <DisposalLocation /> 
       ) : selectedTab === 7 ? (
+        <StaffTitle /> 
+      ) : selectedTab === 8 ? (
         <DenialReason /> 
       ) : (
         <div className="p-4 text-center">content not available</div>
@@ -174,14 +178,16 @@ const Settings: FunctionComponent = () => {
       ) : selectedTab === 1 ? (
         <PackagingUnit/> 
       ) : selectedTab === 2 ? (
-        <Warehouse /> 
+        <ProcessType /> 
       ) : selectedTab === 3 ? (
+        <Warehouse />
+    ) :  selectedTab === 4 ? (
         <Company /> 
-      ) : selectedTab === 4 ? (
-        <DisposalLocation /> 
       ) : selectedTab === 5 ? (
+        <DisposalLocation /> 
+      ) : selectedTab === 6 ? (
         <StaffTitle /> 
-      ) : selectedTab === 6? (
+      ) : selectedTab === 7 ? (
         <DenialReason /> 
       ) : (
         <div className="p-4 text-center">content not available</div>

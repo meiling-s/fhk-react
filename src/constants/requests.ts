@@ -634,6 +634,26 @@ export const SEARCH_LOGISTIC_VEHICLE = (
   url: `api/v1/logistic/vehicle/${table}/${vehicleId}`
 })
 
+export const NEW_SEARCH_LOGISTIC_VEHICLE = (
+  table: string,
+  vehicleId?: string,
+  deviceId?: string
+): AxiosRequestConfig => {
+  let url = `api/v1/logistic/vehicle/${table}/search`
+  // if (vehicleId !== undefined) {
+  //   url += `?vehicleId=${vehicleId}`;
+  // }
+
+  // if (deviceId) {
+  //   url += vehicleId ? `&deviceId=${deviceId}` : `?deviceId=${deviceId}`;
+  // }
+
+  return {
+    method: 'get',
+    url: `${url}`
+  }
+}
+
 export const CREATE_LOGISTIC_VEHICLE = (table: string): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/logistic/vehicle/${table}`
@@ -1690,4 +1710,24 @@ export const UPDATE_DENIAL_REASON_COLLECTORS = (
 export const CREATE_USER_ACTIVITY = (loginId: string): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/administrator/userActivity/${loginId}`
+})
+
+export const CREATE_PROCESS_TYPE_DATA = (realmApiRoute: string): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/processtype`
+})
+
+export const GET_PROCESS_TYPE_DATA = (realmApiRoute: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/processtype`
+})
+
+export const UPDATE_PROCESS_TYPE_DATA = (realmApiRoute: string, processTypeId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/${realmApiRoute}/processtype/${processTypeId}`
+})
+
+export const DELETE_PROCESS_TYPE_DATA = (realmApiRoute: string, processTypeId: string): AxiosRequestConfig => ({
+  method: 'delete',
+  url: `api/v1/${realmApiRoute}/processtype/${processTypeId}`
 })

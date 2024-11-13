@@ -9,8 +9,17 @@ import { useTranslation } from 'react-i18next'
 import { Languages } from '../../../constants/constant'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
-import { picoErrorMessages, fieldName, ErrorsField, initialErrors } from '../../../constants/picoErrorMessages'
+import {
+  picoErrorMessages,
+  fieldName,
+  ErrorsField,
+  initialErrors
+} from '../../../constants/picoErrorMessages'
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 
+dayjs.extend(isSameOrAfter)
+dayjs.extend(isSameOrBefore)
 
 const useValidationPickupOrder = (
   pico: CreatePO | EditPo,
@@ -43,7 +52,6 @@ const useValidationPickupOrder = (
       message = errorMessage?.messageTc ?? ''
     }
     return message
-
   }
 
   useEffect(() => {
@@ -113,7 +121,7 @@ const useValidationPickupOrder = (
           }
         })
       }
-      
+
       if (!isValidDayjsISODate(dayjs(pico.effToDate))) {
         isValid = false
         setErrorsField((prev) => {
@@ -167,7 +175,7 @@ const useValidationPickupOrder = (
         }
       })
     }
-    
+
     if (
       pico.picoType === 'ROUTINE' &&
       pico.routineType === 'specificDate' &&
@@ -190,22 +198,27 @@ const useValidationPickupOrder = (
       pico.routineType === 'specificDate' &&
       pico.routine.length >= 1
     ) {
-        const fromDate = dayjs(pico.effFrmDate, 'DD/MM/YY').startOf('day');
-        const toDate = dayjs(pico.effToDate, 'DD/MM/YY').startOf('day');
-       
-        const outOfRangeDates: string[] = [];
+      // const fromDate = dayjs(pico.effFrmDate, dateFormat).startOf('day')
+      // const toDate = dayjs(pico.effToDate, dateFormat).startOf('day')
+      const fromDate = dayjs(pico.effFrmDate).startOf('day')
+      const toDate = dayjs(pico.effToDate).startOf('day')
+      const outOfRangeDates: string[] = []
 
-        pico.routine.map((item: any) => {
-          // Parse the item with the expected format
-          const date = dayjs(item, 'DD/MM/YY').startOf('day');
+      pico.routine.map((item: any) => {
+        // Parse the item with the expected format
+        // const date = dayjs(item, dateFormat).startOf('day')
+        const date = dayjs(item, dateFormat, true).startOf('day')
 
-          // Check if date is within the valid range
-          if (date < fromDate || date > toDate) {
-            outOfRangeDates.push(item);
-            return false;
-          }
-        });
+        const isWithinRange =
+          date.isSameOrAfter(fromDate) && date.isSameOrBefore(toDate)
+        console.log('Is date within range:', isWithinRange)
 
+        // Check if date is within the valid range
+        if (!isWithinRange) {
+          outOfRangeDates.push(item)
+          return false
+        }
+      })
 
       const originalLength = pico?.routine?.length
       const isDuplicatedDate = new Set([...pico?.routine]).size
@@ -223,7 +236,6 @@ const useValidationPickupOrder = (
             }
           }
         })
-        
       } else if (outOfRangeDates.length > 0) {
         isValid = false
         setErrorsField((prev) => {
@@ -237,7 +249,6 @@ const useValidationPickupOrder = (
             }
           }
         })
-     
       } else {
         setErrorsField((prev) => {
           return {
@@ -264,10 +275,7 @@ const useValidationPickupOrder = (
       })
     }
 
-    if (
-      pico.routineType === 'weekly' &&
-      pico.routine.length === 0
-    ) {
+    if (pico.routineType === 'weekly' && pico.routine.length === 0) {
       isValid = false
       setErrorsField((prev) => {
         return {
@@ -316,7 +324,6 @@ const useValidationPickupOrder = (
         }
       })
     }
-   
 
     if (state.length === 0) {
       isValid = false
@@ -575,7 +582,7 @@ const useValidationPickupOrder = (
     if (pico.picoType !== 'AD_HOC') {
       if (
         pico.routineType === 'specificDate' &&
-        pico.routine.length === 0 &&
+        pico.routine.length >= 1 &&
         errorsField.routine.touch
       ) {
         setErrorsField((prev) => {
@@ -583,32 +590,34 @@ const useValidationPickupOrder = (
             ...prev,
             routine: {
               ...prev.routine,
-              status: true,
-              messages: picoErrorMessages['specificDate'],
-              message: getTranslationMessage('specificDate')
+              status: false,
+              messages: {},
+              message: ''
             }
           }
         })
-      } else if (
-        pico.routineType === 'specificDate' &&
-        pico.routine.length >= 1 &&
-        errorsField.routine.touch
-      ) {
-        const fromDate = dayjs(pico.effFrmDate, 'DD/MM/YY').startOf('day');
-        const toDate = dayjs(pico.effToDate, 'DD/MM/YY').startOf('day');
-        const invalidFormatDates: string[] = [];
-        const outOfRangeDates: string[] = [];
+        // const fromDate = dayjs(pico.effFrmDate, dateFormat).startOf('day')
+        // const toDate = dayjs(pico.effToDate, dateFormat).startOf('day')
+        const fromDate = dayjs(pico.effFrmDate).startOf('day')
+        const toDate = dayjs(pico.effToDate).startOf('day')
+        const invalidFormatDates: string[] = []
+        const outOfRangeDates: string[] = []
 
         pico.routine.map((item: any) => {
           // Parse the item with the expected format
-          const date = dayjs(item, 'DD/MM/YY').startOf('day');
+          //const date = dayjs(item, dateFormat).startOf('day')
+          const date = dayjs(item, dateFormat, true).startOf('day')
+
+          const isWithinRange =
+            date.isSameOrAfter(fromDate) && date.isSameOrBefore(toDate)
+          console.log('Is date within range:', isWithinRange)
 
           // Check if date is within the valid range
-          if (date < fromDate || date > toDate) {
-            outOfRangeDates.push(item);
-            return false;
+          if (!isWithinRange) {
+            outOfRangeDates.push(item)
+            return false
           }
-        });
+        })
 
         const originalLength = pico?.routine?.length
         const isDuplicatedDate = new Set([...pico?.routine]).size
@@ -625,7 +634,6 @@ const useValidationPickupOrder = (
               }
             }
           })
-        
         } else if (outOfRangeDates.length > 0) {
           setErrorsField((prev) => {
             return {
@@ -638,7 +646,7 @@ const useValidationPickupOrder = (
               }
             }
           })
-      
+
           setErrorsField((prev) => {
             return {
               ...prev,
@@ -657,7 +665,7 @@ const useValidationPickupOrder = (
             ...prev,
             routine: {
               ...prev.routine,
-              status: false,
+              status: false
             }
           }
         })
@@ -825,7 +833,6 @@ const useValidationPickupOrder = (
   useEffect(() => {
     validateDataChange()
   }, [pico])
-
 
   const changeTouchField = (field: fieldName) => {
     setErrorsField((prev) => {

@@ -218,7 +218,10 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
               },
               weight: detail.weight,
               images: detail.processoutDetailPhoto.map((item) => {
-                return `data:image/jpeg;base64,${item.photo}`
+                if (item.photo.startsWith('data:image/jpeg;base64,')) {
+                  return item.photo;
+                }
+                return `data:image/jpeg;base64,${item.photo}`;
               }),
               unitId: detail.unitId,
               version: detail.version

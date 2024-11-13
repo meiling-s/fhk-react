@@ -139,6 +139,7 @@ export default function CustomDatePicker({
             aria-label="addSerivceHr"
             size="medium"
             onClick={() => removeDate(index)}
+            data-testid='astd-create-edit-pickup-order-routine-specific-date-delete-button-7171'
           >
             <RemoveCircleOutlineIcon sx={styles.disableIcon} />
           </IconButton>
@@ -153,6 +154,7 @@ export default function CustomDatePicker({
           <Button
             sx={{ ...buttonOutlinedGreen_2, marginY: 2 }}
             onClick={(event) => addDate()}
+            data-testid='astd-create-edit-pickup-order-routine-specific-date-new-button-9866'
           >
             <AddCircleOutlineIcon
               sx={{ fontSize: 25, pr: 1, color: roleColor || ' #79CA25' }}

@@ -1115,6 +1115,7 @@ const PickupOrders = () => {
               marginLeft: '20px'
             }}
             variant="contained"
+            data-testId={'astd-pickup-order-new-button-5743'}
           >
             + {t('col.create')}
           </Button>
@@ -1254,6 +1255,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               onClick={() => {
                 if (selectedRow) onDelete()
               }}
+              data-testId='astd-pickup-order-sidebar-confirm-delete-button-5711'
             >
               {t('check_in.confirm')}
             </button>
@@ -1262,6 +1264,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               onClick={() => {
                 onClose()
               }}
+              data-testId='astd-pickup-order-sidebar-cancel-delete-button-9361'
             >
               {t('check_out.cancel')}
             </button>
