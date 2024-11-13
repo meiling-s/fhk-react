@@ -49,7 +49,6 @@ const CardItem = ({
   }
 
   const dataPicoValid = dataPico?.length > 0 && dataPico[index]
-  console.log("🚀 ~ file: PickupOrderCard.tsx ~ line 52 ~ dataPicoValid", dataPicoValid)
 
   const subtType = dataPicoValid?.subTypeName
   const addonTypeName = dataPicoValid?.addonTypeName

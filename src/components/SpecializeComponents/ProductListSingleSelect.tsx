@@ -51,9 +51,7 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({ optio
   const [choosenProductType, setChoosenProductType] = useState<Products | null>(null)
   
   const [choosenProductSubType, setChoosenSubProductType] = useState<ProductSubType | null>(null)
-  console.log("🚀 ~ file: ProductListSingleSelect.tsx ~ line 54 ~ choosenProductSubType", choosenProductSubType)
   const [choosenProductAddon, setChoosenProductAddon] = useState<ProductAddon | null>(null)
-  console.log("🚀 ~ file: ProductListSingleSelect.tsx ~ line 56 ~ choosenProductAddon", choosenProductAddon)
 
   const [productSubTypeRemark, setProductSubTypeRemark] = useState<string>('')
   const [productAddonTypeRemark, setProductAddonRemark] = useState<string>('')
@@ -159,9 +157,6 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({ optio
       isProductSubTypeOthers: choosenProductSubType?.productNameEng === 'Others',
       isProductAddonTypeOthers: choosenProductAddon?.productNameEng === 'Others',
     }
-    console.log("🚀 ~ file: ProductListSingleSelect.tsx ~ line 162 ~ toSingleProduct ~ singleProduct", singleProduct)
-    console.log("🚀 ~ file: ProductListSingleSelect.tsx ~ line 160 ~ toSingleProduct ~ choosenProductSubType", choosenProductSubType)
-    console.log("🚀 ~ file: ProductListSingleSelect.tsx ~ line 162 ~ toSingleProduct ~ choosenProductAddon", choosenProductAddon)
 
     return singleProduct
   }

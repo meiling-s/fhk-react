@@ -181,7 +181,6 @@ const CreateRecycleForm = ({
   const [editRow, setEditRow] = useState<CreatePicoDetail | null>(null)
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
   const [defaultProduct, setDefaultProduct] = useState<singleProduct>()
-  console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 157 ~ defaultProduct", defaultProduct)
 
   const { marginTop } = useContainer(NotifContainer)
   const [isDetailDouble, setIsDetailDouble] = useState(false)
@@ -207,7 +206,6 @@ const CreateRecycleForm = ({
       productAddonTypeRemark: picoDtl.productAddonTypeRemark || '',
       productSubTypeRemark: picoDtl.productSubTypeRemark || '',
     }
-    console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 206 ~ setDefProd ~ defProd", defProd)
 
     setDefaultProduct(defProd)
   }
@@ -257,7 +255,6 @@ const CreateRecycleForm = ({
 
   useEffect(() => {
     if (editRow) {
-      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 230 ~ useEffect ~ editRow", editRow)
       // Set the form field values based on the editRow data
 
       const refactorDataFormik = {
@@ -287,7 +284,6 @@ const CreateRecycleForm = ({
         productAddonTypeRemark: editRow?.productAddonTypeRemark,
         productAddon: editRow?.productAddonType?.productAddonTypeId || editRow.productAddon,
       }
-      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 264 ~ useEffect ~ refactorDataFormik", refactorDataFormik)
 
       formik.setValues(refactorDataFormik)
       setRecycType((editRow.itemCategory === 'Recyclables' || (!refactorDataFormik?.productType)) ? true : false)
@@ -513,9 +509,6 @@ const CreateRecycleForm = ({
         })
 
       }
-      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 491 ~ validateRemarks ~ isTypeOthers", isTypeOthers)
-      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 494 ~ validateRemarks ~ isRemarksMissing", isRemarksMissing)
-      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 513 ~ validateRemarks ~ isValid", isValid)
       return isValid
 
     }
@@ -838,7 +831,6 @@ const CreateRecycleForm = ({
                       label={t('pick_up_order.product_type.product')}
                       options={productType ?? []}
                       setState={(values) => {
-                        console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 756 ~ values", values)
                         setOpenConfirmModal({
                           ...openConfirmModal,
                           tempData: {
