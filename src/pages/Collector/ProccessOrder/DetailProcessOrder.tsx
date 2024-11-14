@@ -235,20 +235,22 @@ const DetailProcessOrder = ({
   handleDrawerClose,
   selectedRow,
   onSubmitReason,
-  processTypeListData
+  processTypeListData,
+  warehouseSource
 }: {
   drawerOpen: boolean
   handleDrawerClose: () => void
   selectedRow: ProcessOrderItem | null
   onSubmitReason: () => void
   processTypeListData: ProcessType[] | undefined
+  warehouseSource: any[]
 }) => {
   const { t } = useTranslation()
   const [cancelModalOpen, setCancelModalOpen] = useState<boolean>(false)
   const { dateFormat } = useContainer(CommonTypeContainer)
   const [processTypeList, setProcessTypeList] = useState<il_item[]>([])
-  //const [rows, setRows] = useState<rowPorDtl[]>([])
   const [porDetails, setPorDetails] = useState<DetailPOR[]>([])
+  const [warehouseList, setWarehouseList] = useState<il_item[]>([])
 
   const onDeleteData = () => {
     setCancelModalOpen(true)
@@ -276,6 +278,28 @@ const DetailProcessOrder = ({
     }
   }
 
+  const initWarehouse = async () => {
+    if (warehouseSource) {
+      let warehouse: il_item[] = []
+
+      warehouseSource.forEach((item: any) => {
+        var warehouseName =
+          i18n.language === 'zhhk'
+            ? item.warehouseNameTchi
+            : i18n.language === 'zhch'
+            ? item.warehouseNameSchi
+            : item.warehouseNameTchi
+
+        warehouse.push({
+          id: item.warehouseId.toString(),
+          name: warehouseName
+        })
+      })
+      setWarehouseList(warehouse)
+      mappingDetail()
+    }
+  }
+
   const mappingDetail = () => {
     setPorDetails([])
     let rawPorDetails: DetailPOR[] = []
@@ -287,15 +311,24 @@ const DetailProcessOrder = ({
 
       if (selectedItem && selectedItem?.length > 0) {
         selectedItem.map((it) => {
-          const warehouselist = selectedRow?.processOrderDetail
+          const warehouseIds = selectedRow?.processOrderDetail
             .flatMap((detail: any) => detail.processOrderDetailWarehouse)
             .map((warehouse: any) => warehouse.warehouseId)
+
+          const warehouseListName = warehouseIds
+            ?.map((id: string) => {
+              const warehouse = warehouseList.find(
+                (it) => it.id === id.toString()
+              )
+              return warehouse ? warehouse.name : null
+            })
+            .filter(Boolean)
             .join(', ')
 
           rawItem.push({
             procesAction: it.processAction,
             startTime: it.plannedStartAt,
-            warehouse: warehouselist ?? '-',
+            warehouse: warehouseListName ?? '-',
             weight: it.estInWeight.toString(),
             porItem: {
               productTypeId:
@@ -317,18 +350,20 @@ const DetailProcessOrder = ({
       }
     })
     setPorDetails(rawPorDetails)
-
-    console.log('rawPorDetails', rawPorDetails)
   }
 
   useEffect(() => {
-    //getProcessTypeList()
-    initProcessType()
-  }, [])
+    if (processTypeListData && warehouseSource) {
+      initProcessType()
+      initWarehouse()
+    }
+  }, [processTypeListData, warehouseSource])
 
   useEffect(() => {
-    mappingDetail()
-  }, [drawerOpen])
+    if (warehouseList.length > 0 && processTypeList.length > 0 && selectedRow) {
+      mappingDetail()
+    }
+  }, [warehouseList, processTypeList, selectedRow])
 
   const onDeleteReason = () => {
     handleDrawerClose()
@@ -444,13 +479,16 @@ const DetailProcessOrder = ({
                         <Box sx={localStyles.label}>
                           <div className="flex items-normal w-44">
                             <WarehouseIcon sx={localStyles.labelIcon} />
+
                             <Typography sx={localStyles.label}>
                               {t('processOrder.create.warehouse')}
                             </Typography>
                           </div>
-                          <Typography sx={localStyles.value}>
-                            {item.warehouse}
-                          </Typography>
+                          <div className="max-w-[250px]">
+                            <Typography sx={localStyles.value}>
+                              {item.warehouse}
+                            </Typography>
+                          </div>
                         </Box>
 
                         <Box sx={localStyles.label}>

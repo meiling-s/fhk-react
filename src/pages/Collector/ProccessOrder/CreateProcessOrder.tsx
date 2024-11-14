@@ -81,7 +81,6 @@ const CreateProcessOrder = ({}: {}) => {
   const { dateFormat, getProcessTypeList, processTypeListData } =
     useContainer(CommonTypeContainer)
   const [processTypeList, setProcessTypeList] = useState<il_item[]>([])
-  //const [rows, setRows] = useState<rowPorDtl[]>([])
   const [processInDetailData, setProcessInDetailData] = useState<
     ProcessInDtlData[]
   >([])
@@ -252,7 +251,6 @@ const CreateProcessOrder = ({}: {}) => {
         additionalInfo: item.processOrderDetailProduct.productAddonId
       })
     })
-    //setRows(rowData)
 
     let rawProcessOrderInDtl: ProcessInDtlData[] = []
     processTypeList.map((item) => {
@@ -276,6 +274,7 @@ const CreateProcessOrder = ({}: {}) => {
         ...data
       ].flat()
       mappingProcessDtl(updatedProcessOrderDtlSource)
+      debugger
       return updatedProcessOrderDtlSource
     })
   }
@@ -342,7 +341,7 @@ const CreateProcessOrder = ({}: {}) => {
     let updateDeleteRow = processInDetailData.filter(
       (row) => row.id !== item.id
     )
-    debugger
+
     let updateDeleteSource = processOrderDtlSource.filter(
       (it) => it.processTypeId === item.id
     )

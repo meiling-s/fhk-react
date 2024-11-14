@@ -63,6 +63,7 @@ const ProcessOrder = () => {
     []
   )
   const [warehouseList, setWarehouseList] = useState<il_item[]>([])
+  const [warehouseSource, setWarehouseSource] = useState<il_item[]>([])
   const [searchQuery, setSearchQuery] = useState<PorQuery | null>({
     labelId: '',
     frmCreatedDate: '',
@@ -87,11 +88,19 @@ const ProcessOrder = () => {
       }
     },
     {
-      field: 'category',
+      field: 'processTypeId',
       headerName: t('processOrder.porCategory'),
-      width: 250,
+      width: 200,
       renderCell: (params) => {
-        return '-'
+        const processTypeRow = processTypeListData?.find(
+          (item) => item.processTypeId === params.row.processTypeId
+        )
+        let name = '-'
+        if (processTypeRow) {
+          name = processTypeRow.processTypeNameEng
+        }
+        console.log('processTypeRow', processTypeRow)
+        return name
       }
     },
     {
@@ -101,19 +110,30 @@ const ProcessOrder = () => {
       width: 250
     },
     {
-      field: 'workshop',
-      headerName: t('processOrder.workshop'),
+      field: 'warehouse',
+      headerName: t('warehouse_page.place'),
       type: 'string',
-      width: 200,
+      width: 300,
       renderCell: (params) => {
         const warehouseIds = params.row.processOrderDetail
           .flatMap((detail: any) => detail.processOrderDetailWarehouse)
           .map((warehouse: any) => warehouse.warehouseId)
+
+        const warehouseListName = warehouseIds
+          .map((id: string) => {
+            const warehouse = warehouseList.find(
+              (it) => it.id === id.toString()
+            )
+            return warehouse ? warehouse.name : null
+          })
+          .filter(Boolean)
           .join(', ')
+
+       
         return (
           <div>
             {params.row.processOrderDetail.length > 0 && (
-              <div>{warehouseIds ? `${warehouseIds}` : '-'}</div>
+              <div>{warehouseIds ? `${warehouseListName}` : '-'}</div>
             )}
           </div>
         )
@@ -175,10 +195,12 @@ const ProcessOrder = () => {
   }
 
   const initWarehouse = async () => {
+    //to: move to utils
     try {
       const result = await getAllWarehouse(0, 1000)
       if (result) {
         let warehouse: il_item[] = []
+        setWarehouseSource(result.data.content)
         const data = result.data.content
         data.forEach((item: any) => {
           var warehouseName =
@@ -222,7 +244,7 @@ const ProcessOrder = () => {
 
   useEffect(() => {
     initProcessOrderList()
-  }, [page, searchQuery])
+  }, [page, searchQuery, warehouseList, processTypeListData])
 
   useEffect(() => {
     initWarehouse()
@@ -354,6 +376,7 @@ const ProcessOrder = () => {
           selectedRow={selectedRow}
           onSubmitReason={onSubmitReason}
           processTypeListData={processTypeListData}
+          warehouseSource={warehouseSource}
         ></DetailProcessOrder>
       </Box>
     </>
