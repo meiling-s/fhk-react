@@ -3,6 +3,7 @@ import { il_item } from "../FormComponents/CustomItemList";
 import CommonTypeContainer from "../../contexts/CommonTypeContainer";
 import { useContainer } from "unstated-next";
 import i18n from "../../setups/i18n";
+import { PurchaseOrderDetail } from "src/interfaces/purchaseOrder";
 
 export type productItem = {
   productTypeName: string,
@@ -48,7 +49,7 @@ const LocalizeRecyctype = (data: any): TypeReturnLocalizeRecyctype => {
 
   if (data && data.length > 0) {
 
-    const result: itemType[]  = []
+    const result: itemType[] = []
 
     data.forEach((detail: any) => {
       const matchingRecycType = recycType?.find(
@@ -96,9 +97,9 @@ const LocalizeRecyctype = (data: any): TypeReturnLocalizeRecyctype => {
       }
       if (detail?.productType) {
 
-        let name = LocalizeProductType({data: detail?.productType})
-        let subName = LocalizeProductType({data: detail?.productSubType})
-        let addonName = LocalizeProductType({data: detail?.productAddonType})
+        let name = LocalizeProductType({ data: detail?.productType })
+        let subName = LocalizeProductType({ data: detail?.productSubType })
+        let addonName = LocalizeProductType({ data: detail?.productAddonType })
 
         result.push({
           typeName: name,
@@ -119,3 +120,82 @@ const LocalizeRecyctype = (data: any): TypeReturnLocalizeRecyctype => {
 }
 
 export default LocalizeRecyctype;
+
+export const LocalizeRecycleProductTypePO = ({ data }: { data: any }): undefined | itemType => {
+
+  try {
+
+    let result = {
+      typeName: '',
+      subTypeName: '',
+      addonTypeName: '',
+    }
+
+    const isProductType = Boolean(data?.productType || data?.productTypeId || data?.productSubTypeId || data?.productAddonTypeId) // => if data type is Recyclable or Product
+
+    switch (i18n.language) {
+
+      case "enus": {
+
+        if (isProductType) {
+
+          result.typeName = data.productNameEng
+          result.subTypeName = data.productSubNameEng
+          result.addonTypeName = data.productAddOnNameEng
+
+        }
+        else {
+
+          result.typeName = data.recyclableNameEng
+          result.subTypeName = data.recyclableSubNameEng
+
+        }
+
+      } break
+
+      case "zhch": {
+
+        if (isProductType) {
+
+          result.typeName = data.productNameSchi
+          result.subTypeName = data.productSubNameSchi
+          result.addonTypeName = data.productAddOnNameSchi
+
+        }
+        else {
+
+          result.typeName = data.recyclableNameSchi
+          result.subTypeName = data.recyclableSubNameSchi
+
+        }
+
+
+      } break
+
+      case "zhhk":
+      default: {
+
+        if (isProductType) {
+
+          result.typeName = data.productNameTchi
+          result.subTypeName = data.productSubNameTchi
+          result.addonTypeName = data.productAddOnNameTchi
+        }
+
+        else {
+
+          result.typeName = data.recyclableNameTchi
+          result.subTypeName = data.recyclableSubNameTchi
+
+        }
+      } break
+    }
+
+    return result
+
+  }
+  catch (err) {
+
+  }
+
+}

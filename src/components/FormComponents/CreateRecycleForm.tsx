@@ -48,6 +48,7 @@ import ProductListSingleSelect from '../SpecializeComponents/ProductListSingleSe
 import { getProductTypeList } from '../../APICalls/ASTD/settings/productType'
 import { Products } from '../../interfaces/productType'
 import ConfirmModal from '../SpecializeComponents/ConfirmationModal'
+import useModalConfirmRemarksEmpty from '../ModalConfirmRemarksEmpty'
 
 type props = {
   openModal: boolean
@@ -73,7 +74,7 @@ export type singleProduct = {
   productSubTypeId: string
   productAddonId: string
   productSubTypeRemark: string
-  productAddonTypeRemark: string
+  productAddOnTypeRemark: string
   isProductSubTypeOthers?: boolean
   isProductAddonTypeOthers?: boolean
 }
@@ -104,7 +105,7 @@ export interface InitValue {
   productSubType?: string
   productAddon?: string
   productSubTypeRemark?: string
-  productAddonTypeRemark?: string
+  productAddOnTypeRemark?: string
 }
 
 const initValue: InitValue = {
@@ -133,18 +134,7 @@ const initValue: InitValue = {
   productSubType: '',
   productAddon: '',
   productSubTypeRemark: undefined,
-  productAddonTypeRemark: undefined,
-}
-
-const initialState = {
-  openConfirmModal: {
-    isOpen: false,
-    tempData: {
-      isConfirmed: false,
-      isProductSubTypeOthers: false,
-      isProductAddonTypeOthers: false,
-    }
-  }
+  productAddOnTypeRemark: undefined,
 }
 
 const CreateRecycleForm = ({
@@ -169,14 +159,15 @@ const CreateRecycleForm = ({
     getCollectorList
   } = useContainer(CommonTypeContainer)
 
-  const [openConfirmModal, setOpenConfirmModal] = useState<{
-    isOpen: boolean,
-    tempData: {
-      isConfirmed: boolean,
-      isProductSubTypeOthers: boolean
-      isProductAddonTypeOthers: boolean
-    }
-  }>(initialState.openConfirmModal)
+  const {
+    resetModal,
+    openConfirmModal,
+    setOpenConfirmModal,
+    validateRemarks,
+    ModalConfirmRemarksEmpty,
+  } = useModalConfirmRemarksEmpty({
+    onConfirm: () => { formik.handleSubmit() }
+  })
 
   const [editRow, setEditRow] = useState<CreatePicoDetail | null>(null)
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
@@ -203,7 +194,7 @@ const CreateRecycleForm = ({
       productTypeId: picoDtl?.productType?.productTypeId || picoDtl?.productType || '',
       productSubTypeId: picoDtl?.productSubType?.productSubTypeId || picoDtl?.productSubType || '',
       productAddonId: picoDtl?.productAddonType?.productAddonTypeId || picoDtl?.productAddon || '',
-      productAddonTypeRemark: picoDtl.productAddonTypeRemark || '',
+      productAddOnTypeRemark: picoDtl.productAddOnTypeRemark || '',
       productSubTypeRemark: picoDtl.productSubTypeRemark || '',
     }
 
@@ -281,7 +272,7 @@ const CreateRecycleForm = ({
         productType: editRow?.productType?.productTypeId || editRow.productType, // => first value for edit from API , second value from create data row
         productSubType: editRow?.productSubType?.productSubTypeId || editRow.productSubType,
         productSubTypeRemark: editRow?.productSubTypeRemark,
-        productAddonTypeRemark: editRow?.productAddonTypeRemark,
+        productAddOnTypeRemark: editRow?.productAddOnTypeRemark,
         productAddon: editRow?.productAddonType?.productAddonTypeId || editRow.productAddon,
       }
 
@@ -477,48 +468,6 @@ const CreateRecycleForm = ({
     }
   })
 
-  const validateRemarks = (): boolean => {
-
-    try {
-
-      let isValid = true
-
-      const {
-        isProductSubTypeOthers,
-        isProductAddonTypeOthers,
-        isConfirmed,
-      } = openConfirmModal?.tempData
-
-      const isTypeOthers = (isProductSubTypeOthers || isProductAddonTypeOthers)
-
-      let isRemarksMissing = false
-
-      if (isProductSubTypeOthers) {
-        isRemarksMissing = !Boolean(formik?.values?.productSubTypeRemark)
-      }
-      if (isProductAddonTypeOthers) {
-        isRemarksMissing = !Boolean(formik?.values?.productAddonTypeRemark)
-      }
-
-      if (isTypeOthers && !isConfirmed && isRemarksMissing) {
-
-        isValid = false
-        setOpenConfirmModal({
-          ...openConfirmModal,
-          isOpen: true,
-        })
-
-      }
-      return isValid
-
-    }
-    catch (err) {
-
-      return true
-
-    }
-
-  }
 
   const formik = useFormik({
     initialValues: initValue,
@@ -526,12 +475,23 @@ const CreateRecycleForm = ({
 
     onSubmit: (values, { resetForm }) => {
 
-      if (!validateRemarks()) return
+      if (!validateRemarks({
+        openConfirmModal,
+        setOpenConfirmModal,
+        values: {
+          productSubTypeRemark: formik?.values?.productSubTypeRemark,
+          productAddOnTypeRemark: formik?.values?.productAddOnTypeRemark,
+        },
+      })) return
 
       if (isDetailDouble) return
+
       if (isEditing) {
-        //editing row
+
+        // ===== On Edit Row Detail =====
+
         if (editMode) {
+
           const updatedData = data.map((row, id) => {
             if (values.id === row.id) {
               return {
@@ -547,37 +507,47 @@ const CreateRecycleForm = ({
           })
 
           setState(updatedData)
-        } else {
+
+        } 
+        else {
+
           const updatedData = data.map((row, id) => {
             if (values.id === row.id) {
               return {
                 ...values,
-                //id: id
                 id: row.id
               }
             } else {
               return row
             }
           })
+
           setState(updatedData)
+
         }
-      } else {
-        //creating row
+        
+      }
+      else {
+
+        // ===== On Create New Row Detail =====
+
         var updatedValues: CreatePicoDetail = values
-        // if (!editMode) {
-        //updatedValues.id = data.length
-        if (values.picoHisId == '' && !isEditing)
+
+        if (values.picoHisId == '' && !isEditing) {
+
           updatedValues.id = data.length + 1
 
-        // }
+        }
 
         setState([...data, updatedValues])
+
       }
+
       setEditRow(null)
       setDefaultRecyc(undefined)
       setDefaultProduct(undefined)
       resetForm()
-      setOpenConfirmModal(initialState.openConfirmModal)
+      resetModal()
       onClose && onClose()
     }
   })
@@ -622,7 +592,7 @@ const CreateRecycleForm = ({
     setEditRow(null)
     setDefaultRecyc(undefined)
     setDefaultProduct(undefined)
-    setOpenConfirmModal(initialState.openConfirmModal)
+    resetModal()
     formik.resetForm()
   }
 
@@ -844,7 +814,7 @@ const CreateRecycleForm = ({
                         formik.setFieldValue('productSubType', values?.productSubTypeId)
                         formik.setFieldValue('productAddon', values?.productAddonId)
                         formik.setFieldValue('productSubTypeRemark', values?.productSubTypeRemark)
-                        formik.setFieldValue('productAddonTypeRemark', values?.productAddonTypeRemark)
+                        formik.setFieldValue('productAddOnTypeRemark', values?.productAddOnTypeRemark)
                         formik.setFieldValue('recycType', '')
                         formik.setFieldValue('recycSubType', '')
                       }}
@@ -1021,23 +991,7 @@ const CreateRecycleForm = ({
                     )}
                 </Stack>
               </Stack>
-              <ConfirmModal
-                isOpen={openConfirmModal?.isOpen}
-                message={t('pick_up_order.confirm_empty_remarks')}
-                onConfirm={async () => {
-                  setOpenConfirmModal({
-                    isOpen: false,
-                    tempData: {
-                      ...openConfirmModal.tempData,
-                      isConfirmed: true,
-                    }
-                  })
-                  formik.handleSubmit()
-                }}
-                onCancel={() => setOpenConfirmModal({
-                  ...openConfirmModal,
-                  isOpen: false,
-                })}
+              <ModalConfirmRemarksEmpty
               />
             </Box>
             {/* </Box> */}

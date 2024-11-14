@@ -159,7 +159,7 @@ const EditPickupOrder = () => {
         productSubType: item.productSubType,
         productAddonType: item.productAddonType,
         productSubTypeRemark: item.productSubTypeRemark,
-        productAddonTypeRemark: item.productAddonTypeRemark,
+        productAddOnTypeRemark: item.productAddOnTypeRemark,
         weight: formatWeight(item.weight, decimalVal),
         newDetail: false,
         version: poInfo.version
