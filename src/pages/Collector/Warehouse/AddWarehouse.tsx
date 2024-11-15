@@ -1,23 +1,8 @@
-import {
-  FunctionComponent,
-  useCallback,
-  useState,
-  useEffect,
-  useRef
-} from 'react'
+import { FunctionComponent, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import TextField from '@mui/material/TextField'
-import {
-  Grid,
-  FormHelperText,
-  Autocomplete,
-  Modal,
-  Box,
-  Stack,
-  Divider,
-  Typography
-} from '@mui/material'
+import { Grid, FormHelperText, Autocomplete } from '@mui/material'
 import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -25,26 +10,27 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
 import LabelField from '../../../components/FormComponents/CustomField'
+import DeleteModal from '../../../components/FormComponents/deleteModal'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
-import { ToastContainer, toast } from 'react-toastify'
+import { ToastContainer } from 'react-toastify'
 import {
   extractError,
   showErrorToast,
-  showSuccessToast
+  showSuccessToast,
+  returnApiToken
 } from '../../../utils/utils'
 import {
   createWarehouse,
   getWarehouseById,
   editWarehouse,
-  getRecycleType
+  getRecycleType,
+  editWarehouseStatus
 } from '../../../APICalls/warehouseManage'
-import { set } from 'date-fns'
+import { getWeightbySubtype } from '../../../APICalls/warehouseDashboard'
 import { getLocation } from '../../../APICalls/getLocation'
-import { get } from 'http'
 import { getCommonTypes } from '../../../APICalls/commonManage'
-import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
-import { STATUS_CODE } from '../../../constants/constant'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 
 interface RecyleItem {
   recycTypeId: string
@@ -119,19 +105,6 @@ interface recyleSubtypeOption {
   [key: string]: recyleSubtyeData[]
 }
 
-interface WarehouseFormData {
-  id: number
-  warehouseId: number
-  warehouseNameTchi: string
-  warehouseNameSchi: string
-  warehouseNameEng: string
-  location: string
-  physicalFlg: string | boolean
-  contractNo: string[]
-  status: string
-  warehouseRecyc: recyleItem[]
-}
-
 interface nameFields {
   warehouseNameTchi: string
   warehouseNameSchi: string
@@ -157,15 +130,20 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const [contractList, setContractList] = useState<
     { contractNo: string; isEpd: boolean; frmDate: string; toDate: string }[]
   >([])
-  const [pysicalLocation, setPysicalLocation] = useState<boolean>(false) // pysical location field
-  const [status, setStatus] = useState(true) // status field
+  const [pysicalLocation, setPysicalLocation] = useState<boolean>(false)
+  const [status, setStatus] = useState(true)
+  const [workshopFlg, setWorkshopFlg] = useState<boolean>(false)
   const duplicateRecycleTypeIds = new Set<string>()
   const [zeroCapacityItems, setZeroCapacityItems] = useState<
     recyleTypeOption[]
   >([])
-  const isInitialRender = useRef(true) // Add this line
   const [existingWarehouse, setExisitingWarehouse] = useState<Warehouse[]>([])
+  const [version, setVersion] = useState<number>(0)
   const navigate = useNavigate()
+  const role = localStorage.getItem(localStorgeKeyName.role) || 'collector'
+  const [onDeleteWarehouseMsg, setOnDeleteWarehouseMsg] = useState<string>('')
+  const [openWHDeleteModal, setOpenWHDeleteModal] = useState<boolean>(false)
+  const [openWHCloseModal, setOpenWHCloseModal] = useState<boolean>(false)
 
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
@@ -240,7 +218,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
   }
   const resetForm = () => {
-    // console.log('reset form')
     setNamesField({
       warehouseNameTchi: '',
       warehouseNameSchi: '',
@@ -249,6 +226,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     setContractNum([...initContractNum])
     setPlace('')
     setPysicalLocation(true)
+    setWorkshopFlg(true)
     setStatus(true)
     setRecycleCategory([...initRecyleCategory])
   }
@@ -269,12 +247,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         )
         setPlace(warehouse.location)
         setPysicalLocation(warehouse.physicalFlg)
+        if (warehouse?.physicalFlg) setWorkshopFlg(warehouse.workshopFlg)
         setStatus(warehouse.status === 'ACTIVE')
         setRecycleCategory([...warehouse.warehouseRecyc])
 
         setExisitingWarehouse(
           warehouseList.filter((item) => item.id != warehouse.warehouseId)
         )
+        setVersion(warehouse.version)
       }
     } catch (error: any) {
       const { state } = extractError(error)
@@ -285,7 +265,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }
 
   useEffect(() => {
-    // console.log('action', action)
     if (action === 'add') {
       resetForm()
       setTrySubmited(false)
@@ -374,13 +353,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     return filteredArr.length === 1
   })
 
-  // const isRecycleSubUnique = recycleCategory.every((item, index, arr) => {
-  //   const filteredArr = arr.filter(
-  //     (i) => i.recycSubTypeId === item.recycSubTypeId
-  //   )
-  //   return filteredArr.length === 1
-  // })
-
   // validation input text
   useEffect(() => {
     const tempV: { field: string; error: string }[] = []
@@ -458,98 +430,84 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         )}`
       })
 
-    //check value not zero
-    if (isRecyleUnselected) {
-      recycleCategory.forEach((item) => {
+    const errorMap = new Map<string, boolean>()
+
+    recycleCategory.forEach((item, index) => {
+      const recybles = recycleType?.find(
+        (type: recyleTypeOption) => type.id === item.recycTypeId
+      )
+      const subtype = recycleSubType[item.recycTypeId]?.find(
+        (sub: any) => sub.recycSubTypeId === item.recycSubTypeId
+      )
+
+      const recycTypeName =
+        currentLanguage === 'zhhk'
+          ? recybles?.recyclableNameTchi
+          : currentLanguage === 'zhch'
+          ? recybles?.recyclableNameSchi
+          : recybles?.recyclableNameEng || ''
+
+      const recycSubTypeName =
+        currentLanguage === 'zhhk'
+          ? subtype?.recyclableNameTchi
+          : currentLanguage === 'zhch'
+          ? subtype?.recyclableNameSchi
+          : subtype?.recyclableNameEng || ''
+
+      const key = `${item.recycTypeId}-${item.recycSubTypeId}`
+
+      if (!errorMap.has(key)) {
+        let hasError = false
+
+        // Check if capacity is zero
         if (item.recycSubTypeCapacity === 0) {
-          const recybles = recycleType.find(
-            (type: recyleTypeOption) => type.id === item.recycTypeId
-          )
-
-          const subtype = recycleSubType[item.recycTypeId].find(
-            (sub: any) => sub.recycSubTypeId === item.recycSubTypeId
-          )
-
-          const recycTypeName =
-            currentLanguage === 'zhhk'
-              ? recybles?.recyclableNameTchi
-              : currentLanguage === 'zhch'
-              ? recybles?.recyclableNameSchi
-              : recybles?.recyclableNameEng || ''
-
-          const recycSubTypeName =
-            currentLanguage === 'zhhk'
-              ? subtype?.recyclableNameTchi
-              : currentLanguage === 'zhch'
-              ? subtype?.recyclableNameSchi
-              : subtype?.recyclableNameEng || ''
-
+          const zeroCapacityError = `${recycTypeName ? recycTypeName : '"'} - ${
+            recycSubTypeName ? recycSubTypeName : ''
+          }, ${t('form.error.shouldGreaterThanZero')}`
           tempV.push({
-            field: 'warehouseRecyc',
-            error: `${recycTypeName} - ${
-              recycSubTypeName ? recycSubTypeName : ''
-            }, ${t('form.error.shouldGreaterThanZero')}`
+            field: `warehouseRecyc${index}${'zeroErr'}`, // Include index to differentiate fields
+            error: zeroCapacityError
           })
+          hasError = true
         }
-      })
-    }
 
-    //check duplicated recytype
-    if (!isRecycleTypeIdUnique) {
-      duplicateRecycleTypeIds.forEach((recycTypeId) => {
-        recycleCategory.forEach((item) => {
-          if (item.recycTypeId === recycTypeId) {
-            const recybles = recycleType.find(
-              (type: recyleTypeOption) => type.id === item.recycTypeId
-            )
-            const subtype = recycleSubType[item.recycTypeId].find(
-              (sub: any) => sub.recycSubTypeId === item.recycSubTypeId
-            )
-
-            const recycTypeName =
-              currentLanguage === 'zhhk'
-                ? recybles?.recyclableNameTchi
-                : currentLanguage === 'zhch'
-                ? recybles?.recyclableNameSchi
-                : recybles?.recyclableNameEng || ''
-
-            const recycSubTypeName =
-              currentLanguage === 'zhhk'
-                ? subtype?.recyclableNameTchi
-                : currentLanguage === 'zhch'
-                ? subtype?.recyclableNameSchi
-                : subtype?.recyclableNameEng || ''
-
-            const errorMsg = `${recycTypeName} - ${
+        // Check for duplicates
+        recycleCategory.forEach((compareItem, compareIndex) => {
+          if (
+            index !== compareIndex &&
+            item.recycTypeId === compareItem.recycTypeId &&
+            item.recycSubTypeId === compareItem.recycSubTypeId
+          ) {
+            const duplicateError = `${recycTypeName ? recycTypeName : ''} - ${
               recycSubTypeName ? recycSubTypeName : ''
             } ${t('add_warehouse_page.shouldNotDuplicate')}`
-
-            const alreadyExist = tempV.find((it) => it.error === errorMsg)
-
-            if (!alreadyExist) {
-              tempV.push({
-                field: 'warehouseRecyc',
-                error: `${recycTypeName} - ${
-                  recycSubTypeName ? recycSubTypeName : ''
-                } ${t('add_warehouse_page.shouldNotDuplicate')}`
-              })
-            }
+            tempV.push({
+              field: `warehouseRecyc${index}${'duplicatedErr'}`, // Include index to differentiate fields
+              error: duplicateError
+            })
+            hasError = true
           }
         })
-      })
-    }
 
-    const cacheValidation:any[] = [];
-  
-    for(let item of Object.values(tempV)){
-      const { field } = item;
-      const isExist = cacheValidation.find(cache => cache.field === field);
-      if(!isExist){
-        cacheValidation.push(item)
+        if (hasError) {
+          errorMap.set(key, true) // Mark this combination as processed
+        }
       }
-    }
+    })
 
-    setValidation(cacheValidation)
+    console.log('temp', tempV)
+
+    // const cacheValidation: any[] = []
+
+    // for (let item of Object.values(tempV)) {
+    //   const { field } = item
+    //   const isExist = cacheValidation.find((cache) => cache.field === field)
+    //   if (!isExist) {
+    //     cacheValidation.push(item)
+    //   }
+    // }
+
+    setValidation(tempV)
   }, [nameValue, place, contractNum, recycleCategory])
 
   const checkString = (s: string) => {
@@ -596,16 +554,21 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }
 
   const handleAddRecycleCategory = () => {
-    const updatedRecycleCategory = [
-      ...recycleCategory,
-      {
-        recycTypeId: '',
-        recycSubTypeId: '',
-        recycSubTypeCapacity: 0,
-        recycTypeCapacity: 0
-      }
-    ]
-    setRecycleCategory(updatedRecycleCategory)
+    const checkRecyc = recycleCategory.find((recyc) => recyc.recycTypeId === '')
+    if (!checkRecyc) {
+      const updatedRecycleCategory = [
+        ...recycleCategory,
+        {
+          recycTypeId: '',
+          recycSubTypeId: '',
+          recycSubTypeCapacity: 0,
+          recycTypeCapacity: 0
+        }
+      ]
+      setRecycleCategory(updatedRecycleCategory)
+    } else {
+      showErrorToast(t('form.error.selectFirst'))
+    }
   }
 
   const handleRemoveReycleCategory = (indexToRemove: number) => {
@@ -650,7 +613,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     try {
       const response = await createWarehouse(addWarehouseForm)
       if (response) {
-        // console.log('added', response)
         showSuccessToast(t('common.saveSuccessfully'))
       }
     } catch (error: any) {
@@ -666,37 +628,59 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   const editWarehouseData = async (addWarehouseForm: any, type: string) => {
     try {
-      const response = await editWarehouse(addWarehouseForm, rowId)
-      if (response) {
-        showSuccessToast(
-          type == 'edit'
-            ? t('common.editSuccessfully')
-            : t('common.deletedSuccessfully')
-        )
-        handleDrawerClose()
+      const isError = validation.length == 0
+      if (type === 'delete') {
+        const warehouseForm = {
+          status: 'DELETED',
+          version: version
+        }
+        if (role === 'collector') {
+          const response = await editWarehouseStatus(warehouseForm, rowId)
+          if (response) {
+            showSuccessToast(t('common.deletedSuccessfully'))
+            handleDrawerClose()
+          }
+        } else {
+          const response = await editWarehouse(addWarehouseForm, rowId)
+          if (response) {
+            showSuccessToast(t('common.deletedSuccessfully'))
+            handleDrawerClose()
+          }
+        }
+      } else {
+        const response = await editWarehouse(addWarehouseForm, rowId)
+        if (response) {
+          showSuccessToast(t('common.editSuccessfully'))
+          setOpenWHCloseModal(false)
+          handleDrawerClose()
+
+          if (
+            onSubmitData &&
+            typeof onSubmitData === 'function' &&
+            typeof rowId === 'number'
+          ) {
+            onSubmitData(action, rowId, !isError)
+          }
+        }
       }
+      setOpenWHDeleteModal(false)
+      setOnDeleteWarehouseMsg('')
     } catch (error: any) {
-      showErrorToast(
-        type == 'edit' ? t('common.editFailed') : t('common.deleteFailed')
-      )
       const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error.response.data.message)
       }
     }
   }
 
-  //submit data
-  const handleSubmit = async () => {
+  const constructFormData = () => {
     let statusWarehouse = status ? 'ACTIVE' : 'INACTIVE'
     if (action == 'delete') {
       statusWarehouse = 'DELETED'
     }
-
     const filteredContractNum = contractNum.filter((num) => num !== '')
-
-    // console.log('action', action)
-
     const addWarehouseForm = {
       warehouseNameTchi: nameValue.warehouseNameTchi,
       warehouseNameSchi: nameValue.warehouseNameSchi,
@@ -708,33 +692,25 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       status: statusWarehouse,
       createdBy: 'string',
       updatedBy: 'string',
-      warehouseRecyc: recycleCategory
+      warehouseRecyc: recycleCategory,
+      ...(role === 'collector' && { workshopFlg: workshopFlg }),
+      version: version
     }
-    // console.log('addWarehouseForm', addWarehouseForm)
-    // console.log('rowId', rowId)
 
-    const isError = validation.length == 0
+    return addWarehouseForm
+  }
+
+  //submit data
+  const handleSubmit = async () => {
+    const addWarehouseForm = constructFormData()
     getFormErrorMsg()
-
-    console.log('addWarehouseForm', validation)
-
     if (validation.length == 0) {
       action === 'add'
         ? //MOVE API CAL TO PARENT DATA, ONLY PARSING DATA HERE
           createWareHouseData(addWarehouseForm)
-        : editWarehouseData(addWarehouseForm, 'edit')
-
-      if (
-        onSubmitData &&
-        typeof onSubmitData === 'function' &&
-        typeof rowId === 'number'
-      ) {
-        onSubmitData(action, rowId, !isError)
-      }
-      // console.log(addWarehouseForm)
+        : handleEditWH(addWarehouseForm)
       setValidation([])
     } else {
-      // console.log(validation)
       setTrySubmited(true)
     }
   }
@@ -761,10 +737,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     setErrorMsgList(errorList)
   }
 
-  const handleDelete = () => {
-    setOpenDelete(true)
-  }
-
   const handleClose = () => {
     setValidation([])
     setErrorMsgList([])
@@ -772,10 +744,34 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     handleDrawerClose()
   }
 
-  const onDeleteModal = () => {
-    //handleSubmit()
-    //setOpenDelete(false)
-    // console.log('rowId', rowId)
+  const checkWarehouseRecycble = async () => {
+    const token = returnApiToken()
+    const result = await getWeightbySubtype(rowId, token.decodeKeycloack)
+
+    if (result) {
+      console.log(result.data, Object.keys(result.data).length)
+      return Object.keys(result.data).length != 0
+    }
+    return false
+  }
+
+  const handleEditWH = async (editWarehouseForm: any) => {
+    const isRecybleExist = await checkWarehouseRecycble()
+
+    console.log(editWarehouseForm.status, isRecybleExist)
+    if (editWarehouseForm.status === 'INACTIVE' && isRecybleExist) {
+      setOpenWHCloseModal(true)
+    } else {
+      editWarehouseData(editWarehouseForm, 'edit')
+    }
+  }
+
+  const handleCloseWH = () => {
+    const editWarehouseForm = constructFormData()
+    editWarehouseData(editWarehouseForm, 'edit')
+  }
+
+  const handleDeleteWH = () => {
     const deleteform = {
       warehouseNameTchi: nameValue.warehouseNameTchi,
       warehouseNameSchi: nameValue.warehouseNameSchi,
@@ -787,10 +783,28 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       status: 'DELETED',
       createdBy: 'string',
       updatedBy: 'string',
-      warehouseRecyc: recycleCategory
+      warehouseRecyc: recycleCategory,
+      version: version
     }
-
     editWarehouseData(deleteform, 'delete')
+  }
+
+  const onDeleteHeaderWH = async () => {
+    try {
+      // Check if warehouse recyclable data exists
+      const isRecybleExist = await checkWarehouseRecycble()
+      setOnDeleteWarehouseMsg('')
+      if (!isRecybleExist) {
+        setOnDeleteWarehouseMsg(t('add_warehouse_page.warningDeleteWarehouse'))
+      } else {
+        setOnDeleteWarehouseMsg(
+          t('add_warehouse_page.warningDeleteExistingRecy')
+        )
+      }
+      setOpenWHDeleteModal(true)
+    } catch (error) {
+      console.error('Error checking warehouse recyclable:', error)
+    }
   }
 
   return (
@@ -813,8 +827,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleClose,
           onSubmit: handleSubmit,
-          onDelete: onDeleteModal,
-          deleteText: t('common.deleteMessage')
+          onDelete: onDeleteHeaderWH,
+          useDeleteConfirmation: false
         }}
       >
         {/* form warehouse */}
@@ -1124,7 +1138,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             <REMOVE_CIRCLE_ICON
                               fontSize="small"
                               className={`text-grey-light ${
-                                contractNum.length === 1
+                                recycleCategory.length === 1
                                   ? 'cursor-not-allowed'
                                   : 'cursor-pointer'
                               } `}
@@ -1142,6 +1156,21 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 </div>
               </div>
             </div>
+            {/* Workshop flag */}
+            {role === 'collector' && (
+              <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
+                <LabelField label={t('add_warehouse_page.workshopFlag')} />
+                <Switcher
+                  onText={t('add_warehouse_page.yes')}
+                  offText={t('add_warehouse_page.no')}
+                  disabled={action === 'delete'}
+                  defaultValue={workshopFlg}
+                  setState={(newValue) => {
+                    setWorkshopFlg(newValue)
+                  }}
+                />
+              </div>
+            )}
             {/* error msg */}
             {validation.length > 0 && trySubmited && (
               <Grid item className="pt-3 w-full">
@@ -1153,6 +1182,18 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               </Grid>
             )}
           </div>
+          <DeleteModal
+            open={openWHDeleteModal}
+            onClose={() => setOpenWHDeleteModal(false)}
+            onDelete={handleDeleteWH}
+            deleteText={onDeleteWarehouseMsg}
+          />
+          <DeleteModal
+            open={openWHCloseModal}
+            onClose={() => setOpenWHCloseModal(false)}
+            onDelete={handleCloseWH}
+            deleteText={t('add_warehouse_page.warningCloseWarehouse')}
+          />
         </div>
       </RightOverlayForm>
     </div>

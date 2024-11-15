@@ -45,12 +45,13 @@ import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined'
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import BarChartIcon from '@mui/icons-material/BarChart'
-import { dynamicpath, returnApiToken } from '../utils/utils'
+import { dynamicpath, returnApiToken, creatioPageList } from '../utils/utils'
 import { useContainer } from 'unstated-next'
 import NotifContainer from '../contexts/NotifContainer'
 import { createUserActivity } from '../APICalls/userAccount'
 import axios from 'axios'
 import { UserActivity } from '../interfaces/common'
+import ConfirmModal from '../components/SpecializeComponents/ConfirmationModal'
 
 type MainDrawer = {
   role: string
@@ -64,15 +65,20 @@ type DrawerItem = {
   collapseGroup?: boolean
   path?: string
   functionName: string
+  datatestId?: string
+}
+
+type subMenuItem = {
+  name: string
+  value: string
+  path: string
+  functionName: string
 }
 
 const drawerWidth = 225
 
 function MainDrawer() {
   const navigate = useNavigate()
-  const [CPDrawer, setCPDrawer] = useState<boolean>(false) //CP = collection point, this state determine collection point drawer group expand or not
-  const [ASTDStatsDrawer, setASTDStatsDrawer] = useState<boolean>(false)
-  const [WHManageDrawer, setWHManageDrawer] = useState<boolean>(false)
   const [dashboardGroup, setDashboardGroup] = useState<boolean>(false)
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
@@ -83,6 +89,14 @@ function MainDrawer() {
   const { realmApiRoute, loginId } = returnApiToken()
   const { broadcast, showBroadcast } = useContainer(NotifContainer)
   const ipAddress = localStorage.getItem('ipAddress')
+  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false)
+  const [drawerMenuToNavigate, setDrawerMenuToNavigate] =
+    useState<DrawerItem | null>(null)
+  const [currentDrawerMenu, setcurrentDrawerMenu] = useState<number | 0>(0)
+  const [subMenuToNavigate, setSubMenuToNavigate] =
+    useState<subMenuItem | null>(null)
+  const [currentIdxSubMenu, setcurrentIdxSubMenu] = useState<number | 0>(0)
+  const restrictPage = creatioPageList()
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -91,21 +105,6 @@ function MainDrawer() {
   const handleDrawerClose = () => {
     setOpen(false)
   }
-
-  const handleListItemClick = (index: number) => {
-    setSelectedIndex(index)
-    localStorage.setItem('selectedIndex', String(index))
-    setSelectedSubIndex(0)
-    setDashboardGroup(false)
-  }
-
-  useEffect(() => {
-    // Retrieve the selected index from localStorage on component mount
-    const storedIndex = localStorage.getItem('selectedIndex')
-    if (storedIndex !== null) {
-      setSelectedIndex(parseInt(storedIndex, 10))
-    }
-  }, [])
 
   var role = localStorage.getItem(localStorgeKeyName.role)
   var realm = localStorage.getItem(localStorgeKeyName.realm)
@@ -132,6 +131,7 @@ function MainDrawer() {
         onClick: () => navigate(`/${realm}/account`),
         collapse: false,
         path: `/${realm}/account`,
+        datatestId: 'astd-user-group-menu-list-6766',
         functionName: 'User account'
       },
       'Collection point': {
@@ -196,7 +196,8 @@ function MainDrawer() {
         onClick: () => navigate('/astd/setting'),
         collapse: false,
         path: '/astd/setting',
-        functionName: 'Settings'
+        functionName: 'Settings',
+        datatestId: 'astd-menu-list-settings-1869'
       },
       Reports: {
         name: t('reports'),
@@ -204,7 +205,8 @@ function MainDrawer() {
         onClick: () => navigate(`/${realm}/report`),
         collapse: false,
         path: `/${realm}/report`,
-        functionName: 'Reports'
+        functionName: 'Reports',
+        datatestId: 'astd-reports-menu-list-6697'
       },
       'Process out recyclables': {
         name: t('processRecord.processingRecords'),
@@ -259,174 +261,6 @@ function MainDrawer() {
   ]
   // 20240129 add function list daniel keung end
   // 20240129 add function list daniel keung start
-  /*   let drawerMenus_collector: DrawerItem[] = [
-    {
-      name: t('collection_Point'),
-      icon: <PLACE_ICON />,
-      onClick: () => setCPDrawer(!CPDrawer),
-      collapse: false,
-      collapseGroup: CPDrawer
-    },
-    {
-      name: t('all_Collection_Point'),
-      onClick: () => navigate('/collector/collectionPoint'),
-      collapse: true,
-      collapseGroup: CPDrawer
-    },
-    {
-      name: t('process_Records'),
-      onClick: () => navigate('/collector/processRecord'),
-      collapse: true,
-      collapseGroup: CPDrawer
-    },
-    {
-      name: t('recycle_Shipment'),
-      icon: <SHIPPING_CAR_ICON />,
-      onClick: () => navigate('/collector/pickupOrder'),
-      collapse: false
-    },
-    {
-      name: t('reports'),
-      icon: <DOCUMENT_ICON />,
-      onClick: () => navigate('/collector/report'),
-      collapse: false
-    },
-    {
-      name: t('staff'),
-      icon: <STAFF_ICON />,
-      onClick: () => navigate('/collector/staff'),
-      collapse: false
-    }
-  ]
-
-  let drawerMenus_astd: DrawerItem[] = [
-    {
-      name: t('company'),
-      icon: <FOLDER_ICON />,
-      onClick: () => navigate('/astd'),
-      collapse: false
-    },
-    {
-      name: t('noticeTemplate'),
-      icon: <TEMPLATE_ICON />,
-      onClick: () => navigate('/astd/notice'),
-      collapse: false
-    },
-    {
-      name: t('reports'),
-      icon: <DOCUMENT_ICON />,
-      onClick: () => navigate('/astd/report'),
-      collapse: false
-    },
-    {
-      name: t('statistics'),
-      icon: <STATISTIC_ICON />,
-      onClick: () => setASTDStatsDrawer(!ASTDStatsDrawer),
-      collapse: false,
-      collapseGroup: ASTDStatsDrawer
-    },
-    {
-      name: t('recyclables'),
-      onClick: () => navigate('/astd/statistics/recyclables'),
-      collapse: true,
-      collapseGroup: ASTDStatsDrawer
-    },
-    {
-      name: t('convoy'),
-      onClick: () => navigate('/astd/statistics/convoy'),
-      collapse: true,
-      collapseGroup: ASTDStatsDrawer
-    },
-    {
-      name: t('recycleCompany'),
-      onClick: () => navigate('/astd/statistics/recycleCompany'),
-      collapse: true,
-      collapseGroup: ASTDStatsDrawer
-    },
-    {
-      name: t('recyclePlant'),
-      onClick: () => navigate('/astd/statistics/recyclePlant'),
-      collapse: true,
-      collapseGroup: ASTDStatsDrawer
-    },
-    {
-      name: t('settings'),
-      icon: <SETTINGS_ICON />,
-      onClick: () => navigate('/astd/setting'),
-      collapse: false
-    },
-    {
-      name: t('account'),
-      icon: <PERSON_ICON />,
-      onClick: () => navigate('/astd/account'),
-      collapse: false
-    }
-  ]
-
-  let drawerMenus_warehouse: DrawerItem[] = [
-    {
-      name: t('recycle_Shipment'),
-      icon: <SHIPPING_CAR_ICON />,
-      onClick: () => navigate('/warehouse/shipment'),
-      collapse: false
-    },
-    {
-      name: t('manage'),
-      icon: <INBOX_OUTLINE_ICON />,
-      onClick: () => setWHManageDrawer(!WHManageDrawer),
-      collapse: false,
-      collapseGroup: WHManageDrawer
-    },
-    {
-      name: t('overView'),
-      onClick: () => navigate('/warehouse/overview'),
-      collapse: true,
-      collapseGroup: WHManageDrawer
-    },
-    {
-      name: t('reports'),
-      onClick: () => navigate('/warehouse/process'),
-      collapse: true,
-      collapseGroup: WHManageDrawer
-    },
-    {
-      name: t('staff'),
-      icon: <STAFF_ICON />,
-      onClick: () => navigate('/warehouse/staff'),
-      collapse: false
-    }
-  ]
-
-  let drawerMenus_collectorAdmin: DrawerItem[] = [
-    {
-      name: t('all_Collection_Point'),
-      onClick: () => navigate('/collector/collectionPoint'),
-      collapse: false
-    },
-    {
-      name: t('check_in.request_check_in'),
-      onClick: () => navigate('/warehouse/shipment'),
-      collapse: false
-    },
-    {
-      name: t('check_out.request_check_out'),
-      onClick: () => navigate('/warehouse/overview'),
-      collapse: false
-    },
-    {
-      name: t('pick_up_order.enquiry_pickup_order'),
-      onClick: () => navigate('/collector/pickupOrder'),
-      collapse: false
-    },
-    {
-      name: t('settings'),
-      icon: <SETTINGS_ICON />,
-      onClick: () => navigate('/astd/setting'),
-      collapse: false
-    }
-  ] */
-  // 20240129 add function list daniel keung end
-  // 20240129 add function list daniel keung start
   var drawerMenus
   let drawerMenusTmp: DrawerItem[] = []
   var functionListTmp = JSON.parse(
@@ -445,12 +279,7 @@ function MainDrawer() {
 
   //set submenu dashboard
   var subMenuDashboard: any[]
-  let subMenuDashboardTmp: {
-    name: string
-    value: string
-    path: string
-    functionName: string
-  }[] = []
+  let subMenuDashboardTmp: subMenuItem[] = []
   // Base items
   // need to add path & functionName property in order to tracking user activity
   const baseItems = [
@@ -465,7 +294,7 @@ function MainDrawer() {
       value:
         realm === Realm.astd
           ? t('dashboard_recyclables.collector')
-          : t('dashboard_recyclables.recyclable'),
+          : t('dashboard_recyclables.warehouse'),
       path: `/${realm}/dashboard`,
       functionName: 'dashboard'
     },
@@ -538,37 +367,81 @@ function MainDrawer() {
     }
   }
 
-  // 20240129 add function list daniel keung end
-  // 20240129 add function list daniel keung start
-  /*   switch (role) {
-    case 'astd':
-      drawerMenus = drawerMenus_astd
-      break
-    case 'collector':
-      drawerMenus = drawerMenus_collector
-      break
-    case 'warehouse':
-      drawerMenus = drawerMenus_warehouse
-      break
-    case 'collectoradmin':
-      drawerMenus = drawerMenus_collectorAdmin
-      break
-    case 'ckadm01':
-      drawerMenus = drawerMenus_collectorAdmin
-      break
-    case 'oriontadmin':
-      drawerMenus = drawerMenus_collectorAdmin
-      break
-    default:
-      drawerMenus = drawerMenus_astd
-  } */
-  // 20240129 add function list daniel keung end
-  // 20240129 add function list daniel keung start
   drawerMenus = drawerMenusTmp
   subMenuDashboard = subMenuDashboardTmp
-  // 20240129 add function list daniel keung end
 
-  console.log('menulist', drawerMenus)
+  useEffect(() => {
+    const storedIndex = localStorage.getItem('selectedIndex')
+    const selectedIdxCurrentPath = drawerMenusTmp.findIndex(
+      (item) => item.path === currentPath
+    )
+    if (selectedIdxCurrentPath !== -1) {
+      setSelectedIndex(selectedIdxCurrentPath)
+    } else if (storedIndex !== null) {
+      setSelectedIndex(parseInt(storedIndex, 10))
+    }
+  }, [currentPath, drawerMenusTmp])
+
+  const handleNavigateMenu = (drawerItem: DrawerItem, index: number) => {
+    if (drawerItem.collapse) {
+      return drawerItem.onClick()
+    }
+    if (restrictPage.includes(currentPath)) {
+      setOpenConfirmModal(true)
+      setDrawerMenuToNavigate(drawerItem)
+      setcurrentDrawerMenu(index)
+    } else {
+      drawerItem.onClick()
+      setSelectedIndex(index)
+      localStorage.setItem('selectedIndex', String(index))
+      setDrawerMenuToNavigate(null)
+    }
+  }
+
+  const handleSubItemMenu = (item: subMenuItem, index: number) => {
+    if (restrictPage.includes(currentPath)) {
+      setOpenConfirmModal(true)
+      setSubMenuToNavigate(item)
+      setcurrentDrawerMenu(index)
+    } else {
+      navigate(`${realm}/${item.name}`)
+      setSelectedSubIndex(index)
+    }
+  }
+
+  const onConfirmNavigate = () => {
+    if (drawerMenuToNavigate) {
+      drawerMenuToNavigate.onClick()
+      setSelectedIndex(currentDrawerMenu)
+      localStorage.setItem('selectedIndex', String(currentDrawerMenu))
+      setDrawerMenuToNavigate(null)
+      setSelectedSubIndex(0)
+      setDashboardGroup(false)
+    } else {
+      setDashboardGroup(true)
+      navigate(`${realm}/${subMenuToNavigate?.name}`)
+      setSelectedSubIndex(currentIdxSubMenu)
+      setSubMenuToNavigate(null)
+    }
+
+    setOpenConfirmModal(false)
+  }
+
+  const getMenuActiveColor = () => {
+    const color =
+      role === 'manufacturer'
+        ? '#6BC7FF'
+        : role === 'customer'
+        ? '#199BEC'
+        : role === 'logistic'
+        ? '#63D884'
+        : role === 'collector'
+        ? '#79CA25'
+        : '#79CA25'
+
+    return color
+  }
+
   return (
     <>
       {isMobile ? (
@@ -621,25 +494,16 @@ function MainDrawer() {
                       index === drawerMenus.length - 1 ? '48px' : '0px'
                   }}
                   key={drawerMenu.name}
-                  onClick={drawerMenu.onClick}
+                  data-testid={drawerMenu.datatestId || ""}
+                  onClick={() => handleNavigateMenu(drawerMenu, index)}
                   disablePadding
                 >
                   <ListItemButton
                     selected={selectedIndex === index}
-                    onClick={(event) => handleListItemClick(index)}
                     sx={{
                       '&:hover': {
                         '.MuiSvgIcon-root': {
-                          color:
-                            role === 'manufacturer'
-                              ? '#6BC7FF'
-                              : role === 'customer'
-                              ? '#199BEC'
-                              : role === 'logistic'
-                              ? '#63D884'
-                              : role === 'collector'
-                              ? '#79CA25'
-                              : '#79CA25'
+                          color: getMenuActiveColor()
                         }
                       }
                     }}
@@ -647,17 +511,7 @@ function MainDrawer() {
                     <ListItemIcon
                       sx={{
                         color:
-                          selectedIndex === index
-                            ? role === 'manufacturer'
-                              ? '#6BC7FF'
-                              : role === 'customer'
-                              ? '#199BEC'
-                              : role === 'logistic'
-                              ? '#63D884'
-                              : role === 'collector'
-                              ? '#79CA25'
-                              : '#79CA25'
-                            : ''
+                          selectedIndex === index ? getMenuActiveColor() : ''
                       }}
                     >
                       {drawerMenu.icon}
@@ -672,35 +526,22 @@ function MainDrawer() {
                   <List component="div" disablePadding>
                     {subMenuDashboard &&
                       subMenuDashboard.length > 0 &&
-                      subMenuDashboard.map((item, index) => {
+                      subMenuDashboard.map((item, subMenuIndex) => {
                         return (
                           <ListItemButton
-                            key={index}
+                            key={subMenuIndex}
                             sx={{ pl: 7 }}
                             selected={true}
                             onClick={() => {
-                              navigate(`${realm}/${item.name}`)
-                              setSelectedSubIndex(index)
+                              handleSubItemMenu(item, subMenuIndex)
                             }}
                           >
                             <ListItemText
                               className={
-                                index === selectedISubIndex
-                                  ? 'text-menu-active'
+                                subMenuIndex === selectedISubIndex
+                                  ? `text-[${getMenuActiveColor()}]`
                                   : ''
                               }
-                              sx={{
-                                color:
-                                  role === 'manufacturer'
-                                    ? '#6BC7FF'
-                                    : role === 'customer'
-                                    ? '#199BEC'
-                                    : role === 'logistic'
-                                    ? '#63D884'
-                                    : role === 'collector'
-                                    ? '#79CA25'
-                                    : '#79CA25'
-                              }}
                               primary={item.value}
                             />
                           </ListItemButton>
@@ -717,43 +558,23 @@ function MainDrawer() {
                     index === drawerMenus.length - 1 ? '48px' : '0px'
                 }}
                 key={index}
-                onClick={drawerMenu.onClick}
+                data-testid={drawerMenu.datatestId || ""}
+                onClick={() => handleNavigateMenu(drawerMenu, index)}
                 disablePadding
               >
                 <ListItemButton
                   selected={selectedIndex === index}
-                  onClick={(event) => handleListItemClick(index)}
                   sx={{
                     '&:hover': {
                       '.MuiSvgIcon-root': {
-                        color:
-                          role === 'manufacturer'
-                            ? '#6BC7FF'
-                            : role === 'customer'
-                            ? '#199BEC'
-                            : role === 'logistic'
-                            ? '#63D884'
-                            : role === 'collector'
-                            ? '#79CA25'
-                            : '#79CA25'
+                        color: getMenuActiveColor()
                       }
                     }
                   }}
                 >
                   <ListItemIcon
                     sx={{
-                      color:
-                        selectedIndex === index
-                          ? role === 'manufacturer'
-                            ? '#6BC7FF'
-                            : role === 'customer'
-                            ? '#199BEC'
-                            : role === 'logistic'
-                            ? '#63D884'
-                            : role === 'collector'
-                            ? '#79CA25'
-                            : '#79CA25'
-                          : ''
+                      color: selectedIndex === index ? getMenuActiveColor() : ''
                     }}
                   >
                     {drawerMenu.icon}
@@ -772,6 +593,11 @@ function MainDrawer() {
               </ListItem>
             )
           )}
+          <ConfirmModal
+            isOpen={openConfirmModal}
+            onConfirm={() => onConfirmNavigate()}
+            onCancel={() => setOpenConfirmModal(false)}
+          />
         </List>
       </Drawer>
     </>

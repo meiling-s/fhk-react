@@ -3,12 +3,12 @@ import { AXIOS_DEFAULT_CONFIGS } from "../constants/configs"
 import { returnApiToken } from "../utils/utils"
 import { GET_DRIVER_LIST, CREATE_DRIVER, EDIT_DRIVER, DELETE_DRIVER } from '../constants/requests'
 
-export const getDriverList = async (page: number, size: number) => {
+export const getDriverList = async (page: number, size: number, company?: string) => {
     try {
         const token = returnApiToken()
         return await axiosInstance({
             baseURL: window.baseURL.collector,
-            ...GET_DRIVER_LIST(token.decodeKeycloack),
+            ...GET_DRIVER_LIST(company? company : token.decodeKeycloack),
             params: {
                 page,
                 size,
@@ -42,7 +42,7 @@ export const editDriver = async (data: any,driverId: string) => {
             data
         })
     } catch (error) {
-        console.error(error)
+        throw (error)
     }
 }
 

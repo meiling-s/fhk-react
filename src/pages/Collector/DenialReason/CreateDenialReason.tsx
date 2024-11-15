@@ -16,7 +16,11 @@ import {
 } from '../../../APICalls/Collector/denialReasonCollectors'
 import { styles } from '../../../constants/styles'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import {
+  extractError,
+  returnErrorMsg,
+  showErrorToast
+} from '../../../utils/utils'
 import {
   DenialReason,
   CreateDenialReason,
@@ -26,7 +30,10 @@ import {
   UpdateDenialReasonCollectors
 } from '../../../interfaces/denialReason'
 import { localStorgeKeyName } from '../../../constants/constant'
-import { getAllFunction } from '../../../APICalls/Collector/userGroup'
+import {
+  getAllFilteredFunction,
+  getAllFunction
+} from '../../../APICalls/Collector/userGroup'
 import i18n from '../../../setups/i18n'
 import { useNavigate } from 'react-router-dom'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
@@ -64,6 +71,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   }
   const [formData, setFormData] = useState<FormValues>(initialFormValues)
   const [weatherFlg, setWeatherFlg] = useState<boolean>(true)
+  const [version, setVersion] = useState<number>(0)
   const [status, setStatus] = useState<boolean>(true)
   const [selectedFunctionId, setSelectedFunctionId] = useState<string>('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
@@ -79,7 +87,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       name: string
     }[]
   >([])
-  const role = localStorage.getItem(localStorgeKeyName.role)
+  const role = localStorage.getItem(localStorgeKeyName.role) || ''
   const [existingDenialReason, setExistingDenialReason] = useState<
     DenialReason[] | DenialReasonCollectors[]
   >([])
@@ -91,7 +99,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
 
   const initFunctionList = async () => {
     try {
-      const result = await getAllFunction()
+      const result = await getAllFilteredFunction(role)
       const data = result?.data.filter((item: any) => item.tenantTypeId == role)
       if (data.length > 0) {
         let name = ''
@@ -212,6 +220,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         //description: selectedItem.description,
         remark: selectedItem.remark
       })
+      setVersion(selectedItem.version ?? 0)
 
       //set weather Flag
       if (
@@ -422,16 +431,14 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
-        if(error?.response?.data?.status === STATUS_CODE[500]){
-          setValidation(
-            [
-              {
-                field: t('common.reasonName'),
-                problem: formErr.alreadyExist,
-                type: 'error'
-              }
-            ]
-          )
+        if (error?.response?.data?.status === STATUS_CODE[500]) {
+          setValidation([
+            {
+              field: t('common.reasonName'),
+              problem: formErr.alreadyExist,
+              type: 'error'
+            }
+          ])
         }
         setTrySubmited(true)
         // onSubmitData('error', t('common.saveFailed'))
@@ -457,7 +464,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         status: status === true ? 'ACTIVE' : 'INACTIVE',
         remark: formData.remark,
         updatedBy: loginName,
-        ...(isCollectors() && { weatherFlg: weatherFlg })
+        ...(isCollectors() && { weatherFlg: weatherFlg }),
+        version: version
       }
       if (validation.length === 0) {
         if (selectedItem != null) {
@@ -473,6 +481,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
               editData as UpdateDenialReason
             )
           }
+          console.log('result', result)
 
           if (result) {
             onSubmitData('success', t('common.editSuccessfully'))
@@ -485,35 +494,63 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       }
     } catch (error: any) {
       const { state } = extractError(error)
+      console.log('state', state)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error?.response?.data?.message)
       }
     }
   }
 
   const handleDelete = async () => {
-    const selectedValue = functionList.find(
-      (el) => el.name === formData.functionId
-    )
-    if (selectedValue) {
-      formData.functionId = selectedValue.functionId
-    }
-    const editData: UpdateDenialReason = {
-      reasonNameTchi: formData.reasonNameTchi,
-      reasonNameSchi: formData.reasonNameSchi,
-      reasonNameEng: formData.reasonNameEng,
-      description: '',
-      functionId: formData.functionId,
-      status: 'DELETED',
-      remark: formData.remark,
-      updatedBy: loginName
-    }
-    if (selectedItem != null) {
-      const result = await editDenialReason(selectedItem.reasonId, editData)
-      if (result) {
-        onSubmitData('success', t('common.deletedSuccessfully'))
-        resetFormData()
-        handleDrawerClose()
+    try {
+      const selectedValue = functionList.find(
+        (el) => el.name === formData.functionId
+      )
+      if (selectedValue) {
+        formData.functionId = selectedValue.functionId
+      }
+      const editData: UpdateDenialReason = {
+        reasonNameTchi: formData.reasonNameTchi,
+        reasonNameSchi: formData.reasonNameSchi,
+        reasonNameEng: formData.reasonNameEng,
+        description: '',
+        functionId: formData.functionId,
+        status: 'DELETED',
+        remark: formData.remark,
+        updatedBy: loginName,
+        version: version
+      }
+      if (selectedItem != null) {
+        let result = null
+        if (isCollectors()) {
+          result = await editDenialReasonCollectors(
+            selectedItem.reasonId,
+            editData as UpdateDenialReasonCollectors
+          )
+        } else {
+          result = await editDenialReason(
+            selectedItem.reasonId,
+            editData as UpdateDenialReason
+          )
+        }
+        //const result = await editDenialReason(selectedItem.reasonId, editData)
+        if (result) {
+          onSubmitData('success', t('common.deletedSuccessfully'))
+          resetFormData()
+          handleDrawerClose()
+        } else {
+          setTrySubmited(true)
+          onSubmitData('error', t('common.deleteFailed'))
+        }
+      }
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error.response.data.message)
       }
     }
   }

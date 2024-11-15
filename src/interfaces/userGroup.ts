@@ -10,6 +10,7 @@ export type UserGroup = {
     updatedAt: string
     userAccount: object[]
     functions: Functions[]
+    isAdmin: boolean
 }
 
 export type Functions = {
@@ -34,6 +35,7 @@ export type CreateUserGroupProps = {
     functions: number[]
     createdBy: string
     status: string
+    isAdmin: boolean
 }
 
 export type EditUserGroupProps = {
@@ -42,6 +44,7 @@ export type EditUserGroupProps = {
     functions: number[]
     updatedBy: string
     status: string
+    isAdmin: boolean
 }
 
 export type DeleteUserGroupProps = {

@@ -1,160 +1,170 @@
-import { Box, Divider } from "@mui/material";
-import RightOverlayForm from "../../../components/RightOverlayForm";
-import axios from "axios";
-import { AXIOS_DEFAULT_CONFIGS } from "../../../constants/configs";
-import { GET_ALL_RECYCLE_TYPE } from "../../../constants/requests";
-import { useEffect, useState } from "react";
-import { formatWeight, returnApiToken } from "../../../utils/utils";
-import { useTranslation } from "react-i18next";
-import { useContainer } from "unstated-next";
-import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
-import axiosInstance from "../../../constants/axiosInstance";
-import { getCheckInDetailByID, getCheckOutDetailByID } from "../../../APICalls/Collector/inout";
+import { Box, Divider } from '@mui/material'
+import RightOverlayForm from '../../../components/RightOverlayForm'
+import axios from 'axios'
+import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
+import { GET_ALL_RECYCLE_TYPE } from '../../../constants/requests'
+import { useEffect, useState } from 'react'
+import { formatWeight, returnApiToken } from '../../../utils/utils'
+import { useTranslation } from 'react-i18next'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import axiosInstance from '../../../constants/axiosInstance'
+import {
+  getCheckInDetailByID,
+  getCheckOutDetailByID
+} from '../../../APICalls/Collector/inout'
 
 interface CheckInOutDetail {
-    chkInId: number,
-    logisticName: string,
-    logisticId: string,
-    vehicleTypeId: string,
-    plateNo: string,
-    senderName: string,
-    senderId: string,
-    senderAddr: string,
-    senderAddrGps: number[],
-    receiverName: string,
-    receiverAddr: string,
-    warehouseId: number,
-    colId: number,
-    status: string,
-    reason: string[],
-    picoId: string,
-    signature: string
-    normalFlg: boolean,
-    adjustmentFlg: boolean,
-    nightFlg: boolean,
-    createdBy: string,
-    updatedBy: string,
-    checkinDetail?: [
+  chkInId: number
+  logisticName: string
+  logisticId: string
+  vehicleTypeId: string
+  plateNo: string
+  senderName: string
+  senderId: string
+  senderAddr: string
+  senderAddrGps: number[]
+  receiverName: string
+  receiverAddr: string
+  warehouseId: number
+  colId: number
+  status: string
+  reason: string[]
+  picoId: string
+  signature: string
+  normalFlg: boolean
+  adjustmentFlg: boolean
+  nightFlg: boolean
+  createdBy: string
+  updatedBy: string
+  checkinDetail?: [
+    {
+      chkInDtlId: number
+      recycTypeId: string
+      recycSubTypeId: string
+      packageTypeId: string
+      weight: number
+      unitId: string
+      itemId: number
+      picoDtlId: number | string
+      checkinDetailPhoto?: [
         {
-            chkInDtlId: number,
-            recycTypeId: string,
-            recycSubTypeId: string,
-            packageTypeId: string,
-            weight: number,
-            unitId: string,
-            itemId: number,
-            picoDtlId: number | string,
-            checkinDetailPhoto?: [
-                {
-                    sid: number,
-                    photo: string 
-                }
-            ],
-            createdBy: string,
-            updatedBy: string
+          sid: number
+          photo: string
         }
-    ],
-    createdAt: string,
-    updatedAt: string
+      ]
+      createdBy: string
+      updatedBy: string
+    }
+  ]
+  createdAt: string
+  updatedAt: string
 }
 
 function unitName(unit: string) {
-  var name = '';
-  switch(unit?.toString()){
-      case "1":
-          name = 'kg';
-          break;
-      case "2":
-          name = 'lb';
-          break;
+  var name = ''
+  switch (unit?.toString()) {
+    case '1':
+      name = 'kg'
+      break
+    case '2':
+      name = 'lb'
+      break
   }
-  return name;
+  return name
 }
 
-function packagingToText(packaging: string){
-  var text = '';
-  switch(packaging){      //the space of circle text component can only hold 1 chinese word, need to discuss about this function
-      case "PKG00001":
-          text = '袋';
-          break;
-      case "PKG00002":
-          text = '盒';
-          break;
-      case "PKG00003":
-          text = "箱";
-          break;
+function packagingToText(packaging: string) {
+  var text = ''
+  switch (
+    packaging //the space of circle text component can only hold 1 chinese word, need to discuss about this function
+  ) {
+    case 'PKG00001':
+      text = '袋'
+      break
+    case 'PKG00002':
+      text = '盒'
+      break
+    case 'PKG00003':
+      text = '箱'
+      break
   }
-  return text;
+  return text
 }
 
-function packageTextColor(packaging: string){
-  var color = '';
-  switch(packaging){
-      case "PKG00001":
-          color = '#36ABF3';
-          break;
-      case "PKG00002":
-          color = '#ABAD30';
-          break;
-      case "PKG00003":
-          color = '#FF4242';
-          break;
+function packageTextColor(packaging: string) {
+  var color = ''
+  switch (packaging) {
+    case 'PKG00001':
+      color = '#36ABF3'
+      break
+    case 'PKG00002':
+      color = '#ABAD30'
+      break
+    case 'PKG00003':
+      color = '#FF4242'
+      break
   }
-  return color;
+  return color
 }
 
-function packageBgColor(packaging: string){
-  var color = '';
-  switch(packaging){
-      case "PKG00001":
-          color = '#E1F4FF';
-          break;
-      case "PKG00002":
-          color = '#F6F1DC';
-          break;
-      case "PKG00003":
-          color = '#FFEBEB';
-          break;
+function packageBgColor(packaging: string) {
+  var color = ''
+  switch (packaging) {
+    case 'PKG00001':
+      color = '#E1F4FF'
+      break
+    case 'PKG00002':
+      color = '#F6F1DC'
+      break
+    case 'PKG00003':
+      color = '#FFEBEB'
+      break
   }
-  return color;
+  return color
 }
 
-
-
-function CheckInAndCheckOutDetails({isShow, setIsShow, selectedRow}:any) {
+function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
   const { decimalVal } = useContainer(CommonTypeContainer)
 
   const [recycType, setRecycType] = useState([])
-  const [checkInOutData, setCheckInOutData] = useState<CheckInOutDetail | null>(null)
-  const {t} = useTranslation();
+  const [checkInOutData, setCheckInOutData] = useState<CheckInOutDetail | null>(
+    null
+  )
+  const { t } = useTranslation()
 
   useEffect(() => {
-      initCheckinoutDetail()
+    initCheckinoutDetail()
   }, [selectedRow])
 
   const initCheckinoutDetail = async () => {
     if (selectedRow !== null && selectedRow !== undefined) {
-      let result;
-        const token = returnApiToken()
-        if (selectedRow.chkInId)  {
-          result = await getCheckInDetailByID(selectedRow.chkInId, token.realmApiRoute)
-        } else if (selectedRow.chkOutId) {
-          result = await getCheckOutDetailByID(selectedRow.chkOutId, token.realmApiRoute)
-        }
-        const data = result?.data;
-  
-        if (data) {
-          initRecycType()
-          setCheckInOutData(data)
-        }
+      let result
+      const token = returnApiToken()
+      if (selectedRow.chkInId) {
+        result = await getCheckInDetailByID(
+          selectedRow.chkInId,
+          token.realmApiRoute
+        )
+      } else if (selectedRow.chkOutId) {
+        result = await getCheckOutDetailByID(
+          selectedRow.chkOutId,
+          token.realmApiRoute
+        )
+      }
+      const data = result?.data
+
+      if (data) {
+        initRecycType()
+        setCheckInOutData(data)
+      }
     }
   }
   const initRecycType = async () => {
-    
     const token = returnApiToken()
     const AuthToken = token.authToken
 
-    const {data} = await axiosInstance({
+    const { data } = await axiosInstance({
       baseURL: window.baseURL.collector,
       ...GET_ALL_RECYCLE_TYPE(),
       headers: {
@@ -163,33 +173,34 @@ function CheckInAndCheckOutDetails({isShow, setIsShow, selectedRow}:any) {
     })
 
     setRecycType(data)
-
-  };
-
-  const recycleType = (id:string) => {
-    const findRecyc:any = recycType?.find((item:any) => item.recycTypeId === id)
-    return findRecyc?.recyclableNameSchi 
   }
 
+  const recycleType = (id: string) => {
+    const findRecyc: any = recycType?.find(
+      (item: any) => item.recycTypeId === id
+    )
+    return findRecyc?.recyclableNameSchi
+  }
 
-  const recycleSubType = (id:string, subId:string) => {
-    const parent:any =  recycType?.find((item:any) => item.recycTypeId === id)
-    const findSubRecyc:any = parent?.recycSubType?.find((item:any) => item.recycSubTypeId === subId)
+  const recycleSubType = (id: string, subId: string) => {
+    const parent: any = recycType?.find((item: any) => item.recycTypeId === id)
+    const findSubRecyc: any = parent?.recycSubType?.find(
+      (item: any) => item.recycSubTypeId === subId
+    )
     return findSubRecyc?.recyclableNameSchi
   }
-
 
   return (
     <div className="detail-inventory">
       <RightOverlayForm
         open={isShow}
         onClose={() => setIsShow(false)}
-        anchor={"right"}
-        action={"none"}
+        anchor={'right'}
+        action={'none'}
         headerProps={{
           title: t('checkinandcheckout.send_request'),
           subTitle: checkInOutData?.picoId,
-          onCloseHeader: () => setIsShow(false),
+          onCloseHeader: () => setIsShow(false)
         }}
       >
         <Divider />
@@ -207,36 +218,64 @@ function CheckInAndCheckOutDetails({isShow, setIsShow, selectedRow}:any) {
                 <path
                   d="M14 4L6 12L2 8"
                   stroke="#79CA25"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
-              <p className="text-grey-dark">{t('checkinandcheckout.adjust_inventory')}</p>
+              <p className="text-grey-dark">
+                {t('checkinandcheckout.adjust_inventory')}
+              </p>
             </div>
             <div className="flex flex-col gap-y-4">
-              <p className="text-grey-dark font-bold">{t('checkinandcheckout.shipping_info')}</p>
+              <p className="text-grey-dark font-bold">
+                {t('checkinandcheckout.shipping_info')}
+              </p>
               <div className="flex flex-col">
-                <p className="text-gray-middle text-smi m-0">{t('checkinandcheckout.shipping_company')}</p>
-                <p className="text-black font-bold">{checkInOutData?.senderName}</p>
+                <p className="text-gray-middle text-smi m-0">
+                  {t('checkinandcheckout.shipping_company')}
+                </p>
+                <p className="text-black font-bold">
+                  {checkInOutData?.senderName ? checkInOutData.senderName : '-'}
+                </p>
               </div>
 
               <div className="flex flex-col">
-                <p className="text-gray-middle text-smi m-0">{t('checkinandcheckout.receiver')}</p>
-                <p className="text-black font-bold">{checkInOutData?.receiverName}</p>
+                <p className="text-gray-middle text-smi m-0">
+                  {t('checkinandcheckout.receiver')}
+                </p>
+                <p className="text-black font-bold">
+                  {checkInOutData?.receiverName
+                    ? checkInOutData.receiverName
+                    : '-'}
+                </p>
               </div>
 
               <div className="flex flex-col">
-                <p className="text-gray-middle text-smi m-0">{t('checkinandcheckout.logistics_company')}</p>
-                <p className="text-black font-bold">{checkInOutData?.logisticName}</p>
+                <p className="text-gray-middle text-smi m-0">
+                  {t('checkinandcheckout.logistics_company')}
+                </p>
+                <p className="text-black font-bold">
+                  {checkInOutData?.logisticName
+                    ? checkInOutData?.logisticName
+                    : '-'}
+                </p>
               </div>
 
-              <p className="text-grey-dark font-bold">{t('checkinandcheckout.recyle_loc_info')}</p>
+              <p className="text-grey-dark font-bold">
+                {t('checkinandcheckout.recyle_loc_info')}
+              </p>
 
               <div className="flex">
                 <div className="flex flex-col flex-1">
-                  <p className="text-gray-middle text-smi m-0">{t('checkinandcheckout.delivery_location')}</p>
-                  <p className="text-black font-bold">{checkInOutData?.senderAddr}</p>
+                  <p className="text-gray-middle text-smi m-0">
+                    {t('checkinandcheckout.delivery_location')}
+                  </p>
+                  <p className="text-black font-bold">
+                    {checkInOutData?.senderAddr
+                      ? checkInOutData?.senderAddr
+                      : '-'}
+                  </p>
                 </div>
                 <svg
                   width="24"
@@ -253,43 +292,64 @@ function CheckInAndCheckOutDetails({isShow, setIsShow, selectedRow}:any) {
                   />
                 </svg>
                 <div className="flex flex-col flex-1 ml-6">
-                  <p className="text-gray-middle text-smi m-0">{t('checkinandcheckout.arrived')}</p>
-                  <p className="text-black font-bold">{checkInOutData?.receiverAddr}</p>
+                  <p className="text-gray-middle text-smi m-0">
+                    {t('checkinandcheckout.arrived')}
+                  </p>
+                  <p className="text-black font-bold">
+                    {checkInOutData?.receiverAddr
+                      ? checkInOutData?.receiverAddr
+                      : '-'}
+                  </p>
                 </div>
               </div>
 
               <div className="flex flex-col gap-4">
-                <p className="text-grey-dark text-smi -mb-1">{t('checkinandcheckout.recyc_loc_info')}</p>
-                {checkInOutData?.checkinDetail?.map((detail:any) => {
+                <p className="text-grey-dark text-smi -mb-1">
+                  {t('checkinandcheckout.recyc_loc_info')}
+                </p>
+                {checkInOutData?.checkinDetail?.map((detail: any) => {
                   return (
                     <div className="flex px-4 py-2 border border-solid border-grey-line rounded-xl items-center justify-between">
                       <div className="flex items-center">
-                        <div className="w-[25px] h-[25px] rounded-full flex items-center justify-center" style={{backgroundColor: packageBgColor(detail?.packageTypeId), color: packageTextColor(detail?.packageTypeId)}}>
-                          <p className="text-blue-middle text-xxs">{packagingToText(detail?.packageTypeId)}</p>
+                        <div
+                          className="w-[25px] h-[25px] rounded-full flex items-center justify-center"
+                          style={{
+                            backgroundColor: packageBgColor(
+                              detail?.packageTypeId
+                            ),
+                            color: packageTextColor(detail?.packageTypeId)
+                          }}
+                        >
+                          <p className="text-blue-middle text-xxs">
+                            {packagingToText(detail?.packageTypeId)}
+                          </p>
                         </div>
                         <div className="flex flex-col ml-4">
-                          <p className="text-black font-bold m-0">{recycleType(detail?.recycTypeId)}</p>
-                          <p className="text-gray-middle m-0">{recycleSubType(detail?.recycTypeId, detail?.recycSubTypeId)}</p>
+                          <p className="text-black font-bold m-0">
+                            {recycleType(detail?.recycTypeId)}
+                          </p>
+                          <p className="text-gray-middle m-0">
+                            {recycleSubType(
+                              detail?.recycTypeId,
+                              detail?.recycSubTypeId
+                            )}
+                          </p>
                         </div>
                       </div>
-                      <p className="text-black font-bold">{formatWeight(detail?.weight, decimalVal)}{unitName(detail?.unitId)} </p>
+                      <p className="text-black font-bold">
+                        {formatWeight(detail?.weight, decimalVal)}
+                        {unitName(detail?.unitId)}{' '}
+                      </p>
                     </div>
                   )
                 })}
-                
               </div>
-              {/* <div className="flex flex-col">
-                <p className="text-grey-middle text-smi m-0">訊息</p>
-                <p className="text-grey-dark text-xs">
-                  [UserID] 拒絕於 2023/09/24 17:00，原因為 [RejectReason]
-                </p>
-              </div> */}
             </div>
           </div>
         </Box>
       </RightOverlayForm>
     </div>
-  );
+  )
 }
 
-export default CheckInAndCheckOutDetails;
+export default CheckInAndCheckOutDetails

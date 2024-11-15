@@ -16,12 +16,13 @@ import {
 } from '../../../APICalls/staff'
 
 import { styles } from '../../../constants/styles'
-import UserConfirmModal from '../../../components/FormComponents/UserConfirmModal'
+import UserConfirmModal from '../../../components/FormComponents/UserC'
 import { formErr } from '../../../constants/constant'
 import {
   returnErrorMsg,
   validateEmail,
-  extractError
+  extractError,
+  showErrorToast
 } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { Staff, CreateStaff, EditStaff } from '../../../interfaces/staff'
@@ -72,6 +73,7 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
   const [existingEmail, setExistingEmail] = useState<string[]>([])
   const [showModalConfirm, setShowModalConfirm] = useState(false)
+  const [version, setVersion] = useState<number>(0)
   const navigate = useNavigate()
 
   const staffField = [
@@ -189,6 +191,7 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
         titleId: selectedItem.titleId
       })
       setSelectedLoginId(selectedItem.loginId)
+      setVersion(selectedItem.version)
     }
   }
 
@@ -293,7 +296,7 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
     email: formData.email,
     salutation: 'salutation',
     createdBy: loginName,
-    updatedBy: loginName
+    updatedBy: loginName,
   })
 
   const handleCreateOrEditStaff = () => {
@@ -346,60 +349,80 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
   }
 
   const handleEditStaff = async () => {
-    const editData: EditStaff = {
-      staffNameTchi: formData.staffNameTchi,
-      staffNameSchi: formData.staffNameSchi,
-      staffNameEng: formData.staffNameEng,
-      titleId: formData.titleId,
-      contactNo: formData.contactNo,
-      loginId: formData.loginId,
-      status: 'ACTIVE',
-      gender: 'M',
-      email: formData.email,
-      salutation: 'salutation',
-      updatedBy: loginName
+    try {
+      const editData: EditStaff = {
+        staffNameTchi: formData.staffNameTchi,
+        staffNameSchi: formData.staffNameSchi,
+        staffNameEng: formData.staffNameEng,
+        titleId: formData.titleId,
+        contactNo: formData.contactNo,
+        loginId: formData.loginId,
+        status: 'ACTIVE',
+        gender: 'M',
+        email: formData.email,
+        salutation: 'salutation',
+        updatedBy: loginName,
+        version: version,
+      }
+      if (validation.length == 0) {
+        if (selectedItem != null) {
+          const result = await updateUserManufacturer(
+            selectedItem.staffId,
+            editData
+          )
+          if (result) {
+            onSubmitData('success', 'Edit data success')
+            resetFormData()
+            handleDrawerClose()
+          }
+        }
+      } else {
+        setTrySubmited(true)
+      }
+    } catch (error: any) {
+      const {state} = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
+        }
     }
-    if (validation.length == 0) {
+  }
+
+  const handleDelete = async () => {
+    try {
+      const editData: EditStaff = {
+        staffNameTchi: formData.staffNameTchi,
+        staffNameSchi: formData.staffNameSchi,
+        staffNameEng: formData.staffNameEng,
+        titleId: formData.titleId,
+        contactNo: formData.contactNo,
+        loginId: formData.loginId,
+        status: 'DELETED',
+        gender: 'M',
+        email: formData.email,
+        salutation: 'salutation',
+        updatedBy: loginName,
+        version: version,
+      }
       if (selectedItem != null) {
         const result = await updateUserManufacturer(
           selectedItem.staffId,
           editData
         )
         if (result) {
-          onSubmitData('success', 'Edit data success')
+          onSubmitData('success', 'Deleted data success')
           resetFormData()
           handleDrawerClose()
         }
       }
-    } else {
-      setTrySubmited(true)
-    }
-  }
-
-  const handleDelete = async () => {
-    const editData: EditStaff = {
-      staffNameTchi: formData.staffNameTchi,
-      staffNameSchi: formData.staffNameSchi,
-      staffNameEng: formData.staffNameEng,
-      titleId: formData.titleId,
-      contactNo: formData.contactNo,
-      loginId: formData.loginId,
-      status: 'DELETED',
-      gender: 'M',
-      email: formData.email,
-      salutation: 'salutation',
-      updatedBy: loginName
-    }
-    if (selectedItem != null) {
-      const result = await updateUserManufacturer(
-        selectedItem.staffId,
-        editData
-      )
-      if (result) {
-        onSubmitData('success', 'Deleted data success')
-        resetFormData()
-        handleDrawerClose()
-      }
+    } catch (error: any) {
+      const {state} = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
+        }
     }
   }
 

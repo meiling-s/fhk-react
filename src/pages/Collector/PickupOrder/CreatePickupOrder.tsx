@@ -13,6 +13,15 @@ import { useTranslation } from 'react-i18next'
 import { extractError, returnApiToken, showErrorToast } from '../../../utils/utils'
 import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { refactorPickUpOrderDetail } from './utils'
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(customParseFormat);
+
 
 const CreatePickupOrder = () => {
   const navigate = useNavigate()
@@ -40,95 +49,16 @@ const CreatePickupOrder = () => {
     }
   }
 
-  const validateSchema = Yup.object().shape({
-    // effFrmDate: Yup.date().required(),
-    // effToDate: Yup.date()
-    //     .when(
-    //     'effFrmDate',
-    //     (effFrmDate, schema) => {
-    //       return effFrmDate && schema.min(effFrmDate, `${t('form.error.invalidDate') }`)
-    //     },
-    // ),
-    // routineType:
-    //   picoTypeValue == 'ROUTINE'
-    //     ? Yup.string().required('This routineType is required')
-    //     : Yup.string(),
-
-    routine: Yup.lazy((value, schema) => {
-      const routineType = schema.parent.routineType
-      if (routineType === 'specificDate') {
-        return Yup.array()
-          .required('routine is required')
-          .min(1, getErrorMsg(t('pick_up_order.routine.period_should_not_empty'), 'empty'))
-          .test(
-            'is-in-range',
-            t('pick_up_order.out_of_date_range'),
-            function (value) {
-              const { effFrmDate, effToDate } = schema.parent
-              // const fromDate = new Date(effFrmDate)
-              // const toDate = new Date(effToDate)
-              
-              const fromDate = dayjs(effFrmDate).format('YYYY-MM-DD')
-              const toDate =  dayjs(effToDate).format('YYYY-MM-DD')
-             
-              const datesInDateObjects = value.map((date) => new Date(date))
-              return datesInDateObjects.every(
-                (date) => {
-                  const currentDate = dayjs(date).format('YYYY-MM-DD')
-                  return currentDate >= fromDate && currentDate <= toDate
-                }
-              )
-            }
-          )
-      } else {
-        return Yup.array().required('routine is required')
-      }
-    }),
-    logisticName: Yup.string().required(
-      getErrorMsg(t('pick_up_order.choose_logistic'), 'empty')
-    ),
-    vehicleTypeId: Yup.string().required(
-      getErrorMsg(t('pick_up_order.vehicle_category'), 'empty')
-    ),
-    platNo: Yup.string().required(
-      getErrorMsg(t('pick_up_order.plat_number'), 'empty')
-    ),
-    // contactNo: Yup.number().required(
-    //   getErrorMsg(t('pick_up_order.contact_number'), 'empty')
-    // ),
-    // contractNo:
-    //   picoTypeValue == 'ROUTINE'
-    //     ? Yup.string().required(
-    //         getErrorMsg(t('pick_up_order.routine.contract_number'), 'empty')
-    //       )
-    //     : Yup.string(),
-    reason:
-      picoTypeValue == 'AD_HOC'
-        ? Yup.string().required(
-            getErrorMsg(
-              t('pick_up_order.adhoc.reason_get_off'),
-              'isInWrongFormat'
-            )
-          )
-        : Yup.string(),
-    createPicoDetail: Yup.array()
-      .required(getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty'))
-      .test(
-        'has-rows',
-        getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty')!!,
-        (value) => {
-          return value.length > 0 || addRow.length > 0
-        }
-      )
-  })
-
 
   const submitPickUpOrder = async (values: CreatePO) => {
+
     try {
+
       return await createPickUpOrder(values)
+
     } catch (error) {
-      const { state, realm} = extractError(error);
-      if(state.code == STATUS_CODE[503]){
+      const { state, realm } = extractError(error);
+      if (state.code == STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
         return null
@@ -156,24 +86,56 @@ const CreatePickupOrder = () => {
       contractNo: '',
       createdBy: 'Admin',
       updatedBy: 'Admin',
-      createPicoDetail: []
+      createPicoDetail: [],
+      specificDates: []
     },
+
     // validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
-      values.createPicoDetail = addRow;
-      if(picoTypeValue === 'AD_HOC'){
+      const refactorPicoDetail: any = refactorPickUpOrderDetail(addRow)
+      values.createPicoDetail = refactorPicoDetail
+
+
+      if (picoTypeValue === 'AD_HOC') {
         values.routine = [];
+      } else if (picoTypeValue === 'ROUTINE') {
+        if (values.routineType === 'specificDate') {
+          // Get current time (hour and minute) from the user's local time
+          const currentHour = dayjs().hour();
+          const currentMinute = dayjs().minute();
+
+          values.specificDates = values.routine
+            .map(value => {
+              // Format to 'YYYY-MM-DD' first, then parse it in the user's timezone
+              const formattedDate = dayjs(value).format('YYYY-MM-DD');
+              const parsedDate = dayjs.tz(formattedDate, dayjs.tz.guess());
+
+              if (!parsedDate.isValid()) {
+                console.error(`Invalid date format: ${value}`);
+                return null; // Handle invalid dates as needed
+              }
+
+              // Set current hour and minute, then convert to ISO string
+              return parsedDate
+                .set('hour', currentHour)
+                .set('minute', currentMinute)
+                .toISOString();
+            })
+            .filter(date => date !== null) as string[]; // Filter out nulls and cast as string[]
+        } else if (values.routineType === 'weekly') {
+          values.specificDates = [];
+        }
       }
+
+      const result = await submitPickUpOrder(values);
       
-      const result = await submitPickUpOrder(values)
-      const data = result?.data
+
+      const data = result?.data;
       if (data) {
-        //console.log('all pickup order: ', data)
-        const routeName = role
-        navigate(`/${routeName}/PickupOrder`, { state: 'created' })
-        //navigate('/collector/PickupOrder', { state: 'created' })
+          const routeName = role;
+          navigate(`/${routeName}/PickupOrder`, { state: 'created' });
       } else {
-        showErrorToast('fail to create pickup order')
+          showErrorToast('fail to create pickup order');
       }
     }
   })
@@ -181,7 +143,7 @@ const CreatePickupOrder = () => {
   useEffect(() => {
     setPicoType(createPickupOrder.values.picoType)
   }, [createPickupOrder.values.picoType])
-  
+
   return (
     <PickupOrderCreateForm
       formik={createPickupOrder}

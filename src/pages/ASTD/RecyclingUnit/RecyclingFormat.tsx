@@ -71,6 +71,7 @@ interface recyleTypeData {
     updatedAt: string
     updatedBy: string
     recycSubTypeId: string
+    version: number
 }
 
 interface RecyclingFormatProps {
@@ -106,18 +107,19 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         { contractNo: string; isEpd: boolean; frmDate: string; toDate: string }[]
     >([])
     const [pysicalLocation, setPysicalLocation] = useState<boolean>(false) // pysical location field
-    const [status, setStatus] = useState(true) // status field
-    const [trySubmited, setTrySubmitted] = useState(false)
-    const [tChineseName, setTChineseName] = useState('')
-    const [sChineseName, setSChineseName] = useState('')
-    const [englishName, setEnglishName] = useState('')
-    const [description, setDescription] = useState('')
-    const [remark, setRemark] = useState('')
-    const [isMainCategory, setMainCategory] = useState(true)
-    const [chosenRecyclableType, setChosenRecyclableType] = useState('')
-    const [subTypeId, setSubTypeId] = useState('')
-    const [mainTypeId, setMainTypeId] = useState('')
-    const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
+    const [status, setStatus] = useState<boolean>(true) // status field
+    const [trySubmited, setTrySubmitted] = useState<boolean>(false)
+    const [tChineseName, setTChineseName] = useState<string>('')
+    const [sChineseName, setSChineseName] = useState<string>('')
+    const [englishName, setEnglishName] = useState<string>('')
+    const [description, setDescription] = useState<string>('')
+    const [remark, setRemark] = useState<string>('')
+    const [isMainCategory, setMainCategory] = useState<boolean>(true)
+    const [chosenRecyclableType, setChosenRecyclableType] = useState<string>('')
+    const [subTypeId, setSubTypeId] = useState<string>('')
+    const [mainTypeId, setMainTypeId] = useState<string>('')
+    const [version, setVersion] = useState<number>(0)
+    const [validation, setValidation] = useState<{ field: string; error: string, dataTestId: string }[]>([])
     const isInitialRender = useRef(true) // Add this line
     const navigate = useNavigate();
 
@@ -135,6 +137,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         if (action === 'edit') {
             setTrySubmitted(false)
             if (selectedItem !== null && selectedItem !== undefined) {
+                console.log(selectedItem, 'selected')
                 if (!mainCategory) {
                     const parentData = recyclableType.find(value => value.recycSubType.some(subType => subType.recycSubTypeId === selectedItem.recycSubTypeId));
                     setSubTypeId(selectedItem.recycSubTypeId);
@@ -148,6 +151,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 setDescription(selectedItem.description);
                 setRemark(selectedItem.remark);
                 setMainCategory(mainCategory);
+                setVersion(selectedItem.version)
             }
         } else if (action === 'add') {
             resetForm();
@@ -192,14 +196,15 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
       }
       
     useEffect(() => {
-        const tempV: {field: string; error: string}[] = []
+        const tempV: {field: string; error: string; dataTestId: string}[] = []
 
         tChineseName.trim() === '' &&
         tempV.push({
             field: `${t('packaging_unit.traditional_chinese_name')}`,
             error: `${t(
             'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: 'astd-recyclable-form-tc-err-warning-4543'
         })
 
         sChineseName.trim() === '' &&
@@ -207,7 +212,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             field: `${t('packaging_unit.simplified_chinese_name')}`,
             error: `${t(
             'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: 'astd-recyclable-form-sc-err-warning-7195'
         })
 
         englishName.trim() === '' &&
@@ -215,7 +221,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             field: `${t('packaging_unit.english_name')}`,
             error: `${t(
             'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: 'astd-recyclable-form-en-err-warning-2471'
         })
 
         if (isMainCategory === false) {
@@ -224,7 +231,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 field: `${t('recycling_unit.main_category')}`,
                 error: `${t(
                 'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}`,
+                dataTestId: 'astd-recyclable-form-choose-main-select-err-warning-8595'
             })
         }
 
@@ -236,7 +244,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         
         const recyclingForm = {
             status: 'INACTIVE',
-            updatedBy: token.loginId
+            updatedBy: token.loginId,
+            version: version
         }
 
         try {
@@ -256,12 +265,11 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             }
         } catch (error:any) {
             const {state} =  extractError(error)
-            if(state.code === STATUS_CODE[503] ){
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-            } else {
-                console.error(error)
-                showErrorToast(t('notify.errorDeleted'))
-            }
+              } else if (state.code === STATUS_CODE[409]){
+                showErrorToast(error.response.data.message);
+              }
            
         }
     }
@@ -278,6 +286,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             status: 'ACTIVE',
             createdBy: loginId,
             updatedBy: loginId,
+            ...(action === 'edit' && {version: version})
         }
 
         const isError = validation.length == 0
@@ -311,16 +320,19 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             const {state} = extractError(error)
             if(state.code === STATUS_CODE[503] ){
                 navigate('/maintenance')
-            } else {
-                console.error(error)
-                showErrorToast(t('errorCreated.errorCreated'))
-            }
+            } else if (state.code === STATUS_CODE[409]) {
+                const errorMessage = error.response.data.message
+                if (errorMessage.includes('[recyclableNameDuplicate]')) {
+                  showErrorToast(handleDuplicateErrorMessage(errorMessage))
+                } else {
+                  showErrorToast(error.response.data.message);
+                }
+              }
         }
     }
     const editRecycData = async (addRecyclingForm: any) => {
         try {
             if (isMainCategory) {
-                console.log(mainTypeId, 'aaa')
                 const response = await updateRecyc(addRecyclingForm, mainTypeId)
                 if (response) {
                     showSuccessToast(t('notify.SuccessEdited'))
@@ -335,15 +347,49 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             }
         } catch (error:any) {
             const {state} = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-            } else {
-                console.error(error)
-                showErrorToast(t('errorCreated.errorCreated'))
-            }
+              } else if (state.code === STATUS_CODE[409]) {
+                const errorMessage = error.response.data.message
+                if (errorMessage.includes('[recyclableNameDuplicate]')) {
+                  showErrorToast(handleDuplicateErrorMessage(errorMessage))
+                } else {
+                  showErrorToast(error.response.data.message);
+                }
+              }
             
         }
     }
+    const handleDuplicateErrorMessage = (input: string) => {
+        const replacements: { [key: string]: string } = {
+          '[tchi]': 'Traditional Chinese Name',
+          '[eng]': 'English Name',
+          '[schi]': 'Simplified Chinese Name'
+        };
+      
+        let result = input.replace(/\[recyclableNameDuplicate\]/, '');
+      
+        const matches = result.match(/\[(tchi|eng|schi)\]/g);
+      
+        if (matches) {
+          const replaced = matches.map(match => replacements[match as keyof typeof replacements]);
+      
+          let formatted: string;
+          if (replaced.length === 1) {
+            formatted = replaced[0];
+          } else if (replaced.length === 2) {
+            formatted = replaced.join(' and ');
+          } else if (replaced.length === 3) {
+            formatted = `${replaced[0]}, ${replaced[1]} and ${replaced[2]}`;
+          }
+      
+          result = result.replace(/\[(tchi|eng|schi)\]+/, formatted!);
+      
+          result = result.replace(/\[(tchi|eng|schi)\]/g, '');
+        }
+      
+        return result.trim();
+      };
 
     return (
         <div className="add-vehicle">
@@ -379,6 +425,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 placeholder={t('packaging_unit.traditional_chinese_name_placeholder')}
                                 onChange={(event) => setTChineseName(event.target.value)}
                                 error={checkString(tChineseName)}
+                                dataTestId='astd-recyclable-form-tc-input-field-5560'
                             />
                         </CustomField>
                     </Box>
@@ -391,6 +438,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 placeholder={t('packaging_unit.simplified_chinese_name_placeholder')}
                                 onChange={(event) => setSChineseName(event.target.value)}
                                 error={checkString(sChineseName)}
+                                dataTestId='astd-recyclable-form-sc-input-field-2575'
                             />
                         </CustomField>
                     </Box>
@@ -403,6 +451,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 placeholder={t('packaging_unit.english_name_placeholder')}
                                 onChange={(event) => setEnglishName(event.target.value)}
                                 error={checkString(englishName)}
+                                dataTestId='astd-recyclable-form-en-input-field-4031'
                             />
                         </CustomField>
                     </Box>
@@ -417,6 +466,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                     setMainCategory(newValue);
                                     newValue === false && setChosenRecyclableType('')
                                 }}
+                                dataTestId='astd-recyclable-form-type-boolean-button-4961'
                             />
                         </CustomField>
                     </Box>
@@ -434,6 +484,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                                 sx={{ borderRadius: '12px' }}
                                                 error={checkString(chosenRecyclableType)}
+                                                data-testid='astd-recyclable-form-choose-main-select-button-2451'
                                             >
                                                 <MenuItem value="">
                                                 <em>-</em>
@@ -464,6 +515,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             onChange={(event) => setDescription(event.target.value)}
                             multiline={true}
                             defaultValue={description}
+                            dataTestId='astd-recyclable-form-intro-input-field-7653'
                         />
                     </CustomField>
                     <CustomField label={t('packaging_unit.remark')}>
@@ -473,6 +525,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             onChange={(event) => setRemark(event.target.value)}
                             multiline={true}
                             defaultValue={remark}
+                            dataTestId='astd-recyclable-form-remark-input-field-3725'
                         />
                     </CustomField>
                     <Grid item sx={{ width: '92%' }}>
@@ -483,6 +536,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 field={t(val.field)}
                                 errorMsg={val.error}
                                 type={'error'}
+                                dataTestId={val.dataTestId}
                             />
                             ))}
                     </Grid>

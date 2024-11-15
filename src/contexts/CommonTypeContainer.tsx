@@ -12,7 +12,8 @@ import {
   vehicleType,
   ProcessType,
   weightUnit,
-  Company
+  Company,
+  PackagingList
 } from '../interfaces/common'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import {
@@ -36,6 +37,9 @@ import axiosInstance from '../constants/axiosInstance'
 import { getWeightUnit } from '../APICalls/ASTD/recycling'
 import { getAllTenant, getTenantById } from '../APICalls/tenantManage'
 import { localStorgeKeyName } from '../constants/constant'
+import { getAllPackagingUnit } from '../APICalls/Collector/packagingUnit'
+import { getProductTypeList } from '../APICalls/ASTD/settings/productType'
+import { Products } from '../interfaces/productType'
 
 const CommonType = () => {
   const [colPointType, setColPointType] = useState<colPointType[]>()
@@ -60,6 +64,8 @@ const CommonType = () => {
   const [dateFormat, setDateFormat] = useState<string>('')
   const [companies, setCompanies] = useState<Company[]>([]);
   const [currentTenant, setCurrentTenant] = useState<Company| null>(null);
+  const [packagingList, setPackagingList] = useState<PackagingList[]>([])
+  const [productType, setProductType] = useState<Products[]>([])
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId);
   
   const getColPointType = async () => {
@@ -272,7 +278,7 @@ const CommonType = () => {
   
   const initWeightUnit = async () => {
    try {
-    const result = await getWeightUnit(page - 1, pageSize)
+    const result = await getWeightUnit(page - 1, 1000)
     const data = result?.data
     setWeightUnits(data)
    } catch (error) {
@@ -344,6 +350,25 @@ const CommonType = () => {
     }
   }
 
+  const getPackagingUnitList = async () => {
+    try {
+      const result = await getAllPackagingUnit(1 - 1, 1000)
+      if (result.data) {
+        setPackagingList(result.data.content)
+      }
+    } catch (error) {
+      return null
+    }
+  }
+
+  const getProductType = async () => {
+    const response = await getProductTypeList()
+    const data = response.data
+    if (data) {
+      setProductType(data)
+    }
+  }
+
   const updateCommonTypeContainer = () => {
     getColPointType()
     getPremiseType()
@@ -361,6 +386,7 @@ const CommonType = () => {
     getDateFormat()
     initCompaniesData()
     getTenantLogin()
+    getPackagingUnitList()
   }
 
   useEffect(() => {
@@ -382,6 +408,7 @@ const CommonType = () => {
       getDateFormat()
       initCompaniesData()
       getTenantLogin()
+      getPackagingUnitList()
     }
   }, [])
 
@@ -404,6 +431,8 @@ const CommonType = () => {
     dateFormat,
     companies,
     currentTenant,
+    packagingList,
+    productType,
     updateCommonTypeContainer,
     getColPointType,
     getPremiseType,
@@ -419,8 +448,10 @@ const CommonType = () => {
     getImgSettings,
     getDecimalVal,
     getDateFormat,
+    getProductType,
     initWeightUnit,
-    initCompaniesData
+    initCompaniesData,
+    getPackagingUnitList,
   }
 }
 

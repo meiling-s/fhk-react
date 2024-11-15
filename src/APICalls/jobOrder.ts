@@ -1,12 +1,12 @@
-import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import {
-  ASSIGN_DRIVER, REJECT_REASSIGN_DRIVER, GET_DRIVER, GET_VEHICLE_LOGISTIC, GET_ALL_JOB_ORDER, UPDATE_JOB_ORDER_STATUS, GET_DRIVER_DETAIL_BY_ID
+  ASSIGN_DRIVER, REJECT_REASSIGN_DRIVER, GET_DRIVER, GET_VEHICLE_LOGISTIC, GET_ALL_JOB_ORDER, UPDATE_JOB_ORDER_STATUS, GET_DRIVER_DETAIL_BY_ID,
+  GET_VEHICLE_PLATE_LIST,
+  GET_DRIVER_DATA
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
 import { AssignJobDriver, GetDriver, RejectJobDriver } from '../interfaces/pickupOrder'
 import { JoStatus, queryJobOrder } from '../interfaces/JobOrderInterfaces'
-
 
 export const getAllJobOrder = async (query?: queryJobOrder) => {
   const auth = returnApiToken()
@@ -38,11 +38,11 @@ try{
 
 }
 
-export const getDriverDetailById = async (driverId: string) => {
+export const getDriverDetailById = async (driverId: string, company?: string) => {
 const auth = returnApiToken()
 try{
     const response = await axiosInstance({
-        ...GET_DRIVER_DETAIL_BY_ID(auth.decodeKeycloack, driverId),
+        ...GET_DRIVER_DETAIL_BY_ID(company? company : auth.decodeKeycloack, driverId),
         baseURL: window.baseURL.administrator,
     });
     return response
@@ -110,7 +110,6 @@ export const getDriver = async (page: number, size: number, sort: string) => {
 export const getAllVehiclesLogistic = async (page: number, size: number) => {
   try {
     const token = returnApiToken()
-
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
       ...GET_VEHICLE_LOGISTIC(token.decodeKeycloack),
@@ -126,5 +125,42 @@ export const getAllVehiclesLogistic = async (page: number, size: number) => {
     return response
   } catch (e) {
     throw(e)
+  }
+}
+
+export const getVehiclePlateList = async () => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+      baseURL: window.baseURL.collector,
+      ...GET_VEHICLE_PLATE_LIST(token.tenantId),
+      headers: {
+        AuthToken: token.authToken
+      }
+    })
+    
+    return response
+
+  } catch (error) {
+    throw(error)
+  }
+}
+
+export const getVehicleDriverList = async () => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+      baseURL: window.baseURL.collector,
+      ...GET_DRIVER_DATA(token.tenantId),
+      headers: {
+        AuthToken: token.authToken
+      }
+    })
+    
+    return response
+  } catch (error) {
+    throw(error)
   }
 }

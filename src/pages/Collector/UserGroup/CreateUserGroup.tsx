@@ -4,11 +4,16 @@ import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
-
+import Switcher from '../../../components/FormComponents/CustomSwitch'
+import LabelField from '../../../components/FormComponents/CustomField'
 import { useTranslation } from 'react-i18next'
 import { formValidate } from '../../../interfaces/common'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
-import { extractError, returnApiToken, returnErrorMsg } from '../../../utils/utils'
+import {
+  extractError,
+  returnApiToken,
+  returnErrorMsg
+} from '../../../utils/utils'
 import { localStorgeKeyName } from '../../../constants/constant'
 
 import {
@@ -52,12 +57,12 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [roleName, setRoleName] = useState('')
-  // const [realm, setRealm] = useState('')
+  const [isAdmin, setIsAdmin] = useState<boolean>(false)
   const [description, setDescription] = useState('')
   const [groupList, setGroupList] = useState<string[]>([])
   const [functions, setFunctions] = useState<number[]>([])
   var realm = localStorage.getItem(localStorgeKeyName.realm) || 'collector'
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const mappingData = () => {
     if (selectedItem != null) {
@@ -68,9 +73,25 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         newFunctions.push(item.functionId)
       })
       setFunctions(newFunctions)
+      setIsAdmin(selectedItem.isAdmin)
       setDescription(selectedItem.description)
     }
   }
+
+  useEffect(() => {
+    if (isAdmin) {
+      const allFunctionIds = functionList.map(
+        (item: Functions) => item.functionId
+      )
+      setFunctions(allFunctionIds)
+    } else {
+      let prevItem: number[] = []
+      selectedItem?.functions.forEach((item) => {
+        prevItem.push(item.functionId)
+      })
+      setFunctions(prevItem)
+    }
+  }, [isAdmin, functionList])
 
   useEffect(() => {
     setValidation([])
@@ -80,6 +101,13 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     } else {
       setTrySubmited(false)
       resetData()
+
+      if (isAdmin) {
+        const allFunctionIds = functionList.map(
+          (item: Functions) => item.functionId
+        )
+        setFunctions(allFunctionIds)
+      }
     }
 
     //set groupRoleNameList
@@ -89,6 +117,8 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     } else {
       setGroupList(groupNameList)
     }
+
+    //set all funtion selected when drawer open
   }, [drawerOpen])
 
   const resetData = () => {
@@ -115,6 +145,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         tempV.push({
           field: t('userGroup.groupName'),
           problem: formErr.empty,
+          dataTestId: 'astd-user-group-form-group-name-err-warning-3882',
           type: 'error'
         })
       groupList.some((item) => item.toLowerCase() == roleName.toLowerCase()) &&
@@ -127,12 +158,14 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         tempV.push({
           field: t('userGroup.description'),
           problem: formErr.empty,
+          dataTestId: 'astd-user-group-form-desc-err-warning-1635',
           type: 'error'
         })
       functions.length == 0 &&
         tempV.push({
           field: t('userGroup.availableFeatures'),
           problem: formErr.empty,
+          dataTestId: 'astd-user-group-form-available-feature-err-warning-6315',
           type: 'error'
         })
       // console.log("tempV", tempV)
@@ -153,7 +186,8 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         description: description,
         functions: functions,
         createdBy: token.loginId,
-        status: 'ACTIVE'
+        status: 'ACTIVE',
+        isAdmin: isAdmin
       }
       handleCreateUserGroup(formData)
     } else {
@@ -162,7 +196,8 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         roleName: roleName,
         description: description,
         updatedBy: token.loginId,
-        status: 'ACTIVE'
+        status: 'ACTIVE',
+        isAdmin: isAdmin
       }
       handleEditUserGroup(formData)
     }
@@ -183,37 +218,37 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       } else {
         setTrySubmited(true)
       }
-    } catch (error:any) {
-     const { state, realm } =  extractError(error);
-     if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-     }
+      }
     }
   }
 
   const handleEditUserGroup = async (formData: EditUserGroupProps) => {
-   try {
-    if (validation.length === 0) {
-      if (selectedItem != null) {
-        const result = await editUserGroup(formData, selectedItem.groupId!)
-        if (result) {
-          onSubmitData('success', t('notify.SuccessEdited'))
-          resetData()
-          handleDrawerClose()
-        } else {
-          setTrySubmited(true)
-          onSubmitData('error', t('notify.errorEdited'))
+    try {
+      if (validation.length === 0) {
+        if (selectedItem != null) {
+          const result = await editUserGroup(formData, selectedItem.groupId!)
+          if (result) {
+            onSubmitData('success', t('notify.SuccessEdited'))
+            resetData()
+            handleDrawerClose()
+          } else {
+            setTrySubmited(true)
+            onSubmitData('error', t('notify.errorEdited'))
+          }
         }
+      } else {
+        setTrySubmited(true)
       }
-    } else {
-      setTrySubmited(true)
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   } catch (error:any) {
-    const { state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    }
-   }
   }
 
   const handleDelete = async () => {
@@ -279,9 +314,22 @@ const CreateUserGroup: FunctionComponent<Props> = ({
             }}
             className="sm:ml-0 mt-o w-full"
           >
+            <Box sx={{ paddingLeft: '32px' }}>
+              <LabelField label={t('userAccount.isAdmin')} />
+              <Switcher
+                onText={t('common.yes')}
+                offText={t('common.no')}
+                disabled={action === 'delete'}
+                defaultValue={isAdmin}
+                setState={(newValue) => {
+                  setIsAdmin(newValue)
+                }}
+              />
+            </Box>
             <CustomField label={t('userGroup.groupName')} mandatory>
               <CustomTextField
                 id="roleName"
+                dataTestId="astd-user-group-form-group-name-input-field-9870"
                 value={roleName}
                 disabled={action === 'delete'}
                 placeholder={t('userGroup.pleaseEnterName')}
@@ -292,6 +340,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
             <CustomField label={t('userGroup.description')} mandatory>
               <CustomTextField
                 id="description"
+                dataTestId="astd-user-group-form-available-feature-select-button-9031"
                 value={description}
                 disabled={action === 'delete'}
                 placeholder={t('userGroup.pleaseEnterText')}
@@ -307,6 +356,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
                   item={item}
                   functions={functions}
                   disabled={action === 'delete'}
+                  readOnly={isAdmin}
                   setFunctions={setFunctions}
                 />
               ))}
@@ -319,6 +369,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
                     field={t(val.field)}
                     errorMsg={returnErrorMsg(val.problem, t)}
                     type={val.type}
+                    dataTestId={val.dataTestId}
                   />
                 ))}
             </Grid>

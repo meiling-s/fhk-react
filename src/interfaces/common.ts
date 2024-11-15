@@ -1,7 +1,8 @@
 export type formValidate = {
     field: string,
     problem: string,
-    type: string
+    type: string,
+    dataTestId?: string,
 }
 
 export type colPointType = {
@@ -235,4 +236,19 @@ export type Company =  {
     nameEng?: string
     nameSchi?: string
     nameTchi?: string
+}
+
+export type PackagingList = {
+    packagingTypeId: string,
+    tenantId: string,
+    packagingNameTchi: string,
+    packagingNameSchi: string,
+    packagingNameEng: string,
+    description: string,
+    remark: string,
+    status: string,
+    createdBy: string,
+    updatedBy: string,
+    createdAt: string,
+    updatedAt: string
 }

@@ -34,29 +34,34 @@ const Notification = () => {
 
   //  } 
   // }, [loginId])
-
+  
   useEffect(() => {
-    if(loginId){
+    const interval = setInterval(() => {
+      initBroadcastMessage()
+    }, 60 * 60000);
+
+    return() => {
+      clearInterval(interval)
+    }
+  }, [])
+  useEffect(() => {
+    const interval = setInterval(() => {
       setNotifList([])
       setNumOfNotif(0)
       getNumNotif(loginId)
       getNotifList(loginId)
-      const interval = setInterval(() => {
-        initBroadcastMessage()
-      }, 60 * 60000);
-  
-      return() => {
-        clearInterval(interval)
-      }
+    }, 20000)
+
+    return() => {
+      clearInterval(interval)
     }
-  }, [loginId])
+  }, [])
 
   const getNumNotif = async (loginId: string) => {
     const result = await getNumUnreadNotif(loginId)
     const data = result?.data
-
     if (result?.status === 200) {
-      setNumOfNotif(prev => prev + Number(data))
+      setNumOfNotif(data)
     }
   }
 
@@ -64,9 +69,7 @@ const Notification = () => {
     const result = await getNotifByUserId(loginId)
     const data = result?.data
     if (data) {
-      setNotifList((prev:Notif[]) => {
-        return [...prev, ...data]
-      })
+      setNotifList(data)
     }
   }
 

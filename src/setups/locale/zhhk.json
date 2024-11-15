@@ -44,7 +44,11 @@
     "packageName": "包裝單位名稱已存在",
     "warehouseName": "倉庫名稱已存在",
     "vehicle": "車輛",
-    "theNameAlreadyExist": "員工職位名稱已存在"
+    "theNameAlreadyExist": "員工職位名稱已存在",
+    "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失",
+     "noData": "沒有數據",
+     "category": "類別",
+    "subCategory": "次類別"
   },
   "col": {
     "createCP": "建立回收點",
@@ -61,7 +65,9 @@
     "startTime": "服務時間",
     "premiseName": "房屋或埸所名稱",
     "premiseType": "房屋或埸所類別",
-    "premiseRemark": "其他備注",
+    "premiseRemark": "前提备注",
+    "otherResidentialPremise": "其他(住宅處所)備註",
+    "otherNonResidentialPremise": "其他(非住宅處所)備註",
     "enterText": "請輸入文字",
     "status": "開放狀態",
     "open": "開放",
@@ -114,7 +120,9 @@
       "dateSpesificIsWrong": "指定日期格式錯誤",
       "effectiveDateLess": " 開始日期不能晚於截止日期",
       "cannotBeSame": "不能相同",
-      "cantBeSame": "不能相同"
+      "shouldGreaterThanZero": "可存容量大於零",
+      "cantBeSame": "不能相同",
+      "selectFirst": "請先選擇，然後再新增新的。"
     }
   },
   "component": {
@@ -137,6 +145,7 @@
   "noticeTemplate": "通知範本",
   "statistics": "數據",
   "recyclables": "回收物",
+  "product": "產品",
   "convoy": "車隊",
   "recycleCompany": "回收公司",
   "recyclePlant": "回收廠",
@@ -156,6 +165,7 @@
   "top_menu": {
     "general_settings": "一般設定",
     "packaging_unit": "包裝單位",
+    "process_type": "處理方式",
     "workshop": "工場",
     "vehicles": "車輛",
     "company": "公司",
@@ -166,7 +176,32 @@
     "add_new_vehicle": "新增車輛"
   },
   "settings_page": {
-    "title": "設定"
+    "title": "設定",
+    "recycling": {
+      "semi_finish_product": "半成品 ・ 產品類別",
+      "remarks": "備註",
+      "remark_placeholder": "請輸入備註",
+      "add_new": "新增",
+      "product_category": "產品類別",
+      "traditional_chinese_name": "繁體中文名稱",
+      "traditional_chinese_name_placeholder": "請輸入繁體中文名稱",
+      "simplified_chinese_name": "簡體中文名稱",
+      "simplified_chinese_name_placeholder": "請輸入簡體中文名稱",
+      "english_name": "英文名稱",
+      "english_name_placeholder": "請輸入英文名稱",
+      "introduction": "簡介",
+      "introduction_placeholder": "請輸入簡介",
+      "category": "類別",
+      "main_category": "主類別",
+      "sub_category": "次類別",
+      "additional_category": "追加類別",
+      "plastic_no_1": "1號膠",
+      "plastic_no_2": "2號膠",
+      "enter_text": "請輸入文字",
+      "water_bottle": "水",
+      "film": "菲林",
+      "edit": "修改"
+    }
   },
   "warehouse_page": {
     "trad_name": "繁體中文名稱",
@@ -175,7 +210,7 @@
     "location": "實體地點",
     "place": "地點",
     "status": "狀態",
-    "recyclable_subcategories": "回收物類別",
+    "recyclable_subcategories": "可存回收物類別及容量",
     "enter_tenantId": "輸入租戶 ID"
   },
   "add_warehouse_page": {
@@ -198,7 +233,11 @@
     "warehouseRecyc": "回收物類別",
     "shouldNotEmpty": "不應為空",
     "shouldNotDuplicate": "不應重複",
-    "shouldNotDuplicated": " 货仓地址已经被使用"
+    "shouldNotDuplicated": " 货仓地址已经被使用",
+    "workshopFlag": "是否工場",
+    "warningCloseWarehouse": "倉庫裡還有庫存, 確定要關閉倉庫嗎?",
+    "warningDeleteExistingRecy": "倉庫裡還有庫存, 確定要刪除倉庫嗎?",
+    "warningDeleteWarehouse": "你確定要刪除嗎？"
   },
   "check_in": {
     "transport_information": "運輸資料",
@@ -223,9 +262,10 @@
     "message": "訊息",
     "confirm_reject": "確認拒絕送入請求嗎?",
     "reject_reasons": "拒絕原因（可多選）",
-    "confirm": "確認拒絕",
+    "confirm": "確認",
     "cancel": "取消",
-    "search_input": "輸入運單編號"
+    "search_input": "輸入運單編號",
+    "check_in": "送入日期及時間"
   },
   "changePass": {
     "titlePage": "更改密碼",
@@ -354,10 +394,13 @@
       "status": "狀態"
     },
     "card_detail": {
-      "main_category": "主類別",
-      "subcategory": "次類別",
+      "main_category": "回收物主類別",
+      "product_type_label": "產品類型",
+      "sub_product_type_label": "產品子類型",
+      "addon_product_type_label": "產品插件",
+      "subcategory": "回收物次類別",
       "shipping_time": "預計運送時間",
-      "weight": "重量",
+      "weight": "預計重量",
       "shipping_receiver": "運輸和接收公司",
       "deliver_location": "交貨和到達地點",
       "van": "小型貨車",
@@ -366,12 +409,12 @@
       "one-transport": "一次性運輸",
       "sender_and_receiver_company": "寄件和收件公司",
       "sender_and_receiver_location": "回收和到達地點",
-      "checkin_time": "實際到達時間",
-      "checkout_time": "實際送出時間",
-      "checkin_weight": "實際提取重量",
+      "checkin_time": "實際送入日期和時間",
+      "checkout_time": "實際送出日期和時間",
+      "checkin_weight": "實際送入重量",
       "checkout_weight": "實際送出重量",
-      "checkin_by": "提取負責人",
-      "checkout_by" :"送出負責人"
+      "checkin_by": "送入負責人",
+      "checkout_by": "送出負責人"
     },
     "item": {
       "detail": "運單詳情",
@@ -452,7 +495,15 @@
       "receiver": "收件公司",
       "arrived": "到達地點",
       "placeholder": "請輸入地點",
-      "select_po": "選擇運單"
+      "placeholder_shipping_company": "請輸入寄件公司",
+      "placeholder_receiver_company": "請輸入收貨公司",
+      "select_po": "選擇運單",
+      "item_category": "物品類別"
+    },
+    "product_type": {
+      "product": "製成品類別",
+      "subtype": "次類別",
+      "add-on": "追加類別"
     },
     "select_po": "選擇運單",
     "search_company_name": "輸入寄件者公司",
@@ -461,22 +512,26 @@
     "confirm_reject": "確認拒絕",
     "confirm_approve_title": "確認接受嗎？",
     "confirm_reject_title": "確認拒絕嗎？",
+    "confirm_empty_remarks": "確認備註為空白嗎？",
     "approved_success": "接受成功",
     "rejected_success": "拒絕成功",
     "reject_reasons": "拒絕原因",
     "error": {
-      "effFrmDate": "此日期為必填項",
-      "effToDate": "迄今為止這是必要的",
-      "routineType": "此例程类型为必填项",
-      "routine": "需要例行公事",
-      "pickuAt": "此取件時間為必填項",
-      "senderName": "此寄件人姓名為必填項",
-      "senderAddr": "他的寄件者送貨地址是必需的",
-      "receiverName": "此寄件者地址為必填項",
-      "receiverAddr": "T此收件人地址為必填項",
-      "recycType": "此回收類型是必需的",
-      "recycSubType": "需要此可回收子類型",
-      "weight": "此重量為必填項",
+      "effFrmDate": "該日期 不應留白",
+      "effToDate": "迄今 不應留白",
+      "routineType": "此例程類型 不應留白",
+      "routine": "例程 不應留白",
+      "pickuAt": "此取件時間 不應留白",
+      "senderName": "此寄件者姓名 不應留白",
+      "senderAddr": "此寄件者地址 不應留白",
+      "receiverName": "此接收者姓名 不應留白",
+      "receiverAddr": "此接收者位址 不應留白",
+      "recycType": "此可回收類型 不應留白",
+      "recycSubType": "此可回收子類型 不應留白",
+      "productType": "該產品類型不能為空",
+      "productSubType": "此產品子類型不應為空",
+      "productAddon": "該產品插件不應為空",
+      "weight": "該重量 不應留白",
       "weightGreaterThanZero": "這個權重應該大於零",
       "invalid_date": "失效日期",
       "invalid_pickup_time": "取件時間無效，請重新選擇時間",
@@ -550,8 +605,13 @@
       "send": "傳送",
       "invite_success": "成功發送邀請",
       "invite_failed": "發送邀請失敗",
-      "err_date": "運送有效期限無效。確保截止日期晚於開始日期",
-      "err_duplicated": "公司號碼/公司名稱/商業註冊。編號已存在"
+      "validaity_to_date": "有效期限至",
+      "err_date": "確保“有效期限自”不晚於“有效期限至”",
+      "err_duplicated_br_no": "商業註冊。編號已存在",
+      "err_duplicated_company_number": "公司號碼已存在",
+      "err_duplicated_company_name": "公司名稱已存在",
+      "err_duplicated": "公司號碼/公司名稱/商業註冊。編號已存在",
+      "err_illegal_tenant_id": "公司編號不能為 0"
     },
     "detail": {
       "company_category": "公司類別",
@@ -581,7 +641,8 @@
       "confirm": "啟用",
       "suspend": "未啟用",
       "closed": "已停用",
-      "deactivated_reason": "停用原因”"
+      "deactivated_reason": "停用原因”",
+      "companyImgLogo": "*您最多可以上传 1 张公司徽标图片。要更改徽标，请先删除现有徽标。"
     }
   },
   "report": {
@@ -638,9 +699,9 @@
   "inventory": {
     "inventory": "存貨",
     "recyclingInformation": "存貨",
-    "date": "日期",
-    "recyleType": "主類別",
-    "recyleSubType": "次類別",
+    "date": "回收日期及時間",
+    "recyleType": "回收物主類別",
+    "recyleSubType": "回收物次類別",
     "package": "包裝",
     "recyclingNumber": "回收編號",
     "inventoryLocation": "庫存地點",
@@ -772,6 +833,7 @@
     "suspend": "暫停",
     "deleted": "已刪除",
     "staffId": "員工編號",
+    "isAdmin": "是否管理員",
     "successCreatedUser": "成功創建用戶",
     "failedCreatedUser": "創建用戶失敗",
     "successEditUser": "成功編輯用戶",
@@ -780,7 +842,8 @@
     "failedDeleteUser": "刪除用戶失敗",
     "resetPasswaitApproval": "重置密碼等待批准",
     "resetPassword": "重新設密碼",
-    "emailIsExisting": "電郵地址已經被使用過, 請問要繼續嗎?"
+    "emailIsExisting": "電郵地址已經被使用過, 請問要繼續嗎?",
+    "passwordPolicy": "新密碼與之前 8 個密碼之一相同，請提供另一個密碼"
   },
   "checkinandcheckout": {
     "checkinandcheckout": "概覽",
@@ -853,10 +916,12 @@
       "sender_name": "寄件公司",
       "rec_loc_info": "回收地點資料"
     },
-    "confirm_approve_title": "確認核準吗？",
-    "confirm_approve": "确认核準",
+    "confirm_approve_title": "確認核準嗎？",
+    "confirm_approve": "確認",
     "cancel": "取消",
-    "approved_success": "核準成功"
+    "approved_success": "核準成功",
+    "rejected_at": "於",
+    "reason_single": "拒絕，原因為"
   },
   "jobOrder": {
     "job_order_menu": "工作運單",
@@ -968,7 +1033,7 @@
   "companyManagement": {
     "collectorlist": "回收公司",
     "logisticlist": "物流公司",
-    "manulist": "回收廠",
+    "manulist": "製造商",
     "customerlist": "顧客公司",
     "brNo": "商業登記號碼",
     "enterBrNo": "請輸入商業登記號碼"
@@ -1031,14 +1096,17 @@
       }
     },
     "vehicleMenu": {
-      "vehicle_number": "車輛號碼",
-      "license_plate_number": "車牌號",
+      "vehicle_number": "車輛編碼",
+      "imei":"IMEI 號碼",
+      "license_plate_number": "車牌號碼",
       "vehicle_type": "車輛類型",
       "vehicle_cargo_capacity": "車輛載貨量",
       "picture": "圖片",
       "license_plate_number_placeholder": "請輸入車牌號",
       "vehicle_type_placeholder": "請輸入車輛類型",
-      "vehicle_cargo_capacity_placeholder": "請輸入體重"
+      "vehicle_cargo_capacity_placeholder": "請輸入體重",
+      "max_number_photo": "所選影像數量超過最大數量",
+      "max_size_upload": "您嘗試上載的檔案大於大小上限"
     }
   },
   "general_settings": {
@@ -1089,6 +1157,21 @@
     "remark": "備注",
     "remark_placeholder": "請輸入備註"
   },
+  "process_type": {
+    "process_type": "處理方式",
+    "new": "新的",
+    "traditional_chinese_name": "繁體中文名稱",
+    "traditional_chinese_name_placeholder": "請輸入繁體中文名稱",
+    "simplified_chinese_name": "簡體中文名稱",
+    "simplified_chinese_name_placeholder": "請輸入簡體中文名稱",
+    "english_name": "英文名稱",
+    "english_name_placeholder": "請輸入英文名稱",
+    "introduction": "簡介",
+    "introduction_placeholder": "請輸入簡介",
+    "remark": "備注",
+    "remark_placeholder": "請輸入備註",
+    "time": "處理需時（時間/重量）"
+  },
   "staffEnquiry": {
     "title": "員工查詢",
     "addNewStaffEnquiry": "新增員工查詢",
@@ -1126,7 +1209,10 @@
     "report_of_user_management_list": "用户报表",
     "report_of_audit_trail": "审计追踪报表",
     "report_of_user_activity": "用戶活動報表",
-    "report_of_notification": "通知報表"
+    "report_of_notification": "通知報表",
+    "report_formula": "報表數據提取方式",
+    "formula_check_in": "以工廠入貨作準",
+    "formula_check_out": "以回收公司出貨作準"
   },
   "purchase_order": {
     "all_order": "所有訂單",
@@ -1164,6 +1250,7 @@
       "payment_method": "付款方式",
       "payment_method_placeholder": "請選擇",
       "order_information": "訂單資料",
+      "order_information_details": "訂單資訊詳情",
       "recycling_plant": "回收廠",
       "receipt_date_and_time": "收貨日期及時間",
       "main_category": "主類別",
@@ -1274,6 +1361,7 @@
   "dashboard_recyclables": {
     "data": "數據",
     "recyclable": "回收物儀表盤",
+    "warehouse": "倉庫儀表板",
     "recycling_data": "回收物儀表盤",
     "different_recycling_weights": "不同回收物重量",
     "date_range": "日期範圍",
@@ -1425,5 +1513,12 @@
     "place": "地點",
     "po_number": "輸入採購訂單編號",
     "jo_number": "輸入工作編號"
+  },
+  "dashboardOverview": {
+    "checkin": "入",
+    "checkout": "出",
+    "createdAt": "送出入日期及時間",
+    "shippingCompany": "狀態",
+    "inventoryLocation": "送出地點"
   }
 }

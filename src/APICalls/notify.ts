@@ -11,11 +11,15 @@ import {
   UPDATE_NOTIF_TEMPLATE_BROADCAST,
   GET_BROADCAST_MESSAGE
 } from '../constants/requests'
-import { UpdateNotifTemplate, UpdateNotifTemplateBroadcast } from '../interfaces/notif'
+import {
+  UpdateNotifTemplate,
+  UpdateNotifTemplateBroadcast,
+  queryNotiTemplate
+} from '../interfaces/notif'
 import { returnApiToken } from '../utils/utils'
 
 const administratorAPI = {
-  baseURL: window.baseURL.administrator
+  baseURL: window.baseURL?.administrator
 }
 
 export const getNumUnreadNotif = async (loginId: string) => {
@@ -57,35 +61,54 @@ export const updateFlagNotif = async (notiId: number) => {
   }
 }
 
-export const getListNotifTemplatePO = async () => {
+export const getListNotifTemplatePO = async (page: number, size: number, query?: queryNotiTemplate) => {
   try {
     const token = returnApiToken()
     const response = await axiosInstance({
       ...GET_LIST_NOTIF_TEMPLATE_PO(token.tenantId, token.realmApiRoute),
-      baseURL: administratorAPI.baseURL
+      baseURL: administratorAPI.baseURL,
+      params: {
+        page: page,
+        size: size,
+        templateId: query?.templateId,
+        notiType: query?.type,
+        title: query?.title,
+        lang: query?.lang,
+      }
     })
     return response
   } catch (e) {
-    throw(e)
+    throw e
   }
 }
 
-export const getListNotifTemplateStaff = async () => {
+export const getListNotifTemplateStaff = async (page: number, size: number, query?: queryNotiTemplate) => {
   try {
-    const token = returnApiToken();
+    const token = returnApiToken()
     const response = await axiosInstance({
       ...GET_LIST_NOTIF_TEMPLATE_STAFF(token.tenantId, token.realmApiRoute),
-      baseURL: administratorAPI.baseURL
+      baseURL: administratorAPI.baseURL,
+      params: {
+        page: page,
+        size: size,
+        templateId: query?.templateId,
+        notiType: query?.type,
+        title: query?.title,
+        lang: query?.lang,
+      }
     })
     return response
-  } catch (e:any) {
-    throw(e)
+  } catch (e: any) {
+    throw e
   }
 }
 
-export const getDetailNotifTemplate = async (templateId: string, path: string) => {
+export const getDetailNotifTemplate = async (
+  templateId: string,
+  path: string
+) => {
   try {
-    const token = returnApiToken();
+    const token = returnApiToken()
     console.log('token', token.tenantId, templateId)
     const response = await axiosInstance({
       ...GET_DETAIL_NOTIF_TEMPLATE(token.tenantId, templateId, path),
@@ -93,13 +116,17 @@ export const getDetailNotifTemplate = async (templateId: string, path: string) =
     })
     return response.data
   } catch (e) {
-    throw(e)
+    throw e
   }
 }
 
-export const updateNotifTemplate = async (templateId: string, data: UpdateNotifTemplate, path: string) => {
+export const updateNotifTemplate = async (
+  templateId: string,
+  data: UpdateNotifTemplate,
+  path: string
+) => {
   try {
-    const token = returnApiToken();
+    const token = returnApiToken()
     const response = await axiosInstance({
       ...UPDATE_NOTIF_TEMPLATE(token.tenantId, templateId, path),
       baseURL: administratorAPI.baseURL,
@@ -107,13 +134,17 @@ export const updateNotifTemplate = async (templateId: string, data: UpdateNotifT
     })
     return response.data
   } catch (e) {
-    return null
+    return e
   }
 }
 
-export const updateNotifTemplateBroadcast = async (templateId: string, data: UpdateNotifTemplateBroadcast, path: string) => {
+export const updateNotifTemplateBroadcast = async (
+  templateId: string,
+  data: UpdateNotifTemplateBroadcast,
+  path: string
+) => {
   try {
-    const token = returnApiToken();
+    const token = returnApiToken()
     const response = await axiosInstance({
       ...UPDATE_NOTIF_TEMPLATE_BROADCAST(token.tenantId, templateId, path),
       baseURL: administratorAPI.baseURL,
@@ -121,16 +152,16 @@ export const updateNotifTemplateBroadcast = async (templateId: string, data: Upd
     })
     return response.data
   } catch (e) {
-    return null
+    return e
   }
 }
 
 export const getBroadcastMessage = async () => {
   try {
-    const token = returnApiToken();
+    const token = returnApiToken()
     const response = await axiosInstance({
       ...GET_BROADCAST_MESSAGE(),
-      baseURL: administratorAPI.baseURL,
+      baseURL: administratorAPI.baseURL
     })
     return response.data
   } catch (e) {

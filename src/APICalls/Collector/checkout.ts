@@ -128,8 +128,8 @@ export const updateCheckoutRequestStatus = async (
     })
     return response
   } catch (e) {
-    console.error('Update checkout request status failed:', e)
-    return null
+    // console.error('Update checkout request status failed:', e)
+    throw (e)
   }
 }
 

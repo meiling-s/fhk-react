@@ -58,11 +58,12 @@ export type collectionPoint = {
   updatedBy: string
   roster: roster[]
   colPtRecyc: recyclable[]
+  version: number
 }
 
 export type createCP = {
   //data for creating Collection Point
-
+  tenantId: string
   colName: string
   colPointTypeId: string
   effFrmDate: String
@@ -110,4 +111,5 @@ export type updateCP = {
   updatedBy: string
   colPtRecyc: recyclable[]
   roster: roster[]
+  version: number
 }

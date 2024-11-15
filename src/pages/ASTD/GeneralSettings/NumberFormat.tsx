@@ -1,25 +1,5 @@
 import { FunctionComponent, useState, useEffect } from 'react'
-import {
-  Box,
-  Divider,
-  Grid,
-  Typography,
-  Button,
-  InputLabel,
-  MenuItem,
-  Card,
-  FormControl,
-  ButtonBase,
-  ImageList,
-  ImageListItem,
-  OutlinedInput,
-  Autocomplete,
-  TextField
-} from '@mui/material'
-import dayjs from 'dayjs'
-import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
-import ImageUploading, { ImageListType } from 'react-images-uploading'
+import { Box, Divider, Autocomplete, TextField } from '@mui/material'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
@@ -29,23 +9,17 @@ import { styles } from '../../../constants/styles'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 
 import { useTranslation } from 'react-i18next'
-import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
-import { formValidate } from '../../../interfaces/common'
-import { Vehicle, CreateVehicle as CreateVehicleForm } from '../../../interfaces/vehicles'
 import { STATUS_CODE, formErr, format } from '../../../constants/constant'
-import { returnErrorMsg, ImageToBase64, showSuccessToast, showErrorToast, extractError } from '../../../utils/utils'
-import { il_item } from '../../../components/FormComponents/CustomItemList'
-import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { useContainer } from 'unstated-next'
-import { createVehicles as addVehicle, deleteVehicle, editVehicle } from '../../../APICalls/Collector/vehicles'
-import { localStorgeKeyName } from "../../../constants/constant";
-import i18n from '../../../setups/i18n'
-import { Contract, CreateContract as CreateContractProps } from '../../../interfaces/contract'
-import LabelField from '../../../components/FormComponents/CustomField'
-import Switcher from '../../../components/FormComponents/CustomSwitch'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { createContract, editContract } from '../../../APICalls/Collector/contracts'
-import { updateDecimalValue, getAllDecimalValue } from '../../../APICalls/ASTD/decimal'
+import {
+  showSuccessToast,
+  showErrorToast,
+  extractError
+} from '../../../utils/utils'
+import { localStorgeKeyName } from '../../../constants/constant'
+import {
+  updateDecimalValue,
+  getAllDecimalValue
+} from '../../../APICalls/ASTD/decimal'
 import { useNavigate } from 'react-router-dom'
 interface DecimalValueProps {
   createdAt: string
@@ -54,6 +28,7 @@ interface DecimalValueProps {
   decimalValId: number
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 interface NumberFormatProps {
@@ -69,21 +44,23 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
   handleDrawerClose,
   action,
   onSubmitData,
-  numberFormat,
+  numberFormat
 }) => {
   const { t } = useTranslation()
   const [numFormat, setNumFormat] = useState('')
   const [decimalValId, setDecimalValId] = useState(0)
   const [decimalValList, setDecimalValList] = useState<DecimalValueProps[]>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
-  const navigate = useNavigate();
-  
-  useEffect (() => {
+  const [version, setVersion] = useState<number>(0)
+  const navigate = useNavigate()
+
+  useEffect(() => {
     fetchDecimalVal()
     if (action === 'edit') {
       if (numberFormat) {
         setNumFormat(numberFormat.decimalVal)
         setDecimalValId(numberFormat.decimalValId)
+        setVersion(numberFormat.version)
       }
     }
   }, [numberFormat, action, drawerOpen])
@@ -91,24 +68,25 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
   const resetData = () => {
     setNumFormat('')
   }
-  
+
   const fetchDecimalVal = async () => {
     try {
       const response = await getAllDecimalValue()
-    if (response) {
-      const data = response.data
-      const decimalList: DecimalValueProps[] = []
-      data.forEach((item: any) => {
-        decimalList.push({
-          createdAt: item.createdAt,
-          createdBy: item.createdBy,
-          decimalVal: item.decimalVal,
-          decimalValId: item.decimalValId,
-          updatedAt: item.updatedAt,
-          updatedBy: item.updatedBy,
+      if (response) {
+        const data = response.data
+        const decimalList: DecimalValueProps[] = []
+        data.forEach((item: any) => {
+          decimalList.push({
+            createdAt: item.createdAt,
+            createdBy: item.createdBy,
+            decimalVal: item.decimalVal,
+            decimalValId: item.decimalValId,
+            updatedAt: item.updatedAt,
+            updatedBy: item.updatedBy,
+            version: item.version
+          })
         })
-      })
-      setDecimalValList(decimalList);
+        setDecimalValList(decimalList)
       }
     } catch (error) {
       showErrorToast(t('notify.errorFetchingData'))
@@ -124,39 +102,39 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
   }
 
   const handleSubmit = () => {
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
-    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ""
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
 
     const formData = {
-      status: "ACTIVE",
-      updatedBy: loginId
+      status: 'ACTIVE',
+      updatedBy: loginId,
+      version: version
     }
 
     if (formData) {
       handleUpdateDecimalValue(formData)
     }
-
   }
 
   const handleUpdateDecimalValue = async (formData: any) => {
-      try {
-        const result = await updateDecimalValue(formData, decimalValId)
+    try {
+      const result = await updateDecimalValue(formData, decimalValId)
 
-        if(result) {
-          onSubmitData("decimal")
-          resetData()
-          showSuccessToast(t('notify.SuccessEdited'))
-        } else {
-          showErrorToast(t('notify.errorEdited'))
-        }
-      } catch (error:any) {
-        const {state} =  extractError(error);
-        if(state.code === STATUS_CODE[503] ){
-          navigate('/maintenance')
-        } else {
-          showErrorToast(t('notify.errorEdited'))
-        }
+      if (result) {
+        onSubmitData('decimal')
+        resetData()
+        showSuccessToast(t('notify.SuccessEdited'))
+      } else {
+        showErrorToast(t('notify.errorEdited'))
       }
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error.response.data.message)
+      }
+    }
   }
 
   return (
@@ -171,51 +149,47 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
           submitText: t('add_warehouse_page.save'),
           cancelText: '',
           onCloseHeader: handleDrawerClose,
-          onSubmit: handleSubmit,
+          onSubmit: handleSubmit
         }}
       >
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
-          <Box sx={{marginY: 2}}>
+          <Box sx={{ marginY: 2 }}>
             <CustomField label={t('general_settings.diy_format')}>
-              {/* <CustomTextField
-                id="contractNo"
-                value={numFormat}
-                disabled={action === 'delete'}
-                placeholder={t('general_settings.number_format')}
-                onChange={(event) => setNumFormat(event.target.value)}
-                error={checkString(numFormat)}
-              /> */}
               <Autocomplete
                 disablePortal
                 id="numFormat"
+                data-testid="astd-number-format-form-select-button-4448"
                 defaultValue={numFormat}
-                options={decimalValList.map((functionItem) => functionItem.decimalVal)}
+                options={decimalValList.map(
+                  (functionItem) => functionItem.decimalVal
+                )}
                 onChange={(event, value) => {
                   if (value) {
                     const selecteddecimalVal = decimalValList.find((item) => item.decimalVal === value);
-                      if (selecteddecimalVal) {
-                        setNumFormat(selecteddecimalVal.decimalVal);
-                        setDecimalValId(selecteddecimalVal.decimalValId);
-                      }
+                    if (selecteddecimalVal) {
+                      setNumFormat(selecteddecimalVal.decimalVal);
+                      setDecimalValId(selecteddecimalVal.decimalValId);
+                      setVersion(selecteddecimalVal.version)
                     }
+                  }
                 }}
                 value={numFormat}
                 disabled={action === 'delete'}
                 renderInput={(params) => (
-                <TextField
+                  <TextField
                     {...params}
                     placeholder={t('general_settings.number_format')}
                     sx={[styles.textField, { width: 320 }]}
                     InputProps={{
-                    ...params.InputProps,
-                    sx: styles.inputProps
+                      ...params.InputProps,
+                      sx: styles.inputProps
                     }}
                     error={checkString(numFormat)}
-                />
+                  />
                 )}
                 noOptionsText={t('common.noOptions')}
-            />
+              />
             </CustomField>
           </Box>
         </Box>
@@ -269,12 +243,12 @@ const localstyles = {
     ...styles.textField,
     width: '250px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25',
+      color: '#79CA25'
     }
   },
   DateItem: {
     display: 'flex',
-    height: 'fit-content',
+    height: 'fit-content'
   }
 }
 

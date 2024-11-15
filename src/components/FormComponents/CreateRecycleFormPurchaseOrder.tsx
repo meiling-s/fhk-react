@@ -85,15 +85,24 @@ const initValue = {
   weight: '0',
   pickupAt: dayjs.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
   receiverAddr: '',
+  receiverAddrGps: [0],
   createdBy: loginId,
-  updatedBy: loginId
+  updatedBy: loginId,
+  status: 'CREATED',
 }
 
 const ErrorMessages: React.FC<{ message: string }> = ({ message }) => {
   return (
-    <Typography style={{ color: 'red', fontWeight: '400' }}>
-      {message}
-    </Typography>
+    <div className="bg-[#F7BBC6] p-3 rounded-xl w-full">
+      <Typography
+        style={{
+          color: 'red',
+          fontWeight: '400'
+        }}
+      >
+        {message}
+      </Typography>
+    </div>
   )
 }
 type fieldName =
@@ -182,8 +191,10 @@ const CreateRecycleForm = ({
   useEffect(() => {
     if (editRowId == null) {
       formik.setValues(initValue)
+      onHandleError('recycTypeId', 'succeed')
+      onHandleError('recycSubTypeId', 'succeed')
     } else {
-      const editR = data.at(editRowId)
+      const editR = data.find(value => value.id === editRowId)
       if (editR) {
         setDefRecyc(editR)
         setEditRow(editR)
@@ -208,12 +219,13 @@ const CreateRecycleForm = ({
 
   useEffect(() => {
     if (editRow) {
-      // Set the form field values based on the editRow data
+      onHandleError('recycTypeId', 'succeed')
+      onHandleError('recycSubTypeId', 'succeed')
       const index = data.indexOf(editRow)
 
       formik.setValues({
         id: index,
-        poDtlId: editRow.poDtlId,
+        poDtlId: editRow.poDtlId ?? 0,
         recycTypeId: editRow.recycTypeId,
         recyclableNameTchi: editRow.recyclableNameTchi,
         recyclableNameSchi: editRow.recyclableNameSchi,
@@ -230,7 +242,9 @@ const CreateRecycleForm = ({
         pickupAt: editRow?.pickupAt || '',
         createdBy: editRow.createdBy,
         updatedBy: editRow.updatedBy,
-        receiverAddr: editRow.receiverAddr || ''
+        receiverAddr: editRow.receiverAddr || '',
+        receiverAddrGps: editRow.receiverAddrGps || [0],
+        status: editRow.status === null ? 'CREATED' : editRow.status ?? 'CREATED'
       })
     }
   }, [editRow])
@@ -281,7 +295,6 @@ const CreateRecycleForm = ({
       )
     })
   })
-
   const validateData = () => {
     let isValid = true
     // debugger
@@ -324,27 +337,27 @@ const CreateRecycleForm = ({
       })
       isValid = false
     }
-    if (formik.values.recycSubTypeId === '') {
-      const filteredRecyc = recycType?.filter(
-        (value) => value.recycTypeId === formik.values.recycTypeId
-      ) as recycType[]
-      if (
-        filteredRecyc !== undefined &&
-        filteredRecyc.length > 0 &&
-        filteredRecyc[0].recycSubType.length > 0
-      ) {
-        setErrorsField((prev) => {
-          return {
-            ...prev,
-            recycSubTypeId: {
-              ...prev.recycSubTypeId,
-              status: true
-            }
-          }
-        })
-        isValid = false
-      }
-    }
+    // if (formik.values.recycSubTypeId === '') {
+    //   const filteredRecyc = recycType?.filter(
+    //     (value) => value.recycTypeId === formik.values.recycTypeId
+    //   ) as recycType[]
+    //   if (
+    //     filteredRecyc !== undefined &&
+    //     filteredRecyc.length > 0 &&
+    //     filteredRecyc[0].recycSubType.length > 0
+    //   ) {
+    //     setErrorsField((prev) => {
+    //       return {
+    //         ...prev,
+    //         recycSubTypeId: {
+    //           ...prev.recycSubTypeId,
+    //           status: true
+    //         }
+    //       }
+    //     })
+    //     isValid = false
+    //   }
+    // }
     if (Number(formik.values.weight) <= 0) {
       setErrorsField((prev) => {
         return {
@@ -397,10 +410,16 @@ const CreateRecycleForm = ({
         })
         setState(updatedData)
       } else {
-        //creating row
-        var updatedValues: PurchaseOrderDetail = values
-        updatedValues.id = data.length
-        setState([...data, updatedValues])
+        let updatedValues: PurchaseOrderDetail = values;
+
+        if (updatedValues.poDtlId === 0) {
+          const { poDtlId, ...rest } = updatedValues;
+          updatedValues = rest;
+        }
+
+        updatedValues.id = data.length;
+        
+        setState([...data, updatedValues]);
       }
       resetForm()
       onClose && onClose()
@@ -603,29 +622,28 @@ const CreateRecycleForm = ({
                     </Box>
                   </Box>
                 </CustomField>
-                {errorsField['pickupAt' as keyof ErrorsField].status ? (
+                {/* {errorsField['pickupAt' as keyof ErrorsField].status ? (
                   <ErrorMessages message={t('form.error.isInWrongFormat')} />
                 ) : (
                   ''
-                )}
+                )} */}
               </Grid>
               <Grid item>
                 <CustomField label={t('col.recycType')} mandatory>
                   <RecyclablesListSingleSelect
                     showError={
-                      (formik.errors?.recycTypeId &&
-                        formik.touched?.recycTypeId) ||
+                      errorsField.recycTypeId.status ||
+                      errorsField.recycSubTypeId.status ||
                       undefined
                     }
                     recycL={recycType ?? []}
                     setState={(values) => {
-                      if (values.recycTypeId)
-                        onChangeContent('recycTypeId', values?.recycTypeId)
-                      if (values.recycSubTypeId)
-                        onChangeContent(
-                          'recycSubTypeId',
-                          values?.recycSubTypeId
-                        )
+                      if (values.recycTypeId !== undefined) {
+                        onChangeContent('recycTypeId', values.recycTypeId)
+                      }
+                      if (values.recycSubTypeId !== undefined) {
+                        onChangeContent('recycSubTypeId', values.recycSubTypeId)
+                      }
                     }}
                     itemColor={{
                       bgColor: customListTheme
@@ -639,14 +657,14 @@ const CreateRecycleForm = ({
                     key={formik.values.id}
                   />
                 </CustomField>
-                {errorsField['recycSubTypeId' as keyof ErrorsField].required &&
+                {/* {errorsField['recycSubTypeId' as keyof ErrorsField].required &&
                 errorsField['recycSubTypeId' as keyof ErrorsField].status ? (
                   <ErrorMessages
                     message={t('purchase_order.create.required_field')}
                   />
                 ) : (
                   ''
-                )}
+                )} */}
               </Grid>
               <Grid item>
                 <CustomField
@@ -679,7 +697,9 @@ const CreateRecycleForm = ({
                     }}
                     value={formik.values.weight}
                     error={
-                      (formik.errors?.weight && formik.touched?.weight) ||
+                      errorsField.weight.status ||
+                      errorsField.unitId.status ||
+                      //formik.errors?.weight && formik.touched?.weight)
                       undefined
                     }
                     sx={{ width: '100%' }}
@@ -717,7 +737,7 @@ const CreateRecycleForm = ({
                   ></CustomTextField>
                 </CustomField>
                 {/* { errors.weight.required && errors.weight.status &&  <ErrorMessages  message={t('purchase_order.create.required_field')}/>} */}
-                {(errorsField['weight' as keyof ErrorsField].required &&
+                {/* {(errorsField['weight' as keyof ErrorsField].required &&
                   errorsField['weight' as keyof ErrorsField].status) ||
                 (errorsField['unitId' as keyof ErrorsField].required &&
                   errorsField['unitId' as keyof ErrorsField].status) ? (
@@ -726,7 +746,7 @@ const CreateRecycleForm = ({
                   />
                 ) : (
                   ''
-                )}
+                )} */}
               </Grid>
               <Grid item>
                 <CustomField
@@ -747,21 +767,55 @@ const CreateRecycleForm = ({
                     value={formik.values.receiverAddr}
                     sx={{ width: '100%', height: '100%' }}
                     error={
-                      (formik.errors?.receiverAddr &&
-                        formik.touched?.receiverAddr) ||
-                      undefined
+                      // formik.errors?.receiverAddr &&
+                      // formik.touched?.receiverAddr)
+                      errorsField.receiverAddr.status || undefined
                     }
                   />
                 </CustomField>
-                {errorsField['receiverAddr' as keyof ErrorsField].required &&
+                {/* {errorsField['receiverAddr' as keyof ErrorsField].required &&
                 errorsField['receiverAddr' as keyof ErrorsField].status ? (
                   <ErrorMessages
                     message={t('purchase_order.create.required_field')}
                   />
                 ) : (
                   ''
-                )}
+                )} */}
               </Grid>
+              <Stack spacing={2}>
+                {errorsField.pickupAt.status && (
+                  <ErrorMessages
+                    message={
+                      t('purchase_order.create.receipt_date_and_time') +
+                      t('form.error.isInWrongFormat')
+                    }
+                  />
+                )}
+                {errorsField.recycTypeId.status && (
+                    <ErrorMessages
+                      message={
+                        t('pick_up_order.card_detail.main_category') +
+                        t('form.error.shouldNotBeEmpty')
+                      }
+                    />
+                  )}
+                {(errorsField.weight.status || errorsField.unitId.status) && (
+                  <ErrorMessages
+                    message={
+                      t('purchase_order.create.weight') +
+                      t('form.error.shouldNotBeEmpty')
+                    }
+                  />
+                )}
+                {errorsField.receiverAddr.status && (
+                  <ErrorMessages
+                    message={
+                      t('purchase_order.create.arrived') +
+                      t('form.error.shouldNotBeEmpty')
+                    }
+                  />
+                )}
+              </Stack>
               {/* <Stack spacing={2}>
                   {formik.errors.createdBy && formik.touched.createdBy && (
                     <Alert severity="error">{formik.errors.createdBy} </Alert>

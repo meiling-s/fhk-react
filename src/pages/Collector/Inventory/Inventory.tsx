@@ -6,7 +6,8 @@ import {
   Stack,
   TextField,
   InputAdornment,
-  IconButton
+  IconButton,
+  CircularProgress
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -39,17 +40,23 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
+import {
+  getPicoById,
+  getAllLogisticsPickUpOrder,
+  getAllPickUpOrder
+} from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import { PickupOrder } from '../../../interfaces/pickupOrder'
 import { astdSearchWarehouse } from '../../../APICalls/warehouseManage'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import { SEARCH_ICON } from '../../../themes/icons'
 import useDebounce from '../../../hooks/useDebounce'
+import CircularLoading from '../../../components/CircularLoading'
 import {
   returnApiToken,
   extractError,
-  getPrimaryColor
+  getPrimaryColor,
+  debounce
 } from '../../../utils/utils'
 import { getAllWarehouse } from '../../../APICalls/warehouseManage'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
@@ -72,6 +79,7 @@ type recycItem = {
 
 function createInventory(
   itemId: number,
+  labelId: string,
   warehouseId: number,
   recyclingNumber: string,
   recycTypeId: string,
@@ -92,6 +100,7 @@ function createInventory(
 ): InventoryItem {
   return {
     itemId,
+    labelId,
     warehouseId,
     recyclingNumber,
     recycTypeId,
@@ -133,7 +142,7 @@ const Inventory: FunctionComponent = () => {
   const debouncedSearchValue: string = useDebounce(searchText, 1000)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
   const [query, setQuery] = useState<InventoryQuery>({
-    itemId: null,
+    labelId: null,
     warehouseId: null,
     recycTypeId: '',
     recycSubTypeId: ''
@@ -141,6 +150,8 @@ const Inventory: FunctionComponent = () => {
   const [warehouseList, setWarehouseList] = useState<Option[]>([])
   const [recycList, setRecycList] = useState<Option[]>([])
   const [packagingMapping, setPackagingMapping] = useState<PackagingUnit[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
 
   const initpackagingUnit = async () => {
     try {
@@ -161,6 +172,7 @@ const Inventory: FunctionComponent = () => {
   useEffect(() => {
     mappingRecyleItem()
     initpackagingUnit()
+    getAllPickupOrder()
   }, [recycType, i18n.language])
 
   useEffect(() => {
@@ -168,7 +180,7 @@ const Inventory: FunctionComponent = () => {
       if (recycItem.length > 0) {
         initInventory()
         initWarehouse()
-      } //init dat when recyleitem done mapping
+      }
     }
   }, [recycItem, page, realmApi, query, i18n.language])
 
@@ -223,33 +235,42 @@ const Inventory: FunctionComponent = () => {
     setRecycItem(recyleMapping)
   }
 
-  const getPicoDetail = async (sourcePicoId: string) => {
-    try {
-      const result = await getPicoById(sourcePicoId)
-      if(result) return result
-    } catch (error) {
-      return null
-    }
-  }
+  // const getPicoDetail = async (sourcePicoId: string) => {
+  //   try {
+  //     const result = await getPicoById(sourcePicoId)
+  //     if (result) return result
+  //   } catch (error) {
+  //     return null
+  //   }
+  // }
 
-  const getAllPickupOrder = async (data: InventoryItem[]) => {
-    const picoData: PickupOrder[] = []
-    for (let index = 0; index < data.length; index++) {
-      const item = data[index]
-      for (let index = 0; index < item.inventoryDetail.length; index++) {
-        const invDetail = item.inventoryDetail[index]
-        const result = await getPicoDetail(invDetail.sourcePicoId)
-        if (result?.data) {
-          picoData.push(result.data)
-        }
-      }
-    }
+  // const getAllPickupOrder = async (data: InventoryItem[]) => {
+  //   const picoData: PickupOrder[] = []
+  //   for (let index = 0; index < data.length; index++) {
+  //     const item = data[index]
+  //     for (let index = 0; index < item.inventoryDetail.length; index++) {
+  //       const invDetail = item.inventoryDetail[index]
+  //       const result = await getPicoDetail(invDetail.sourcePicoId)
+  //       if (result?.data) {
+  //         picoData.push(result.data)
+  //       }
+  //     }
+  //   }
 
-    setPicoList(picoData)
-    return picoData
+  //   setPicoList(picoData)
+  //   return picoData
+  // }
+
+  const getAllPickupOrder = async () => {
+    const result = await getAllPickUpOrder(page - 1, 1000)
+    let data = result?.data.content
+    if (data && data.length > 0) {
+      setPicoList(data)
+    }
   }
 
   const initInventory = async () => {
+    setIsLoading(true)
     setFilteredInventory([])
     let result
     if (realmApi === 'account') {
@@ -261,12 +282,9 @@ const Inventory: FunctionComponent = () => {
     setInventoryData(data?.content || [])
 
     if (data) {
-      const picoData = await getAllPickupOrder(data.content)
+      // const picoData = await getAllPickupOrder(data.content)
       var inventoryMapping: InventoryItem[] = []
       data.content.map((item: InventoryItem) => {
-        // const recy = recycItem.find(
-        //   (re) => re.recycType.id === item.recycTypeId
-        // )
         let recyName: string = '-'
         let subName: string = '-'
         item.packageName = item.packageTypeId
@@ -306,25 +324,21 @@ const Inventory: FunctionComponent = () => {
             item.packageName = packages.packagingNameTchi
         }
 
-        // const recyName = recy ? recy.recycType.name : '-'
-        // const subType = recy
-        //   ? recy.recycSubType.find((sub) => sub.id == item.recycSubTypeId)
-        //   : null
-        // const subName = subType ? subType.name : '-'
         const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
         const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
 
         let selectedPico: PickupOrder[] = []
 
-        item.inventoryDetail?.map((invDetail: InvDetails) => {
-          selectedPico = picoData.filter(
-            (pico) => pico.picoId == invDetail.sourcePicoId
-          )
-        })
+        // item.inventoryDetail?.map((invDetail: InvDetails) => {
+        //   selectedPico = picoList.filter(
+        //     (pico) => pico.picoId == invDetail.sourcePicoId
+        //   )
+        // })
 
         inventoryMapping.push(
           createInventory(
             item?.itemId,
+            item?.labelId,
             item?.warehouseId,
             item?.recycTypeId,
             item?.recycTypeId,
@@ -349,6 +363,7 @@ const Inventory: FunctionComponent = () => {
       setFilteredInventory(inventoryMapping)
       setTotalData(data.totalPages)
     }
+    setIsLoading(false)
   }
 
   const columns: GridColDef[] = [
@@ -377,7 +392,7 @@ const Inventory: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'itemId',
+      field: 'labelId',
       headerName: t('inventory.recyclingNumber'),
       width: 200,
       type: 'string'
@@ -452,7 +467,7 @@ const Inventory: FunctionComponent = () => {
   const searchfield = [
     {
       label: t('inventory.recyclingNumber'),
-      field: 'itemId',
+      field: 'labelId',
       placeholder: t('placeHolder.enterRecyclingNumber'),
       width: '280px'
     },
@@ -528,11 +543,14 @@ const Inventory: FunctionComponent = () => {
       (item) => item.itemId == params.row.itemId
     )
     let selectedPicoList: PickupOrder[] = []
+    // console.log('selectedInv', selectedInv)
+    // console.log('selectedInv', picoList)
     selectedInv.inventoryDetail?.forEach((item) => {
       const pico = picoList.find((pico) => pico.picoId == item.sourcePicoId)
       if (pico) {
         selectedPicoList.push(pico)
       }
+      console.log('pico', pico)
     })
     setSelectedRow(selectedInv)
     setSelectedPico(selectedPicoList)
@@ -549,20 +567,23 @@ const Inventory: FunctionComponent = () => {
     setQuery({ ...query, ...newQuery })
   }
 
-  function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
-    let timeoutID: ReturnType<typeof setTimeout> | null
+  // function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
+  //   let timeoutID: ReturnType<typeof setTimeout> | null
 
-    return function (this: any, ...args: Parameters<T>) {
-      if (timeoutID) {
-        clearTimeout(timeoutID)
-      }
-      timeoutID = setTimeout(() => {
-        fn.apply(this, args)
-      }, delay)
-    }
-  }
+  //   return function (this: any, ...args: Parameters<T>) {
+  //     if (timeoutID) {
+  //       clearTimeout(timeoutID)
+  //     }
+  //     timeoutID = setTimeout(() => {
+  //       fn.apply(this, args)
+  //     }, delay)
+  //   }
+  // }
 
   const handleSearch = debounce((keyName, value) => {
+    if (value.trim() === '' && query.labelId == null) {
+      return
+    }
     updateQuery({ [keyName]: value })
     setPage(1)
   }, 500)
@@ -658,51 +679,57 @@ const Inventory: FunctionComponent = () => {
         </Stack>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={filteredInventory}
-              getRowId={(row) => row.itemId}
-              hideFooter
-              columns={columns}
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) =>
-                selectedRow && params.row.itemId === selectedRow.itemId
-                  ? 'selected-row'
-                  : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                <DataGrid
+                  rows={filteredInventory}
+                  getRowId={(row) => row.itemId}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.row.itemId === selectedRow.itemId
+                      ? 'selected-row'
+                      : ''
                   }
-                },
-                '.MuiDataGrid-columnHeaderTitle': {
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                  backgroundColor: '#F6FDF2 !important',
-                  border: '1px solid #79CA25'
-                }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
           <InventoryDetail
             drawerOpen={drawerOpen}

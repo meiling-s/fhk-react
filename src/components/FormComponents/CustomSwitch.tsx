@@ -1,94 +1,110 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
-import theme from "../../themes/palette";
-import { red } from "@mui/material/colors";
 
-type props = {
-    onText: string,
-    offText: string,
-    setState: (b: boolean) => void,
-    defaultValue?: boolean,
-    disabled?: boolean
-    value?: string,
-    helperText?:any
-}
+type Props = {
+  onText: string;
+  offText: string;
+  setState: (b: boolean) => void;
+  defaultValue?: boolean;
+  disabled?: boolean;
+  value?: string;
+  helperText?: string;
+  styles?: object;
+  dataTestId?: string;
+};
 
-export default function Switches({
-    onText,
-    offText,
-    defaultValue,
-    setState,
-    disabled,
-    value,
-    helperText
-    
-}: props) {
-    const [onOff, setOnOff] = useState<boolean>((defaultValue!=undefined)? defaultValue : false);
-    useEffect(() => {
-        if (defaultValue !== undefined) {
-            setOnOff(defaultValue);
-        }
-    }, [defaultValue]);
-    const handleSwitchChange = () => {
-        if(disabled){
-            return;
-        }
-        setState(!onOff);
-        setOnOff(!onOff);
+export default function Switcher({
+  onText,
+  offText,
+  defaultValue,
+  setState,
+  disabled,
+  value,
+  helperText,
+  styles,
+  dataTestId
+}: Props) {
+  const [onOff, setOnOff] = useState<boolean>(defaultValue !== undefined ? defaultValue : false);
+
+  useEffect(() => {
+    if (defaultValue !== undefined) {
+      setOnOff(defaultValue);
     }
-  
-    return (
-        <>
-        <Button sx={localstyles.container} onClick={() => handleSwitchChange()}>
-            <Box sx={[disabled? localstyles.switch_disabled : localstyles.switch,{ml: onOff? "5px" : "105px"}]} />
-            <Typography sx={localstyles.onOffLabel}>
-                {onText}
-            </Typography>
-            <Typography sx={localstyles.onOffLabel}>
-                {offText}
-            </Typography>
-        </Button>
-        {helperText&&<Typography color='red' ml={'15px'} >{helperText}</Typography>}
-        </>
-    );
-}
+  }, [defaultValue]);
 
-const localstyles = {
-    container: {
-        display: "flex",
-        flexDirection: "row",
-        width: "200px",
-        height: "60px",
-        backgroundColor: "#E2E2E2",
-        borderRadius: 50,
-        justifyContent: "flex-start",
-        padding: 0
-    },
-    switch: {
-        width: "90px",
-        height: "50px",
-        backgroundColor: "white",
-        ml: "5px",
-        position: "absolute",
-        borderRadius: 50,
-        transition: "transform 1s"
-    },
-    switch_disabled: {
-        width: "90px",
-        height: "50px",
-        backgroundColor: "#CBCBCB",
-        ml: "5px",
-        position: "absolute",
-        borderRadius: 50,
-        transition: "transform 1s"
-    },
-    onOffLabel: {
-        zIndex: 1,
-        display: "flex",
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        color: "#717171",
-        fontWeight: "bold"
-    }
+  const handleSwitchChange = () => {
+    if (disabled) return;
+    setState(!onOff);
+    setOnOff(!onOff);
+  };
+
+  return (
+    <>
+      <Box
+        sx={{
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          width: "200px",
+          height: "50px",
+          borderRadius: "50px",
+          backgroundColor: "#E2E2E2",
+          cursor: disabled ? "not-allowed" : "pointer",
+          padding: "5px",
+          justifyContent: "space-between", 
+          marginTop: "5px"
+        }}
+        onClick={handleSwitchChange}
+        data-testId={dataTestId}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            left: onOff ? "5px" : "calc(100% - 100px)",
+            width: "95px",
+            height: "100%",
+            backgroundColor: "white",
+            borderRadius: "50px",
+            transition: "left 0.3s ease",
+            zIndex: 0,
+          }}
+        />
+
+        {/* On Text */}
+        <Typography
+          sx={{
+            zIndex: 1, 
+            fontWeight: "bold",
+            color: onOff ? "#000" : "#717171", 
+            width: "90px",
+            textAlign: "center",
+            fontSize: 14
+          }}
+        >
+          {onText}
+        </Typography>
+
+        {/* Off Text */}
+        <Typography
+          sx={{
+            zIndex: 1,
+            fontWeight: "bold",
+            color: !onOff ? "#000" : "#717171",
+            width: "90px",
+            textAlign: "center",
+            fontSize: 14
+          }}
+        >
+          {offText}
+        </Typography>
+      </Box>
+
+      {/* Helper text */}
+      {helperText && (
+        <Typography color="red" ml="15px">
+          {helperText}
+        </Typography>
+      )}
+    </>
+  );
 }

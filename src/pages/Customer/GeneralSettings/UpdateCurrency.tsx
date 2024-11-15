@@ -14,12 +14,14 @@ import { styles } from '../../../constants/styles'
 import { useTranslation } from 'react-i18next'
 import { formValidate } from '../../../interfaces/common'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
-import { localStorgeKeyName } from '../../../constants/constant'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import {
   updateUserCurrency,
   getCurrencyList
 } from '../../../APICalls/Collector/currency'
 import { Currency } from '../../../interfaces/currency'
+import { extractError, showErrorToast } from '../../../utils/utils'
+import { useNavigate } from 'react-router-dom'
 
 interface UpdateCurrencyProps {
   drawerOpen: boolean
@@ -27,6 +29,7 @@ interface UpdateCurrencyProps {
   action: 'edit'
   tenantCurrency: string
   onSubmitData: (type: string, msg: string) => void
+  monetaryVersion: number
 }
 
 const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
@@ -34,10 +37,12 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
   handleDrawerClose,
   action,
   tenantCurrency,
-  onSubmitData
+  onSubmitData,
+  monetaryVersion
 }) => {
   const { t } = useTranslation()
   const [currencyList, setCurrencyList] = useState<il_item[]>([])
+  const navigate = useNavigate()
   // const currencyList: il_item[] = [
   //   {
   //     id: 'HKD',
@@ -111,17 +116,27 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
   }
 
   const handleSubmit = async () => {
-    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
-    const username = localStorage.getItem(localStorgeKeyName.username) || ''
-
-    const result = await updateUserCurrency(
-      tenantId,
-      selectedCurrency.id,
-      username
-    )
-    if (result) {
-      onSubmitData('success', t('common.saveSuccessfully'))
-      handleDrawerClose()
+    try {
+      const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
+      const username = localStorage.getItem(localStorgeKeyName.username) || ''
+  
+      const result = await updateUserCurrency(
+        tenantId,
+        selectedCurrency.id,
+        username,
+        monetaryVersion
+      )
+      if (result) {
+        onSubmitData('success', t('common.saveSuccessfully'))
+        handleDrawerClose()
+      }
+    } catch (error: any) {
+      const {state} = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
+        }
     }
   }
 

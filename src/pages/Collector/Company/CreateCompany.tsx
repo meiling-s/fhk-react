@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { editCompany, createCompany } from '../../../APICalls/Collector/company'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
 import { STATUS_CODE, formErr, localStorgeKeyName } from '../../../constants/constant'
 import {
   Company,
@@ -55,42 +55,49 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
     localStorage.getItem(localStorgeKeyName.username) ?? ''
   const [prefixItemName, setPrefixItemName] = useState<string>('')
   const [existingCompanyList, setExistingCompanyList] = useState<Company[]>([])
+  const role = localStorgeKeyName.realm
   const staffField = [
     {
       label: t('common.traditionalChineseName'),
       placeholder: t('common.enterName'),
       field: 'nameTchi',
-      type: 'text'
+      type: 'text',
+      id: `astd-company-${selectedItem?.companyType}-form-tc-input-field-9717`
     },
     {
       label: t('common.simplifiedChineseName'),
       placeholder: t('common.enterName'),
       field: 'nameSchi',
-      type: 'text'
+      type: 'text',
+      id: `astd-company-${selectedItem?.companyType}-form-sc-input-field-2809`
     },
     {
       label: t('common.englishName'),
       placeholder: t('common.enterName'),
       field: 'nameEng',
-      type: 'text'
+      type: 'text',
+      id: `astd-company-${selectedItem?.companyType}-form-en-input-field-1442`
     },
     {
       label: t('companyManagement.brNo'),
       placeholder: t('companyManagement.enterBrNo'),
       field: 'brNo',
-      type: 'text'
+      type: 'text',
+      id: `astd-company-${selectedItem?.companyType}-form-brn-input-field-5627`
     },
     {
       label: t('common.description'),
       placeholder: t('common.enterText'),
       field: 'description',
-      type: 'text'
+      type: 'text',
+      id: `astd-company-${selectedItem?.companyType}-form-desc-input-field-8229`
     },
     {
       label: t('common.remark'),
       placeholder: t('common.enterText'),
       field: 'remark',
-      type: 'text'
+      type: 'text',
+      id: `astd-company-${selectedItem?.companyType}-form-remark-input-field-7911`
     }
   ]
   const navigate = useNavigate();
@@ -155,12 +162,22 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
       description: t('common.description'),
       remark: t('common.remark')
     }
+
+    const fieldIdMapping: Record<string, string> = {
+      nameTchi: 'tc-err-warning-4372',
+      nameSchi: 'sc-err-warning-6316',
+      nameEng: 'en-err-warning-8979',
+      brNo: 'brn-err-warning-4976',
+      description: 'desc-err-warning-9102',
+      remark: 'remark-err-warning-5854'
+    }
     Object.keys(formData).forEach((fieldName) => {
       formData[fieldName as keyof FormValues].trim() === '' &&
         tempV.push({
           field: fieldMapping[fieldName as keyof FormValues],
           problem: formErr.empty,
-          type: 'error'
+          type: 'error',
+          dataTestId:`astd-company-${companyType}-form-${fieldIdMapping[fieldName]}`
         })
     })
     existingCompanyList.forEach((item) => {
@@ -168,21 +185,24 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
         tempV.push({
           field: t('common.traditionalChineseName'),
           problem: formErr.alreadyExist,
-          type: 'error'
+          type: 'error',
+          dataTestId: `astd-company-${item.companyType}-form-tc-err-warning-4372`,
         })
       }
       if (item.nameSchi.toLowerCase() === formData.nameSchi.toLowerCase()) {
         tempV.push({
           field: t('common.simplifiedChineseName'),
           problem: formErr.alreadyExist,
-          type: 'error'
+          type: 'error',
+          dataTestId: `astd-company-${item.companyType}-form-sc-err-warning-6316`
         })
       }
       if (item.nameEng.toLowerCase() === formData.nameEng.toLowerCase()) {
         tempV.push({
           field: t('common.englishName'),
           problem: formErr.alreadyExist,
-          type: 'error'
+          type: 'error',
+          dataTestId: `astd-company-${item.companyType}-form-en-err-warning-8979`
         })
       }
     })
@@ -268,7 +288,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
     } else {
       setTrySubmited(true)
     }
-   } catch (error:any) {
+  } catch (error:any) {
     const {state} = extractError(error);
     if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
@@ -301,13 +321,21 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
           ]
         )
       }
+      if (error?.response?.data.status === STATUS_CODE[409]) {
+        const errorMessage = error.response.data.message
+        if (errorMessage.includes(`[${prefixItemName}NameDuplicate]`)) {
+          showErrorToast(handleDuplicateErrorMessage(errorMessage))
+        } else {
+          showErrorToast(error.response.data.message);
+        }
+      }
     }
-   }
+  }
   }
 
   const handleEditCompany = async () => {
     try {
-      const editData: UpdateCompany = {
+      const editData = {
         companyId: selectedItem?.companyId || '',
         nameTchi: formData.nameTchi,
         nameSchi: formData.nameSchi,
@@ -317,7 +345,8 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
         remark: formData.remark,
         status: 'ACTIVE',
         createdBy: formData.createdBy,
-        updatedBy: loginName
+        updatedBy: loginName,
+        version: selectedItem?.version.toString() ?? "0"
       }
       const data: {
         brNo: string
@@ -326,6 +355,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
         status: string
         createdBy: string
         updatedBy: string
+        version: string
         [key: string]: string
       } = {
         brNo: editData.brNo,
@@ -333,7 +363,8 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
         remark: editData.remark,
         status: editData.status,
         createdBy: editData.createdBy,
-        updatedBy: editData.updatedBy
+        updatedBy: editData.updatedBy,
+        version: editData.version
       }
       data[`${prefixItemName}NameTchi`] = editData.nameTchi
       data[`${prefixItemName}NameSchi`] = editData.nameSchi
@@ -356,57 +387,114 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
       }
     } catch (error:any) {
       const {state} = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
-        navigate('/maintenance')
-      }
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          const errorMessage = error.response.data.message
+          if (errorMessage.includes(`[${prefixItemName}NameDuplicate]`)) {
+            showErrorToast(handleDuplicateErrorMessage(errorMessage))
+          } else {
+            showErrorToast(error.response.data.message);
+          }
+        }
     }
   }
 
   const handleDelete = async () => {
-    const editData: UpdateCompany = {
-      companyId: selectedItem?.companyId || '',
-      nameTchi: formData.nameTchi,
-      nameSchi: formData.nameSchi,
-      nameEng: formData.nameEng,
-      brNo: formData.brNo,
-      description: formData.description,
-      remark: formData.remark,
-      status: 'DELETED',
-      createdBy: formData.createdBy,
-      updatedBy: loginName
-    }
-    const data: {
-      brNo: string
-      description: string
-      remark: string
-      status: string
-      updatedBy: string
-      [key: string]: string
-    } = {
-      brNo: editData.brNo,
-      description: editData.description,
-      remark: editData.remark,
-      status: editData.status,
-      createdBy: editData.createdBy,
-      updatedBy: editData.updatedBy
-    }
-    data[`${prefixItemName}NameTchi`] = editData.nameTchi
-    data[`${prefixItemName}NameSchi`] = editData.nameSchi
-    data[`${prefixItemName}NameEng`] = editData.nameEng
-    if (selectedItem != null) {
-      const result = await editCompany(
-        companyType,
-        selectedItem.companyId,
-        data
-      )
-      if (result) {
-        onSubmitData('success', t('common.deletedSuccessfully'))
-        resetFormData()
-        handleDrawerClose()
+    try {
+      const editData = {
+        companyId: selectedItem?.companyId || '',
+        nameTchi: formData.nameTchi,
+        nameSchi: formData.nameSchi,
+        nameEng: formData.nameEng,
+        brNo: formData.brNo,
+        description: formData.description,
+        remark: formData.remark,
+        status: 'DELETED',
+        createdBy: formData.createdBy,
+        updatedBy: loginName,
+        version: selectedItem?.version.toString() ?? "0"
       }
+      const data: {
+        brNo: string
+        description: string
+        remark: string
+        status: string
+        createdBy: string
+        updatedBy: string
+        version: string
+        [key: string]: string
+      } = {
+        brNo: editData.brNo,
+        description: editData.description,
+        remark: editData.remark,
+        status: editData.status,
+        createdBy: editData.createdBy,
+        updatedBy: editData.updatedBy,
+        version: editData.version
+      }
+      data[`${prefixItemName}NameTchi`] = editData.nameTchi
+      data[`${prefixItemName}NameSchi`] = editData.nameSchi
+      data[`${prefixItemName}NameEng`] = editData.nameEng
+      if (selectedItem != null) {
+        const result = await editCompany(
+          companyType,
+          selectedItem.companyId,
+          data
+        )
+        if (result) {
+          onSubmitData('success', t('common.deletedSuccessfully'))
+          resetFormData()
+          handleDrawerClose()
+        }
+      }
+    } catch (error: any) {
+      const {state} = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
+        }
     }
   }
 
+  const handleDuplicateErrorMessage = (input: string) => {
+    const replacements: { [key: string]: string } = {
+      '[tchi]': 'Traditional Chinese Name',
+      '[eng]': 'English Name',
+      '[schi]': 'Simplified Chinese Name'
+    };
+  
+    // Remove type-specific duplicate tags
+    let result = input.replace(/\[(collectorNameDuplicate|logisticNameDuplicate|manufacturerNameDuplicate|customerNameDuplicate)\]/, '');
+  
+    // Find and replace language-specific tags with descriptive text
+    const matches = result.match(/\[(tchi|eng|schi)\]/g);
+    
+    let formatted = '';
+  
+    if (matches) {
+      const replaced = matches.map(match => replacements[match as keyof typeof replacements]);
+  
+      if (replaced.length === 1) {
+        formatted = replaced[0];
+      } else if (replaced.length === 2) {
+        formatted = replaced.join(' and ');
+      } else if (replaced.length === 3) {
+        formatted = `${replaced[0]}, ${replaced[1]} and ${replaced[2]}`;
+      }
+    }
+  
+    // Prepend the descriptive text to the result if there are matches
+    if (formatted) {
+      result = `${formatted} ${result.replace(/\[(tchi|eng|schi)\]/g, '')}`;
+    }
+  
+    return result.trim();
+  };
+  
+  
+  
   return (
     <div className="add-vehicle">
       <RightOverlayForm
@@ -454,6 +542,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
                 <CustomField label={item.label} mandatory>
                   <CustomTextField
                     id={item.label}
+                    dataTestId={item.id}
                     //value={formData[item.field as keyof FormValues]}
                     defaultValue={formData[item.field as keyof FormValues]}
                     disabled={action === 'delete'}
@@ -475,6 +564,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
               {trySubmited &&
                 validation.map((val, index) => (
                   <FormErrorMsg
+                    dataTestId={val.dataTestId}
                     key={index}
                     field={t(val.field)}
                     errorMsg={returnErrorMsg(val.problem, t)}

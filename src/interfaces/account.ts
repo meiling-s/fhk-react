@@ -12,6 +12,7 @@ export type RegisterItem = {
   brImages: string[]
   epdImages: string[]
   monetaryValue: string
+  version: number
 }
 
 export type Tenant = {
@@ -77,4 +78,5 @@ export type UpdateTenantForm = {
   createdAt: string
   updatedAt: string
   updatedBy: string
+  version: number
 }

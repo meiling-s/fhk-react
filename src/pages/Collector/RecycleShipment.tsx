@@ -39,15 +39,22 @@ import {
   updateCheckin,
   getDetailCheckInRequests
 } from '../../APICalls/Collector/warehouseManage'
+import CircularLoading from '../../components/CircularLoading'
 import { CheckInWarehouse, updateStatus } from '../../interfaces/warehouse'
 import RequestForm from '../../components/FormComponents/RequestForm'
 import { CheckIn } from '../../interfaces/checkin'
-import { Languages, STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
+import {
+  Languages,
+  STATUS_CODE,
+  localStorgeKeyName
+} from '../../constants/constant'
 import {
   displayCreatedDate,
   extractError,
   getPrimaryColor,
-  showSuccessToast
+  showSuccessToast,
+  debounce,
+  showErrorToast
 } from '../../utils/utils'
 import { useTranslation } from 'react-i18next'
 import { queryCheckIn } from '../../interfaces/checkin'
@@ -67,10 +74,9 @@ import { getWarehouseById } from '../../APICalls/warehouseManage'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-
 type CompanyNameLanguages = {
-  labelEnglish: string,
-  labelSimpflifed: string,
+  labelEnglish: string
+  labelSimpflifed: string
   labelTraditional: string
 }
 
@@ -136,6 +142,8 @@ type rejectForm = {
   checkedShipments: number[]
   onRejected?: () => void
   reasonList: any
+  checkInData: CheckIn[]
+  navigate: (url: string) => void
 }
 
 function RejectForm({
@@ -143,7 +151,9 @@ function RejectForm({
   onClose,
   checkedShipments,
   onRejected,
-  reasonList
+  reasonList,
+  checkInData,
+  navigate,
 }: rejectForm) {
   const { t } = useTranslation()
 
@@ -157,15 +167,17 @@ function RejectForm({
       return reasonItem ? reasonItem.name : ''
     })
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
-    const statReason: updateStatus = {
-      status: 'REJECTED',
-      reason: rejectReason,
-      updatedBy: loginId
-    }
 
     const results = await Promise.allSettled(
       checkedShipments.map(async (checkInId) => {
+        const selected = checkInData.find(value => value.chkInId === checkInId)
         try {
+          const statReason: updateStatus = {
+            status: 'REJECTED',
+            reason: rejectReason,
+            updatedBy: loginId,
+            version: selected?.version ?? 0
+          }
           const result = await updateCheckinStatus(checkInId, statReason)
           const data = result?.data
           if (data) {
@@ -174,11 +186,13 @@ function RejectForm({
               onRejected()
             }
           }
-        } catch (error) {
-          console.error(
-            `Failed to update check-in status for id ${checkInId}: `,
-            error
-          )
+        } catch (error: any) {
+          const { state } = extractError(error)
+          if (state.code === STATUS_CODE[503]) {
+            navigate('/maintenance')
+          } else if (state.code === STATUS_CODE[409]) {
+            showErrorToast(error?.response?.data?.message)
+          }
         }
       })
     )
@@ -248,73 +262,89 @@ type ApproveForm = {
   onClose: () => void
   checkedCheckIn: number[]
   onApprove?: () => void
+  checkInData: CheckIn[]
+  navigate: (url: string) => void
 }
 
 interface CheckInDetail {
-  chkInDtlId: number;
-  recycTypeId: string;
-  recycSubTypeId: string;
-  packageTypeId: string;
-  weight: number;
-  unitId: string;
-  itemId: number;
-  picoDtlId: number;
+  chkInDtlId: number
+  recycTypeId: string
+  recycSubTypeId: string
+  packageTypeId: string
+  weight: number
+  unitId: string
+  itemId: number
+  picoDtlId: number
   checkinDetailPhoto: {
-    sid: number;
-    photo: string;
-  }[];
-  createdBy: string;
-  updatedBy: string;
+    sid: number
+    photo: string
+  }[]
+  createdBy: string
+  updatedBy: string
 }
 
 const ApproveModal: React.FC<ApproveForm> = ({
   open,
   onClose,
   checkedCheckIn,
-  onApprove
+  onApprove,
+  checkInData,
+  navigate
+
 }) => {
   const { t } = useTranslation()
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const handleApproveRequest = async () => {
     const confirmReason: string[] = ['Confirmed']
-    const statReason: updateStatus = {
-      status: 'CONFIRMED',
-      reason: confirmReason,
-      updatedBy: loginId
-    }
-    
-  
+
     const results = await Promise.allSettled(
       checkedCheckIn.map(async (checkInId) => {
+        const selected = checkInData.find(value => value.chkInId === checkInId)
         try {
+          const statReason: updateStatus = {
+            status: 'CONFIRMED',
+            reason: confirmReason,
+            updatedBy: loginId,
+            version: selected?.version ?? 0
+          }
           const result = await updateCheckinStatus(checkInId, statReason)
           const data = result?.data
           if (data) {
             // console.log('updated check-in status: ', data)
-            
+
             // Map over each item in checkinDetail
             data.checkinDetail.map(async (detail: any) => {
-              const dataCheckin: CheckInWarehouse = {
-                checkInWeight: detail.weight || 0,
-                checkInUnitId: detail.unitId || 0,
-                checkInAt: data.updatedAt || '',
-                checkInBy: data.updatedBy || '',
-                updatedBy: loginId
-              }
-              if (detail.picoDtlId){
-                return await updateCheckin(checkInId, dataCheckin, detail.picoDtlId)
+              if (detail.picoDtlId) {
+                const picoAPI = await getPicoById(selected?.picoId ?? '')
+                const picoResult = picoAPI.data.pickupOrderDetail.find((value: { picoDtlId: number }) => value.picoDtlId === detail.picoDtlId)
+  
+                const dataCheckin: CheckInWarehouse = {
+                  checkInWeight: detail.weight || 0,
+                  checkInUnitId: detail.unitId || 0,
+                  checkInAt: data.updatedAt || '',
+                  checkInBy: data.updatedBy || '',
+                  updatedBy: loginId,
+                  version: picoResult.version
+                }
+                return await updateCheckin(
+                  checkInId,
+                  dataCheckin,
+                  detail.picoDtlId
+                )
               }
             })
-  
+
             if (onApprove) {
               onApprove()
             }
           }
-        } catch (error) {
-          console.error(
-            `Failed to update check-in status for id ${checkInId}: `,
-            error
-          )
+        } catch (error: any) {
+          const { state } = extractError(error)
+          if (state.code === STATUS_CODE[503]) {
+            navigate('/maintenance')
+          } else if (state.code === STATUS_CODE[409]) {
+            showErrorToast(error?.response?.data?.message)
+          }
         }
       })
     )
@@ -386,6 +416,7 @@ function ShipmentManage() {
   const [approveModal, setApproveModal] = useState<boolean>(false)
   const [company, setCompany] = useState('')
   const [location, setLocation] = useState('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [checkedShipments, setCheckedShipments] = useState<CheckIn[]>([])
   const [open, setOpen] = useState<boolean>(false)
   const [selectAll, setSelectAll] = useState(false)
@@ -403,8 +434,9 @@ function ShipmentManage() {
   const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
   const [reasonList, setReasonList] = useState<any>([])
   const { dateFormat } = useContainer(CommonTypeContainer)
-  const { localeTextDataGrid } = useLocaleTextDataGrid();
-  const { logisticList, manuList, collectorList, companies, currentTenant } = useContainer(CommonTypeContainer)
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const { logisticList, manuList, collectorList, companies, currentTenant } =
+    useContainer(CommonTypeContainer)
   const role = localStorage.getItem(localStorgeKeyName.role)
 
   const getRejectReason = async () => {
@@ -444,12 +476,12 @@ function ShipmentManage() {
   useEffect(() => {
     initCheckInRequest()
     getRejectReason()
-  }, [page, query, dateFormat, i18n.language]);
+  }, [page, query, dateFormat, i18n.language])
 
   const transformToTableRow = (item: CheckIn): TableRow => {
     const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
-    const createdAt = dateInHK.format(`${dateFormat} HH:mm`);
-   
+    const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
+
     return {
       id: item.chkInId,
       chkInId: item.chkInId,
@@ -466,112 +498,129 @@ function ShipmentManage() {
     }
   }
 
-  const getTranslationCompanyName = (name: string) : string => {
-    let companyName:string = '';
-    const logistic = logisticList?.find(item => {
+  const getTranslationCompanyName = (name: string): string => {
+    let companyName: string = ''
+    const logistic = logisticList?.find((item) => {
       const { logisticNameEng, logisticNameSchi, logisticNameTchi } = item
-      if(logisticNameEng === name || logisticNameSchi === name || logisticNameTchi === name){
-        return item;
-      }
-    })
-
-    if(logistic){
-      if(i18n.language === Languages.ENUS) companyName = logistic.logisticNameEng
-      if(i18n.language === Languages.ZHCH) companyName = logistic.logisticNameSchi;
-      if(i18n.language === Languages.ZHHK) companyName = logistic.logisticNameTchi
-    }
-    return companyName
-  }
-
-  const listTranslationCompanyName = () : CompanyNameLanguages[] => {
-
-    const manufacturerCompany: CompanyNameLanguages[] = manuList?.map(item => {
-      return {
-        labelEnglish : item?.manufacturerNameEng ?? '',
-        labelSimpflifed : item?.manufacturerNameSchi ?? '',
-        labelTraditional : item?.manufacturerNameTchi ?? ''
-      }
-    }) ?? []
-
-    const collectorCompany : CompanyNameLanguages[] = collectorList?.map(item => {
-      return {
-        labelEnglish : item?.collectorId ?? '',
-        labelSimpflifed : item?.collectorNameSchi ?? '',
-        labelTraditional : item?.collectorNameTchi ?? ''
-      }
-    })  ?? []
-   
-    return [...manufacturerCompany, ...collectorCompany]
-  }
-
-  const companyReceiverSender  = listTranslationCompanyName();
-
-  const getTranslationCompany = (name: string) : string => {
-    let companyName:string = '';
-    const company = companyReceiverSender.find(item => {
-      const { labelEnglish, labelSimpflifed, labelTraditional } = item
-      if( name === labelEnglish || name === labelSimpflifed || name === labelTraditional){
+      if (
+        logisticNameEng === name ||
+        logisticNameSchi === name ||
+        logisticNameTchi === name
+      ) {
         return item
       }
     })
 
-    if(company){
-      if(i18n.language === Languages.ENUS) companyName = company.labelEnglish
-      if(i18n.language === Languages.ZHCH) companyName = company.labelSimpflifed
-      if(i18n.language === Languages.ZHHK) companyName = company.labelTraditional
+    if (logistic) {
+      if (i18n.language === Languages.ENUS)
+        companyName = logistic.logisticNameEng
+      if (i18n.language === Languages.ZHCH)
+        companyName = logistic.logisticNameSchi
+      if (i18n.language === Languages.ZHHK)
+        companyName = logistic.logisticNameTchi
+    }
+    return companyName
+  }
+
+  const listTranslationCompanyName = (): CompanyNameLanguages[] => {
+    const manufacturerCompany: CompanyNameLanguages[] =
+      manuList?.map((item) => {
+        return {
+          labelEnglish: item?.manufacturerNameEng ?? '',
+          labelSimpflifed: item?.manufacturerNameSchi ?? '',
+          labelTraditional: item?.manufacturerNameTchi ?? ''
+        }
+      }) ?? []
+
+    const collectorCompany: CompanyNameLanguages[] =
+      collectorList?.map((item) => {
+        return {
+          labelEnglish: item?.collectorId ?? '',
+          labelSimpflifed: item?.collectorNameSchi ?? '',
+          labelTraditional: item?.collectorNameTchi ?? ''
+        }
+      }) ?? []
+
+    return [...manufacturerCompany, ...collectorCompany]
+  }
+
+  const companyReceiverSender = listTranslationCompanyName()
+
+  const getTranslationCompany = (name: string): string => {
+    let companyName: string = ''
+    const company = companyReceiverSender.find((item) => {
+      const { labelEnglish, labelSimpflifed, labelTraditional } = item
+      if (
+        name === labelEnglish ||
+        name === labelSimpflifed ||
+        name === labelTraditional
+      ) {
+        return item
+      }
+    })
+
+    if (company) {
+      if (i18n.language === Languages.ENUS) companyName = company.labelEnglish
+      if (i18n.language === Languages.ZHCH)
+        companyName = company.labelSimpflifed
+      if (i18n.language === Languages.ZHHK)
+        companyName = company.labelTraditional
     }
 
     return companyName
   }
 
-  const getPicoDetail =  async (picoId: string) => {
+  const getPicoDetail = async (picoId: string) => {
     try {
-      const picoDetail = await getPicoById(picoId);
+      const picoDetail = await getPicoById(picoId)
       return picoDetail
     } catch (error) {
       return null
     }
   }
 
-  const getCompanyNameById = (id:number):string => {
+  const getCompanyNameById = (id: number): string => {
     let { ENUS, ZHCH, ZHHK } = Languages
-    let companyName:string = '';
-    const company = companies.find(item => item.id === id);
-    if(company){
-      if(i18n.language === ENUS) companyName = company.nameEng ?? ''
-      if(i18n.language === ZHCH) companyName = company.nameSchi ?? ''
-      if(i18n.language === ZHHK) companyName = company.nameTchi ?? ''
+    let companyName: string = ''
+    const company = companies.find((item) => item.id === id)
+    if (company) {
+      if (i18n.language === ENUS) companyName = company.nameEng ?? ''
+      if (i18n.language === ZHCH) companyName = company.nameSchi ?? ''
+      if (i18n.language === ZHHK) companyName = company.nameTchi ?? ''
     }
 
     return companyName
   }
 
-  const getRecepientCompany = ():string => {
-    let recipientCompany:string = '';
-    if(i18n.language === Languages.ENUS) recipientCompany = currentTenant?.nameEng ?? ''
-    if(i18n.language === Languages.ZHCH) recipientCompany = currentTenant?.nameSchi ?? ''
-    if(i18n.language === Languages.ZHHK) recipientCompany = currentTenant?.nameTchi ?? ''
-    return recipientCompany;
+  const getRecepientCompany = (): string => {
+    let recipientCompany: string = ''
+    if (i18n.language === Languages.ENUS)
+      recipientCompany = currentTenant?.nameEng ?? ''
+    if (i18n.language === Languages.ZHCH)
+      recipientCompany = currentTenant?.nameSchi ?? ''
+    if (i18n.language === Languages.ZHHK)
+      recipientCompany = currentTenant?.nameTchi ?? ''
+    return recipientCompany
   }
 
-  const cacheWarehouse:any = {}
+  const cacheWarehouse: any = {}
 
-  const getWarehouseAddres =  async (warehouseId: number) => {
-    let deliveryAddress:string = '';
-    if(warehouseId in cacheWarehouse) {
+  const getWarehouseAddres = async (warehouseId: number) => {
+    let deliveryAddress: string = ''
+    if (warehouseId in cacheWarehouse) {
       deliveryAddress = cacheWarehouse[warehouseId].address
     } else {
-      const warehouse = await getWarehouseDetail(warehouseId);
+      const warehouse = await getWarehouseDetail(warehouseId)
 
-      if(warehouse){
+      if (warehouse) {
         cacheWarehouse[warehouseId] = {
-          isExist : true,
+          isExist: true,
           address: warehouse.location
         }
         deliveryAddress = warehouse.location
       } else {
         cacheWarehouse[warehouseId] = {
-          isExist : false,
+          isExist: false,
           address: ''
         }
       }
@@ -580,33 +629,37 @@ function ShipmentManage() {
   }
 
   const initCheckInRequest = async () => {
+    setIsLoading(true)
     try {
       const result = await getAllCheckInRequests(page - 1, pageSize, query)
       if (result) {
         const data = result?.data?.content
         if (data && data.length > 0) {
-            const newData:CheckIn[] = [];
-            for(let item of data){
-              const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
-              item.createdAt =  dateInHK.format(`${dateFormat} HH:mm`);
+          const newData: CheckIn[] = []
+          for (let item of data) {
+            const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+            item.createdAt = dateInHK.format(`${dateFormat} HH:mm`)
 
-              if(item?.logisticId){
-                const companyName = getCompanyNameById(Number(item.logisticId));
-                item.logisticName = companyName === '' ? item.logisticName  : companyName
-              }
-
-              if(item.senderId){
-                const companyName = getCompanyNameById(Number(item.senderId))
-                item.senderName = companyName === '' ? item.senderName  : companyName
-              }
-
-              item.recipientCompany = getRecepientCompany()
-
-              if(item.warehouseId){
-                item.deliveryAddress = await getWarehouseAddres(item.warehouseId) ?? ''
-              }
-              newData.push(item)
+            if (item?.logisticId) {
+              const companyName = getCompanyNameById(Number(item.logisticId))
+              item.logisticName =
+                companyName === '' ? item.logisticName : companyName
             }
+
+            if (item.senderId) {
+              const companyName = getCompanyNameById(Number(item.senderId))
+              item.senderName =
+                companyName === '' ? item.senderName : companyName
+            }
+
+            item.recipientCompany = getRecepientCompany()
+
+            if (item.warehouseId) {
+              item.deliveryAddress =
+                (await getWarehouseAddres(item.warehouseId)) ?? ''
+            }
+            newData.push(item)
+          }
           // const checkinData = newData.map(transformToTableRow)
           setCheckInRequest(newData)
           setFilterShipments(newData)
@@ -621,6 +674,7 @@ function ShipmentManage() {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -633,23 +687,23 @@ function ShipmentManage() {
   }
 
   useEffect(() => {
-    if(selectAll){
-      let newIds:number[] = []
+    if (selectAll) {
+      let newIds: number[] = []
 
-      for(let item of filterShipments){
-        if(!selectedUnCheckin.includes(item.chkInId)){
+      for (let item of filterShipments) {
+        if (!selectedUnCheckin.includes(item.chkInId)) {
           newIds.push(item.chkInId)
         }
       }
 
-      const allId:number[] = [...selectedCheckin, ...newIds];
+      const allId: number[] = [...selectedCheckin, ...newIds]
       const ids = new Set(allId)
       setSelectedCheckin(Array.from(ids))
     }
   }, [filterShipments])
 
   useEffect(() => {
-    if(selectedCheckin.length === 0){
+    if (selectedCheckin.length === 0) {
       setSelectAll(false)
     }
   }, [selectedCheckin])
@@ -659,19 +713,19 @@ function ShipmentManage() {
     chkInId: number
   ) => {
     setOpen(false)
-    setSelectedRow(undefined);
+    setSelectedRow(undefined)
 
     const checked = event.target.checked
-    if(checked){
-      setSelectedCheckin(prev => [...prev, chkInId])
-      setSelectedUnCheckin(prev => {
-        const unCheck = prev.filter(id => id !== chkInId)
+    if (checked) {
+      setSelectedCheckin((prev) => [...prev, chkInId])
+      setSelectedUnCheckin((prev) => {
+        const unCheck = prev.filter((id) => id !== chkInId)
         return unCheck
       })
     } else {
       const updatedChecked = selectedCheckin.filter((rowId) => rowId != chkInId)
       setSelectedCheckin(updatedChecked)
-      setSelectedUnCheckin(prev => [...prev, chkInId])
+      setSelectedUnCheckin((prev) => [...prev, chkInId])
     }
     // const updatedChecked = checked
     //   ? [...selectedCheckin, chkInId]
@@ -716,7 +770,7 @@ function ShipmentManage() {
     {
       field: 'createdAt',
       type: 'string',
-      headerName: t('check_in.created_at'),
+      headerName: t('check_in.check_in'),
       width: 150
     },
     {
@@ -784,17 +838,20 @@ function ShipmentManage() {
     setQuery({ ...query, ...newQuery })
   }
 
-  const handleFilterPoNum = (searchWord: string) => {
+  const handleFilterPoNum = debounce((searchWord: string) => {
+    setPage(1)
     updateQuery({ picoId: searchWord })
-  }
+  }, 1000)
 
   const handleComChange = (event: SelectChangeEvent) => {
+    setPage(1)
     setCompany(event.target.value)
     var searchWord = event.target.value
     updateQuery({ senderName: searchWord })
   }
 
   const handleLocChange = (event: SelectChangeEvent) => {
+    setPage(1)
     setLocation(event.target.value)
     var searchWord = event.target.value
     updateQuery({ senderAddr: searchWord })
@@ -878,12 +935,11 @@ function ShipmentManage() {
     try {
       const warehouse = await getWarehouseById(id)
       return warehouse.data
-    
     } catch (error) {
       return null
     }
   }
-  
+
   return (
     <>
       <Modal open={open} onClose={handleClose}>
@@ -914,19 +970,19 @@ function ShipmentManage() {
         <Box>
           <Button
             sx={{
-                mt: 3,
-                width: '90px',
-                height: '40px',
-                m: 0.5,
-                cursor: selectedCheckin.length === 0 ? 'not-allowed' : 'pointer',
-                borderRadius: '20px',
-                backgroundColor: primaryColor,
-                '&.MuiButton-root:hover': { bgcolor: primaryColor },
-                borderColor: primaryColor,
-                marginLeft: '20px',
-                fontWeight: 'bold',
-                color: 'white'
-              }}
+              mt: 3,
+              width: '90px',
+              height: '40px',
+              m: 0.5,
+              cursor: selectedCheckin.length === 0 ? 'not-allowed' : 'pointer',
+              borderRadius: '20px',
+              backgroundColor: primaryColor,
+              '&.MuiButton-root:hover': { bgcolor: primaryColor },
+              borderColor: primaryColor,
+              marginLeft: '20px',
+              fontWeight: 'bold',
+              color: 'white'
+            }}
             disabled={selectedCheckin.length === 0}
             variant="outlined"
             onClick={() => {
@@ -939,17 +995,17 @@ function ShipmentManage() {
           </Button>
           <Button
             sx={{
-                mt: 3,
-                width: '90px',
-                height: '40px',
-                m: 0.5,
-                cursor: selectedCheckin.length === 0 ? 'not-allowed' : 'pointer',
-                borderRadius: '20px',
-                borderColor: primaryColor,
-                borderWidth: 1,
-                fontWeight: 'bold',
-                marginLeft: '20px',
-              }}
+              mt: 3,
+              width: '90px',
+              height: '40px',
+              m: 0.5,
+              cursor: selectedCheckin.length === 0 ? 'not-allowed' : 'pointer',
+              borderRadius: '20px',
+              borderColor: primaryColor,
+              borderWidth: 1,
+              fontWeight: 'bold',
+              marginLeft: '20px'
+            }}
             variant="outlined"
             disabled={selectedCheckin.length === 0}
             onClick={() => setRejectModal(selectedCheckin.length > 0)}
@@ -974,7 +1030,7 @@ function ShipmentManage() {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={() => {}}>
+                  <IconButton onClick={() => { }}>
                     <SEARCH_ICON style={{ color: primaryColor }} />
                   </IconButton>
                 </InputAdornment>
@@ -1040,53 +1096,67 @@ function ShipmentManage() {
         </Box>
         <div className="table-overview">
           <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={filterShipments}
-              getRowId={(row) => row.chkInId}
-              hideFooter
-              columns={headCells}
-              disableRowSelectionOnClick
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                `${selectedRow && params.row.chkInId === selectedRow.chkInId ? 'selected-row ' : ''}${selectedCheckin && selectedCheckin.includes(params.row.chkInId) ? 'checked-row' : ''}`
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                {' '}
+                <DataGrid
+                  rows={filterShipments}
+                  getRowId={(row) => row.chkInId}
+                  hideFooter
+                  columns={headCells}
+                  disableRowSelectionOnClick
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    `${selectedRow && params.row.chkInId === selectedRow.chkInId
+                      ? 'selected-row '
+                      : ''
+                    }${selectedCheckin &&
+                      selectedCheckin.includes(params.row.chkInId)
+                      ? 'checked-row'
+                      : ''
+                    }`
                   }
-                },
-                '.checked-row':{
-                  backgroundColor: `rgba(25, 118, 210, 0.08)`
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.checked-row': {
+                      backgroundColor: `rgba(25, 118, 210, 0.08)`
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         <RejectForm
@@ -1097,6 +1167,8 @@ function ShipmentManage() {
             setRejectModal(false)
           }}
           onRejected={onRejectCheckin}
+          checkInData={checkInRequest ?? []}
+          navigate={navigate}
         />
 
         <ApproveModal
@@ -1111,6 +1183,8 @@ function ShipmentManage() {
             // setConfirmModal(true)
           }}
           checkedCheckIn={selectedCheckin}
+          checkInData={checkInRequest ?? []}
+          navigate={navigate}
         />
         <ConfirmModal open={confirmModal} onClose={resetPage} />
       </Box>

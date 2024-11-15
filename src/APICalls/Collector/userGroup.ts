@@ -1,7 +1,7 @@
 import { CreateVehicle } from "../../interfaces/vehicles";
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
 import {
-  CREATE_VEHICLE, DELETE_VEHICLE, EDIT_VEHICLE, GET_USER_GROUP, GET_USER_ACCOUNT, GET_FUNCTION, CREATE_USER_GROUP, EDIT_USER_GROUP, DELETE_USER_GROUP, GET_STAFF_ID
+  CREATE_VEHICLE, DELETE_VEHICLE, EDIT_VEHICLE, GET_USER_GROUP, GET_USER_ACCOUNT, GET_FUNCTION, CREATE_USER_GROUP, EDIT_USER_GROUP, DELETE_USER_GROUP, GET_STAFF_ID, GET_FUNCTION_FILTERED
 } from "../../constants/requests";
 import { returnApiToken } from "../../utils/utils";
 import { CreateUserGroupProps, DeleteUserGroupProps, EditUserGroupProps } from "../../interfaces/userGroup";
@@ -92,6 +92,28 @@ export const getAllFunction = async () => {
     throw(e)
   }
 }
+
+export const getAllFilteredFunction = async (tenantTypeId: string) => {
+  try {
+    // const userAccount = await getUserAccount();
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+        baseURL: window.baseURL.collector,
+      // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
+      ...GET_FUNCTION_FILTERED(tenantTypeId),
+      headers: {
+        AuthToken: token.authToken
+      }
+    })
+    
+    return response
+  } catch (e) {
+    console.error('Get all vehicle failed:', e)
+    throw(e)
+  }
+}
+
 
 // create userGroup
 export const createUserGroup = async (data: CreateUserGroupProps) => {

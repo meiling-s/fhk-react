@@ -24,10 +24,17 @@ export interface PickupOrderDetail {
     checkInUnitId?: number | null,
     checkInAt?: string | null,
     checkInBy?: string | null,
+    checkInByNameEng?: string | null,
+    checkInByNameSchi?: string | null,
+    checkInByNameTchi?: string | null,
     checkOutWeight?: number | null,
     checkOutUnitId?: number | null,
     checkOutAt?: string | null,
     checkOutBy?: string | null,
+    checkOutByNameEng?: string | null,
+    checkOutByNameSchi?: string | null,
+    checkOutByNameTchi?: string | null,
+    productType?: any,
 }
 
 export interface PickupOrder {
@@ -58,6 +65,7 @@ export interface PickupOrder {
     createdAt:         string;
     refPicoId:         string;
     pickupOrderDetail: PickupOrderDetail[];
+    version?: number;
 }
 
 export interface PickupOrderItem {
@@ -90,6 +98,7 @@ export interface CreatePO {
     createdBy:        string;
     updatedBy:        string;
     createPicoDetail: CreatePicoDetail[];
+    specificDates: string[];
 }
 
 export interface CreatePicoDetail {
@@ -108,9 +117,18 @@ export interface CreatePicoDetail {
     createdBy:       string;
     updatedBy:       string;
     pickupAt:        string;
-    recycType:    string;
-    recycSubType: string;
+    recycType?:    string;
+    recycSubType?: string;
     weight:       string;
+    itemCategory?: string;
+    version?: number;
+    addon?: string;
+    productType?: any | string;
+    productSubType?: any | string;
+    productAddon?: any | string;
+    productAddonType?: any;
+    productSubTypeRemark?: string;
+    productAddonTypeRemark?: string
     
 }
 
@@ -163,6 +181,8 @@ export interface Row {
     updatedBy:     string;
     refPicoId:     string ;
     updatePicoDetail: CreatePicoDetail[]
+    version?: number;
+    specificDates: string[];
     
 }
 
@@ -231,7 +251,7 @@ export interface AssignJobDriver {
     createdBy: string;
     effFrmDate:  string,
     effToDate:  string,
-    status: string  ,
+    status: string,
     updatedBy: string
 }
 

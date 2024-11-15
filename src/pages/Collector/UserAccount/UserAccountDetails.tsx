@@ -41,7 +41,7 @@ import {
 } from '../../../APICalls/userAccount'
 import { getStaffList } from '../../../APICalls/staff'
 import { useNavigate } from 'react-router-dom'
-import UserConfirmModal from '../../../components/FormComponents/UserConfirmModal'
+import UserConfirmModal from '../../../components/FormComponents/UserC'
 
 interface UserAccountDetailsProps {
   drawerOpen: boolean
@@ -201,10 +201,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     prohibitedLoginId: string[]
   ) => {
     const lowerCaseLoginId = loginId?.toLowerCase()
-    return (
-      prohibitedLoginId.includes(lowerCaseLoginId.toLowerCase()) ||
-      /admin/.test(loginId.toLocaleLowerCase())
-    )
+    return prohibitedLoginId.includes(lowerCaseLoginId.toLowerCase())
   }
 
   useEffect(() => {
@@ -215,7 +212,8 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         tempV.push({
           field: t('userAccount.loginName'),
           problem: formErr.empty,
-          type: 'error'
+          type: 'error',
+          dataTestId: 'astd-user-form-login-name-err-warning-4845'
         })
 
       if (hasProhibitedSubstring(loginId, prohibitedLoginId)) {
@@ -235,13 +233,15 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         tempV.push({
           field: t('staffManagement.contactNumber'),
           problem: formErr.empty,
-          type: 'error'
+          type: 'error',
+          dataTestId: 'astd-user-form-email-address-err-warning-3197'
         })
       email?.toString() == '' &&
         tempV.push({
           field: t('userAccount.emailAddress'),
           problem: formErr.empty,
-          type: 'error'
+          type: 'error',
+          dataTestId: 'astd-user-form-contact-number-err-warning-5232'
         })
 
       !validateEmail(email) &&
@@ -327,7 +327,12 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
       const result = await postUserAccount(formData)
 
       setValidation([])
-      if (result == 409) {
+      if (result && result?.status === 200) {
+        onSubmitData()
+        showSuccessToast(t('userAccount.successCreatedUser'))
+        resetData()
+        handleDrawerClose()
+      } else if (result === 409) {
         //SET VALIDATION FOR USER WITH SAME EMAIL
         setTrySubmited(true)
         let tempV = []
@@ -339,14 +344,10 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           type: 'error'
         })
         setValidation(tempV)
-      } else if (result == 500) {
+      } else {
+        // handle err response 500, 404, undifiend etc
         setTrySubmited(true)
         showErrorToast(t('userAccount.failedCreatedUser'))
-      } else {
-        onSubmitData()
-        showSuccessToast(t('userAccount.successCreatedUser'))
-        resetData()
-        handleDrawerClose()
       }
     } else {
       setTrySubmited(true)
@@ -431,6 +432,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
             {action == 'add' && (
               <CustomField label={t('userAccount.staffId')}>
                 <CustomTextField
+                  dataTestId="astd-user-form-staff-id-input-field-6488"
                   id="staffId"
                   value={staffId}
                   placeholder={t('userAccount.pleaseEnterNumber')}
@@ -441,10 +443,11 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
             <CustomField label={t('userAccount.loginName')} mandatory>
               <CustomTextField
                 id="LoginId"
+                dataTestId="astd-user-form-login-name-input-field-1164"
                 value={loginId}
                 disabled={action === 'delete' || action === 'edit'}
                 placeholder={t('userAccount.pleaseEnterName')}
-                onChange={(event) => setLoginId(event.target.value)}
+                onChange={(event) => setLoginId(event.target.value.trim())}
                 error={checkString(loginId)}
               />
             </CustomField>
@@ -454,6 +457,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                   <CustomField label={t('userAccount.emailAddress')} mandatory>
                     <CustomTextField
                       id="email"
+                      dataTestId="astd-user-form-email-address-input-field-7349"
                       value={email}
                       placeholder={t('userAccount.pleaseEnterEmailAddress')}
                       onChange={(event) => setEmail(event.target.value)}
@@ -468,6 +472,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 >
                   <CustomTextField
                     id="contactNo"
+                    dataTestId="astd-user-form-user-group-select-button-1083"
                     value={contactNo}
                     placeholder={t('staffManagement.enterContactNo')}
                     onChange={(event) => setContactNo(event.target.value)}
@@ -491,6 +496,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 <Select
                   labelId="userGroup"
                   id="userGroup"
+                  data-testid="astd-user-form-status-select-button-6538"
                   value={userGroup.toString()}
                   sx={{
                     borderRadius: '12px'
@@ -556,6 +562,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                     field={t(val.field)}
                     errorMsg={returnErrorMsg(val.problem, t)}
                     type={val.type}
+                    dataTestId={val.dataTestId}
                   />
                 ))}
             </Grid>

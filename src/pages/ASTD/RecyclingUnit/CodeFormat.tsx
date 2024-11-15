@@ -18,31 +18,11 @@ import {
     Divider,
     Typography
 } from '@mui/material'
-import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
-import InputAdornment from '@mui/material/InputAdornment'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
-import Switcher from '../../../components/FormComponents/CustomSwitch'
-import LabelField from '../../../components/FormComponents/CustomField'
-import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
-import { ToastContainer, toast } from 'react-toastify'
 import { extractError, returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
-import {
-    createWarehouse,
-    getWarehouseById,
-    editWarehouse,
-    getRecycleType
-} from '../../../APICalls/warehouseManage'
-import { set } from 'date-fns'
-import { getLocation } from '../../../APICalls/getLocation'
-import { get } from 'http'
-import { getCommonTypes } from '../../../APICalls/commonManage'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { createPackagingUnit, createRecyc, editPackagingUnit } from '../../../APICalls/ASTD/recycling'
 import { createCodeData, deleteCodeData, updateCodeData } from '../../../APICalls/ASTD/code'
 import { STATUS_CODE } from '../../../constants/constant'
 
@@ -58,15 +38,16 @@ interface CodeFormatProps {
     status: string
     updatedAt: string
     updatedBy: string
-  }
+    version: number
+}
 
 interface RecyclingFormatProps {
     drawerOpen: boolean
     handleDrawerClose: () => void
     action?: 'add' | 'edit' | 'delete'
     onSubmitData: (type: string) => void
-    selectedItem: CodeFormatProps | null 
-  }
+    selectedItem: CodeFormatProps | null
+}
 
 const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     drawerOpen,
@@ -79,21 +60,21 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     const { i18n } = useTranslation()
     const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
     const [errorMsgList, setErrorMsgList] = useState<string[]>([])
-
-    const [trySubmited, setTrySubmitted] = useState(false)
-    const [description, setDescription] = useState('')
-    const [remark, setRemark] = useState('')
-    const [codeId, setCodeId] = useState(0)
-    const [codeName, setCodeName] = useState('')
-    const [mainName, setMainName] = useState('')
-    const [subName, setSubName] = useState('')
-    const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
+    const [trySubmited, setTrySubmitted] = useState<boolean>(false)
+    const [description, setDescription] = useState<string>('')
+    const [remark, setRemark] = useState<string>('')
+    const [codeId, setCodeId] = useState<number>(0)
+    const [codeName, setCodeName] = useState<string>('')
+    const [mainName, setMainName] = useState<string>('')
+    const [subName, setSubName] = useState<string>('')
+    const [version, setVersion] = useState<number>(0)
+    const [validation, setValidation] = useState<{ field: string; error: string, dataTestId: string }[]>([])
     const navigate = useNavigate();
 
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
     }, [i18n, currentLanguage])
-    
+
     useEffect(() => {
         setTrySubmitted(false)
         resetForm()
@@ -105,11 +86,12 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 setSubName(selectedItem.recycSubTypeId)
                 setDescription(selectedItem.description)
                 setRemark(selectedItem.remark)
+                setVersion(selectedItem.version)
             }
         } else if (action === 'add') {
             resetForm()
         }
-    }, [selectedItem, action,drawerOpen])
+    }, [selectedItem, action, drawerOpen])
 
     const resetForm = () => {
         setCodeId(0)
@@ -118,6 +100,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         setSubName('')
         setDescription('')
         setRemark('')
+        setVersion(0)
     }
 
     const checkString = (s: string) => {
@@ -139,22 +122,23 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     const getFormErrorMsg = () => {
         const errorList: string[] = []
         validation.map((item) => {
-          errorList.push(`${item.error}`)
+            errorList.push(`${item.error}`)
         })
         setErrorMsgList(errorList)
-    
+
         return ''
-      }
-      
+    }
+
     useEffect(() => {
-        const tempV: {field: string; error: string}[] = []
+        const tempV: {field: string; error: string, dataTestId: string}[] = []
 
         codeName.trim() === '' &&
         tempV.push({
             field: `${t('recycling_unit.recyclable_code')}`,
             error: `${t(
             'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: 'astd-code-form-name-err-warning-4381'
         })
 
         mainName.trim() === '' &&
@@ -162,7 +146,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             field: `${t('recycling_unit.main_category')}`,
             error: `${t(
             'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: 'astd-code-form-main-err-warning-5392'
         })
 
         subName.trim() === '' &&
@@ -170,7 +155,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             field: `${t('recycling_unit.sub_category')}`,
             error: `${t(
             'add_warehouse_page.shouldNotEmpty'
-            )}`
+            )}`,
+            dataTestId: 'astd-code-form-sub-err-warning-4927'
         })
 
         setValidation(tempV)
@@ -181,29 +167,29 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
 
         const codeForm = {
             status: "INACTIVE",
-            updatedBy: loginId
+            updatedBy: loginId,
+            version: version
         }
 
-       if (codeForm) {
-        try {
-            const response = await deleteCodeData(codeForm, codeId)
-            if (response) {
-                onSubmitData('code')
-                showSuccessToast(t('notify.successDeleted'))
-                resetForm()
-            }
-        } catch (error:any) {
-            const {state} = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
-                navigate('/maintenance')
-            } else {
-                console.error(error)
-                showErrorToast(t('notify.errorDeleted'))
+        if (codeForm) {
+            try {
+                const response = await deleteCodeData(codeForm, codeId)
+                if (response) {
+                    onSubmitData('code')
+                    showSuccessToast(t('notify.successDeleted'))
+                    resetForm()
+                }
+            } catch (error: any) {
+                const { state } = extractError(error)
+                if (state.code === STATUS_CODE[503]) {
+                    navigate('/maintenance')
+                } else if (state.code === STATUS_CODE[409]) {
+                    showErrorToast(error.response.data.message);
+                }
             }
         }
-       }
     }
-    
+
     const handleSubmit = () => {
         const { loginId, tenantId } = returnApiToken();
 
@@ -215,7 +201,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             remark: remark,
             status: 'ACTIVE',
             createdBy: loginId,
-            updatedBy: loginId
+            updatedBy: loginId,
+            ...(action === 'edit' && { version: version })
         }
 
         const isError = validation.length == 0
@@ -238,13 +225,17 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 onSubmitData('code')
                 resetForm()
             }
-        } catch (error:any) {
-            const {state} = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
+        } catch (error: any) {
+            const { state } = extractError(error)
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-            } else {
-                console.error(error)
-                showErrorToast(t('errorCreated.errorCreated'))
+            } else if (state.code === STATUS_CODE[409]) {
+                const errorMessage = error.response.data.message
+                if (errorMessage.includes('recycCodeNameDuplicate')) {
+                    showErrorToast(handleDuplicateErrorMessage(errorMessage))
+                } else {
+                    showErrorToast(error.response.data.message);
+                }
             }
         }
     }
@@ -256,17 +247,52 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 onSubmitData('code')
                 resetForm()
             }
-        } catch (error:any) {
-            const {state} = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
+        } catch (error: any) {
+            const { state } = extractError(error)
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-            } else {
-                console.error(error)
-                showErrorToast(t('notify.errorEdited'))
+            } else if (state.code === STATUS_CODE[409]) {
+                const errorMessage = error.response.data.message
+                if (errorMessage.includes('recycCodeNameDuplicate')) {
+                    showErrorToast(handleDuplicateErrorMessage(errorMessage))
+                } else {
+                    showErrorToast(error.response.data.message);
+                }
             }
 
         }
     }
+
+    const handleDuplicateErrorMessage = (input: string) => {
+        const replacements: { [key: string]: string } = {
+            '[tchi]': 'Traditional Chinese Name',
+            '[eng]': 'English Name',
+            '[schi]': 'Simplified Chinese Name'
+        };
+
+        let result = input.replace(/\[recycCodeNameDuplicate\]/, '');
+
+        const matches = result.match(/\[(tchi|eng|schi)\]/g);
+
+        if (matches) {
+            const replaced = matches.map(match => replacements[match as keyof typeof replacements]);
+
+            let formatted: string;
+            if (replaced.length === 1) {
+                formatted = replaced[0];
+            } else if (replaced.length === 2) {
+                formatted = replaced.join(' and ');
+            } else if (replaced.length === 3) {
+                formatted = `${replaced[0]}, ${replaced[1]} and ${replaced[2]}`;
+            }
+
+            result = result.replace(/\[(tchi|eng|schi)\]+/, formatted!);
+
+            result = result.replace(/\[(tchi|eng|schi)\]/g, '');
+        }
+
+        return result.trim();
+    };
 
     return (
         <div className="add-vehicle">
@@ -302,6 +328,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 placeholder={t('recycling_unit.enter_code')}
                                 onChange={(event) => setCodeName(event.target.value)}
                                 error={checkString(codeName)}
+                                dataTestId='astd-code-form-name-input-field-1649'
                             />
                         </CustomField>
                     </Box>
@@ -314,6 +341,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 placeholder={t('recycling_unit.main_category')}
                                 onChange={(event) => setMainName(event.target.value)}
                                 error={checkString(mainName)}
+                                dataTestId='astd-code-form-main-input-field-8567'
                             />
                         </CustomField>
                     </Box>
@@ -326,6 +354,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 placeholder={t('recycling_unit.sub_category')}
                                 onChange={(event) => setSubName(event.target.value)}
                                 error={checkString(subName)}
+                                dataTestId='astd-code-form-sub-input-field-7940'
                             />
                         </CustomField>
                     </Box>
@@ -337,6 +366,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 field={t(val.field)}
                                 errorMsg={val.error}
                                 type={'error'}
+                                dataTestId={val.dataTestId}
                             />
                             ))}
                     </Grid>

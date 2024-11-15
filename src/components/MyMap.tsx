@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { MapContainer, Marker, TileLayer, Popup, useMap } from 'react-leaflet'
+import { MapContainer, Marker, TileLayer, Popup, useMap, Tooltip } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import '../index.css'
 import { Icon } from 'leaflet'
@@ -78,6 +78,7 @@ function MyMap({
             }}
           >
             <Popup>{collectionPoint.address}</Popup>
+            <Tooltip direction="bottom" offset={[0, 20]} opacity={0.9}>{collectionPoint.colName}</Tooltip>
             <FlyToMarker hoveredCard={hoveredCard} />
           </Marker>
         )

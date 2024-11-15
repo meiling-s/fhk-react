@@ -1,4 +1,4 @@
-import { AddCircle, CancelRounded, DeleteSweepOutlined } from "@mui/icons-material"
+import { AddCircle, CancelRounded, DeleteSweepOutlined, WidthFull } from "@mui/icons-material"
 import { Autocomplete, Box, Button, ButtonBase, Card, Divider, Grid, ImageList, ImageListItem, TextField, Typography } from "@mui/material"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -12,13 +12,14 @@ import { il_item } from "../../../components/FormComponents/CustomItemList"
 import CustomTextField from "../../../components/FormComponents/CustomTextField"
 import { FormErrorMsg } from "../../../components/FormComponents/FormErrorMsg"
 import RightOverlayForm from "../../../components/RightOverlayForm"
-import { formErr } from "../../../constants/constant"
+import { STATUS_CODE, formErr } from "../../../constants/constant"
 import { styles } from '../../../constants/styles'
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer"
 import { formValidate } from "../../../interfaces/common"
 import { Driver } from "../../../interfaces/driver"
 import { CAMERA_OUTLINE_ICON } from "../../../themes/icons"
-import { ImageToBase64, returnErrorMsg } from "../../../utils/utils"
+import { ImageToBase64, extractError, returnErrorMsg, showErrorToast } from "../../../utils/utils"
+import { useNavigate } from "react-router-dom"
 
 interface FormValues {
     [key: string]: string | string[]
@@ -68,6 +69,8 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
     const [maxImageNumber, setMaxImageNumber] = useState(0)
     const [maxImageSize, setMaxImageSize] = useState(0)
     const [validation, setValidation] = useState<formValidate[]>([])
+    const [version, setVersion] = useState<number>(0)
+    const navigate = useNavigate()
 
     const driverField = useMemo(() => (
         [
@@ -288,6 +291,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
             if (driver.driverDetail.length > 0) {
                 setDriverDetailList([...driver.driverDetail])
             }
+            setVersion(driver.version)
 
             const imageList: any = driver.photo.map(
                 (url: string, index: number) => {
@@ -320,32 +324,42 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
             ...formData,
             photo: ImageToBase64(pictures),
             driverDetail: driverDetailList,
-            status: 'ACTIVE'
+            status: 'ACTIVE',
+            version: version,
         }
 
-        console.log(formValues, 'formValues')
         const user = localStorage.getItem('username')
         if (action === 'add' || action === 'edit') {
-            setTrySubmited(true)
-            if (validation.length === 0) {
-                if (action === 'add') {
-                    const res = await createDriver({ ...formValues, createdBy: user, updatedBy: user })
-                    if (res) {
-                        onSubmitData('success', t('driver.DriverMenu.popUp.field.createSuccessMsg'))
-                        resetData()
-                        onClose()
-                    } else {
-                        onSubmitData('error', t('driver.DriverMenu.popUp.field.createFailMsg'))
+            try {
+                setTrySubmited(true)
+                if (validation.length === 0) {
+                    if (action === 'add') {
+                        const res = await createDriver({ ...formValues, createdBy: user, updatedBy: user })
+                        if (res) {
+                            onSubmitData('success', t('driver.DriverMenu.popUp.field.createSuccessMsg'))
+                            resetData()
+                            onClose()
+                            setTrySubmited(false)
+                        } else {
+                            onSubmitData('error', t('driver.DriverMenu.popUp.field.createFailMsg'))
+                            setTrySubmited(false)
+                        }
+                    }
+                    if (action === 'edit') {
+                        const res = await editDriver({ ...formValues, updatedBy: user }, driver?.driverId.toString()!)
+                        if (res) {
+                            onSubmitData('success', t('driver.DriverMenu.popUp.field.editSuccessMsg'))
+                            onClose()
+                            setTrySubmited(false)
+                        }
                     }
                 }
-                if (action === 'edit') {
-                    const res = await editDriver({ ...formValues, updatedBy: user }, driver?.driverId.toString()!)
-                    if (res) {
-                        onSubmitData('success', t('driver.DriverMenu.popUp.field.editSuccessMsg'))
-                        onClose()
-                    } else {
-                        onSubmitData('error', t('driver.DriverMenu.popUp.field.editFailMsg'))
-                    }
+            } catch (error: any) {
+                const {state} = extractError(error);
+                if (state.code === STATUS_CODE[503]) {
+                    navigate('/maintenance')
+                } else if (state.code === STATUS_CODE[409]){
+                    showErrorToast(error.response.data.message);
                 }
             }
         }
@@ -439,6 +453,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                             dataURLKey="data_url"
                                             maxNumber={imgSettings?.ImgQuantity}
                                             maxFileSize={imgSettings?.ImgSize}
+                                            acceptType={['jpg', 'jpeg', 'png']}
                                         >
                                             {({ imageList, onImageUpload, onImageRemove }) => (
                                                 <Box className="box">
@@ -502,10 +517,11 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                             ) : driver.type === 'select' ?
                                 <Grid item key={driverIndex.toString()}>
                                     {driverDetailList.map((info, idx) =>
-                                        <Grid container spacing={2} key={idx} sx={{ mt: 1 }}>
+                                        <Grid container spacing={1} key={idx} sx={{ mt: 1 }}>
                                             <Grid item xs={4.5}>
                                                 <CustomField
                                                     label={idx === 0 ? t('driver.DriverMenu.popUp.field.carType') : ''}
+                                                    mandatory={idx === 0 ? true : false}
                                                 >
                                                     <Autocomplete
                                                         disablePortal
@@ -535,9 +551,10 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                                     />
                                                 </CustomField>
                                             </Grid>
-                                            <Grid item xs>
+                                            <Grid item>
                                                 <CustomField
                                                     label={idx === 0 ? t('driver.DriverMenu.popUp.field.carYear') : ''}
+                                                    mandatory={idx === 0 ? true : false}
                                                 >
                                                     <TextField
                                                         sx={{ ...styles.textField, width: '12ch' }}
@@ -551,12 +568,13 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                                     />
                                                 </CustomField>
                                             </Grid>
-                                            <Grid item xs={4}>
+                                            <Grid item xs={3.5}>
                                                 <CustomField
                                                     label={idx === 0 ? t('driver.DriverMenu.popUp.field.driveYear') : ''}
+                                                    mandatory={idx === 0 ? true : false}
                                                 >
                                                     <TextField
-                                                        sx={{ ...styles.textField, width: '12ch' }}
+                                                        sx={{ ...styles.textField, width: '14ch' }}
                                                         id='driveYear'
                                                         placeholder={t('driver.DriverMenu.popUp.field.yearInput')}
                                                         onChange={(e) => {

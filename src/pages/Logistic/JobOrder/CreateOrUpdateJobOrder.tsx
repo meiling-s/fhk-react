@@ -18,10 +18,10 @@ import {
   VehicleList
 } from '../../../interfaces/pickupOrder'
 import { useNavigate, useParams } from 'react-router-dom'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 import { Languages, STATUS_CODE, format } from '../../../constants/constant'
-import { rejectAssginDriver, assignDriver } from '../../../APICalls/jobOrder'
+import { rejectAssginDriver, assignDriver, getVehiclePlateList, getVehicleDriverList } from '../../../APICalls/jobOrder'
 import { ToastContainer, toast } from 'react-toastify'
 import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../../themes/icons'
 import {
@@ -32,11 +32,9 @@ import {
 import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
-import { getAllVehiclesLogistic, getDriver } from '../../../APICalls/jobOrder'
 import { mappingRecyName } from '../../../utils/utils'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { getTenantById } from '../../../APICalls/tenantManage'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -61,7 +59,8 @@ const JobOrder = () => {
   const [isActive, setIsActive] = useState(false)
   const { t, i18n } = useTranslation()
   const { loginId } = returnApiToken()
-  const { recycType, decimalVal, dateFormat, companies } = useContainer(CommonTypeContainer)
+  const { recycType, decimalVal, dateFormat, companies } =
+    useContainer(CommonTypeContainer)
   const [driverList, setDriverList] = useState<DriverList[]>([])
   const [vehicleList, setVehicleList] = useState<VehicleList[]>([])
 
@@ -73,19 +72,10 @@ const JobOrder = () => {
 
   const initListDriver = async () => {
     try {
-      const result = await getDriver(0, 1000, 'string')
+      const result = await getVehicleDriverList()
       if (result) {
-        const data = result?.data?.content
-        const mappingDriver: DriverList[] = []
-        data.forEach((item: any) => {
-          mappingDriver.push({
-            driverId: item.driverId,
-            driverNameEng: item.driverNameEng,
-            driverNameSchi: item.driverNameSchi,
-            driverNameTchi: item.driverNameTchi
-          })
-        })
-        setDriverList(mappingDriver)
+        const data = result?.data
+        setDriverList(data)
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -97,17 +87,10 @@ const JobOrder = () => {
 
   const initListVehicle = async () => {
     try {
-      const result = await getAllVehiclesLogistic(0, 1000)
+      const result = await getVehiclePlateList()
       if (result) {
-        const data = result?.data?.content
-        const mappingVehicle: VehicleList[] = []
-        data.forEach((item: any) => {
-          mappingVehicle.push({
-            vehicleId: item.vehicleId,
-            plateNo: item.plateNo
-          })
-        })
-        setVehicleList(mappingVehicle)
+        const data = result?.data
+        setVehicleList(data)
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -121,22 +104,24 @@ const JobOrder = () => {
     initListDriver()
     initListVehicle()
   }, [])
-  
-  const getLogisticName =  (logisticId: number) => {
-    try {
-      if(logisticId) {
-        // const tenant =  getTenantById(logisticId);
-        const tenant = companies.find(item => item.id == logisticId)
 
-        let logisticName:string = '';
-        if(tenant ){
-          if(i18n.language === Languages.ENUS) logisticName = tenant.nameEng ?? ''
-          if(i18n.language === Languages.ZHCH) logisticName = tenant.nameSchi ?? ''
-          if(i18n.language === Languages.ZHHK) logisticName = tenant.nameTchi ?? ''
+  const getLogisticName = (logisticId: number) => {
+    try {
+      if (logisticId) {
+        // const tenant =  getTenantById(logisticId);
+        const tenant = companies.find((item) => item.id == logisticId)
+
+        let logisticName: string = ''
+        if (tenant) {
+          if (i18n.language === Languages.ENUS)
+            logisticName = tenant.nameEng ?? ''
+          if (i18n.language === Languages.ZHCH)
+            logisticName = tenant.nameSchi ?? ''
+          if (i18n.language === Languages.ZHHK)
+            logisticName = tenant.nameTchi ?? ''
         }
         return logisticName
       }
-       
     } catch (error) {
       return null
     }
@@ -146,59 +131,77 @@ const JobOrder = () => {
   //   if(picoId) getDetailPico(picoId)
   // },[i18n.language])
 
+  function sortByPickupAt(arr: any[]) {
+    return arr.sort((a, b) => {
+      const dateA = parseDateOrTime(a.pickupAt);
+      const dateB = parseDateOrTime(b.pickupAt);
+      return dateA.getTime() - dateB.getTime();
+    });
+  }
+  
+  function parseDateOrTime(pickupAt: string): Date {
+    if (pickupAt.includes('T')) {
+      return new Date(pickupAt);
+    }
+    
+    const now = new Date();
+    const [hours, minutes, seconds] = pickupAt.split(':').map(Number);
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, seconds);
+  }
+  
+
   const getDetailPico = async (picoId: string) => {
     try {
       const response = await getPicoById(picoId)
       if (response) {
-        const logistic =  getLogisticName(response?.data?.logisticId)
-        if(logistic){
+        const logistic = getLogisticName(response?.data?.logisticId)
+        if (logistic) {
           response.data.logisticName = logistic
         }
-        const details: any [] = []
-        for(let item of response.data.pickupOrderDetail){
-          const currentDate = dayjs().format('YYYY-MM-DD');
-          const fullDateTime = `${currentDate}T${item?.pickupAt}.000Z`;
-          const date = dayjs.utc(fullDateTime).tz('Asia/Hong_Kong');
+        const details: any[] = []
+        const sortedPickupOrderDetails = sortByPickupAt(response.data.pickupOrderDetail);
+
+        for (let item of sortedPickupOrderDetails) {
+          const date = dayjs(item.pickupAt).tz('Asia/Hong_Kong');
           const formattedPickUpAt = date.format('DD/MM/YYYY HH:mm');
-          const receiverName =  getLogisticName(item?.receiverId);
-          const senderName =  getLogisticName(item?.senderId);
-         
-          if(receiverName)item.receiverName = receiverName;
-          if(senderName) item.senderName = senderName;
-          details.push(
-            {
-              joId: item?.joId ?? 0,
-              picoId: response?.data?.picoId,
-              picoDtlId: item?.picoDtlId ?? 0,
-              plateNo: item?.plateNo ?? '',
-              senderId: item?.senderId ?? '',
-              senderName: item?.senderName ?? '',
-              senderAddr: item?.senderAddr ?? '',
-              senderAddrGps: item?.senderAddrGps ?? [],
-              receiverId: item?.receiverId ?? '',
-              receiverName: item?.receiverName ?? '',
-              receiverAddr: item?.receiverAddr ?? '',
-              receiverAddrGps: item?.receiverAddrGps ?? [],
-              recycType: item?.recycType ?? '',
-              recycSubType: item?.recycSubType ?? '',
-              weight: formatWeight(item?.weight, decimalVal) ?? 0,
-              vehicleId: item?.vehicleId ?? 0,
-              driverId: item?.driverId ?? '',
-              contractNo: response?.data?.contractNo ?? '',
-              pickupAt: item.pickupAt ?? '',
-              createdBy: loginId ?? '',
-              updatedBy: loginId ?? '',
-              status: item?.driverId ? 'assigned' : ''
-            }
-          )
-        }
+          const receiverName = getLogisticName(item?.receiverId);
+          const senderName = getLogisticName(item?.senderId);
         
+          if (receiverName) item.receiverName = receiverName;
+          if (senderName) item.senderName = senderName;
+        
+          details.push({
+            joId: item?.joId ?? 0,
+            picoId: response?.data?.picoId,
+            picoDtlId: item?.picoDtlId ?? 0,
+            plateNo: item?.plateNo ?? '',
+            senderId: item?.senderId ?? '',
+            senderName: item?.senderName ?? '',
+            senderAddr: item?.senderAddr ?? '',
+            senderAddrGps: item?.senderAddrGps ?? [],
+            receiverId: item?.receiverId ?? '',
+            receiverName: item?.receiverName ?? '',
+            receiverAddr: item?.receiverAddr ?? '',
+            receiverAddrGps: item?.receiverAddrGps ?? [],
+            recycType: item?.recycType ?? '',
+            recycSubType: item?.recycSubType ?? '',
+            weight: formatWeight(item?.weight, decimalVal) ?? 0,
+            vehicleId: item?.vehicleId ?? 0,
+            driverId: item?.driverId ?? '',
+            contractNo: response?.data?.contractNo ?? '',
+            pickupAt: item.pickupAt ?? '',
+            createdBy: loginId ?? '',
+            updatedBy: loginId ?? '',
+            status: item?.driverId ? 'assigned' : '',
+          });
+        }
+
         // const details = response?.data.pickupOrderDetail.map(async (item: any) => {
         //   const currentDate = dayjs().format('YYYY-MM-DD');
         //   const fullDateTime = `${currentDate}T${item?.pickupAt}.000Z`;
         //   const date = dayjs.utc(fullDateTime).tz('Asia/Hong_Kong');
         //   const formattedPickUpAt = date.format('DD/MM/YYYY HH:mm');
-       
+
         //   // const receiverName = await getLogisticName(item?.receiverId);
         //   // const senderName = await getLogisticName(item?.senderId);
         //   // console.log('receiverAddr', item.receiverId, item.senderId, receiverName, senderName)
@@ -239,9 +242,13 @@ const JobOrder = () => {
             receiverName: response?.data?.logisticName,
             effFrmDate: response?.data?.effFrmDate,
             effToDate: response?.data?.effToDate,
-            setupDate: dayjs(response?.data?.createdAt).format(
-              'YYYY/MM/DD hh:mm'
-            )
+            // setupDate: dayjs(response?.data?.createdAt).format(
+            //   'YYYY/MM/DD hh:mm'
+            // )
+            setupDate: dayjs
+              .utc(response?.data?.createdAt)
+              .tz('Asia/Hong_Kong')
+              .format(`${dateFormat} HH:mm`)
           }
         })
       }
@@ -279,30 +286,49 @@ const JobOrder = () => {
           vehicleId: 0,
           driverId: '',
           plateNo: '',
-          status: status
+          status: status,
+          pickupAt: dayjs(new Date()).format(`HH:mm:ss`).toString()
         }
       } else {
         return item
       }
     })
-
     setPickupOrderDetail(ids)
   }
-
+  
+  const isValidDayjsISODate = (date: Dayjs): boolean => {
+    if (!date.isValid()) {
+      return false
+    }
+    // Convert to ISO string and check if it matches the original input
+    const isoString = date.toISOString()
+    // Regex to ensure ISO 8601 format with 'Z' (UTC time)
+    const iso8601Pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+    return iso8601Pattern.test(isoString)
+  }
+  
   const onHandleSubmitOrder = async () => {
     if (params?.get('isEdit') === 'false') {
       for (let order of pickupOrderDetail) {
-        const response = await assignDriver(order)
-        if (response?.status === 201) {
-          onSubmitData(
-            'success',
-            `${t('jobOrder.success_assign')} ${orderDetail.picoId}`
-          )
-          setTimeout(() => {
-            onHandleCancel()
-          }, 1000)
-        } else {
-          onSubmitData('error', `${t('jobOrder.failed_assign')} ${order.picoDtlId}`)
+        if (isValidDayjsISODate(dayjs(order.pickupAt))) {
+          const date = new Date(order.pickupAt)
+          await date.setHours(date.getHours() + 8)
+          order.pickupAt = date.toISOString()
+          const response = await assignDriver(order)
+          if (response?.status === 201) {
+            onSubmitData(
+              'success',
+              `${t('jobOrder.success_assign')} ${orderDetail.picoId}`
+            )
+            setTimeout(() => {
+              onHandleCancel()
+            }, 1000)
+          } else {
+            onSubmitData(
+              'error',
+              `${t('jobOrder.failed_assign')} ${order.picoDtlId}`
+            )
+          }
         }
       }
     } else {
@@ -317,7 +343,10 @@ const JobOrder = () => {
             onHandleCancel()
           }, 1000)
         } else {
-          onSubmitData('error', `${t('jobOrder.failed_assign')} ${order.picoDtlId}`)
+          onSubmitData(
+            'error',
+            `${t('jobOrder.failed_assign')} ${order.picoDtlId}`
+          )
         }
       }
     }
@@ -383,7 +412,6 @@ const JobOrder = () => {
     }
   }
 
-  console.log()
   return (
     <Box sx={[styles.innerScreen_container, { paddingRight: 0 }]}>
       <ToastContainer></ToastContainer>
@@ -490,9 +518,16 @@ const JobOrder = () => {
               {' '}
               {t('jobOrder.recycling_location_information')}
             </p>
-            {pickupOrderDetail.map((item: AssignJobDriver, index) => {
-              const driver = driverList.find(value => value.driverId === item.driverId)
-              const driverName = i18n.language === 'enus' ? driver?.driverNameEng : i18n.language === 'zhch' ? driver?.driverNameSchi : driver?.driverNameTchi
+            {sortByPickupAt(pickupOrderDetail).map((item: AssignJobDriver, index) => {
+              const driver = driverList.find(
+                (value) => value.driverId === item.driverId
+              )
+              const driverName =
+                i18n.language === 'enus'
+                  ? driver?.driverNameEng
+                  : i18n.language === 'zhch'
+                  ? driver?.driverNameSchi
+                  : driver?.driverNameTchi
               return (
                 <div
                   className={`flex flex-col rounded-sm px-[15px] py-[18px] w-[450px] ${
@@ -526,7 +561,11 @@ const JobOrder = () => {
                       </label>
                     </div>
                     <p className="flex-1 font-semibold text-[#535353]">
-                      {item.driverId == '' ? dayjs(new Date).format(`${dateFormat} ${item.pickupAt}`) : dayjs(item.pickupAt).format(`${dateFormat} HH:mm`)}
+                      {item.driverId == ''
+                        ? dayjs(new Date()).format(
+                            `${dateFormat} ${item.pickupAt}`
+                          )
+                        : dayjs(item.pickupAt).format(`${dateFormat} HH:mm`)}
                     </p>
                   </div>
                   <div className="flex items-center">

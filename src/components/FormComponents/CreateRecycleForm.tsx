@@ -27,27 +27,37 @@ import * as Yup from 'yup'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import CustomTextField from './CustomTextField'
-import { useFormik } from 'formik'
+import { FormikHelpers, useFormik } from 'formik'
 import { CreatePicoDetail } from '../../interfaces/pickupOrder'
 import RecyclablesListSingleSelect from '../SpecializeComponents/RecyclablesListSingleSelect'
 import { collectorList, manuList } from '../../interfaces/common'
 import CustomAutoComplete from './CustomAutoComplete'
 import dayjs from 'dayjs'
 import { Languages, localStorgeKeyName } from '../../constants/constant'
-import { formatWeight, getThemeColorRole, getThemeCustomList, onChangeWeight } from '../../utils/utils'
+import {
+  formatWeight,
+  getThemeColorRole,
+  getThemeCustomList,
+  onChangeWeight
+} from '../../utils/utils'
 import { useTranslation } from 'react-i18next'
 import NotifContainer from '../../contexts/NotifContainer'
 import i18n from '../../setups/i18n'
+import Switcher from './CustomSwitch'
+import ProductListSingleSelect from '../SpecializeComponents/ProductListSingleSelect'
+import { getProductTypeList } from '../../APICalls/ASTD/settings/productType'
+import { Products } from '../../interfaces/productType'
+import ConfirmModal from '../SpecializeComponents/ConfirmationModal'
 
 type props = {
-  openModal: boolean,
+  openModal: boolean
   onClose: () => void
   setState: (val: CreatePicoDetail[]) => void
   data: CreatePicoDetail[]
   setId: Dispatch<SetStateAction<number>>
   picoHisId: string | null
   editRowId: number | null
-  isEditing: boolean,
+  isEditing: boolean
   index?: number | null
   editMode: boolean
 }
@@ -58,36 +68,52 @@ const formattedTime = (pickupAtValue: dayjs.Dayjs) => {
   return pickupAtValue.format('HH:mm:ss')
 }
 
+export type singleProduct = {
+  productTypeId: string
+  productSubTypeId: string
+  productAddonId: string
+  productSubTypeRemark: string
+  productAddonTypeRemark: string
+  isProductSubTypeOthers?: boolean
+  isProductAddonTypeOthers?: boolean
+}
 export interface InitValue {
-  picoDtlId?:      any;
-  picoHisId:       string;
-  senderId:        string;
-  senderName:      string;
-  senderAddr:      string;
-  senderAddrGps:   number[];
-  receiverId:      string;
-  receiverName:    string;
-  receiverAddr:    string;
-  receiverAddrGps: number[];
-  status:          string;
-  createdBy:       string;
-  updatedBy:       string;
-  pickupAt:        string;
-  recycType:    string;
-  recycSubType: string;
-  weight:       string;
-  newDetail?: boolean;
-  id?: number,
+  picoDtlId?: any
+  picoHisId: string
+  senderId: string
+  senderName: string
+  senderAddr: string
+  senderAddrGps: number[]
+  receiverId: string
+  receiverName: string
+  receiverAddr: string
+  receiverAddrGps: number[]
+  status: string
+  createdBy: string
+  updatedBy: string
+  pickupAt: string
+  recycType?: string
+  recycSubType?: string
+  weight: string
+  newDetail?: boolean
+  id?: number
   recycTypeName?: string
+  itemCategory?: string
+  addon?: string
+  productType?: string
+  productSubType?: string
+  productAddon?: string
+  productSubTypeRemark?: string
+  productAddonTypeRemark?: string
 }
 
-const initValue:InitValue  = {
+const initValue: InitValue = {
   picoHisId: '',
-  senderId: '1',
+  senderId: '',
   senderName: '',
   senderAddr: '',
   senderAddrGps: [0, 0],
-  receiverId: '1',
+  receiverId: '',
   receiverName: '',
   receiverAddr: '',
   receiverAddrGps: [0, 0],
@@ -100,7 +126,25 @@ const initValue:InitValue  = {
   weight: '0',
   newDetail: true,
   id: 0,
-  recycTypeName: ''
+  recycTypeName: '',
+  itemCategory: 'Recyclables',
+  addon: '',
+  productType: '',
+  productSubType: '',
+  productAddon: '',
+  productSubTypeRemark: undefined,
+  productAddonTypeRemark: undefined,
+}
+
+const initialState = {
+  openConfirmModal: {
+    isOpen: false,
+    tempData: {
+      isConfirmed: false,
+      isProductSubTypeOthers: false,
+      isProductAddonTypeOthers: false,
+    }
+  }
 }
 
 const CreateRecycleForm = ({
@@ -114,12 +158,34 @@ const CreateRecycleForm = ({
   index,
   editMode
 }: props) => {
-  const { recycType, manuList, collectorList, decimalVal, getManuList, getCollectorList } =
-    useContainer(CommonTypeContainer)
+  const {
+    recycType,
+    manuList,
+    collectorList,
+    decimalVal,
+    productType,
+    getProductType,
+    getManuList,
+    getCollectorList
+  } = useContainer(CommonTypeContainer)
+
+  const [openConfirmModal, setOpenConfirmModal] = useState<{
+    isOpen: boolean,
+    tempData: {
+      isConfirmed: boolean,
+      isProductSubTypeOthers: boolean
+      isProductAddonTypeOthers: boolean
+    }
+  }>(initialState.openConfirmModal)
+
   const [editRow, setEditRow] = useState<CreatePicoDetail | null>(null)
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
-  const { marginTop } = useContainer(NotifContainer);
-  const [isDetailDouble, setIsDetailDouble] = useState(false);
+  const [defaultProduct, setDefaultProduct] = useState<singleProduct>()
+  console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 157 ~ defaultProduct", defaultProduct)
+
+  const { marginTop } = useContainer(NotifContainer)
+  const [isDetailDouble, setIsDetailDouble] = useState(false)
+  const [isRecyc, setRecycType] = useState<boolean>(true)
   //---set custom style each role---
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
   const colorTheme: string = getThemeColorRole(role) || '#79CA25'
@@ -128,36 +194,53 @@ const CreateRecycleForm = ({
   const { t } = useTranslation()
   const setDefRecyc = (picoDtl: CreatePicoDetail) => {
     const defRecyc: singleRecyclable = {
-      recycTypeId: picoDtl.recycType,
-      recycSubTypeId: picoDtl.recycSubType
+      recycTypeId: picoDtl.recycType ?? '',
+      recycSubTypeId: picoDtl.recycSubType ?? ''
     }
-    //console.log("set def", defRecyc);
     setDefaultRecyc(defRecyc)
   }
+  const setDefProd = (picoDtl: CreatePicoDetail) => {
+    const defProd: singleProduct = {
+      productTypeId: picoDtl?.productType?.productTypeId || picoDtl?.productType || '',
+      productSubTypeId: picoDtl?.productSubType?.productSubTypeId || picoDtl?.productSubType || '',
+      productAddonId: picoDtl?.productAddonType?.productAddonTypeId || picoDtl?.productAddon || '',
+      productAddonTypeRemark: picoDtl.productAddonTypeRemark || '',
+      productSubTypeRemark: picoDtl.productSubTypeRemark || '',
+    }
+    console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 206 ~ setDefProd ~ defProd", defProd)
+
+    setDefaultProduct(defProd)
+  }
+
 
   useEffect(() => {
-    if(editRowId && editRowId){
-      const editR = data.find(item => item.picoDtlId === editRowId)
+    if (editRowId) {
+      const editR = data.find((item) => item.picoDtlId === editRowId)
       if (editR) {
         setDefRecyc(editR)
+        setDefProd(editR)
         setEditRow(editR)
       }
-    } else if(editRowId == null && index && editMode){
-      const editR = data.find(item => item.id === index)
+    } else if (editRowId == null && index && editMode) {
+      const editR = data.find((item) => item.id === index)
       if (editR) {
-       setDefRecyc(editR)
-       setEditRow(editR)
-     }
-    } else if(editMode)  {
+        setDefRecyc(editR)
+        setDefProd(editR)
+        setEditRow(editR)
+      }
+    } else if (editMode) {
       setDefaultRecyc(undefined)
-      initValue.id = data.length;
+      setDefaultProduct(undefined)
+      initValue.id = data.length
       formik.setValues(initValue)
     }
 
-    if(!editMode && index !== null && index !== undefined){
-      const edit = data.find(item => item.id === index);
-      if(edit){
+    if (!editMode && index !== null && index !== undefined) {
+      const edit = data.find((item) => item.id === index)
+
+      if (edit) {
         setDefRecyc(edit)
+        setDefProd(edit)
         setEditRow(edit)
       }
     }
@@ -174,13 +257,12 @@ const CreateRecycleForm = ({
 
   useEffect(() => {
     if (editRow) {
+      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 230 ~ useEffect ~ editRow", editRow)
       // Set the form field values based on the editRow data
 
-      const index = data.indexOf(editRow)
-
-      formik.setValues({
+      const refactorDataFormik = {
         id: editRow.id,
-        picoDtlId: editRowId ?? 0,
+        picoDtlId: editRowId === editRow.picoDtlId ? editRow.picoDtlId : 0,
         picoHisId: picoHisId ?? '',
         senderId: editRow.senderId,
         senderName: editRow.senderName,
@@ -196,14 +278,27 @@ const CreateRecycleForm = ({
         pickupAt: editRow.pickupAt,
         recycType: editRow.recycType,
         recycSubType: editRow.recycSubType,
-        weight: formatWeight(editRow.weight, decimalVal)
-      })
+        weight: formatWeight(editRow.weight, decimalVal),
+        itemCategory: editRow.itemCategory,
+        addon: editRow.addon,
+        productType: editRow?.productType?.productTypeId || editRow.productType, // => first value for edit from API , second value from create data row
+        productSubType: editRow?.productSubType?.productSubTypeId || editRow.productSubType,
+        productSubTypeRemark: editRow?.productSubTypeRemark,
+        productAddonTypeRemark: editRow?.productAddonTypeRemark,
+        productAddon: editRow?.productAddonType?.productAddonTypeId || editRow.productAddon,
+      }
+      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 264 ~ useEffect ~ refactorDataFormik", refactorDataFormik)
+
+      formik.setValues(refactorDataFormik)
+      setRecycType((editRow.itemCategory === 'Recyclables' || (!refactorDataFormik?.productType)) ? true : false)
+
     }
   }, [editRow])
 
   useEffect(() => {
     getManuList()
     getCollectorList()
+    getProductType()
   }, [])
 
   const validateSchema = Yup.lazy((values) => {
@@ -214,19 +309,20 @@ const CreateRecycleForm = ({
       prevData = data
     }
 
-    return Yup.object().shape({
-      pickupAt: Yup.string()
-        .required(t('pick_up_order.error.pickuAt'))
-        .test(
-         'invalid-date',
-          t('pick_up_order.error.invalid_pickup_time'),
-          function (value) {
-            if(value !== 'Invalid Date') return true
-            if(value === undefined) return true
-            return false
-            // return value !== t('pick_up_order.error.invalid_date')
-          }
-        ),
+    if (isRecyc) {
+      return Yup.object().shape({
+        pickupAt: Yup.string()
+          .required(t('pick_up_order.error.pickuAt'))
+          .test(
+            'invalid-date',
+            t('pick_up_order.error.invalid_pickup_time'),
+            function (value) {
+              if (value !== 'Invalid Date') return true
+              if (value === undefined) return true
+              return false
+              // return value !== t('pick_up_order.error.invalid_date')
+            }
+          ),
         // .test(
         //   t('pick_up_order.error.not_in_prev_data'),
         //   t('pick_up_order.error.pickup_time'),
@@ -235,17 +331,17 @@ const CreateRecycleForm = ({
         //   }
         // ),
 
-      senderName: Yup.string().required(t('pick_up_order.error.senderName')),
-      senderAddr: Yup.string()
-        .required(t('pick_up_order.error.senderAddr'))
-        .test(
-          t('pick_up_order.error.not_same_as_receiver'),
-          t('pick_up_order.error.sender_address'),
-          function (value) {
-            const receiverAddr = values.receiverAddr
-            return value !== receiverAddr
-          }
-        ),
+        senderName: Yup.string().required(t('pick_up_order.error.senderName')),
+        senderAddr: Yup.string()
+          .required(t('pick_up_order.error.senderAddr'))
+          .test(
+            t('pick_up_order.error.not_same_as_receiver'),
+            t('pick_up_order.error.sender_address'),
+            function (value) {
+              const receiverAddr = values.receiverAddr
+              return value !== receiverAddr
+            }
+          ),
         // .test(
         //   t('pick_up_order.error.not_in_prev_data'),
         //   t('pick_up_order.error.sender_address_exists'),
@@ -253,17 +349,19 @@ const CreateRecycleForm = ({
         //     return !prevData.some((item) => item.senderAddr === value)
         //   }
         // ),
-      receiverName: Yup.string().required(t('pick_up_order.error.receiverName')),
-      receiverAddr: Yup.string()
-        .required(t('pick_up_order.error.receiverAddr'))
-        .test(
-          t('pick_up_order.error.not_same_as_sender'),
-          t('pick_up_order.error.receiver_address_cannot'),
-          function (value) {
-            const senderAddr = values.senderAddr
-            return value !== senderAddr
-          }
+        receiverName: Yup.string().required(
+          t('pick_up_order.error.receiverName')
         ),
+        receiverAddr: Yup.string()
+          .required(t('pick_up_order.error.receiverAddr'))
+          .test(
+            t('pick_up_order.error.not_same_as_sender'),
+            t('pick_up_order.error.receiver_address_cannot'),
+            function (value) {
+              const senderAddr = values.senderAddr
+              return value !== senderAddr
+            }
+          ),
         // .test(
         //   t('pick_up_order.error.not_in_prev_data'),
         //   t('pick_up_order.error.receiver_address_exists'),
@@ -271,52 +369,198 @@ const CreateRecycleForm = ({
         //     return !prevData.some((item) => item.receiverAddr === value)
         //   }
         // ),
-      recycType: Yup.string().required(t('pick_up_order.error.recycType')),
-      // recycSubType: Yup.string().required(t('pick_up_order.error.recycSubType')),
-      recycSubType: Yup.string()
-        .when("recycTypeName", (recycTypeName, schema) => {
-          if(recycTypeName[0] !== 'Non-recyclable') return schema.required(t('pick_up_order.error.recycSubType'))
-          return schema
-        }
-      ),
-      weight: Yup.number().moreThan(0, t('pick_up_order.error.weightGreaterThanZero')).required(t('pick_up_order.error.weight'))
-    })
+        recycType: Yup.string()
+          .typeError(t('pick_up_order.error.recycType'))
+          .required(t('pick_up_order.error.recycType'))
+        ,
+        recycSubType: Yup.string()
+          .typeError(t('pick_up_order.error.recycSubType'))
+          .when('recycType', {
+            is: (value: string) => {
+              const item: any = recycType && recycType?.length > 0 && recycType?.find((item: any) => item.recycTypeId == value)
+              const isValid = item?.recycSubType?.length > 0
+              return isValid
+            },
+            then: (schema) =>
+              schema
+                .required(t('pick_up_order.error.recycSubType')),
+          })
+        ,
+        weight: Yup.number()
+          .moreThan(0, t('pick_up_order.error.weightGreaterThanZero'))
+          .required(t('pick_up_order.error.weight'))
+      })
+    } else {
+      return Yup.object().shape({
+        pickupAt: Yup.string()
+          .required(t('pick_up_order.error.pickuAt'))
+          .test(
+            'invalid-date',
+            t('pick_up_order.error.invalid_pickup_time'),
+            function (value) {
+              if (value !== 'Invalid Date') return true
+              if (value === undefined) return true
+              return false
+              // return value !== t('pick_up_order.error.invalid_date')
+            }
+          ),
+        // .test(
+        //   t('pick_up_order.error.not_in_prev_data'),
+        //   t('pick_up_order.error.pickup_time'),
+        //   function (value) {
+        //     return !prevData.some((item) => item.pickupAt === value)
+        //   }
+        // ),
+
+        senderName: Yup.string().required(t('pick_up_order.error.senderName')),
+        senderAddr: Yup.string()
+          .required(t('pick_up_order.error.senderAddr'))
+          .test(
+            t('pick_up_order.error.not_same_as_receiver'),
+            t('pick_up_order.error.sender_address'),
+            function (value) {
+              const receiverAddr = values.receiverAddr
+              return value !== receiverAddr
+            }
+          ),
+        // .test(
+        //   t('pick_up_order.error.not_in_prev_data'),
+        //   t('pick_up_order.error.sender_address_exists'),
+        //   function (value) {
+        //     return !prevData.some((item) => item.senderAddr === value)
+        //   }
+        // ),
+        receiverName: Yup.string().required(
+          t('pick_up_order.error.receiverName')
+        ),
+        receiverAddr: Yup.string()
+          .required(t('pick_up_order.error.receiverAddr'))
+          .test(
+            t('pick_up_order.error.not_same_as_sender'),
+            t('pick_up_order.error.receiver_address_cannot'),
+            function (value) {
+              const senderAddr = values.senderAddr
+              return value !== senderAddr
+            }
+          ),
+        productType: Yup.string()
+          .required(t('pick_up_order.error.productType'))
+          .typeError(t('pick_up_order.error.productType'))
+        ,
+        productSubType: Yup.string()
+          .typeError(t('pick_up_order.error.productSubType'))
+          .when('productType', {
+            is: (value: string) => {
+              const item: any = productType && productType?.length > 0 && productType?.find((item: any) => item.productTypeId == value)
+              const isValid = item?.productSubType?.length > 0
+              return isValid
+            },
+            then: (schema) =>
+              schema
+                .required(t('pick_up_order.error.productSubType')),
+          })
+        ,
+        productAddon: Yup.string()
+          .when(['productType', 'productSubType'], {
+            is: (value: string, value2: string) => {
+              const itemProductType: any = productType && productType?.length > 0 && productType?.find((item: any) => item.productTypeId == value)
+              const itemSubProductType: any = itemProductType?.productSubType?.length > 0 && itemProductType?.productSubType?.find((item: any) => item.productSubTypeId == value2)
+              const isValid = itemSubProductType?.productAddonType?.length > 0
+              return isValid
+
+            },
+            then: (schema) =>
+              schema
+                .required(t('pick_up_order.error.productAddon')),
+          })
+        ,
+        weight: Yup.number()
+          .moreThan(0, t('pick_up_order.error.weightGreaterThanZero'))
+          .required(t('pick_up_order.error.weight'))
+      })
+    }
   })
 
-  //console.log(JSON.stringify(data)+'qwesss')
+  const validateRemarks = (): boolean => {
+
+    try {
+
+      let isValid = true
+
+      const {
+        isProductSubTypeOthers,
+        isProductAddonTypeOthers,
+        isConfirmed,
+      } = openConfirmModal?.tempData
+
+      const isTypeOthers = (isProductSubTypeOthers || isProductAddonTypeOthers)
+
+      let isRemarksMissing = false
+
+      if (isProductSubTypeOthers) {
+        isRemarksMissing = !Boolean(formik?.values?.productSubTypeRemark)
+      }
+      if (isProductAddonTypeOthers) {
+        isRemarksMissing = !Boolean(formik?.values?.productAddonTypeRemark)
+      }
+
+      if (isTypeOthers && !isConfirmed && isRemarksMissing) {
+
+        isValid = false
+        setOpenConfirmModal({
+          ...openConfirmModal,
+          isOpen: true,
+        })
+
+      }
+      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 491 ~ validateRemarks ~ isTypeOthers", isTypeOthers)
+      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 494 ~ validateRemarks ~ isRemarksMissing", isRemarksMissing)
+      console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 513 ~ validateRemarks ~ isValid", isValid)
+      return isValid
+
+    }
+    catch (err) {
+
+      return true
+
+    }
+
+  }
 
   const formik = useFormik({
     initialValues: initValue,
     validationSchema: validateSchema,
 
     onSubmit: (values, { resetForm }) => {
-      //console.log(values)
-      // alert(JSON.stringify(values, null, 2));
-      if(isDetailDouble) return
+
+      if (!validateRemarks()) return
+
+      if (isDetailDouble) return
       if (isEditing) {
         //editing row
-        //const {id, ...updateValue} = values
-        if(editMode){
+        if (editMode) {
           const updatedData = data.map((row, id) => {
-            if(editRowId === row.picoDtlId){
+            if (values.id === row.id) {
               return {
                 ...values,
-                id
+                id: row.id
               }
             } else {
               return {
-                ...row,
-                id
+                ...row
+                //id : row.id
               }
             }
           })
+
           setState(updatedData)
         } else {
           const updatedData = data.map((row, id) => {
-            if(index === row.id){
+            if (values.id === row.id) {
               return {
                 ...values,
-                id: index
+                //id: id
+                id: row.id
               }
             } else {
               return row
@@ -324,19 +568,23 @@ const CreateRecycleForm = ({
           })
           setState(updatedData)
         }
-       
       } else {
         //creating row
         var updatedValues: CreatePicoDetail = values
-        if(!editMode){
-          updatedValues.id = data.length
-        }
-        //console.log("data: ",data," updatedValues: ",updatedValues)
+        // if (!editMode) {
+        //updatedValues.id = data.length
+        if (values.picoHisId == '' && !isEditing)
+          updatedValues.id = data.length + 1
+
+        // }
+
         setState([...data, updatedValues])
       }
       setEditRow(null)
       setDefaultRecyc(undefined)
+      setDefaultProduct(undefined)
       resetForm()
+      setOpenConfirmModal(initialState.openConfirmModal)
       onClose && onClose()
     }
   })
@@ -346,7 +594,7 @@ const CreateRecycleForm = ({
       label: t('pick_up_order.item.sender_name'),
       id: 'senderName',
       value: formik.values.senderName,
-      error: formik.errors.senderName && formik.touched.senderName
+      error: formik.errors.senderName && formik.touched.senderName,
     },
     {
       label: t('pick_up_order.recyclForm.receiver'),
@@ -380,40 +628,71 @@ const CreateRecycleForm = ({
     onClose && onClose()
     setEditRow(null)
     setDefaultRecyc(undefined)
+    setDefaultProduct(undefined)
+    setOpenConfirmModal(initialState.openConfirmModal)
     formik.resetForm()
   }
-  
+
   const validateIsDataExist = () => {
-    if(data.length === 0) return
-    const { pickupAt, receiverAddr, receiverName, senderName,  senderAddr, recycType, recycSubType, id } = formik.values;
-  
-    const newValueString = pickupAt +  receiverAddr + receiverName + senderName + senderAddr + recycType + recycSubType;
-    const dataStrings:string[] = [];
-    for(let item of data){
-      const { pickupAt, receiverAddr, receiverName, senderName,  senderAddr, recycType, recycSubType } = item;
-      const oldValueString = pickupAt +  receiverAddr + receiverName + senderName + senderAddr + recycType + recycSubType;
-      
-      if(!isEditing){
+    if (data.length === 0) return
+    const {
+      pickupAt,
+      receiverAddr,
+      receiverName,
+      senderName,
+      senderAddr,
+      recycType,
+      recycSubType,
+      id
+    } = formik.values
+
+    const newValueString =
+      pickupAt +
+      receiverAddr +
+      receiverName +
+      senderName +
+      senderAddr +
+      recycType +
+      recycSubType
+    const dataStrings: string[] = []
+    for (let item of data) {
+      const {
+        pickupAt,
+        receiverAddr,
+        receiverName,
+        senderName,
+        senderAddr,
+        recycType,
+        recycSubType
+      } = item
+      const oldValueString =
+        pickupAt +
+        receiverAddr +
+        receiverName +
+        senderName +
+        senderAddr +
+        recycType +
+        recycSubType
+
+      if (!isEditing) {
         dataStrings.push(oldValueString)
       } else {
-        if(formik.values.id !== item.id){
+        if (formik.values.id !== item.id) {
           dataStrings.push(oldValueString)
+        }
       }
-      }
-     
     }
 
-   if(dataStrings.includes(newValueString)){
-    setIsDetailDouble(true)
-   } else {
-    setIsDetailDouble(false)
-   }
+    if (dataStrings.includes(newValueString)) {
+      setIsDetailDouble(true)
+    } else {
+      setIsDetailDouble(false)
+    }
   }
 
   useEffect(() => {
     validateIsDataExist()
   }, [formik.values])
-  
 
   return (
     <Drawer
@@ -428,230 +707,351 @@ const CreateRecycleForm = ({
       }}
     >
       <Divider></Divider>
-        <div
-          className={`border-b-[1px] border-grey-line h-full ${
-            openModal ? `md:w-[700px] w-[100vw] mt-[${marginTop}]` : 'hidden'
+      <div
+        className={`border-b-[1px] border-grey-line h-full ${openModal ? `md:w-[700px] w-[100vw] mt-[${marginTop}]` : 'hidden'
           }`}
-        >
-          <form onSubmit={formik.handleSubmit}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              {/* <Box sx={{...localstyles.modal, marginTop}} onClick={handleOverlayClick}> */}
+      >
+        <form onSubmit={formik.handleSubmit}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            {/* <Box sx={{...localstyles.modal, marginTop}} onClick={handleOverlayClick}> */}
+            <Box>
+              <Box
+                sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}
+              >
                 <Box>
-                    <Box
-                      sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}
-                    >
-                      <Box>
-                        <Typography sx={styles.header4}>
-                          {isEditing ? t('userGroup.change') : t('top_menu.add_new')}
-                        </Typography>
-                        <Typography sx={styles.header3}>
-                          {t('pick_up_order.recyclForm.expected_recycling')}
-                        </Typography>
-                      </Box>
+                  <Typography sx={styles.header4}>
+                    {isEditing ? t('userGroup.change') : t('top_menu.add_new')}
+                  </Typography>
+                  <Typography sx={styles.header3}>
+                    {t('pick_up_order.recyclForm.expected_recycling')}
+                  </Typography>
+                </Box>
 
-                      <Box sx={{ marginLeft: 'auto' }}>
-                        <Button
-                          variant="outlined"
-                          sx={{
-                            ...localstyles.button,
-                            color: 'white',
-                            bgcolor: colorTheme,
-                            borderColor: colorTheme
-                          }}
-                          type="submit"
-                        >
-                          {t('col.save')}
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          sx={{
-                            ...localstyles.button,
-                            color: colorTheme,
-                            bgcolor: 'white',
-                            borderColor: colorTheme
-                          }}
-                          onClick={onHandleDrawer}
-                        >
-                          {t('col.cancel')}
-                        </Button>
-                        <IconButton
-                          sx={{ ml: '25px' }}
-                          onClick={onHandleDrawer}
-                        >
-                          <KeyboardTabIcon sx={{ fontSize: '30px' }} />
-                        </IconButton>
-                      </Box>
-                    </Box>
-                    <Divider />
-                    
-                    <Stack spacing={2} sx={localstyles.content}>
-                      <CustomField
-                        label={t('pick_up_order.recyclForm.shipping_time')}
-                        mandatory
-                      >
-                        <TimePicker
-                          sx={{ width: '100%' }}
-                          value={formatTimePickAt(formik.values.pickupAt)}
-                          onChange={(value) => {
-                            formik.setFieldValue(
-                              'pickupAt',
-                              value ? formattedTime(value) : ''
-                            )
-                          }}
-                        />
-                      </CustomField>
+                <Box sx={{ marginLeft: 'auto' }}>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      ...localstyles.button,
+                      color: 'white',
+                      bgcolor: colorTheme,
+                      borderColor: colorTheme
+                    }}
+                    type="submit"
+                    data-testId='astd-create-edit-pickup-order-complete-button-4904'
+                  >
+                    {t('col.save')}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      ...localstyles.button,
+                      color: colorTheme,
+                      bgcolor: 'white',
+                      borderColor: colorTheme
+                    }}
+                    onClick={onHandleDrawer}
+                    data-testId='astd-create-edit-pickup-order-cancel-button-1205'
+                  >
+                    {t('col.cancel')}
+                  </Button>
+                  <IconButton sx={{ ml: '25px' }} onClick={onHandleDrawer}>
+                    <KeyboardTabIcon sx={{ fontSize: '30px' }} />
+                  </IconButton>
+                </Box>
+              </Box>
+              <Divider />
 
-                      <CustomField label={t('col.recycType')} mandatory>
-                        <RecyclablesListSingleSelect
-                          showError={
-                            (formik.errors?.recycType && formik.touched?.recycType) ||
-                            undefined
-                          }
-                          recycL={recycType ?? []}
-                          setState={(values) => {
-                            formik.setFieldValue('recycType', values?.recycTypeId)
-                            formik.setFieldValue(
-                              'recycSubType',
-                              values?.recycSubTypeId
-                            )
-                            const recyc = recycType?.find(item => item.recycTypeId === values.recycTypeId);
-                            // will use to validate when non-recycable selected
-                            if(recyc){
-                              formik.setFieldValue('recycTypeName', recyc?.recyclableNameEng)
-                            }
-                          }}
+              <Stack spacing={2} sx={localstyles.content}>
+                <CustomField
+                  label={t('pick_up_order.recyclForm.shipping_time')}
+                  mandatory
+                >
+                  <TimePicker
+                    sx={{ width: '100%' }}
+                    value={formatTimePickAt(formik.values.pickupAt)}
+                    onChange={(value) => {
+                      formik.setFieldValue(
+                        'pickupAt',
+                        value ? formattedTime(value) : ''
+                      )
+                    }}
+                  />
+                </CustomField>
+
+                <CustomField label={t('pick_up_order.recyclForm.item_category')}>
+                  <Switcher
+                    onText={t('recyclables')}
+                    offText={t('product')}
+                    defaultValue={isRecyc}
+                    setState={(newValue) => {
+                      formik.setFieldValue('itemCategory', newValue === true ? 'Recyclables' : 'Product');
+                      setRecycType(!isRecyc)
+                    }}
+                    dataTestId='astd-create-edit-pickup-order-form-type-select-button-3525'
+                  />
+                </CustomField>
+                {isRecyc ? (
+                  <CustomField label={t('col.recycType')} mandatory>
+                    <RecyclablesListSingleSelect
+                      showError={
+                        (formik.errors?.recycType && formik.touched?.recycType) ||
+                        undefined
+                      }
+                      recycL={recycType ?? []}
+                      setState={(values) => {
+                        formik.setFieldValue('itemCategory', isRecyc === true ? 'Recyclables' : 'Product');
+                        formik.setFieldValue('recycType', values?.recycTypeId)
+                        formik.setFieldValue(
+                          'recycSubType',
+                          values?.recycSubTypeId
+                        )
+                        formik.setFieldValue('productType', '')
+                        formik.setFieldValue('productSubType', '')
+                        formik.setFieldValue('productAddon', '')
+                        const recyc = recycType?.find(
+                          (item) => item.recycTypeId === values.recycTypeId
+                        )
+                        // will use to validate when non-recycable selected
+                        if (recyc) {
+                          formik.setFieldValue(
+                            'recycTypeName',
+                            recyc?.recyclableNameEng
+                          )
+                        }
+                      }}
                       itemColor={{
-                        bgColor: customListTheme ? customListTheme.bgColor : '#E4F6DC',
-                        borderColor: customListTheme ? customListTheme.border: '79CA25'
+                        bgColor: customListTheme
+                          ? customListTheme.bgColor
+                          : '#E4F6DC',
+                        borderColor: customListTheme
+                          ? customListTheme.border
+                          : '79CA25'
                       }}
                       defaultRecycL={defaultRecyc}
                       key={formik.values.picoDtlId}
                     />
                   </CustomField>
-                  <CustomField
-                    label={t('pick_up_order.recyclForm.weight')}
-                    mandatory
-                  >
-                    <CustomTextField
-                      id="weight"
-                      placeholder={t('userAccount.pleaseEnterNumber')}
-                      // onChange={formik.handleChange}
-                      onChange={(event) => {
-                        onChangeWeight(event.target.value, decimalVal, (value: string) => {
-                          formik.setFieldValue('weight', value)
+                ) :
+                  <CustomField label={t('pick_up_order.product_type.product')} mandatory>
+                    <ProductListSingleSelect
+                      showError={(formik.errors?.productType && formik.touched?.productType) || undefined}
+                      label={t('pick_up_order.product_type.product')}
+                      options={productType ?? []}
+                      setState={(values) => {
+                        console.log("🚀 ~ file: CreateRecycleForm.tsx ~ line 756 ~ values", values)
+                        setOpenConfirmModal({
+                          ...openConfirmModal,
+                          tempData: {
+                            ...openConfirmModal.tempData,
+                            isProductSubTypeOthers: Boolean(values?.isProductSubTypeOthers),
+                            isProductAddonTypeOthers: Boolean(values?.isProductAddonTypeOthers),
+                          }
                         })
+                        formik.setFieldValue('itemCategory', Boolean(isRecyc) === true ? 'Recyclables' : 'Product')
+                        formik.setFieldValue('productType', values?.productTypeId)
+                        formik.setFieldValue('productSubType', values?.productSubTypeId)
+                        formik.setFieldValue('productAddon', values?.productAddonId)
+                        formik.setFieldValue('productSubTypeRemark', values?.productSubTypeRemark)
+                        formik.setFieldValue('productAddonTypeRemark', values?.productAddonTypeRemark)
+                        formik.setFieldValue('recycType', '')
+                        formik.setFieldValue('recycSubType', '')
                       }}
-                      onBlur={(event) => {
-                        const value = formatWeight(event.target.value, decimalVal)
-                        formik.setFieldValue('weight', value)
+                      itemColor={{
+                        bgColor: customListTheme
+                          ? customListTheme.bgColor
+                          : '#E4F6DC',
+                        borderColor: customListTheme
+                          ? customListTheme.border
+                          : '79CA25'
                       }}
-                      value={formik.values.weight}
-                      error={
-                        (formik.errors?.weight && formik.touched?.weight) ||
-                        undefined
-                      }
-                      sx={{ width: '100%' }}
-                      endAdornment={
-                        <InputAdornment position="end">kg</InputAdornment>
-                      }
-                    ></CustomTextField>
+                      defaultProduct={defaultProduct}
+                      key={formik.values.picoDtlId}
+                    />
                   </CustomField>
-                  {TextFields.map((it) => (
-                    <CustomField mandatory label={it.label}>
-                      {it.id === 'senderName' || it.id === 'receiverName' ? (
-                        <CustomAutoComplete
-                          placeholder={t('pick_up_order.recyclForm.placeholder')}
-                          option={[
-                            ...(collectorList?.map(
-                              (option) => {
-                                if(i18n.language === Languages.ENUS){
-                                  return option.collectorNameEng
-                                } else if(i18n.language === Languages.ZHCH){
-                                  return option.collectorNameSchi
-                                } else {
-                                  return option.collectorNameTchi
-                                }
-                              }
-                            ) ?? []),
-                            ...(manuList?.map(
-                              (option) => {
-                                if(i18n.language === Languages.ENUS){
-                                  return option.manufacturerNameEng
-                                } else if(i18n.language === Languages.ZHCH){
-                                  return option.manufacturerNameSchi
-                                } else {
-                                  return option.manufacturerNameTchi
-                                }
-                              }
-                            ) ?? [])
-                          ]}
-                          sx={{ width: '100%' }}
-                          onChange={(
-                            _: SyntheticEvent,
-                            newValue: string | null
-                          ) => formik.setFieldValue(it.id, newValue)}
-                          onInputChange={(event: any, newInputValue: string) => {
-                            formik.setFieldValue(it.id, newInputValue) // Update the formik field value if needed
-                          }}
-                          value={it.value}
-                          inputValue={it.value}
-                          error={it.error || undefined}
-                        />
-                      ) : (
-                        <CustomTextField
-                          id={it.id}
-                          placeholder={t('pick_up_order.recyclForm.placeholder')}
-                          rows={4}
-                          onChange={formik.handleChange}
-                          value={it.value}
-                          sx={{ width: '100%' }}
-                          error={it.error || undefined}
-                        />
-                      )}
-                    </CustomField>
-                  ))}
-                  {isDetailDouble && <Typography style={{color: 'red'}} >{t('pick_up_order.picoDetailCannotBeRepeated')}</Typography>}
-                  <Stack spacing={2}>
-                    {formik.errors.pickupAt && formik.touched.pickupAt && (
-                      <Alert severity="error">{formik.errors.pickupAt} </Alert>
+                }
+
+                <CustomField
+                  label={t('pick_up_order.recyclForm.weight')}
+                  mandatory
+                >
+                  <CustomTextField
+                    id="weight"
+                    placeholder={t('userAccount.pleaseEnterNumber')}
+                    // onChange={formik.handleChange}
+                    onChange={(event) => {
+                      onChangeWeight(
+                        event.target.value,
+                        decimalVal,
+                        (value: string) => {
+                          formik.setFieldValue('weight', value)
+                        }
+                      )
+                    }}
+                    onBlur={(event) => {
+                      const value = formatWeight(event.target.value, decimalVal)
+                      formik.setFieldValue('weight', value)
+                    }}
+                    value={formik.values.weight}
+                    error={
+                      (formik.errors?.weight && formik.touched?.weight) ||
+                      undefined
+                    }
+                    sx={{ width: '100%' }}
+                    endAdornment={
+                      <InputAdornment position="end">kg</InputAdornment>
+                    }
+                    dataTestId='astd-create-edit-pickup-order-form-weight-input-field-2997'
+                  ></CustomTextField>
+                </CustomField>
+                {TextFields.map((it) => (
+                  <CustomField mandatory label={it.label}>
+                    {it.id === 'senderName' || it.id === 'receiverName' ? (
+                      <CustomAutoComplete
+                        placeholder={t('pick_up_order.recyclForm.placeholder')}
+                        option={[
+                          ...(collectorList?.map((option) => {
+                            if (i18n.language === Languages.ENUS) {
+                              return option.collectorNameEng
+                            } else if (i18n.language === Languages.ZHCH) {
+                              return option.collectorNameSchi
+                            } else {
+                              return option.collectorNameTchi
+                            }
+                          }) ?? []),
+                          ...(manuList?.map((option) => {
+                            if (i18n.language === Languages.ENUS) {
+                              return option.manufacturerNameEng
+                            } else if (i18n.language === Languages.ZHCH) {
+                              return option.manufacturerNameSchi
+                            } else {
+                              return option.manufacturerNameTchi
+                            }
+                          }) ?? [])
+                        ]}
+                        sx={{ width: '100%' }}
+                        onChange={(
+                          _: SyntheticEvent,
+                          newValue: string | null
+                        ) => {
+                          formik.setFieldValue(it.id, newValue)
+
+                          const optionId =
+                            collectorList?.find(
+                              (item) =>
+                                item.collectorNameEng === newValue ||
+                                item.collectorNameEng === newValue ||
+                                item.collectorNameEng === newValue
+                            )?.collectorId ||
+                            manuList?.find(
+                              (manu) =>
+                                manu.manufacturerNameEng === newValue ||
+                                manu.manufacturerNameSchi === newValue ||
+                                manu.manufacturerNameTchi === newValue
+                            )?.manufacturerId ||
+                            ''
+
+                          //set receiverId and senderId
+                          if (it.id === 'senderName') {
+                            formik.setFieldValue('senderId', optionId)
+                          } else {
+                            formik.setFieldValue('receiverId', optionId)
+                          }
+                        }}
+                        onInputChange={(event: any, newInputValue: string) => {
+                          formik.setFieldValue(it.id, newInputValue) // Update the formik field value if needed
+                        }}
+                        value={it.value}
+                        inputValue={it.value}
+                        error={it.error || undefined}
+                        dataTestId={it.id === 'senderName' ? 'astd-create-edit-pickup-order-form-sender-company-select-button-8477' : 'astd-create-edit-pickup-order-form-receiver-company-select-button-8814'}
+                      />
+                    ) : (
+                      <CustomTextField
+                        id={it.id}
+                        placeholder={t('pick_up_order.recyclForm.placeholder')}
+                        rows={4}
+                        onChange={formik.handleChange}
+                        value={it.value}
+                        sx={{ width: '100%' }}
+                        error={it.error || undefined}
+                        dataTestId={it.id === 'senderAddr' ? 'astd-create-edit-pickup-order-form-sender-address-input-field-8204' : 'astd-create-edit-pickup-order-form-receiver-address-input-field-7002'}
+                      />
                     )}
-                    {formik.errors?.recycType && formik.touched?.recycType && (
-                      <Alert severity="error">{formik.errors?.recycType} </Alert>
+                  </CustomField>
+                ))}
+                {isDetailDouble && (
+                  <Typography style={{ color: 'red' }}>
+                    {t('pick_up_order.picoDetailCannotBeRepeated')}
+                  </Typography>
+                )}
+                <Stack spacing={2}>
+                  {formik.errors.pickupAt && formik.touched.pickupAt && (
+                    <Alert severity="error">{formik.errors.pickupAt} </Alert>
+                  )}
+                  {formik.errors?.recycType && formik.touched?.recycType && (
+                    <Alert severity="error" data-testId='astd-create-edit-pickup-order-form-recyc-main-err-warning-7333'>{formik.errors?.recycType} </Alert>
+                  )}
+                  {formik.errors?.recycSubType &&
+                    formik.touched?.recycSubType && (
+                      <Alert severity="error" data-testId='astd-create-edit-pickup-order-form-recyc-sub-err-warning-8762'>
+                        {formik.errors?.recycSubType}{' '}
+                      </Alert>
                     )}
-                    {formik.errors?.recycSubType &&
-                      formik.touched?.recycSubType && (
-                        <Alert severity="error">
-                          {formik.errors?.recycSubType}{' '}
-                        </Alert>
-                      )}
-                    {formik.errors?.weight && formik.touched?.weight && (
-                      <Alert severity="error">{formik.errors?.weight} </Alert>
+                  {formik.errors?.productType && formik.touched?.productType && (
+                    <Alert severity="error" data-testId='astd-create-edit-pickup-order-form-product-type-err-warning-7624'>{formik.errors?.productType} </Alert>
+                  )}
+                  {formik.errors?.productSubType && formik.touched?.productSubType && (
+                    <Alert severity="error" data-testId='astd-create-edit-pickup-order-form-product-type-err-warning-7624'>{formik.errors?.productSubType} </Alert>
+                  )}
+                  {formik.errors?.productAddon && formik.touched?.productAddon && (
+                    <Alert severity="error" data-testId='astd-create-edit-pickup-order-form-product-addon-err-warning-9664'>{formik.errors?.productAddon} </Alert>
+                  )}
+                  {formik.errors?.weight && formik.touched?.weight && (
+                    <Alert severity="error" data-testId='astd-create-edit-pickup-order-form-weight-err-warning-7399'>{formik.errors?.weight} </Alert>
+                  )}
+                  {formik.errors.senderName && formik.touched.senderName && (
+                    <Alert severity="error" data-testId='astd-create-edit-pickup-order-form-sender-company-err-warning-7661'>{formik.errors.senderName} </Alert>
+                  )}
+                  {formik.errors.receiverName &&
+                    formik.touched.receiverName && (
+                      <Alert severity="error" data-testId='astd-create-edit-pickup-order-form-receiver-company-err-warning-5648'>
+                        {formik.errors.receiverName}{' '}
+                      </Alert>
                     )}
-                    {formik.errors.senderName && formik.touched.senderName && (
-                      <Alert severity="error">{formik.errors.senderName} </Alert>
+                  {formik.errors.senderAddr && formik.touched.senderAddr && (
+                    <Alert severity="error" data-testId='astd-create-edit-pickup-order-form-sender-address-err-warning-8679'>{formik.errors.senderAddr} </Alert>
+                  )}
+                  {formik.errors.receiverAddr &&
+                    formik.touched.receiverAddr && (
+                      <Alert severity="error" data-testId='astd-create-edit-pickup-order-form-receiver-address-err-warning-3798'>
+                        {formik.errors.receiverAddr}{' '}
+                      </Alert>
                     )}
-                    {formik.errors.receiverName &&
-                      formik.touched.receiverName && (
-                        <Alert severity="error">
-                          {formik.errors.receiverName}{' '}
-                        </Alert>
-                      )}
-                    {formik.errors.senderAddr && formik.touched.senderAddr && (
-                      <Alert severity="error">{formik.errors.senderAddr} </Alert>
-                    )}
-                    {formik.errors.receiverAddr &&
-                      formik.touched.receiverAddr && (
-                        <Alert severity="error">
-                          {formik.errors.receiverAddr}{' '}
-                        </Alert>
-                      )}
-                  </Stack>
                 </Stack>
-              </Box>
-          {/* </Box> */}
-            </LocalizationProvider>
-          </form>
-        </div>
+              </Stack>
+              <ConfirmModal
+                isOpen={openConfirmModal?.isOpen}
+                message={t('pick_up_order.confirm_empty_remarks')}
+                onConfirm={async () => {
+                  setOpenConfirmModal({
+                    isOpen: false,
+                    tempData: {
+                      ...openConfirmModal.tempData,
+                      isConfirmed: true,
+                    }
+                  })
+                  formik.handleSubmit()
+                }}
+                onCancel={() => setOpenConfirmModal({
+                  ...openConfirmModal,
+                  isOpen: false,
+                })}
+              />
+            </Box>
+            {/* </Box> */}
+          </LocalizationProvider>
+        </form>
+      </div>
     </Drawer>
   )
 }

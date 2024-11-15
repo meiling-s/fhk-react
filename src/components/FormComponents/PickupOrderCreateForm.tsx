@@ -32,12 +32,10 @@ import AddCircleIcon from '@mui/icons-material/AddCircle'
 import { useNavigate } from 'react-router-dom'
 import { DataGrid, GridColDef, GridRowSpacingParams } from '@mui/x-data-grid'
 import { DELETE_OUTLINED_ICON, EDIT_OUTLINED_ICON } from '../../themes/icons'
-import { t } from 'i18next'
 import CustomAutoComplete from './CustomAutoComplete'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import PicoRoutineSelect from '../SpecializeComponents/PicoRoutineSelect'
 import PickupOrderList from '../../components/PickupOrderList'
-import i18n from '../../setups/i18n'
 import { useTranslation } from 'react-i18next'
 import { Languages, format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
@@ -53,6 +51,12 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
 import useValidationPickupOrder from '../../pages/Collector/PickupOrder/useValidationPickupOrder'
+import { t } from 'i18next'
+import {
+  getProductAddonFromDataRow,
+  getProductTypeFromDataRow,
+  getProductSubTypeFromDataRow,
+} from 'src/pages/Collector/PickupOrder/utils'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -80,6 +84,26 @@ const ErrorMessage: React.FC<{ message: string }> = ({ message }) => {
   )
 }
 
+const WarningMessage: React.FC<{ message: string, setContinue: () => void }> = ({ message, setContinue }) => {
+  return (
+    <div className="bg-[#F6F4B7] p-3 rounded-xl w-1/4">
+      <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+        <Typography
+          style={{
+            color: '#ec942c',
+            fontWeight: '400'
+          }}
+        >
+          {t('col.contractNo')} {message}
+        </Typography>
+        <Button sx={{ ...styles.buttonFilledGreen, marginLeft: 'auto' }} onClick={() => setContinue && setContinue()}>
+          {t("continue")}
+        </Button>
+      </Box>
+    </div>
+  )
+}
+
 const DeleteModal: React.FC<DeleteModalProps> = ({
   open,
   selectedRecycLoc,
@@ -87,7 +111,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   onDelete,
   editMode
 }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   return (
     <Modal
       open={open}
@@ -151,6 +175,7 @@ const PickupOrderCreateForm = ({
   state: CreatePicoDetail[]
   editMode: boolean
 }) => {
+
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [openDelete, setOpenDelete] = useState<boolean>(false)
   const [editRowId, setEditRowId] = useState<number | null>(null)
@@ -159,11 +184,14 @@ const PickupOrderCreateForm = ({
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [skipValidation, setSkipValidation] = useState<string[]>([])
+  const { t, i18n } = useTranslation()
   const {
     logisticList,
     contractType,
     vehicleType,
     recycType,
+    productType,
     dateFormat,
     getLogisticlist,
     getContractList,
@@ -179,10 +207,10 @@ const PickupOrderCreateForm = ({
 
   const unexpiredContracts = contractRole
     ? contractRole?.filter((contract) => {
-        const currentDate = new Date()
-        const contractDate = new Date(contract.contractToDate)
-        return contractDate > currentDate
-      })
+      const currentDate = new Date()
+      const contractDate = new Date(contract.contractToDate)
+      return contractDate > currentDate
+    })
     : []
   const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(
     null
@@ -262,13 +290,15 @@ const PickupOrderCreateForm = ({
 
   const handleDeleteRow = (id: any) => {
     if (editMode) {
-      let updateDeleteRow = state.filter((row, index) => index != id)
-      updateDeleteRow = updateDeleteRow.map((picoDtl, index) => {
-        return {
+      //let updateDeleteRow = state.filter((row, index) => row.id == id)
+      // let updateDeleteRow: CreatePicoDetail[] = []
+      // debugger
+      const updateDeleteRow = state
+        .filter((picoDtl) => picoDtl.picoDtlId) // Only include items with picoDtlId
+        .map((picoDtl) => ({
           ...picoDtl,
           status: picoDtl.picoDtlId === id ? 'DELETED' : picoDtl.status
-        }
-      })
+        }))
       setState(updateDeleteRow)
     } else {
       let updateDeleteRow = state.filter((row) => row.id !== id)
@@ -278,20 +308,20 @@ const PickupOrderCreateForm = ({
 
   const createdDate = selectedPo
     ? dayjs
-        .utc(selectedPo.createdAt)
-        .tz('Asia/Hong_Kong')
-        .format(`${dateFormat} HH:mm`)
+      .utc(selectedPo.createdAt)
+      .tz('Asia/Hong_Kong')
+      .format(`${dateFormat} HH:mm`)
     : dayjs.utc(new Date()).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
 
   const approveAt = selectedPo?.approvedAt
     ? dayjs
-        .utc(selectedPo?.approvedAt)
-        .tz('Asia/Hong_Kong')
-        .format(`${dateFormat} HH:mm`)
+      .utc(selectedPo?.approvedAt)
+      .tz('Asia/Hong_Kong')
+      .format(`${dateFormat} HH:mm`)
     : dayjs
-        .utc(selectedPo?.updatedAt)
-        .tz('Asia/Hong_Kong')
-        .format(`${dateFormat} HH:mm`)
+      .utc(selectedPo?.updatedAt)
+      .tz('Asia/Hong_Kong')
+      .format(`${dateFormat} HH:mm`)
 
   const handleHeaderOnClick = () => {
     //console.log('Header click')
@@ -303,6 +333,11 @@ const PickupOrderCreateForm = ({
     }
   }, [])
 
+  const addSkipValidation = (skip: string) => {
+    if (skip === 'contractNo') {
+      validateData(skip)
+    }
+  }
   const getvehicleType = () => {
     if (vehicleType) {
       const carType: il_item[] = []
@@ -385,32 +420,61 @@ const PickupOrderCreateForm = ({
       width: 150
     },
     {
+      field: 'itemCategory',
+      headerName: t('pick_up_order.recyclForm.item_category'),
+      valueGetter: ({ row }) => {
+
+        const itemCategory = row?.productType ? t('product') : t('recyclables')
+
+        return itemCategory
+      },
+      width: 150,
+    },
+    {
       field: 'recycType',
       headerName: t('pick_up_order.detail.main_category'),
       width: 150,
       editable: true,
       valueGetter: ({ row }) => {
-        const matchingRecycType = recycType?.find(
-          (item) => item.recycTypeId === row.recycType
-        )
+        const typeField = row.recycType || row.productType;
+        const matchingRecycType = recycType?.find(item => item.recycTypeId === row.recycType);
+        const matchingProductType = getProductTypeFromDataRow({ row, dataProductType: productType })
+
         if (matchingRecycType) {
-          var name = ''
+          let name = '';
           switch (i18n.language) {
             case 'enus':
-              name = matchingRecycType.recyclableNameEng
-              break
+              name = matchingRecycType.recyclableNameEng;
+              break;
             case 'zhch':
-              name = matchingRecycType.recyclableNameSchi
-              break
+              name = matchingRecycType.recyclableNameSchi;
+              break;
             case 'zhhk':
-              name = matchingRecycType.recyclableNameTchi
-              break
+              name = matchingRecycType.recyclableNameTchi;
+              break;
             default:
-              name = matchingRecycType.recyclableNameTchi //default fallback language is zhhk
-              break
+              name = matchingRecycType.recyclableNameTchi;
           }
-          return name
+          return name;
+        } else if (matchingProductType) {
+          let name = '';
+          switch (i18n.language) {
+            case 'enus':
+              name = matchingProductType?.productNameEng
+              break;
+            case 'zhch':
+              name = matchingProductType?.productNameSchi
+              break;
+            case 'zhhk':
+              name = matchingProductType?.productNameTchi
+              break;
+            default:
+              name = matchingProductType?.productNameTchi
+          }
+          return name;
         }
+
+        return typeField;
       }
     },
     {
@@ -420,9 +484,11 @@ const PickupOrderCreateForm = ({
       width: 150,
       editable: true,
       valueGetter: ({ row }) => {
-        const matchingRecycType = recycType?.find(
-          (item) => item.recycTypeId === row.recycType
-        )
+
+        const matchingRecycType = recycType?.find((item) => item.recycTypeId === row.recycType)
+
+        const matchingProductSubType = getProductSubTypeFromDataRow({ row, dataProductType: productType })
+
         if (matchingRecycType) {
           const matchrecycSubType = matchingRecycType.recycSubType?.find(
             (subtype) => subtype.recycSubTypeId === row.recycSubType
@@ -445,8 +511,57 @@ const PickupOrderCreateForm = ({
             }
 
             return subName
+          } else {
+            return row.recycSubType
           }
         }
+        else if (matchingProductSubType) {
+          var subName = ''
+          switch (i18n.language) {
+            case 'enus':
+              subName = matchingProductSubType?.productNameEng || ''
+              break
+            case 'zhch':
+              subName = matchingProductSubType?.productNameSchi || ''
+              break
+            case 'zhhk':
+              subName = matchingProductSubType?.productNameTchi || ''
+              break
+            default:
+              subName = matchingProductSubType?.productNameTchi || '' //default fallback language is zhhk
+              break
+          }
+
+          return subName
+        }
+      }
+    },
+    {
+      field: 'addon',
+      headerName: t('pick_up_order.product_type.add-on'),
+      type: 'string',
+      width: 150,
+      editable: true,
+      valueGetter: ({ row }) => {
+        const matchingProductAddon = getProductAddonFromDataRow({ row, dataProductType: productType })
+
+        var addonName = ''
+        switch (i18n.language) {
+          case 'enus':
+            addonName = matchingProductAddon?.productNameEng || ''
+            break
+          case 'zhch':
+            addonName = matchingProductAddon?.productNameSchi || ''
+            break
+          case 'zhhk':
+            addonName = matchingProductAddon?.productNameTchi || ''
+            break
+          default:
+            addonName = matchingProductAddon?.productNameTchi || ''
+            break
+        }
+
+        return addonName
       }
     },
     {
@@ -496,6 +611,7 @@ const PickupOrderCreateForm = ({
               setIndex(params.row.id)
               handleEditRow(params.row.picoDtlId)
             }}
+            data-testId={'astd-create-edit-pickup-order-edit-recycling-3943' + params.row.id}
           />
         </IconButton>
       )
@@ -511,10 +627,10 @@ const PickupOrderCreateForm = ({
         // </IconButton>
         <IconButton
           onClick={() => {
-            console.log('params delete', params.row.picoDtlId)
             setOpenDelete(true)
             setRecycbleLocId(params.row)
           }}
+          data-testId={'astd-create-edit-pickup-order-delete-recycling-4671' + params.row.id}
         >
           <DELETE_OUTLINED_ICON />
         </IconButton>
@@ -543,34 +659,36 @@ const PickupOrderCreateForm = ({
   }
 
   const getCurrentLogisticName = (value: string) => {
+    console.log(value, 'valuee')
+    console.log(prevLang, 'prevlang')
     let logisticName: string = ''
     if (!logisticCompany) return logisticName
-    if (prevLang === Languages.ENUS) {
-      const logistic = logisticCompany.find(
-        (item) => item.logisticNameEng === value
-      )
-      if (i18n.language === Languages.ZHCH) {
-        logisticName = logistic?.logisticNameSchi ?? ''
-      } else if (i18n.language === Languages.ZHHK) {
-        logisticName = logistic?.logisticNameTchi ?? ''
+    const logisticSimplified = logisticCompany.find((item) => item.logisticNameSchi === value)
+    const logisticEnglish = logisticCompany.find((item) => item.logisticNameEng === value)
+    const logisticTraditional = logisticCompany.find((item) => item.logisticNameTchi === value)
+    if (logisticSimplified !== undefined) {
+      if (i18n.language === 'enus') {
+        logisticName = logisticSimplified?.logisticNameEng ?? ''
+      } else if (i18n.language === 'zhhk') {
+        logisticName = logisticSimplified?.logisticNameTchi ?? ''
+      } else if (i18n.language === 'zhch') {
+        logisticName = logisticSimplified?.logisticNameSchi ?? ''
       }
-    } else if (prevLang === Languages.ZHCH) {
-      const logistic = logisticCompany.find(
-        (item) => item.logisticNameSchi === value
-      )
-      if (i18n.language === Languages.ENUS) {
-        logisticName = logistic?.logisticNameEng ?? ''
-      } else if (i18n.language === Languages.ZHHK) {
-        logisticName = logistic?.logisticNameTchi ?? ''
+    } else if (logisticEnglish !== undefined) {
+      if (i18n.language === 'zhch') {
+        logisticName = logisticEnglish?.logisticNameSchi ?? ''
+      } else if (i18n.language === 'zhhk') {
+        logisticName = logisticEnglish?.logisticNameTchi ?? ''
+      } else if (i18n.language === 'enus') {
+        logisticName = logisticEnglish?.logisticNameEng ?? ''
       }
-    } else if (prevLang === Languages.ZHHK) {
-      const logistic = logisticCompany.find(
-        (item) => item.logisticNameTchi === value
-      )
-      if (i18n.language === Languages.ZHCH) {
-        logisticName = logistic?.logisticNameSchi ?? ''
-      } else if (i18n.language === Languages.ENUS) {
-        logisticName = logistic?.logisticNameEng ?? ''
+    } else if (logisticTraditional !== undefined) {
+      if (i18n.language === 'zhch') {
+        logisticName = logisticTraditional?.logisticNameSchi ?? ''
+      } else if (i18n.language === 'enus') {
+        logisticName = logisticTraditional?.logisticNameEng ?? ''
+      } else if (i18n.language === 'zhhk') {
+        logisticName = logisticTraditional?.logisticNameTchi ?? ''
       }
     }
     formik.setFieldValue('logisticName', logisticName)
@@ -585,8 +703,9 @@ const PickupOrderCreateForm = ({
 
   const onhandleSubmit = () => {
     const isValid = validateData()
-    if (!isValid) return
-    formik.handleSubmit()
+    if (isValid == true) {
+      formik.handleSubmit()
+    }
   }
 
   return (
@@ -634,8 +753,8 @@ const PickupOrderCreateForm = ({
                     selectedPo?.picoType === 'AD_HOC'
                       ? false
                       : selectedPo?.picoType === 'ROUTINE'
-                      ? true
-                      : true
+                        ? true
+                        : true
                   }
                   setState={(value) =>
                     formik.setFieldValue(
@@ -644,6 +763,7 @@ const PickupOrderCreateForm = ({
                     )
                   }
                   value={formik.values.picoType}
+                  dataTestId='astd-create-edit-pickup-order-type-select-button-2449'
                 />
               </CustomField>
             </Grid>
@@ -735,6 +855,7 @@ const PickupOrderCreateForm = ({
                     errorsField.logisticName.status
                     //formik.errors.logisticName && formik.touched.logisticName
                   }
+                  dataTestId={'astd-create-edit-pickup-order-choose-logistic-select-button-6878'}
                 />
               </CustomField>
               {/* {errorsField.logisticName.status ? (
@@ -757,7 +878,7 @@ const PickupOrderCreateForm = ({
                   defaultSelected={selectedPo?.vehicleTypeId}
                   error={
                     errorsField.vehicleTypeId.status
-                   // formik.errors.vehicleTypeId && formik.touched.vehicleTypeId
+                    // formik.errors.vehicleTypeId && formik.touched.vehicleTypeId
                   }
                   itemColor={{
                     bgColor: customListTheme.bgColor,
@@ -765,6 +886,7 @@ const PickupOrderCreateForm = ({
                       ? customListTheme.border
                       : '#79CA25'
                   }}
+                  dataTestId='astd-create-edit-pickup-order-vehicle-type-select-button-9679'
                 />
               </CustomField>
               {/* {errorsField.vehicleTypeId.status ? (
@@ -788,6 +910,7 @@ const PickupOrderCreateForm = ({
                   value={formik.values.platNo}
                   sx={{ width: '400px' }}
                   error={formik.errors.platNo && formik.touched.platNo}
+                  dataTestId='astd-create-edit-pickup-order-vehicle-plate-input-field-9795'
                 />
               </CustomField>
               {/* {errorsField.platNo.status ? (
@@ -812,6 +935,7 @@ const PickupOrderCreateForm = ({
                   value={formik.values.contactNo}
                   sx={{ width: '400px' }}
                   error={formik.errors.contactNo && formik.touched.contactNo}
+                  dataTestId='astd-create-edit-pickup-order-contact-no-input-field-6429'
                 />
                 {/* {errorsField.contactNo.status ? (
                   <ErrorMessage message={errorsField.contactNo.message} />
@@ -836,6 +960,7 @@ const PickupOrderCreateForm = ({
                       }
                       onChange={(event, value) => {
                         formik.setFieldValue('contractNo', value)
+                        addSkipValidation('contractNo')
                       }}
                       renderInput={(params) => (
                         <TextField
@@ -846,6 +971,7 @@ const PickupOrderCreateForm = ({
                             ...params.InputProps,
                             sx: styles.inputProps
                           }}
+                          data-testId='astd-create-edit-pickup-order-contract-no-select-button-3176'
                         />
                       )}
                       noOptionsText={t('common.noOptions')}
@@ -877,6 +1003,7 @@ const PickupOrderCreateForm = ({
                         ? customListTheme.border
                         : '#79CA25'
                     }}
+                    dataTestId='astd-create-edit-pickup-order-ad-hoc-reason-select-button-5199'
                   />
                 </CustomField>
                 {/* {errorsField.AD_HOC.status ? (
@@ -887,36 +1014,36 @@ const PickupOrderCreateForm = ({
               </Grid>
             )}
             {formik.values.picoType === 'AD_HOC' && (
-              <>
-                <Grid item>
-                  <Typography sx={[styles.header3, { marginBottom: 1 }]}>
-                    {t('pick_up_order.adhoc.po_number')}
-                  </Typography>
-                  {formik.values.refPicoId !== '' && formik.values.refPicoId ? (
-                    <div className="flex items-center justify-between w-[390px]">
-                      <div className="font-bold text-mini">
-                        {formik.values.refPicoId}
-                      </div>
-                      <div
-                        className={`text-mini cursor-pointer text-[${colorTheme}]`}
-                        onClick={resetPicoId}
-                      >
-                        {t('pick_up_order.change')}
-                      </div>
+              <Grid item>
+                <Typography sx={[styles.header3, { marginBottom: 1 }]}>
+                  {t('pick_up_order.adhoc.po_number')}
+                </Typography>
+                {formik.values.refPicoId !== '' && formik.values.refPicoId ? (
+                  <div className="flex items-center justify-between w-[390px]">
+                    <div className="font-bold text-mini">
+                      {formik.values.refPicoId}
                     </div>
-                  ) : (
-                    <div>
-                      <Button
-                        sx={[picoIdButton]}
-                        onClick={() => setOpenPico(true)}
-                      >
-                        <AddCircleIcon sx={{ ...endAdornmentIcon, pr: 1 }} />
-                        {t('pick_up_order.choose')}
-                      </Button>
+                    <div
+                      className={`text-mini cursor-pointer text-[${colorTheme}]`}
+                      onClick={resetPicoId}
+                      data-testId='astd-create-edit-pickup-order-related-po-change-menu-button-5755'
+                    >
+                      {t('pick_up_order.change')}
                     </div>
-                  )}
-                </Grid>
-              </>
+                  </div>
+                ) : (
+                  <div>
+                    <Button
+                      sx={[picoIdButton]}
+                      onClick={() => setOpenPico(true)}
+                      data-testId='astd-create-edit-pickup-order-related-po-select-menu-button-7503'
+                    >
+                      <AddCircleIcon sx={{ ...endAdornmentIcon, pr: 1 }} />
+                      {t('pick_up_order.choose')}
+                    </Button>
+                  </div>
+                )}
+              </Grid>
             )}
             <Grid item>
               <Typography sx={styles.header2}>
@@ -995,6 +1122,7 @@ const PickupOrderCreateForm = ({
                     setOpenModal(true)
                     changeTouchField('createPicoDetail')
                   }}
+                  data-testId='astd-create-edit-pickup-order-new-recycling-9199'
                   sx={{
                     height: '40px',
                     width: '100%',
@@ -1076,11 +1204,15 @@ const PickupOrderCreateForm = ({
             {errorsField.logisticName.status && (
               <ErrorMessage message={errorsField.logisticName.message} />
             )}
-            {errorsField.AD_HOC.status && formik.values.picoType === 'AD_HOC' && (
-              <ErrorMessage message={errorsField.AD_HOC.message} />
-            )}
+            {errorsField.AD_HOC.status &&
+              formik.values.picoType === 'AD_HOC' && (
+                <ErrorMessage message={errorsField.AD_HOC.message} />
+              )}
             {errorsField.createPicoDetail.status && (
               <ErrorMessage message={errorsField.createPicoDetail.message} />
+            )}
+            {errorsField.contractNo.status && (
+              <WarningMessage message={errorsField.contractNo.message} setContinue={() => addSkipValidation('contractNo')} />
             )}
           </Stack>
           <DeleteModal

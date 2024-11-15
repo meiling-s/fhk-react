@@ -56,11 +56,11 @@ export default function RecyclablesListSingleSelect({
       setSubType(defaultRecycL.recycSubTypeId)
       setCurRecyc(defaultRecycL.recycTypeId)
     }
-  }, [])
+  }, [defaultRecycL])
   
   useEffect(() => {
-    //console.log(toSingleRecyclable());
     setState(toSingleRecyclable())
+    // console.log(toSingleRecyclable());
   }, [recycType, subType])
 
   const returnRecycTypes = () => {
@@ -174,6 +174,7 @@ export default function RecyclablesListSingleSelect({
         setLastSelect={setCurRecyc}
         error={showError && recycType.length == 0}
         defaultSelected={defaultRecycL ? defaultRecycL.recycTypeId : []}
+        dataTestId='astd-create-edit-pickup-order-form-recyc-main-category-select-button-5238'
       />
       <Collapse
         sx={{ mt: 1 }}
@@ -187,12 +188,14 @@ export default function RecyclablesListSingleSelect({
               : getNameFromRecycId(curRecyc) + ' ' + t('pick_up_order.detail.subcategory')
           }
           key={recycType}
+          mandatory={true}
         >
           <CustomItemList
             items={returnSubRecyclables(curRecyc)}
             singleSelect={setSubType}
             defaultSelected={subType}
             itemColor={itemColor ? itemColor : null}
+            dataTestId='astd-create-edit-pickup-order-form-recyc-sub-category-select-button-1689'
           />
         </CustomField>
       </Collapse>

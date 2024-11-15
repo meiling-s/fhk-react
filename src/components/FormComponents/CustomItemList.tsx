@@ -6,7 +6,8 @@ import { getPrimaryColor, getPrimaryLightColor } from "../../utils/utils"
 //item list's item
 export type il_item = {
     name: string,
-    id: string
+    id: string,
+    dataTestId?: string
 }
 
 export type StaffName = {
@@ -34,7 +35,8 @@ type props = {
     editable?: boolean
     value?:string
     itemColor?: itemList | null,
-    needPrimaryColor?: boolean
+    needPrimaryColor?: boolean,
+    dataTestId?: string
 }
 function CustomItemList({
     items,
@@ -49,6 +51,7 @@ function CustomItemList({
     value,
     itemColor,
     needPrimaryColor,
+    dataTestId
 }: props){
 
     const triggerdItem = {
@@ -160,7 +163,9 @@ function CustomItemList({
                         sx={error? localstyles.error : returnTheme(item.id)}
                         style={{marginRight: '6px', marginBottom: '6px'}}
                         onClick={()=>{dbClickSelect? handleSingleClick(item.id) : handleSelect(item.id)}}
-                        onDoubleClick={() => {dbClickSelect && handleSelect(item.id)}}>
+                        onDoubleClick={() => {dbClickSelect && handleSelect(item.id)}}
+                        data-testId={item.dataTestId !== undefined ? item.dataTestId + index : dataTestId !== undefined ? dataTestId + index : ''}
+                        >
                         {item.name}
                     </Button>
                 ))

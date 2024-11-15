@@ -46,6 +46,7 @@ type createRecyclable = {
   processoutDetailPhoto: processOutImage[]
   createdBy: string
   updatedBy: string
+  version: number
 }
 
 type RecycItem = {
@@ -56,13 +57,14 @@ type RecycItem = {
   weight: number
   images: string[]
   unitId?: string
+  version: number
 }
 interface EditProcessRecordProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   onCreateRecycle: (data: createRecyclable) => void
   onEditRecycle: (data: createRecyclable, processOutDtlId: number ) => void
-  onDeleteItem: (itemId: number) => void
+  onDeleteItem: (version: number, itemId: number) => void
   editedData: RecycItem | null
   processOut?: ProcessOut | null
   action: 'none' | 'add' | 'edit' | 'delete' | undefined
@@ -180,7 +182,8 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
       status: "ACTIVE",
       processoutDetailPhoto: imgItems,
       createdBy: loginId,
-      updatedBy: loginId
+      updatedBy: loginId,
+      version: editedData?.version ?? 0
     }
 
     if (validation.length === 0) {
@@ -194,7 +197,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
 
   const onHandleDelete = () => {
     if (editedData != null) {
-      onDeleteItem(editedData.processOutDtlId)
+      onDeleteItem(editedData?.version ?? 0, editedData.processOutDtlId)
       resetData()
       handleDrawerClose()
     }
@@ -342,6 +345,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
                     maxNumber={imgSettings?.ImgQuantity}
                     maxFileSize={imgSettings?.ImgSize}
                     dataURLKey="data_url"
+                    acceptType={['jpg', 'jpeg', 'png']}
                   >
                     {({ imageList, onImageUpload, onImageRemove }) => (
                       <Box className="box">

@@ -8,17 +8,25 @@ import {
 import PickupOrderCreateForm from '../../../components/FormComponents/PickupOrderCreateForm'
 import { useFormik } from 'formik'
 import {
-  editPickupOrder,
+  editPickupOrder, getPicoById,
 } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useContainer } from 'unstated-next'
 import { useTranslation } from 'react-i18next'
 import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import { extractError, formatWeight, showErrorToast } from '../../../utils/utils'
-import * as Yup from 'yup'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { refactorPickUpOrderDetail } from './utils'
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(customParseFormat);
 
 const EditPickupOrder = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { state } = useLocation()
   const [addRow, setAddRow] = useState<CreatePicoDetail[]>([])
@@ -26,7 +34,9 @@ const EditPickupOrder = () => {
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const role = localStorage.getItem(localStorgeKeyName.role)
   const { decimalVal } = useContainer(CommonTypeContainer)
-  
+
+  console.log(poInfo, 'poInfo')
+
   const getErrorMsg = (field: string, type: string) => {
     switch (type) {
       case 'empty':
@@ -37,74 +47,16 @@ const EditPickupOrder = () => {
         return field + ' ' + t('form.error.isInWrongFormat')
     }
   }
-  const validateSchema = Yup.object().shape({
-    // effFrmDate: Yup.string().required('This effFrmDate is required'),
-    // effToDate: Yup.string().required('This effToDate is required'),
-    effFrmDate: Yup.date().required(),
-    effToDate: Yup.date()
-        .when(
-        'effFrmDate',
-        (effFrmDate, schema) => {
-          return effFrmDate && schema.min(effFrmDate, `${t('form.error.invalidDate') }`)
-        },
-    ),
 
-    routine: Yup.lazy((value, schema) => {
-      const routineType = schema.parent.routineType
-      if (routineType === 'specificDate') {
-        return Yup.array()
-          .required('routine is required')
-          .test(
-            'is-in-range',
-            t('pick_up_order.out_of_date_range'),
-            function (value) {
-              const { effFrmDate, effToDate } = schema.parent
-              const fromDate = new Date(effFrmDate)
-              const toDate = new Date(effToDate)
-
-              const datesInDateObjects = value.map((date) => new Date(date))
-
-              return datesInDateObjects.every(
-                (date) => date >= fromDate && date <= toDate
-              )
-            }
-          )
-      } else {
-        return Yup.array().required('routine is required')
-      }
-    }),
-    logisticName: Yup.string().required(
-      getErrorMsg(t('pick_up_order.choose_logistic'), 'empty')
-    ),
-    vehicleTypeId: Yup.string().required(
-      getErrorMsg(t('pick_up_order.vehicle_category'), 'empty')
-    ),
-    platNo: Yup.string().required(
-      getErrorMsg(t('pick_up_order.plat_number'), 'empty')
-    ),
-    contactNo: Yup.number().required(
-      getErrorMsg(t('pick_up_order.contact_number'), 'empty')
-    ),
-    updatePicoDetail: Yup.array()
-      .required(getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty'))
-      .test(
-        'has-rows',
-        getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty')!!,
-        (value) => {
-          return value.length > 0 || addRow.length > 0
-        }
-      )
-  })
-
-  const submitEditPickUpOrder = async (pickupOrderId: string, values:EditPo) => {
+  const submitEditPickUpOrder = async (pickupOrderId: string, values: EditPo) => {
     try {
       return await editPickupOrder(pickupOrderId, values)
-    } catch (error:any) {
+    } catch (error: any) {
       const { state, realm } = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else {
-        return null
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error.response.data.message);
       }
     }
   }
@@ -132,14 +84,47 @@ const EditPickupOrder = () => {
       contractNo: '',
       updatedBy: loginId,
       refPicoId: '',
-      updatePicoDetail: []
+      updatePicoDetail: [],
+      version: 0,
+      specificDates: []
     },
     // validationSchema: validateSchema,
     onSubmit: async (values: EditPo) => {
-      values.updatePicoDetail = addRow
-      if(values.picoType === 'AD_HOC'){
+
+      const refactorPicoDetail: any = refactorPickUpOrderDetail(addRow)
+      values.updatePicoDetail = refactorPicoDetail
+
+      if (values.picoType === 'AD_HOC') {
         values.routine = [];
+      } else if (values.picoType === 'ROUTINE') {
+        if (values.routineType === 'specificDate') {
+          // Get current time (hour and minute) from the user's local time
+          const currentHour = dayjs().hour();
+          const currentMinute = dayjs().minute();
+
+          values.specificDates = values.routine
+            .map(value => {
+              // Format to 'YYYY-MM-DD' first, then parse it in the user's timezone
+              const formattedDate = dayjs(value).format('YYYY-MM-DD');
+              const parsedDate = dayjs.tz(formattedDate, dayjs.tz.guess());
+
+              if (!parsedDate.isValid()) {
+                console.error(`Invalid date format: ${value}`);
+                return null; // Handle invalid dates as needed
+              }
+
+              // Set current hour and minute, then convert to ISO string
+              return parsedDate
+                .set('hour', currentHour)
+                .set('minute', currentMinute)
+                .toISOString();
+            })
+            .filter(date => date !== null) as string[]; // Filter out nulls and cast as string[]
+        } else if (values.routineType === 'weekly') {
+          values.specificDates = []
+        }
       }
+      console.log("🚀 ~ file: EditPickupOrder.tsx ~ line 128 ~ onSubmit: ~ values", values)
       const result = await submitEditPickUpOrder(poInfo.picoId, values)
 
       const data = result?.data
@@ -147,15 +132,13 @@ const EditPickupOrder = () => {
         //navigate('/collector/PickupOrder', { state: 'updated' })
         const routeName = role
         navigate(`/${routeName}/PickupOrder`, { state: 'updated' })
-      } else {
-        showErrorToast('fail to create pickup order')
       }
     }
   })
 
-  const setPickupOrderDetail = () => {
+  const setPickupOrderDetail = (data: any) => {
     const picoDetails: CreatePicoDetail[] =
-      poInfo?.pickupOrderDetail?.map((item, index) => ({
+      data?.pickupOrderDetail?.map((item: any) => ({
         id: item.picoDtlId,
         picoDtlId: item.picoDtlId,
         picoHisId: item.picoHisId,
@@ -173,43 +156,58 @@ const EditPickupOrder = () => {
         pickupAt: item.pickupAt,
         recycType: item.recycType,
         recycSubType: item.recycSubType,
+        productType: item.productType,
+        productSubType: item.productSubType,
+        productAddonType: item.productAddonType,
+        productSubTypeRemark: item.productSubTypeRemark,
+        productAddonTypeRemark: item.productAddonTypeRemark,
         weight: formatWeight(item.weight, decimalVal),
         newDetail: false,
+        version: poInfo.version
       })) || []
 
     setAddRow(picoDetails)
     return picoDetails
   }
 
+  const initGetPickUpOrderData = async (picoId: string) => {
+    const result = await getPicoById(picoId.toString())
+    if (result) {
+      const data = result.data
+      if (data) {
+        const createPicoDetail: CreatePicoDetail[] = setPickupOrderDetail(data)
+        updatePickupOrder.setValues({
+          tenantId: data.tenantId,
+          picoType: data.picoType,
+          effFrmDate: data.effFrmDate,
+          effToDate: data.effToDate,
+          routineType: data.routineType,
+          routine: data.routine,
+          logisticId: data.logisticId,
+          logisticName: data.logisticName,
+          vehicleTypeId: data.vehicleTypeId,
+          platNo: data.platNo,
+          contactNo: data.contactNo,
+          status: 'CREATED',
+          reason: data.reason,
+          normalFlg: true,
+          approvedAt: '',
+          rejectedAt: '',
+          approvedBy: loginId,
+          rejectedBy: loginId,
+          contractNo: data.contractNo,
+          updatedBy: loginId,
+          refPicoId: data?.refPicoId,
+          updatePicoDetail: [],
+          version: data.version ?? 0,
+          specificDates: data.specificDates
+        })
+      }
+    }
+  }
   useEffect(() => {
     if (poInfo) {
-      //console.log('selectedPo:', poInfo)
-      const createPicoDetail: CreatePicoDetail[] = setPickupOrderDetail()
-
-      updatePickupOrder.setValues({
-        tenantId: poInfo.tenantId,
-        picoType: poInfo.picoType,
-        effFrmDate: poInfo.effFrmDate,
-        effToDate: poInfo.effToDate,
-        routineType: poInfo.routineType,
-        routine: poInfo.routine,
-        logisticId: poInfo.logisticId,
-        logisticName: poInfo.logisticName,
-        vehicleTypeId: poInfo.vehicleTypeId,
-        platNo: poInfo.platNo,
-        contactNo: poInfo.contactNo,
-        status: 'CREATED',
-        reason: poInfo.reason,
-        normalFlg: true,
-        approvedAt: '',
-        rejectedAt: '',
-        approvedBy: loginId,
-        rejectedBy: loginId,
-        contractNo: poInfo.contractNo,
-        updatedBy: loginId,
-        refPicoId: poInfo?.refPicoId,
-        updatePicoDetail: []
-      })
+      initGetPickUpOrderData(poInfo.picoId)
     }
   }, [poInfo])
 

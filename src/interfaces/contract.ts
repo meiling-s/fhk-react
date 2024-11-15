@@ -12,6 +12,7 @@ export type Contract = {
     updatedBy: string
     createdAt: string
     updatedAt: string
+    version?: number
 }
 
 export type CreateContract = {
@@ -25,4 +26,5 @@ export type CreateContract = {
     epdFlg: boolean
     createdBy: string
     updatedBy: string
+    version?: number
 }

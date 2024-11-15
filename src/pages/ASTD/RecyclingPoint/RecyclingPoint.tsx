@@ -1,4 +1,4 @@
-import React, {
+import  {
   useEffect,
   useState,
   FunctionComponent,
@@ -7,12 +7,7 @@ import React, {
 import {
   Box,
   Button,
-  Checkbox,
   Typography,
-  Pagination,
-  Container,
-  IconButton,
-  Switch
 } from '@mui/material'
 import {
   DataGrid,
@@ -26,31 +21,13 @@ import {
   EDIT_OUTLINED_ICON,
   DELETE_OUTLINED_ICON
 } from '../../../themes/icons'
-import EditIcon from '@mui/icons-material/Edit'
 
 import { styles } from '../../../constants/styles'
-// import CreateVehicle from './CreateVehicle'
-import {
-  Vehicle as VehicleItem,
-  CreateVehicle as VehiclesForm
-} from '../../../interfaces/vehicles'
-import { Contract as ContractItem } from '../../../interfaces/contract'
-import { getAllContract } from '../../../APICalls/Collector/contracts'
 import { ToastContainer, toast } from 'react-toastify'
-
+import CircularLoading from '../../../components/CircularLoading'
 import { useTranslation } from 'react-i18next'
-import { extractError, returnApiToken } from '../../../utils/utils'
-import { getTenantById } from '../../../APICalls/tenantManage'
-import StatusLabel from '../../../components/StatusLabel'
-import {
-  GET_ALL_RECYCLE_TYPE,
-  GET_RECYC_TYPE
-} from '../../../constants/requests'
-import { useContainer } from 'unstated-next'
-import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import axiosInstance from '../../../constants/axiosInstance'
-import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
-import { t } from 'i18next'
+import { extractError } from '../../../utils/utils'
+
 import {
   getEngineData,
   getSiteTypeData
@@ -73,6 +50,7 @@ interface siteTypeDataProps {
   status: string
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 interface engineDataProps {
@@ -90,6 +68,7 @@ interface engineDataProps {
   status: string
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 const RecyclingPoint: FunctionComponent = () => {
@@ -108,12 +87,15 @@ const RecyclingPoint: FunctionComponent = () => {
   const [engineDrawerOpen, setEngineDrawerOpen] = useState<boolean>(false)
   const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [isLoadingSite, setIsLoadingSite] = useState<boolean>(false)
+  const [isLoadingEngine, setIsLoadingEngine] = useState<boolean>(false)
   useEffect(() => {
     initSiteTypeData()
     initEngineData()
   }, [page])
 
   const initSiteTypeData = async () => {
+    setIsLoadingSite(true)
     try {
       const result = await getSiteTypeData()
       const data = result?.data
@@ -125,9 +107,11 @@ const RecyclingPoint: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoadingSite(false)
   }
 
   const initEngineData = async () => {
+    setIsLoadingEngine(true)
     try {
       const result = await getEngineData()
       const data = result?.data
@@ -139,6 +123,7 @@ const RecyclingPoint: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoadingEngine(false)
   }
 
   const columns: GridColDef[] = [
@@ -178,7 +163,7 @@ const RecyclingPoint: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} role="button" aria-label='edit button' data-testId={`astd-land-edit-button-2039-${params?.id}`}>
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
@@ -198,7 +183,7 @@ const RecyclingPoint: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} role="button" aria-label='delete button' data-testId={`astd-land-delete-button-1795-${params?.id}`}>
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
@@ -213,6 +198,7 @@ const RecyclingPoint: FunctionComponent = () => {
       }
     }
   ]
+
   const engineColumns: GridColDef[] = [
     {
       field: 'premiseTypeNameTchi',
@@ -251,10 +237,10 @@ const RecyclingPoint: FunctionComponent = () => {
       type: 'string'
     },
     {
-    field: 'description',
-    headerName: t('packaging_unit.introduction'),
-    width: 170,
-    type: 'string'
+      field: 'description',
+      headerName: t('packaging_unit.introduction'),
+      width: 170,
+      type: 'string'
     },
     {
       field: 'edit',
@@ -262,7 +248,7 @@ const RecyclingPoint: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+             <div style={{ display: 'flex', gap: '8px' }} role="button" aria-label='edit button' data-testId={`astd-house-edit-button-3145-${params?.id}`}>
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
@@ -282,7 +268,7 @@ const RecyclingPoint: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+             <div style={{ display: 'flex', gap: '8px' }} role="button" aria-label='delete button' data-testId={`astd-house-delete-button-2454-${params?.id}`}>
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
@@ -390,156 +376,185 @@ const RecyclingPoint: FunctionComponent = () => {
         }}
       >
         <ToastContainer></ToastContainer>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            marginY: 4
-          }}
-        >
-          <Typography fontSize={16} color="black" fontWeight="bold">
-            {t(`recycling_point.engineering_land`)}
-          </Typography>
-          <Button
-            sx={[
-              styles.buttonOutlinedGreen,
-              {
-                width: 'max-content',
-                height: '40px'
-              }
-            ]}
-            variant="outlined"
-            onClick={() => {
-              setDrawerOpen(true)
-              setAction('add')
+        <section aria-label='engineering land category'>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '16px',
+              marginY: 4
             }}
           >
-            <ADD_ICON /> {t('top_menu.add_new')}
-          </Button>
-        </Box>
-        <div className="table-vehicle">
-          <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
-            <DataGrid
-              rows={siteTypeData}
-              getRowId={(row) => row.siteTypeId}
-              hideFooter
-              columns={columns}
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.siteTypeId ? 'selected-row' : ''
-              }
+            <Typography fontSize={16} color="black" fontWeight="bold">
+              {t(`recycling_point.engineering_land`)}
+            </Typography>
+            <Button
+              data-testId="astd-land-new-button-4466"
+              sx={[
+                styles.buttonOutlinedGreen,
+                {
+                  width: 'max-content',
+                  height: '40px'
+                }
+              ]}
+              variant="outlined"
+              onClick={() => {
+                setDrawerOpen(true)
+                setAction('add')
+              }}
+            >
+              <ADD_ICON /> {t('top_menu.add_new')}
+            </Button>
+          </Box>
 
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
-                  }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
-              }}
-            />
-          </Box>
-        </div>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            marginY: 4
-          }}
-        >
-          <Typography fontSize={16} color="black" fontWeight="bold">
-            {t(`recycling_point.house_or_place`)}
-          </Typography>
-          <Button
-            sx={[
-              styles.buttonOutlinedGreen,
-              {
-                width: 'max-content',
-                height: '40px'
-              }
-            ]}
-            variant="outlined"
-            onClick={() => {
-              setEngineDrawerOpen(true)
-              setAction('add')
-            }}
+          <div className="table-vehicle" aria-label='Engineering land table'>
+            <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
+              {isLoadingSite ? (
+                <CircularLoading />
+              ) : (
+                <Box>
+                  {' '}
+                  <DataGrid
+                    rows={siteTypeData}
+                    getRowId={(row) => row.siteTypeId}
+                    hideFooter
+                    columns={columns}
+                    onRowClick={handleSelectRow}
+                    getRowSpacing={getRowSpacing}
+                    localeText={localeTextDataGrid}
+                    getRowClassName={(params) =>
+                      selectedRow && params.id === selectedRow.siteTypeId
+                        ? 'selected-row'
+                        : ''
+                    }
+                    sx={{
+                      border: 'none',
+                      '& .MuiDataGrid-cell': {
+                        border: 'none'
+                      },
+                      '& .MuiDataGrid-row': {
+                        bgcolor: 'white',
+                        borderRadius: '10px'
+                      },
+                      '&>.MuiDataGrid-main': {
+                        '&>.MuiDataGrid-columnHeaders': {
+                          borderBottom: 'none'
+                        }
+                      },
+                      '.MuiDataGrid-columnHeaderTitle': {
+                        fontWeight: 'bold !important',
+                        overflow: 'visible !important'
+                      },
+                      '& .selected-row': {
+                        backgroundColor: '#F6FDF2 !important',
+                        border: '1px solid #79CA25'
+                      }
+                    }}
+                  />
+                </Box>
+              )}
+            </Box>
+          </div>
+        </section>
+        
+        <section className="house or place category">
+          <Box
+            display="flex"
+            alignItems="center"
+            gap="16px"
+            marginY={4}
           >
-            <ADD_ICON /> {t('top_menu.add_new')}
-          </Button>
-        </Box>
-        <div className="table-vehicle">
-          <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
-            <DataGrid
-              rows={engineData}
-              getRowId={(row) => row.premiseTypeId}
-              hideFooter
-              columns={engineColumns}
-              onRowClick={handleEngineSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                engineSelectedRow && params.id === engineSelectedRow.premiseTypeId ? 'selected-row' : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
-                  }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
+            <Typography fontSize={16} color="black" fontWeight="bold">
+              {t(`recycling_point.house_or_place`)}
+            </Typography>
+            <Button
+              data-testId="astd-house-new-button-5539"
+              sx={[
+                styles.buttonOutlinedGreen,
+                {
+                  width: 'max-content',
+                  height: '40px'
+                }
+              ]}
+              variant="outlined"
+              onClick={() => {
+                setEngineDrawerOpen(true)
+                setAction('add')
               }}
-            />
+            >
+              <ADD_ICON /> {t('top_menu.add_new')}
+            </Button>
           </Box>
-        </div>
+
+          <div className="table-vehicle" aria-label="House or place category table">
+            <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
+              {isLoadingEngine ? (
+                <CircularLoading />
+              ) : (
+                <DataGrid
+                  rows={engineData}
+                  getRowId={(row) => row.premiseTypeId}
+                  hideFooter
+                  columns={engineColumns}
+                  onRowClick={handleEngineSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    engineSelectedRow &&
+                    params.id === engineSelectedRow.premiseTypeId
+                      ? 'selected-row'
+                      : ''
+                  }
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+              )}
+            </Box>
+          </div>
+        </section>
+
         <CreateRecyclingPoint
-            drawerOpen={drawerOpen}
-            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
-            action={action}
-            rowId={rowId}
-            selectedItem={selectedRow}
-            handleOnSubmitData={handleOnSubmitData}
-            
+          drawerOpen={drawerOpen}
+          handleDrawerClose={() => {
+            setDrawerOpen(false)
+            setSelectedRow(null)
+          }}
+          action={action}
+          rowId={rowId}
+          selectedItem={selectedRow}
+          handleOnSubmitData={handleOnSubmitData}
         />
         <CreateEngineData
-            drawerOpen={engineDrawerOpen}
-            handleDrawerClose={() => {setEngineDrawerOpen(false); setEngineSelectedRow(null)}}
-            action={action}
-            rowId={rowId}
-            selectedItem={engineSelectedRow}
-            handleOnSubmitData={handleOnSubmitData}
+          drawerOpen={engineDrawerOpen}
+          handleDrawerClose={() => {
+            setEngineDrawerOpen(false)
+            setEngineSelectedRow(null)
+          }}
+          action={action}
+          rowId={rowId}
+          selectedItem={engineSelectedRow}
+          handleOnSubmitData={handleOnSubmitData}
         />
       </Box>
     </>

@@ -38,6 +38,7 @@ import {
 } from '../../APICalls/tenantManage'
 import { STATUS_CODE, defaultPath, format } from '../../constants/constant'
 import { styles } from '../../constants/styles'
+import CircularLoading from '../../components/CircularLoading'
 import dayjs from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -59,7 +60,8 @@ import {
   returnApiToken,
   showErrorToast,
   showSuccessToast,
-  validateEmail
+  validateEmail,
+  debounce
 } from '../../utils/utils'
 import { ToastContainer } from 'react-toastify'
 import utc from 'dayjs/plugin/utc'
@@ -68,6 +70,8 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import i18n from '../../setups/i18n'
 import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
+import ConfirmModal from '../../components/SpecializeComponents/ConfirmationModal'
+import { errorState } from '../../interfaces/common'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -79,9 +83,10 @@ function createCompany(
   status: string,
   type: string,
   createDate: string,
-  accountNum: number
+  accountNum: number,
+  version: number
 ): Company {
-  return { id, cName, eName, status, type, createDate, accountNum }
+  return { id, cName, eName, status, type, createDate, accountNum, version }
 }
 
 type inviteModal = {
@@ -106,12 +111,13 @@ const Required = () => {
 
 type rejectModal = {
   tenantId: number
+  version: number
   open: boolean
   onClose: () => void
   onSubmit: () => void
 }
 
-function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
+function RejectModal({ tenantId, version, open, onClose, onSubmit }: rejectModal) {
   const { t } = useTranslation()
   const [rejectReasonId, setRejectReasonId] = useState<string[]>([])
   const navigate = useNavigate()
@@ -160,7 +166,8 @@ function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
     try {
       const statData: UpdateStatus = {
         status: 'REJECTED',
-        updatedBy: 'admin'
+        updatedBy: 'admin',
+        version: version
       }
 
       const result = await updateTenantStatus(statData, tenantId)
@@ -427,6 +434,7 @@ type inviteForm = {
   onClose: () => void
   onSubmitForm: (formikValues: InviteTenant) => void
   isDuplicated: boolean
+  duplicatedErr: string
   isTenantErr: boolean
 }
 
@@ -436,11 +444,12 @@ function InviteForm({
   onClose,
   onSubmitForm,
   isDuplicated,
+  duplicatedErr,
   isTenantErr
 }: inviteForm) {
   const { t } = useTranslation()
   //const [submitable, setSubmitable] = useState<boolean>(false)
-
+  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false)
   const validateSchema = Yup.object().shape({
     companyCategory: Yup.string().required(
       `${t('tenant.invite_form.company_category')} ${t(
@@ -472,37 +481,47 @@ function InviteForm({
         'purchase_order.create.is_required'
       )}`
     ),
-    effFrmDate: Yup.date()
+    effFrmDate: Yup.mixed()
       .nullable()
       .required(
-        `${t('pick_up_order.shipping_validity')} ${t(
+        `${t('common.start_date_at')} ${t('purchase_order.create.is_required')}`
+      )
+      .test(
+        'is-valid-format',
+        `${t('common.start_date_at')} ${t('form.error.isInWrongFormat')}`,
+        function (value) {
+          if (value === null || value === undefined) return true
+          const date = new Date(value as string)
+          return !isNaN(date.getTime())
+        }
+      )
+      .test(
+        'is-before-end-date',
+        `${t('tenant.invite_modal.err_date')}`,
+        function (value) {
+          const { effToDate } = this.parent
+          if (!value || !effToDate) return true
+          const startDate = new Date(value as string)
+          const endDate = new Date(effToDate as string)
+          return startDate <= endDate
+        }
+      ),
+    effToDate: Yup.mixed()
+      .nullable()
+      .required(
+        `${t('tenant.invite_modal.validaity_to_date')} ${t(
           'purchase_order.create.is_required'
         )}`
       )
       .test(
-        'is-before-end-date',
-        `${t('pick_up_order.shipping_validity')} ${t(
-          'tenant.invite_modal.err_date'
-        )} `,
+        'is-valid-format',
+        `${t('tenant.invite_modal.validaity_to_date')} ${t(
+          'form.error.isInWrongFormat'
+        )}`,
         function (value) {
-          const { effToDate } = this.parent
-          return !effToDate || !value || new Date(value) <= new Date(effToDate)
-        }
-      ),
-    effToDate: Yup.date()
-      .nullable()
-      .required(
-        `${t('pick_up_order.to')} ${t('purchase_order.create.is_required')}`
-      )
-      .test(
-        'is-after-start-date',
-        `${t('pick_up_order.to')} ${t('tenant.invite_modal.err_date')} `,
-        function (value) {
-          const { effFrmDate } = this.parent
-
-          return (
-            !effFrmDate || !value || new Date(value) >= new Date(effFrmDate)
-          )
+          if (value === null || value === undefined) return true
+          const date = new Date(value as string)
+          return !isNaN(date.getTime())
         }
       )
   })
@@ -615,12 +634,32 @@ function InviteForm({
     await formik.handleSubmit()
   }
 
+  const handleOncloseForm = () => {
+    setOpenConfirmModal(true)
+    // onClose()
+  }
+
+  const getErrorMessage = () => {
+    switch (duplicatedErr) {
+      case 'brNo':
+        return t('tenant.invite_modal.err_duplicated_br_no')
+      case 'companyName':
+        return t('tenant.invite_modal.err_duplicated_company_name')
+      case 'companyNumber' || 'tenantId':
+        return t('tenant.invite_modal.err_duplicated_company_number')
+      case 'illegalTenantId':
+        return t('tenant.invite_modal.err_illegal_tenant_id')
+      default:
+        return t('tenant.invite_modal.err_duplicated_company_number')
+    }
+  }
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
         <Modal
           open={open}
-          onClose={onClose}
+          onClose={handleOncloseForm}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
@@ -814,9 +853,7 @@ function InviteForm({
                     <Alert severity="error">{formik.errors.remark} </Alert>
                   )}
                   {isDuplicated && (
-                    <Alert severity="error">
-                      {t('tenant.invite_modal.err_duplicated')}{' '}
-                    </Alert>
+                    <Alert severity="error">{getErrorMessage()}</Alert>
                   )}
                   {isTenantErr && (
                     <Alert severity="error">
@@ -830,7 +867,7 @@ function InviteForm({
               </Box>
               <Box sx={{ alignSelf: 'center', paddingBottom: '16px' }}>
                 <Button
-                  disabled={!formik.isValid || isLoading}
+                  //disabled={!formik.isValid || isLoading}
                   onClick={handleSubmit}
                   type="submit"
                   // onClick={async () => {
@@ -851,6 +888,14 @@ function InviteForm({
                 </Button>
               </Box>
             </Stack>
+            <ConfirmModal
+              isOpen={openConfirmModal}
+              onConfirm={() => {
+                setOpenConfirmModal(false)
+                onClose()
+              }}
+              onCancel={() => setOpenConfirmModal(false)}
+            />
           </Box>
         </Modal>
       </LocalizationProvider>
@@ -877,12 +922,15 @@ function CompanyManage() {
   const [selectedTenanId, setSelectedTenantId] = useState(0)
   const [isLoadingInvite, setIsLoadingInvite] = useState<boolean>(false)
   const [rejectedId, setRejectId] = useState(0)
+  const [rejectVersion, setRejectVersion] = useState<number>(0)
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const { dateFormat } = useContainer(CommonTypeContainer)
   const [duplicatedData, setDuplicatedData] = useState<boolean>(false)
+  const [duplicatedType, setDuplicatedType] = useState<string>('')
   const [tenantIdErr, setTenantIdErr] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const realmOptions = [
     {
       key: 'collector',
@@ -927,12 +975,13 @@ function CompanyManage() {
     )
   }
 
-  const handleApproveTenant = async (tenantId: number) => {
+  const handleApproveTenant = async (tenantId: number, version: number) => {
     try {
       setOpenDetails(false)
       const statData: UpdateStatus = {
         status: 'CONFIRMED',
-        updatedBy: 'admin'
+        updatedBy: 'admin',
+        version: version
       }
 
       const result = await updateTenantStatus(statData, tenantId)
@@ -950,8 +999,9 @@ function CompanyManage() {
     }
   }
 
-  const handleRejectTenant = (tenantId: number) => {
+  const handleRejectTenant = (tenantId: number, version: number) => {
     setRejectId(tenantId)
+    setRejectVersion(version)
     setRejectModal(true)
   }
 
@@ -1063,7 +1113,7 @@ function CompanyManage() {
                   ]}
                   variant="outlined"
                   onClick={(event) => {
-                    handleApproveTenant(params.row.id)
+                    handleApproveTenant(params.row.id, params.row.version)
                     event.stopPropagation()
                   }}
                 >
@@ -1079,7 +1129,7 @@ function CompanyManage() {
                   ]}
                   variant="outlined"
                   onClick={(event) => {
-                    handleRejectTenant(params.row.id)
+                    handleRejectTenant(params.row.id, params.row.version)
                     event.stopPropagation() // Prevent event bubbling
                   }}
                 >
@@ -1110,7 +1160,8 @@ function CompanyManage() {
           com?.status,
           com?.tenantType,
           com?.createdAt,
-          com?.decimalPlace || 0
+          com?.decimalPlace || 0,
+          com?.version
         )
       )
     })
@@ -1119,6 +1170,7 @@ function CompanyManage() {
   }
 
   async function initCompaniesData() {
+    setIsLoading(true)
     try {
       const result = await getAllTenant(page - 1, pageSize)
       const data = result?.data.content
@@ -1134,9 +1186,10 @@ function CompanyManage() {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
-  const handleFilterCompanies = async (searchWord: string) => {
+  const handleFilterCompanies = debounce(async (searchWord: string) => {
     try {
       if (searchWord != '') {
         const tenantId = parseInt(searchWord)
@@ -1157,7 +1210,7 @@ function CompanyManage() {
         navigate('/maintenance')
       }
     }
-  }
+  }, 500)
 
   const onRejectModal = () => {
     initCompaniesData()
@@ -1186,7 +1239,24 @@ function CompanyManage() {
   const handleCloseInvite = () => {
     setInvSendModal(false)
     setDuplicatedData(false)
+    setDuplicatedType('')
     initCompaniesData()
+  }
+
+  const getDuplicatedErrType = (state: errorState) => {
+    const match = state.message.match(/\[(.*?)\]/)
+    const errField = match ? match[1] : ''
+
+    switch (state.code) {
+      case 409:
+        setDuplicatedType(errField)
+        break
+      case 403:
+        setDuplicatedType(errField)
+        break
+      case 500:
+        setDuplicatedType('companyNumber')
+    }
   }
 
   const handleSendInvitation = (isSend: boolean) => {
@@ -1247,6 +1317,7 @@ function CompanyManage() {
           setInvFormModal(false)
           setIsLoadingInvite(false)
           setDuplicatedData(false)
+          setDuplicatedType('')
           setTenantIdErr(false)
         } else {
           showErrorToast(t('common.saveFailed'))
@@ -1254,13 +1325,19 @@ function CompanyManage() {
         }
       } catch (error: any) {
         const { state, realm } = extractError(error)
+        console.log('state.code', state.code)
         if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[403]) {
+          //showErrorToast(t('common.saveFailed'))
+          getDuplicatedErrType(state)
+          setDuplicatedData(true)
+          setIsLoadingInvite(false)
         } else {
           showErrorToast(`${t('common.saveFailed')}`)
+          getDuplicatedErrType(state)
           setDuplicatedData(true)
           setTenantIdErr(false)
-          // console.log("test", "lalal2")
           setIsLoadingInvite(false)
         }
       }
@@ -1295,6 +1372,7 @@ function CompanyManage() {
           onClick={() => {
             setInvFormModal(true)
             setDuplicatedData(false)
+            setDuplicatedType('')
           }}
         >
           <ADD_PERSON_ICON sx={{ marginX: 1 }} /> {t('tenant.invite')}
@@ -1339,52 +1417,58 @@ function CompanyManage() {
         />
         <div className="table-tenant">
           <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={filterCompanies}
-              getRowId={(row) => row.id}
-              hideFooter
-              columns={headCells}
-              disableRowSelectionOnClick
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) =>
-                selectedTenanId && params.id === selectedTenanId
-                  ? 'selected-row'
-                  : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                <DataGrid
+                  rows={filterCompanies}
+                  getRowId={(row) => row.id}
+                  hideFooter
+                  columns={headCells}
+                  disableRowSelectionOnClick
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedTenanId && params.id === selectedTenanId
+                      ? 'selected-row'
+                      : ''
                   }
-                },
-                '.MuiDataGrid-columnHeaderTitle': {
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                  backgroundColor: '#F6FDF2 !important',
-                  border: '1px solid #79CA25'
-                }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         <InviteForm
@@ -1396,6 +1480,7 @@ function CompanyManage() {
           }}
           onSubmitForm={onInviteFormSubmit}
           isDuplicated={duplicatedData}
+          duplicatedErr={duplicatedType}
           isTenantErr={tenantIdErr}
         />
 
@@ -1413,6 +1498,7 @@ function CompanyManage() {
 
         <RejectModal
           tenantId={rejectedId}
+          version={rejectVersion}
           open={rejectModal}
           onClose={() => setRejectModal(false)}
           onSubmit={onRejectModal}

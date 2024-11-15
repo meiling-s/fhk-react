@@ -1,4 +1,10 @@
-import { useEffect, useState, FunctionComponent, useCallback } from 'react'
+import {
+  useEffect,
+  useState,
+  FunctionComponent,
+  useCallback,
+  useRef
+} from 'react'
 import {
   Box,
   Button,
@@ -28,12 +34,17 @@ import {
 } from '../../../APICalls/Collector/denialReason'
 import { DenialReason as DenialReasonItem } from '../../../interfaces/denialReason'
 import CreateDenialReason from './CreateDenialReason'
-import { getAllFunction } from '../../../APICalls/Collector/userGroup'
+import {
+  getAllFilteredFunction,
+  getAllFunction
+} from '../../../APICalls/Collector/userGroup'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import { useNavigate } from 'react-router-dom'
 import { extractError } from '../../../utils/utils'
 import { STATUS_CODE } from '../../../constants/constant'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import CircularLoading from '../../../components/CircularLoading'
+
 import StatusLabel from '../../../components/StatusLabel'
 
 function createDenialReason(
@@ -50,7 +61,8 @@ function createDenialReason(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
+  version: number,
 ): DenialReasonItem {
   return {
     reasonId,
@@ -66,7 +78,8 @@ function createDenialReason(
     createdBy,
     updatedBy,
     createdAt,
-    updatedAt
+    updatedAt,
+    version,
   }
 }
 
@@ -98,14 +111,18 @@ const DenialReason: FunctionComponent = () => {
   const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null)
   const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const searchActionRef = useRef(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
     initFunctionList()
   }, [i18n, currentLanguage])
 
   const initFunctionList = async () => {
+    setIsLoading(true)
     try {
-      const result = await getAllFunction()
+      const result = await getAllFilteredFunction('astd')
       const data = result?.data
       if (data.length > 0) {
         let name = ''
@@ -153,6 +170,7 @@ const DenialReason: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   const initDenialReasonList = async () => {
@@ -183,7 +201,8 @@ const DenialReason: FunctionComponent = () => {
               item?.createdBy,
               item?.updatedBy,
               item?.createdAt,
-              item?.updatedAt
+              item?.updatedAt,
+              item?.version,
             )
           )
         })
@@ -198,9 +217,11 @@ const DenialReason: FunctionComponent = () => {
     }
   }
   const searchByFunctionId = async (functionId: number) => {
+    setIsLoading(true)
     try {
+      setPage(1)
       const result = await getAllDenialReasonByFunctionId(
-        page - 1,
+        0,
         pageSize,
         functionId
       )
@@ -229,7 +250,8 @@ const DenialReason: FunctionComponent = () => {
               item?.createdBy,
               item?.updatedBy,
               item?.createdAt,
-              item?.updatedAt
+              item?.updatedAt,
+              item?.version,
             )
           )
         })
@@ -242,13 +264,17 @@ const DenialReason: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
   useEffect(() => {
     initFunctionList()
   }, [])
 
   useEffect(() => {
-    initDenialReasonList()
+    if (!searchActionRef.current) {
+      initDenialReasonList()
+    }
+    searchActionRef.current = false
   }, [functionList, page])
 
   const columns: GridColDef[] = [
@@ -299,6 +325,7 @@ const DenialReason: FunctionComponent = () => {
               event.stopPropagation()
               handleAction(params, 'edit')
             }}
+            data-testid={'astd-reject-delete-button-5983-' + params.id}
           >
             <EDIT_OUTLINED_ICON
               fontSize="small"
@@ -320,6 +347,7 @@ const DenialReason: FunctionComponent = () => {
               event.stopPropagation()
               handleAction(params, 'delete')
             }}
+            data-testid={'astd-reject-delete-button-5983-'  + params.id}
           >
             <DELETE_OUTLINED_ICON
               fontSize="small"
@@ -346,7 +374,8 @@ const DenialReason: FunctionComponent = () => {
       label: t('denial_reason.corresponding_functions'),
       placeholder: t('denial_reason.corresponding_functions'),
       width: '100%',
-      options: functionOptions
+      options: functionOptions,
+      dataTestId: 'astd-reject-functions-select-menu-8108'
     }
   ]
 
@@ -409,6 +438,7 @@ const DenialReason: FunctionComponent = () => {
   }, [])
 
   const handleSearch = (keyName: string, value: string) => {
+    searchActionRef.current = true
     if (value) {
       searchByFunctionId(Number(value))
     } else {
@@ -417,8 +447,8 @@ const DenialReason: FunctionComponent = () => {
   }
 
   useEffect(() => {
-    if(DenialReasonList.length === 0 && page > 1){
-      setPage(prev => prev -1)
+    if (DenialReasonList.length === 0 && page > 1) {
+      setPage((prev) => prev - 1)
     }
   }, [DenialReasonList])
 
@@ -458,6 +488,7 @@ const DenialReason: FunctionComponent = () => {
               setDrawerOpen(true)
               setAction('add')
             }}
+            data-testid='astd-reject-new-button-6726'
           >
             <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
@@ -472,59 +503,73 @@ const DenialReason: FunctionComponent = () => {
               label={s.label}
               options={s.options || []}
               onChange={handleSearch}
+              dataTestId={s.dataTestId}
             />
           ))}
           {/* </Stack> */}
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={DenialReasonList}
-              getRowId={(row) => row.reasonId}
-              hideFooter
-              columns={columns}
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.reasonId ? 'selected-row' : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                {' '}
+                <DataGrid
+                  rows={DenialReasonList}
+                  getRowId={(row) => row.reasonId}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.reasonId
+                      ? 'selected-row'
+                      : ''
                   }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    searchActionRef.current = false
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         {rowId != 0 && (
           <CreateDenialReason
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
+            handleDrawerClose={() => {
+              setDrawerOpen(false)
+              setSelectedRow(null)
+            }}
             action={action}
             selectedItem={selectedRow}
             onSubmitData={onSubmitData}

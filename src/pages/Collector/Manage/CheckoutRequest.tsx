@@ -44,23 +44,30 @@ import { CheckOut } from '../../../interfaces/checkout'
 import { useTranslation } from 'react-i18next'
 import { styles } from '../../../constants/styles'
 import { queryCheckout } from '../../../interfaces/checkout'
-import { Languages, STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
+import {
+  Languages,
+  STATUS_CODE,
+  localStorgeKeyName
+} from '../../../constants/constant'
 import {
   displayCreatedDate,
   extractError,
   getPrimaryColor,
-  showSuccessToast
+  showSuccessToast,
+  debounce,
+  showErrorToast
 } from '../../../utils/utils'
 import CustomButton from '../../../components/FormComponents/CustomButton'
 import i18n from '../../../setups/i18n'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-
+import CircularLoading from '../../../components/CircularLoading'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
+import { getTenantById, searchTenantById } from '../../../APICalls/tenantManage'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -74,6 +81,8 @@ type ApproveForm = {
   onClose: () => void
   checkedCheckOut: number[]
   onApprove?: () => void
+  checkOutData: CheckOut[]
+  navigate: (url: string) => void
 }
 
 type RejectForm = {
@@ -82,6 +91,8 @@ type RejectForm = {
   checkedCheckOut: number[]
   onRejected?: () => void
   reasonList: any
+  checkOutData: CheckOut[]
+  navigate: (url: string) => void
 }
 
 type Confirm = {
@@ -132,46 +143,61 @@ const ApproveModal: React.FC<ApproveForm> = ({
   open,
   onClose,
   checkedCheckOut,
-  onApprove
+  onApprove,
+  checkOutData,
+  navigate,
 }) => {
   const { t } = useTranslation()
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const handleApproveRequest = async () => {
     const confirmReason: string[] = ['Confirmed']
-    const statReason: updateStatus = {
-      status: 'CONFIRMED',
-      reason: confirmReason,
-      updatedBy: loginId
-    }
-
+    
     const results = await Promise.allSettled(
       checkedCheckOut.map(async (chkOutId) => {
+        const selected = checkOutData.find(value => value.chkOutId === chkOutId)
         try {
+          const statReason: updateStatus = {
+            status: 'CONFIRMED',
+            reason: confirmReason,
+            updatedBy: loginId,
+            version: selected?.version ?? 0
+          }
           const result = await updateCheckoutRequestStatus(chkOutId, statReason)
           const data = result?.data
           if (data) {
             // console.log('updated check-iout status: ', data)
             data.checkoutDetail.map(async (detail: any) => {
-            const dataCheckout: CheckOutWarehouse = {
-              checkOutWeight: detail.weight || 0,
-              checkOutUnitId: detail.unitId || 0,
-              checkOutAt: data.updatedAt || '',
-              checkOutBy: data.updatedBy || '',
-              updatedBy: loginId
+              if (detail.picoDtlId) {
+                const picoAPI = await getPicoById(selected?.picoId ?? '')
+                const picoResult = picoAPI.data.pickupOrderDetail.find((value: { picoDtlId: number }) => value.picoDtlId === detail.picoDtlId)
+  
+                const dataCheckout: CheckOutWarehouse = {
+                  checkOutWeight: detail.weight || 0,
+                  checkOutUnitId: detail.unitId || 0,
+                  checkOutAt: data.updatedAt || '',
+                  checkOutBy: data.updatedBy || '',
+                  updatedBy: loginId,
+                  version: picoResult.version,
+                }
+                return await updateCheckout(
+                  chkOutId,
+                  dataCheckout,
+                  detail.picoDtlId
+                )
+              }
+            })
+
+            if (onApprove) {
+              onApprove()
             }
-            if (detail.picoDtlId){
-              return await updateCheckout(chkOutId, dataCheckout, detail.picoDtlId)
-            }
-          })
-          
-          if (onApprove) {
-            onApprove()
           }
-        }} catch (error) {
-          console.error(
-            `Failed to update check-in status for id ${chkOutId}: `,
-            error
-          )
+        } catch (error: any) {
+          const { state } = extractError(error)
+          if (state.code === STATUS_CODE[503]) {
+            navigate('/maintenance')
+          } else if (state.code === STATUS_CODE[409]) {
+            showErrorToast(error?.response?.data?.message)
+          }
         }
       })
     )
@@ -233,7 +259,9 @@ const RejectModal: React.FC<RejectForm> = ({
   onClose,
   checkedCheckOut,
   onRejected,
-  reasonList
+  reasonList,
+  checkOutData,
+  navigate
 }) => {
   const { t } = useTranslation()
   const [rejectReasonId, setRejectReasonId] = useState<string[]>([])
@@ -246,15 +274,17 @@ const RejectModal: React.FC<RejectForm> = ({
       return reasonItem ? reasonItem.name : ''
     })
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
-    const statReason: updateStatus = {
-      status: 'REJECTED',
-      reason: rejectReason,
-      updatedBy: loginId
-    }
-
+    
     const results = await Promise.allSettled(
       checkedCheckOut.map(async (chkOutId) => {
+        const selected = checkOutData.find(value => value.chkOutId === chkOutId)
         try {
+          const statReason: updateStatus = {
+            status: 'REJECTED',
+            reason: rejectReason,
+            updatedBy: loginId,
+            version: selected?.version ?? 0
+          }
           const result = await updateCheckoutRequestStatus(chkOutId, statReason)
           const data = result?.data
           if (data) {
@@ -262,11 +292,13 @@ const RejectModal: React.FC<RejectForm> = ({
               onRejected()
             }
           }
-        } catch (error) {
-          console.error(
-            `Failed to update check-in status for id ${chkOutId}: `,
-            error
-          )
+        } catch (error: any) {
+          const { state } = extractError(error)
+          if (state.code === STATUS_CODE[503]) {
+            navigate('/maintenance')
+          } else if (state.code === STATUS_CODE[409]) {
+            showErrorToast(error?.response?.data?.message)
+          }
         }
       })
     )
@@ -333,8 +365,8 @@ const RejectModal: React.FC<RejectForm> = ({
 }
 
 type CompanyNameLanguages = {
-  labelEnglish: string,
-  labelSimpflifed: string,
+  labelEnglish: string
+  labelSimpflifed: string
   labelTraditional: string
 }
 
@@ -346,6 +378,7 @@ const CheckoutRequest: FunctionComponent = () => {
   const approveLabel = t('check_out.approve')
   const rejectLabel = t('check_out.reject')
   const [location, setLocation] = useState('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [rejFormModal, setRejectModal] = useState<boolean>(false)
   const [approveModal, setApproveModal] = useState<boolean>(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -366,7 +399,8 @@ const CheckoutRequest: FunctionComponent = () => {
     receiverAddr: ''
   })
   const [reasonList, setReasonList] = useState<any>([])
-  const { dateFormat, manuList, collectorList, logisticList, companies } = useContainer(CommonTypeContainer)
+  const { dateFormat, manuList, collectorList, logisticList, companies, currentTenant } =
+    useContainer(CommonTypeContainer)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const getRejectReason = async () => {
@@ -419,20 +453,22 @@ const CheckoutRequest: FunctionComponent = () => {
     chkOutId: number
   ) => {
     setDrawerOpen(false)
-    setSelectedRow(undefined);
+    setSelectedRow(undefined)
 
     const checked = event.target.checked
 
-    if(checked){
-      setCheckedCheckOut(prev => [...prev, chkOutId])
-      setUnCheckedCheckOut(prev => {
-        const unCheck = prev.filter(id => id !== chkOutId)
+    if (checked) {
+      setCheckedCheckOut((prev) => [...prev, chkOutId])
+      setUnCheckedCheckOut((prev) => {
+        const unCheck = prev.filter((id) => id !== chkOutId)
         return unCheck
       })
     } else {
-      const updatedChecked = checkedCheckOut.filter((rowId) => rowId != chkOutId)
+      const updatedChecked = checkedCheckOut.filter(
+        (rowId) => rowId != chkOutId
+      )
       setCheckedCheckOut(updatedChecked)
-      setUnCheckedCheckOut(prev => [...prev, chkOutId])
+      setUnCheckedCheckOut((prev) => [...prev, chkOutId])
     }
     // const updatedChecked = checked
     //   ? [...checkedCheckOut, chkOutId]
@@ -456,22 +492,22 @@ const CheckoutRequest: FunctionComponent = () => {
   )
 
   useEffect(() => {
-    if(selectAll){
-      const newIds:number[] = []
-       filterCheckOut.map(item => item.chkOutId)
-       for(let item of filterCheckOut){
-        if(!unCheckedCheckOut.includes(item.chkOutId)){
+    if (selectAll) {
+      const newIds: number[] = []
+      filterCheckOut.map((item) => item.chkOutId)
+      for (let item of filterCheckOut) {
+        if (!unCheckedCheckOut.includes(item.chkOutId)) {
           newIds.push(item.chkOutId)
         }
-       }
-      const allId:number[] = [...checkedCheckOut, ...newIds]
+      }
+      const allId: number[] = [...checkedCheckOut, ...newIds]
       const ids = new Set(allId)
       setCheckedCheckOut(Array.from(ids))
     }
   }, [filterCheckOut])
 
   useEffect(() => {
-    if(checkedCheckOut.length === 0){
+    if (checkedCheckOut.length === 0) {
       setSelectAll(false)
     }
   }, [checkedCheckOut])
@@ -503,7 +539,7 @@ const CheckoutRequest: FunctionComponent = () => {
       width: 200
     },
     {
-      field: 'senderName',
+      field: 'senderCompany',
       headerName: t('check_out.shipping_company'),
       width: 150,
       type: 'string'
@@ -577,78 +613,90 @@ const CheckoutRequest: FunctionComponent = () => {
 
   const getPicoDetail = async (picoId: string) => {
     try {
-        const pico = await getPicoById(picoId)
-        if(pico) {
-          return pico.data
-        }
+      const pico = await getPicoById(picoId)
+      if (pico) {
+        return pico.data
+      }
     } catch (error) {
       return null
     }
   }
 
-  const getCompanyNameById = (id:number):string => {
+  const getCompanyNameById = (id: number): string => {
     let { ENUS, ZHCH, ZHHK } = Languages
-    let companyName:string = '';
-    const company = companies.find(item => item.id === id);
-    if(company){
-      if(i18n.language === ENUS) companyName = company.nameEng ?? ''
-      if(i18n.language === ZHCH) companyName = company.nameSchi ?? ''
-      if(i18n.language === ZHHK) companyName = company.nameTchi ?? ''
+    let companyName: string = ''
+    const company = companies.find((item) => item.id === id)
+    if (company) {
+      if (i18n.language === ENUS) companyName = company.nameEng ?? ''
+      if (i18n.language === ZHCH) companyName = company.nameSchi ?? ''
+      if (i18n.language === ZHHK) companyName = company.nameTchi ?? ''
     }
 
     return companyName
   }
 
+  const getReceiverCompany = async (id: string) => {
+    let companyName: string = ''
+    const result = await getTenantById(Number(id))
+    const data = result.data
+    if (i18n.language === 'enus') {
+      companyName = data.companyNameEng
+    } else if (i18n.language === 'zhch') {
+      companyName = data.companyNameSchi
+    } else {
+      companyName = data.companyNameTchi
+    }
+
+    return companyName
+  }
+
+  const getSenderCompany = (): string => {
+    let senderCompany: string = ''
+    if (i18n.language === Languages.ENUS)
+      senderCompany = currentTenant?.nameEng ?? ''
+    if (i18n.language === Languages.ZHCH)
+      senderCompany = currentTenant?.nameSchi ?? ''
+    if (i18n.language === Languages.ZHHK)
+      senderCompany = currentTenant?.nameTchi ?? ''
+    return senderCompany
+  }
+
   const getCheckoutRequest = async () => {
+    setIsLoading(true)
     try {
       const result = await getAllCheckoutRequest(page - 1, pageSize, query)
       const data = result?.data.content
       if (data && data.length > 0) {
-        // console.log('transformToTableRow', data)
-        // const checkoutData = data
-        //   .map(transformToTableRow)
-        //   .filter((item: CheckOut) => item.status === 'CREATED')
-        // setCheckoutRequest(
-        //   data.filter((item: CheckOut) => item.status === 'CREATED')
-        // )
-        let checkoutData:CheckOut[] = []
-        for (let item of data){
-          
-          if(item.status !== 'CREATED') continue
+        let checkoutData: CheckOut[] = []
+        for (let item of data) {
+          if (item.status !== 'CREATED') continue
           const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
-          const createdAt = dateInHK.format(`${dateFormat} HH:mm`);
-          item.createdAt = createdAt;
-          if(item.picoId){
-            const picoDetail = await getPicoDetail(item.picoId);
-            if(picoDetail?.pickupOrderDetail[0]){
+          const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
+          item.createdAt = createdAt
+          if (item.picoId) {
+            const picoDetail = await getPicoDetail(item.picoId)
+            if (picoDetail?.pickupOrderDetail[0]) {
               const pico = picoDetail?.pickupOrderDetail[0]
               item.senderName = pico.senderName
               item.senderAddr = pico.senderAddr
             }
           }
-          if(item?.logisticId){
+          if (item?.logisticId) {
             const companyName = getCompanyNameById(Number(item?.logisticId))
-            item.logisticName = companyName !== '' ? companyName : item.logisticName
+            item.logisticName =
+              companyName !== '' ? companyName : item.logisticName
           }
-          if(item.receiverId){
-            const companyName = getCompanyNameById(item.receiverId);
-            item.receiverName = companyName !== '' ? companyName : item.receiverName
+          if (item.receiverId) {
+            const companyName = await getReceiverCompany(item.receiverId)
+            item.receiverName =
+              item.receiverId !== '' ? companyName : item.receiverName
           }
-          if(item.senderName){
-            const companyName = getTranslationCompany(item.senderName);
-            item.senderName = companyName !== '' ? companyName : item.senderName
-          }
- 
+          
+          item.senderCompany = getSenderCompany()
+
           checkoutData.push(item)
         }
-        // const checkoutData = data.map((item: CheckOut) => {
-        //   const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
-        //   const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
-        //   return {
-        //     ...item,
-        //     createdAt
-        //   }
-        // })
+
         setCheckoutRequest(checkoutData)
         setFilterCheckOut(checkoutData)
       } else {
@@ -661,6 +709,7 @@ const CheckoutRequest: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -672,18 +721,21 @@ const CheckoutRequest: FunctionComponent = () => {
     setQuery({ ...query, ...newQuery })
   }
 
-  const handleSearchByPoNumb = (searchWord: string) => {
+  const handleSearchByPoNumb = debounce((searchWord: string) => {
+    setPage(1)
     updateQuery({ picoId: searchWord })
-  }
+  }, 1000)
 
   const handleCompanyChange = (event: SelectChangeEvent) => {
     // console.log("company", event.target.value)
+    setPage(1)
     setCompany(event.target.value)
     var searchWord = event.target.value
     updateQuery({ receiverName: searchWord })
   }
 
   const handleLocChange = (event: SelectChangeEvent) => {
+    setPage(1)
     setLocation(event.target.value)
     var searchWord = event.target.value
     updateQuery({ receiverAddr: searchWord })
@@ -700,7 +752,7 @@ const CheckoutRequest: FunctionComponent = () => {
     const selectedItem = checkOutRequest?.find(
       (item) => item.chkOutId === row.chkOutId
     )
-    
+
     setSelectedRow(selectedItem)
 
     setDrawerOpen(true)
@@ -727,66 +779,81 @@ const CheckoutRequest: FunctionComponent = () => {
     )
   }, [role])
 
-  const getTranslationCompanyName = (name: string) : string => {
-    let companyName:string = '';
-    const logistic = logisticList?.find(item => {
+  const getTranslationCompanyName = (name: string): string => {
+    let companyName: string = ''
+    const logistic = logisticList?.find((item) => {
       const { logisticNameEng, logisticNameSchi, logisticNameTchi } = item
-      if(logisticNameEng === name || logisticNameSchi === name || logisticNameTchi === name){
-        return item;
-      }
-    })
-
-    if(logistic){
-      if(i18n.language === Languages.ENUS) companyName = logistic.logisticNameEng
-      if(i18n.language === Languages.ZHCH) companyName = logistic.logisticNameSchi;
-      if(i18n.language === Languages.ZHHK) companyName = logistic.logisticNameTchi
-    }
-    return companyName
-  }
-
-  const listTranslationCompanyName = () : CompanyNameLanguages[] => {
-
-    const manufacturerCompany: CompanyNameLanguages[] = manuList?.map(item => {
-      return {
-        labelEnglish : item?.manufacturerNameEng ?? '',
-        labelSimpflifed : item?.manufacturerNameSchi ?? '',
-        labelTraditional : item?.manufacturerNameTchi ?? ''
-      }
-    }) ?? []
-
-    const collectorCompany : CompanyNameLanguages[] = collectorList?.map(item => {
-      return {
-        labelEnglish : item?.collectorId ?? '',
-        labelSimpflifed : item?.collectorNameSchi ?? '',
-        labelTraditional : item?.collectorNameTchi ?? ''
-      }
-    })  ?? []
-   
-    return [...manufacturerCompany, ...collectorCompany]
-  }
-
-  const companyReceiverSender  = listTranslationCompanyName();
-
-  const getTranslationCompany = (name: string) : string => {
-    let companyName:string = '';
-    const company = companyReceiverSender.find(item => {
-      const { labelEnglish, labelSimpflifed, labelTraditional } = item
-      if( name === labelEnglish || name === labelSimpflifed || name === labelTraditional){
+      if (
+        logisticNameEng === name ||
+        logisticNameSchi === name ||
+        logisticNameTchi === name
+      ) {
         return item
       }
     })
 
-    if(company){
-      if(i18n.language === Languages.ENUS) companyName = company.labelEnglish
-      if(i18n.language === Languages.ZHCH) companyName = company.labelSimpflifed
-      if(i18n.language === Languages.ZHHK) companyName = company.labelTraditional
+    if (logistic) {
+      if (i18n.language === Languages.ENUS)
+        companyName = logistic.logisticNameEng
+      if (i18n.language === Languages.ZHCH)
+        companyName = logistic.logisticNameSchi
+      if (i18n.language === Languages.ZHHK)
+        companyName = logistic.logisticNameTchi
+    }
+    return companyName
+  }
+
+  const listTranslationCompanyName = (): CompanyNameLanguages[] => {
+    const manufacturerCompany: CompanyNameLanguages[] =
+      manuList?.map((item) => {
+        return {
+          labelEnglish: item?.manufacturerNameEng ?? '',
+          labelSimpflifed: item?.manufacturerNameSchi ?? '',
+          labelTraditional: item?.manufacturerNameTchi ?? ''
+        }
+      }) ?? []
+
+    const collectorCompany: CompanyNameLanguages[] =
+      collectorList?.map((item) => {
+        return {
+          labelEnglish: item?.collectorId ?? '',
+          labelSimpflifed: item?.collectorNameSchi ?? '',
+          labelTraditional: item?.collectorNameTchi ?? ''
+        }
+      }) ?? []
+
+    return [...manufacturerCompany, ...collectorCompany]
+  }
+
+  const companyReceiverSender = listTranslationCompanyName()
+
+  const getTranslationCompany = (name: string): string => {
+    let companyName: string = ''
+    const company = companyReceiverSender.find((item) => {
+      console.log(item, 'itemmm')
+      const { labelEnglish, labelSimpflifed, labelTraditional } = item
+      if (
+        name === labelEnglish ||
+        name === labelSimpflifed ||
+        name === labelTraditional
+      ) {
+        return item
+      }
+    })
+
+    if (company) {
+      if (i18n.language === Languages.ENUS) companyName = company.labelEnglish
+      if (i18n.language === Languages.ZHCH)
+        companyName = company.labelSimpflifed
+      if (i18n.language === Languages.ZHHK)
+        companyName = company.labelTraditional
     }
 
     return companyName
   }
 
   return (
-    <Box className="container-wrapper w-max mr-11">
+    <Box className="container-wrapper w-full mr-11">
       <div className="overview-page bg-bg-primary">
         <div
           className="header-page flex justify-start items-center mb-4 cursor-pointer"
@@ -904,55 +971,71 @@ const CheckoutRequest: FunctionComponent = () => {
             </Select>
           </FormControl>
         </div>
-        <div className="table-overview">
+        <div className="table-overview w-full">
           <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={filterCheckOut}
-              getRowId={(row) => row.chkOutId}
-              hideFooter
-              columns={checkoutHeader}
-              disableRowSelectionOnClick
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                `${selectedRow && params.row.chkOutId === selectedRow.chkOutId ? 'selected-row ' : ''}${checkedCheckOut && checkedCheckOut.includes(params.row.chkOutId) ? 'checked-row' : ''}`
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                <DataGrid
+                  rows={filterCheckOut}
+                  getRowId={(row) => row.chkOutId}
+                  hideFooter
+                  columns={checkoutHeader}
+                  disableRowSelectionOnClick
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    `${
+                      selectedRow &&
+                      params.row.chkOutId === selectedRow.chkOutId
+                        ? 'selected-row '
+                        : ''
+                    }${
+                      checkedCheckOut &&
+                      checkedCheckOut.includes(params.row.chkOutId)
+                        ? 'checked-row'
+                        : ''
+                    }`
                   }
-                },
-                '.checked-row':{
-                  backgroundColor: `rgba(25, 118, 210, 0.08)`
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.checked-row': {
+                      backgroundColor: `rgba(25, 118, 210, 0.08)`
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
       </div>
@@ -969,6 +1052,8 @@ const CheckoutRequest: FunctionComponent = () => {
           resetPage()
           // setConfirmModal(true)
         }}
+        checkOutData={checkOutRequest ?? []}
+        navigate={navigate}
       />
       <ApproveModal
         open={approveModal}
@@ -982,6 +1067,8 @@ const CheckoutRequest: FunctionComponent = () => {
           // setConfirmModal(true)
         }}
         checkedCheckOut={checkedCheckOut}
+        checkOutData={checkOutRequest ?? []}
+        navigate={navigate}
       />
       <ConfirmModal open={confirmModal} onClose={resetPage} />
       <CheckInDetails

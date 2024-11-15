@@ -11,6 +11,7 @@ export type Vehicle = {
     updatedBy: string
     createdAt: string
     updatedAt: string
+    version: number
 }
 
 export type CreateVehicle = {
@@ -30,11 +31,13 @@ export type LogisticVehicle = {
     plateNo: string
     photo: string[]
     status: string
+    deviceId: string
     netWeight: number
     createdBy: string
     updatedBy: string
     createdAt: string
     updatedAt: string
+    version: number
 }
 
 export type CreateLogisticVehicle = {
@@ -43,6 +46,7 @@ export type CreateLogisticVehicle = {
     netWeight: number,
     photo: string[],
     status: string,
+    deviceId: string,
     createdBy: string,
     updatedBy: string
 }

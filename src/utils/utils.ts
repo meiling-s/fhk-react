@@ -6,11 +6,11 @@ import {
   Roles,
   Realm,
   RealmApi,
-  STATUS_CODE
+  STATUS_CODE,
+  fieldNameRecycables
 } from '../constants/constant'
 import dayjs, { Dayjs } from 'dayjs'
 import { toast } from 'react-toastify'
-import { fieldNameRecycables } from '../constants/constant'
 import { errorState } from '../interfaces/common'
 import i18n from '../setups/i18n'
 import { recycType } from '../interfaces/common'
@@ -457,4 +457,54 @@ export const validDayjsISODate = (date: Dayjs): boolean => {
   // Regex to ensure ISO 8601 format with 'Z' (UTC time)
   const iso8601Pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
   return iso8601Pattern.test(isoString)
+}
+
+export const creatioPageList = () => {
+  const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
+  const listPage = [
+    '/collector/createCollectionPoint',
+    '/collector/editCollectionPoint',
+    `/${realm}/createPickupOrder`,
+    `/${realm}/editPickupOrder`,
+    '/astd/createPicoLogistic',
+    '/astd/editPicoLogistic',
+    '/logistic/createJobOrder/:picoId',
+    '/customer/createPurchaseOrder',
+    '/customer/editPurchaseOrder'
+  ]
+
+  return listPage
+}
+
+export function debounce<T extends (...args: any[]) => void>(
+  fn: T,
+  delay: number
+) {
+  let timeoutID: ReturnType<typeof setTimeout> | null
+
+  return function (this: any, ...args: Parameters<T>) {
+    if (timeoutID) {
+      clearTimeout(timeoutID)
+    }
+    timeoutID = setTimeout(() => {
+      fn.apply(this, args)
+    }, delay)
+  }
+}
+
+export const getFormatId = (id: string): string => {
+  let initId: string = '000000';
+
+  if (id?.length === 0 || !id) {
+    initId = '';
+  } else if (id?.length < 6) {
+    initId = initId.slice(id?.length, initId?.length) + id
+  } else {
+    initId = id;
+  }
+  return initId
+};
+
+export const cloneData = (data: any) => {
+  return JSON.parse(JSON.stringify(data))
 }

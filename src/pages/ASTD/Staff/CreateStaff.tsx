@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { createStaffTitle, editStaffTitle } from '../../../APICalls/Collector/staffTitle'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
 import { STATUS_CODE, formErr, localStorgeKeyName } from '../../../constants/constant'
 import { StaffTitle, CreateStaffTitle as CreateStaffTitleItem, UpdateStaffTitle } from '../../../interfaces/staffTitle'
 import { useNavigate } from 'react-router-dom'
@@ -53,37 +53,43 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
       label: t('common.traditionalChineseName'),
       placeholder: t('common.enterName'),
       field: 'titleNameTchi',
-      type: 'text'
+      type: 'text',
+      dataTestId: 'astd-staff-form-tc-input-field-9644'
     },
     {
       label: t('common.simplifiedChineseName'),
       placeholder: t('common.enterName'),
       field: 'titleNameSchi',
-      type: 'text'
+      type: 'text',
+      dataTestId: 'astd-staff-form-sc-input-field-7457'
     },
     {
       label: t('common.englishName'),
       placeholder: t('common.enterName'),
       field: 'titleNameEng',
-      type: 'text'
+      type: 'text',
+      dataTestId: 'astd-staff-form-en-input-field-4721'
     },
     {
       label: t('staff_title.duty'),
       placeholder: t('staff_title.enter_duty'),
       field: 'duty',
-      type: 'text'
+      type: 'text',
+      dataTestId: 'astd-staff-form-duty-input-field-2652'
     },
     {
       label: t('common.description'),
       placeholder: t('common.enterText'),
       field: 'description',
-      type: 'text-not-mandatory'
+      type: 'text-not-mandatory',
+      dataTestId: 'astd-staff-form-desc-input-field-2523'
     },
     {
       label: t('common.remark'),
       placeholder: t('common.enterText'),
       field: 'remark',
-      type: 'text-not-mandatory'
+      type: 'text-not-mandatory',
+      dataTestId: 'astd-staff-form-remark-input-field-1867'
     }
   ]
 
@@ -122,6 +128,15 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
     return s == ''
   }
 
+  const validationTestId: FormValues = {
+    titleNameTchi: 'astd-staff-form-tc-err-warning-5437',
+    titleNameSchi: 'astd-staff-form-sc-err-warning-3344',
+    titleNameEng: 'astd-staff-form-en-err-warning-1010',
+    duty: 'astd-staff-form-duty-err-warning-7195',
+    description: 'astd-staff-form-description-err-warning',
+    remark: 'astd-staff-form-remark-err-warning',
+  }
+
   const validate = async () => {
     const tempV: formValidate[] = []
     const fieldMapping: FormValues = {
@@ -137,7 +152,8 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
         tempV.push({
           field: fieldMapping[fieldName as keyof FormValues],
           problem: formErr.empty,
-          type: 'error'
+          type: 'error',
+          dataTestId: validationTestId[fieldName],
         })
     })
     setValidation(tempV)
@@ -208,9 +224,13 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
       const {state} =  extractError(error)
       if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
-      } else {
-        setTrySubmited(true)
-        onSubmitData('error', t('common.saveFailed'))
+      } else if (state.code === STATUS_CODE[409]) {
+        const errorMessage = error.response.data.message
+        if (errorMessage.includes('[titleNameDuplicate]')) {
+          showErrorToast(handleDuplicateErrorMessage(errorMessage))
+        } else {
+          showErrorToast(error.response.data.message);
+        }
       }
     }
   }
@@ -226,7 +246,8 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
       duty: [formData.duty],
       status: 'ACTIVE',
       remark: formData.remark,
-      updatedBy: loginName
+      updatedBy: loginName,
+      version: selectedItem?.version ?? 0
     }
     if (validation.length === 0) {
       if (selectedItem != null) {
@@ -242,33 +263,81 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
     }
    } catch (error:any) {
     const {state} =  extractError(error)
-      if(state.code === STATUS_CODE[503] ){
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        const errorMessage = error.response.data.message
+        if (errorMessage.includes('[titleNameDuplicate]')) {
+          showErrorToast(handleDuplicateErrorMessage(errorMessage))
+        } else {
+          showErrorToast(error.response.data.message);
+        }
       }
-   }
+    }
   }
 
   const handleDelete = async () => {
-    const editData: UpdateStaffTitle = {
-      titleId: selectedItem?.titleId || '',
-      titleNameTchi: formData.titleNameTchi,
-      titleNameSchi: formData.titleNameSchi,
-      titleNameEng: formData.titleNameEng,
-      description: formData.description,
-      duty: [formData.duty],
-      status: 'DELETED',
-      remark: formData.remark,
-      updatedBy: loginName
-    }
-    if (selectedItem != null) {
-      const result = await editStaffTitle(selectedItem.titleId, editData)
-      if (result) {
-        onSubmitData('success', t('common.deletedSuccessfully'))
-        resetFormData()
-        handleDrawerClose()
+    try {
+      const editData: UpdateStaffTitle = {
+        titleId: selectedItem?.titleId || '',
+        titleNameTchi: formData.titleNameTchi,
+        titleNameSchi: formData.titleNameSchi,
+        titleNameEng: formData.titleNameEng,
+        description: formData.description,
+        duty: [formData.duty],
+        status: 'DELETED',
+        remark: formData.remark,
+        updatedBy: loginName,
+        version: selectedItem?.version ?? 0
+      }
+      if (selectedItem != null) {
+        const result = await editStaffTitle(selectedItem.titleId, editData)
+        if (result) {
+          onSubmitData('success', t('common.deletedSuccessfully'))
+          resetFormData()
+          handleDrawerClose()
+        }
+      }
+    } catch (error: any) {
+      const {state} =  extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error?.response?.data?.message)
       }
     }
   }
+
+  const handleDuplicateErrorMessage = (input: string) => {
+    const replacements: { [key: string]: string } = {
+      '[tchi]': 'Traditional Chinese Name',
+      '[eng]': 'English Name',
+      '[schi]': 'Simplified Chinese Name'
+    };
+  
+    let result = input.replace(/\[titleNameDuplicate\]/, '');
+  
+    const matches = result.match(/\[(tchi|eng|schi)\]/g);
+  
+    if (matches) {
+      const replaced = matches.map(match => replacements[match as keyof typeof replacements]);
+  
+      let formatted: string;
+      if (replaced.length === 1) {
+        formatted = replaced[0];
+      } else if (replaced.length === 2) {
+        formatted = replaced.join(' and ');
+      } else if (replaced.length === 3) {
+        formatted = `${replaced[0]}, ${replaced[1]} and ${replaced[2]}`;
+      }
+  
+      result = result.replace(/\[(tchi|eng|schi)\]+/, formatted!);
+  
+      result = result.replace(/\[(tchi|eng|schi)\]/g, '');
+    }
+  
+    return result.trim();
+  };
 
   return (
     <div className="add-vehicle">
@@ -321,6 +390,7 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
                     value={formData[item.field as keyof FormValues]}
                     disabled={action === 'delete'}
                     placeholder={item.placeholder}
+                    dataTestId={item.dataTestId}
                     onChange={(event) =>
                       handleFieldChange(
                         item.field as keyof FormValues,
@@ -336,6 +406,7 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
                     value={formData[item.field as keyof FormValues]}
                     disabled={action === 'delete'}
                     placeholder={item.placeholder}
+                    dataTestId={item.dataTestId}
                     onChange={(event) =>
                       handleFieldChange(
                         item.field as keyof FormValues,
@@ -359,6 +430,7 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
                         field={t(val.field)}
                         errorMsg={returnErrorMsg(val.problem, t)}
                         type={val.type}
+                        dataTestId={val.dataTestId}
                       />
                     )
                   }

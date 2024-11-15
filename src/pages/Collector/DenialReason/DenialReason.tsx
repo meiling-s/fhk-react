@@ -1,4 +1,10 @@
-import { useEffect, useState, FunctionComponent, useCallback } from 'react'
+import {
+  useEffect,
+  useState,
+  FunctionComponent,
+  useCallback,
+  useRef
+} from 'react'
 import {
   Box,
   Button,
@@ -35,7 +41,10 @@ import {
   DenialReasonCollectors
 } from '../../../interfaces/denialReason'
 import CreateDenialReason from './CreateDenialReason'
-import { getAllFunction } from '../../../APICalls/Collector/userGroup'
+import {
+  getAllFilteredFunction,
+  getAllFunction
+} from '../../../APICalls/Collector/userGroup'
 import i18n from '../../../setups/i18n'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import { useNavigate } from 'react-router-dom'
@@ -43,6 +52,7 @@ import { extractError } from '../../../utils/utils'
 import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import StatusLabel from '../../../components/StatusLabel'
+import CircularLoading from '../../../components/CircularLoading'
 
 const DenialReason: FunctionComponent = () => {
   const { t } = useTranslation()
@@ -74,10 +84,12 @@ const DenialReason: FunctionComponent = () => {
     return role === 'collector'
   }
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const searchActionRef = useRef(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const initFunctionList = async () => {
     try {
-      const result = await getAllFunction()
+      const result = await getAllFilteredFunction(role)
       const data = result?.data.filter((item: any) => item.tenantTypeId == role)
       if (data.length > 0) {
         let name = ''
@@ -128,6 +140,7 @@ const DenialReason: FunctionComponent = () => {
   }
 
   const initDenialReasonList = async () => {
+    setIsLoading(true)
     let result = null
     if (isCollectors()) {
       result = await getDenialReasonCollectors(page - 1, pageSize)
@@ -153,21 +166,21 @@ const DenialReason: FunctionComponent = () => {
       setDenialReasonList(denialReasonMapping)
       setTotalData(data.totalPages)
     }
+    setIsLoading(false)
   }
+
   const searchByFunctionId = async (functionId: number) => {
+    setIsLoading(true)
+    setPage(1)
     let result = null
     if (isCollectors()) {
       result = await getDenialReasonByFunctionIdCollectors(
-        page - 1,
+        0,
         pageSize,
         functionId
       )
     } else {
-      result = await getAllDenialReasonByFunctionId(
-        page - 1,
-        pageSize,
-        functionId
-      )
+      result = await getAllDenialReasonByFunctionId(0, pageSize, functionId)
     }
 
     const data = result?.data
@@ -186,13 +199,18 @@ const DenialReason: FunctionComponent = () => {
       setDenialReasonList(denialReasonMapping)
       setTotalData(data.totalPages)
     }
+    setIsLoading(false)
   }
+
   useEffect(() => {
     initFunctionList()
   }, [i18n.language])
 
   useEffect(() => {
-    initDenialReasonList()
+    if (!searchActionRef.current) {
+      initDenialReasonList()
+    }
+    searchActionRef.current = false
   }, [functionList, page])
 
   const columns: GridColDef[] = [
@@ -221,12 +239,6 @@ const DenialReason: FunctionComponent = () => {
       width: 200,
       type: 'string'
     },
-    // {
-    //   field: 'description',
-    //   headerName: t('denial_reason.description'),
-    //   width: 100,
-    //   type: 'string'
-    // },
     {
       field: 'remark',
       headerName: t('denial_reason.remark'),
@@ -275,15 +287,6 @@ const DenialReason: FunctionComponent = () => {
         )
       }
     }
-    // {
-    //   field: 'status',
-    //   headerName: t('col.status'),
-    //   width: 100,
-    //   type: 'string',
-    //   renderCell(params) {
-    //     return <StatusLabel status={params.row.status}></StatusLabel>
-    //   }
-    // }
   ]
 
   const searchfield = [
@@ -353,6 +356,7 @@ const DenialReason: FunctionComponent = () => {
   }, [])
 
   const handleSearch = (keyName: string, value: string) => {
+    searchActionRef.current = true
     if (value) {
       searchByFunctionId(Number(value))
     } else {
@@ -361,9 +365,9 @@ const DenialReason: FunctionComponent = () => {
   }
 
   useEffect(() => {
-    if(DenialReasonList.length === 0 && page > 1){
+    if (DenialReasonList.length === 0 && page > 1) {
       // move backward to previous page once data deleted from last page (no data left on last page)
-      setPage(prev => prev - 1)
+      setPage((prev) => prev - 1)
     }
   }, [DenialReasonList])
 
@@ -418,55 +422,67 @@ const DenialReason: FunctionComponent = () => {
             />
           ))}
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={DenialReasonList}
-              getRowId={(row) => row.reasonId}
-              hideFooter
-              columns={columns}
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.reasonId ? 'selected-row' : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                <DataGrid
+                  rows={DenialReasonList}
+                  getRowId={(row) => row.reasonId}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.reasonId
+                      ? 'selected-row'
+                      : ''
                   }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    searchActionRef.current = false
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         {rowId != 0 && (
           <CreateDenialReason
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
+            handleDrawerClose={() => {
+              setDrawerOpen(false)
+              setSelectedRow(null)
+            }}
             action={action}
             selectedItem={selectedRow}
             onSubmitData={onSubmitData}

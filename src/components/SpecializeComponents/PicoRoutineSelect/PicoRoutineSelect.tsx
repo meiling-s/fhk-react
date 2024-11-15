@@ -47,7 +47,6 @@ export default function PicoRoutineSelect({
       routineType: rType,
       routineContent: rContent
     }
-    console.log(picoRoutine)
     return picoRoutine
   }
 
@@ -56,6 +55,7 @@ export default function PicoRoutineSelect({
   const getRoutineType = () => {
     const routineT: il_item[] = routineType.map((routine) => {
       var name: string = ''
+      var dataTestId: string = routine.id === 'daily' ? 'astd-create-edit-pickup-order-routine-daily-9735' : routine.id === 'weekly' ? 'astd-create-edit-pickup-order-routine-weekly-8504' : 'astd-create-edit-pickup-order-routine-specific-date-9942'
       switch (i18n.language) {
         case 'enus':
           name = routine.engName
@@ -69,7 +69,7 @@ export default function PicoRoutineSelect({
         default:
           name = routine.tchiName //default fallback language is zhhk
       }
-      return { name: name, id: routine.id }
+      return { name: name, id: routine.id, dataTestId: dataTestId }
     })
     return routineT
   }

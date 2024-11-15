@@ -4,15 +4,51 @@ import CommonTypeContainer from "../../contexts/CommonTypeContainer";
 import { useContainer } from "unstated-next";
 import i18n from "../../setups/i18n";
 
-type recycItem = {
-  recycType: string;
-  recycSubType: string;
+export type productItem = {
+  productTypeName: string,
+  productSubTypeName: string,
+  productAddonTypeName: string,
+}
+export type recycItem = {
+  recycType: string,
+  recycSubType: string,
+}
+
+export type itemType = {
+  typeName: string;
+  subTypeName: string;
+  addonTypeName?: string; // => currently only type Product will use this addon
 };
 
-const LocalizeRecyctype = (data: any) => {
-  const { recycType } = useContainer(CommonTypeContainer);
+export const LocalizeProductType = ({ data }: {
+  data: {
+    productNameEng: string,
+    productNameSchi: string,
+    productNameTchi: string,
+  }
+}) => {
+
+  switch (i18n.language) {
+    case 'enus':
+      return data?.productNameEng
+    case 'zhch':
+      return data?.productNameSchi
+    case 'zhhk':
+      return data?.productNameTchi
+    default:
+      return data?.productNameTchi
+  }
+}
+
+export type TypeReturnLocalizeRecyctype = null | itemType[]
+
+const LocalizeRecyctype = (data: any): TypeReturnLocalizeRecyctype => {
+
+  const { recycType } = useContainer(CommonTypeContainer)
+
   if (data && data.length > 0) {
-    const recycItems: recycItem[] = [];
+
+    const result: itemType[]  = []
 
     data.forEach((detail: any) => {
       const matchingRecycType = recycType?.find(
@@ -53,17 +89,33 @@ const LocalizeRecyctype = (data: any) => {
             subName = matchrecycSubType?.recyclableNameTchi ?? ""; //default fallback language is zhhk
             break;
         }
-        recycItems.push({
-          recycType: name,
-          recycSubType: subName,
-        });
+        result.push({
+          typeName: name,
+          subTypeName: subName,
+        })
       }
-    });
+      if (detail?.productType) {
 
-    return recycItems; // Return the recycItems array
+        let name = LocalizeProductType({data: detail?.productType})
+        let subName = LocalizeProductType({data: detail?.productSubType})
+        let addonName = LocalizeProductType({data: detail?.productAddonType})
+
+        result.push({
+          typeName: name,
+          subTypeName: subName,
+          addonTypeName: addonName,
+        })
+
+      }
+    })
+
+
+    return result; // Return the recycItems array
+
   }
 
   return null; // Return null if data is empty or not provided
-};
+
+}
 
 export default LocalizeRecyctype;

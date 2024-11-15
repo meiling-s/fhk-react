@@ -6,6 +6,7 @@ import { styles } from '../constants/styles'
 import { useContainer } from 'unstated-next'
 import NotifContainer from '../contexts/NotifContainer'
 import DeleteModal from './FormComponents/deleteModal'
+import ConfirmModal from './SpecializeComponents/ConfirmationModal'
 import { t } from 'i18next'
 
 type HeaderProps = {
@@ -19,6 +20,7 @@ type HeaderProps = {
   action?: 'add' | 'edit' | 'delete' | 'none'
   statusLabel?: string
   deleteText?: string
+  useDeleteConfirmation?: boolean
 }
 
 type RightOverlayFormProps = {
@@ -29,6 +31,7 @@ type RightOverlayFormProps = {
   showHeader?: boolean
   headerProps?: HeaderProps
   action?: 'add' | 'edit' | 'delete' | 'none'
+  useConfirmModal?: boolean
 }
 
 const HeaderSection: React.FC<HeaderProps> = ({
@@ -41,18 +44,19 @@ const HeaderSection: React.FC<HeaderProps> = ({
   onDelete,
   action = 'add',
   statusLabel,
-  deleteText
+  deleteText,
+  useDeleteConfirmation = true
 }) => {
   const [openDelete, setOpenDelete] = useState<boolean>(false)
 
   const onDeleteModal = () => {
-    if(cancelText === t('common.cancel')){
+    if (cancelText === t('common.cancel') || !useDeleteConfirmation) {
       setOpenDelete(false)
-      if (onDelete){
+      if (onDelete) {
         onDelete()
       }
     } else {
-      setOpenDelete(prev => !prev)
+      setOpenDelete((prev) => !prev)
     }
   }
 
@@ -88,6 +92,7 @@ const HeaderSection: React.FC<HeaderProps> = ({
                 ]}
                 disabled={action === 'delete'}
                 onClick={onSubmit}
+                data-testid=" astd-right-drawer-save-button-5997"
               >
                 {submitText}
               </Button>
@@ -101,6 +106,7 @@ const HeaderSection: React.FC<HeaderProps> = ({
                       height: '40px'
                     }
                   ]}
+                  data-testid="astd-right-drawer-cancel-delete-button-8523"
                   variant="outlined"
                   disabled={action === 'add'}
                   onClick={onDeleteModal}
@@ -111,7 +117,10 @@ const HeaderSection: React.FC<HeaderProps> = ({
             </div>
           )}
 
-          <div className="close-icon ml-2 cursor-pointer">
+          <div
+            className="close-icon ml-2 cursor-pointer"
+            data-testid="astd-right-drawer-close-button-8612"
+          >
             <img
               className="relative w-6 h-6 overflow-hidden shrink-0"
               alt=""
@@ -120,14 +129,14 @@ const HeaderSection: React.FC<HeaderProps> = ({
             />
           </div>
         </div>
-        </div>
-        <DeleteModal
-          open={openDelete}
-          onClose={onDeleteModal}
-          onDelete={onDeleteClick}
-          deleteText={deleteText}
-        />
       </div>
+      <DeleteModal
+        open={openDelete}
+        onClose={onDeleteModal}
+        onDelete={onDeleteClick}
+        deleteText={deleteText}
+      />
+    </div>
   )
 }
 
@@ -138,16 +147,19 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
   anchor = 'left',
   showHeader = true,
   headerProps,
-  action = 'add'
+  action = 'add',
+  useConfirmModal = true
 }) => {
   const [isOpen, setIsOpen] = useState(open)
-  const { marginTop } = useContainer(NotifContainer);
-  
+  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false)
+  const { marginTop } = useContainer(NotifContainer)
+
   useEffect(() => {
     setIsOpen(open)
   }, [open])
 
   const handleClose = () => {
+    setOpenConfirmModal(false)
     if (onClose) {
       onClose()
     }
@@ -157,7 +169,11 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
   return (
     <Drawer
       open={isOpen}
-      onClose={handleClose}
+      onClose={(_, reason) => {
+        action != 'delete' && useConfirmModal
+          ? reason === 'backdropClick' && setOpenConfirmModal(true)
+          : handleClose()
+      }}
       anchor={anchor}
       variant={'temporary'}
       sx={{
@@ -178,6 +194,13 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
         ) : null}
 
         <div className="">{children}</div>
+        <ConfirmModal
+          isOpen={openConfirmModal && useConfirmModal}
+          onConfirm={() => {
+            handleClose()
+          }}
+          onCancel={() => setOpenConfirmModal(false)}
+        />
       </div>
     </Drawer>
   )

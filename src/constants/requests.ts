@@ -48,12 +48,12 @@ export const UPDATE_TENANT_REGISTER = (
   tenantId: number
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/account/t/updateInfo/${tenantId}`
+  url: `api/v1/account/t/V2/updateInfo/${tenantId}`
 })
 
 export const UPDATE_TENANT_INFO = (tenantId: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/account/t/${tenantId}`
+  url: `api/v1/account/t/V2/${tenantId}`
 })
 
 export const GET_TENANT_BY_TENANT_ID = (
@@ -65,7 +65,7 @@ export const GET_TENANT_BY_TENANT_ID = (
 
 export const UPDATE_TENANT_STATUS = (tenantId: number): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/account/t/status/${tenantId}`
+  url: `api/v1/account/t/V2/status/${tenantId}`
 })
 
 export const GET_CURRENCY_LIST: AxiosRequestConfig = {
@@ -76,10 +76,11 @@ export const GET_CURRENCY_LIST: AxiosRequestConfig = {
 export const UPDATE_TENANT_CURRENCY = (
   tenantId: string,
   monetaryValue: string,
-  updatedBy: string
+  updatedBy: string,
+  version: number,
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/account/t/monetary/${tenantId}?tenantId=${tenantId}&monetaryValue=${monetaryValue}&updatedBy=${updatedBy}`
+  url: `api/v1/account/t/V2/monetary/${tenantId}?tenantId=${tenantId}&monetaryValue=${monetaryValue}&updatedBy=${updatedBy}&version=${version}`
 })
 
 //collection point
@@ -167,7 +168,7 @@ export const UPDATE_CHECK_IN_STATUS = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/${realmApiRoute}/checkin/${table}/status/${chkInId}`
+  url: `api/v1/${realmApiRoute}/checkin/V2/${table}/status/${chkInId}`
 })
 
 //get checkin reason list
@@ -197,7 +198,7 @@ export const GET_PICK_UP_ORDER_BY_ID = (
 
 export const GET_PICK_UP_ORDER_DETAIL: AxiosRequestConfig = {
   method: 'get',
-  url: 'api/v1/administrator/pico/details'
+  url: 'api/v1/administrator/pico/V2/details'
 }
 export const ADD_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'post',
@@ -264,15 +265,15 @@ export const GET_MANULIST = (
 
 export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'put',
-  url: 'api/v1/administrator/pico/new'
+  url: 'api/v1/administrator/pico/V3'
 }
 export const UPDATE_PICK_UP_ORDER_STATUS: AxiosRequestConfig = {
   method: 'patch',
-  url: 'api/v1/administrator/pico/status'
+  url: 'api/v1/administrator/pico/V2/status'
 }
 export const UPDATE_PICK_UP_ORDER_DETAIL_STATUS: AxiosRequestConfig = {
   method: 'patch',
-  url: 'api/v1/administrator/pico/detail/status'
+  url: 'api/v1/administrator/pico/V2/details/status'
 }
 //common
 export const GET_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {
@@ -299,14 +300,14 @@ export const EDIT_PREMISE_TYPE = (
   premiseTypeId: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/premiseType/${premiseTypeId}`
+  url: `api/v1/administrator/premiseType/V2/${premiseTypeId}`
 })
 
 export const DELETE_PREMISE_TYPE = (
   premiseTypeId: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/premiseType/${premiseTypeId}`
+  url: `api/v1/administrator/premiseType/V2/${premiseTypeId}`
 })
 
 export const GET_SITE_TYPE: AxiosRequestConfig = {
@@ -321,12 +322,12 @@ export const ADD_SITE_TYPE: AxiosRequestConfig = {
 
 export const EDIT_SITE_TYPE = (siteTypeId: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/siteType/${siteTypeId}`
+  url: `api/v1/administrator/siteType/V2/${siteTypeId}`
 })
 
 export const DELETE_SITE_TYPE = (siteTypeId: string): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/siteType/${siteTypeId}`
+  url: `api/v1/administrator/siteType/V2/${siteTypeId}`
 })
 
 export const GET_RECYC_TYPE: AxiosRequestConfig = {
@@ -341,12 +342,12 @@ export const ADD_RECYC_TYPE: AxiosRequestConfig = {
 
 export const UPDATE_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/recycType/${recycTypeId}`
+  url: `api/v1/administrator/recycType/V2/${recycTypeId}`
 })
 
 export const DELETE_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/recycType/${recycTypeId}`
+  url: `api/v1/administrator/recycType/V2/${recycTypeId}`
 })
 
 export const ADD_SUB_RECYC_TYPE = (
@@ -360,14 +361,14 @@ export const UPDATE_SUB_RECYC_TYPE = (
   recycTypeId: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/recycSubType/${recycTypeId}`
+  url: `api/v1/administrator/recycSubType/V2/${recycTypeId}`
 })
 
 export const DELETE_SUB_RECYC_TYPE = (
   recycTypeId: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/recycSubType/${recycTypeId}`
+  url: `api/v1/administrator/recycSubType/V2/${recycTypeId}`
 })
 
 export const CREATE_VEHICLE_TYPE: AxiosRequestConfig = {
@@ -382,12 +383,12 @@ export const GET_VEHICLE_TYPE: AxiosRequestConfig = {
 
 export const UPDATE_VEHICLE_TYPE = (vehicleId: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/vehicleType/${vehicleId}`
+  url: `api/v1/administrator/vehicleType/V2/${vehicleId}`
 })
 
 export const DELETE_VEHICLE_TYPE = (vehicleId: string): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/vehicleType/${vehicleId}`
+  url: `api/v1/administrator/vehicleType/V2/${vehicleId}`
 })
 
 export const GET_NUM_UNREAD_NOTIF = (loginId: string): AxiosRequestConfig => ({
@@ -462,7 +463,24 @@ export const UPDATE_WAREHOUSE_BY_ID = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/warehouse/${table}/${warehouseId}`
+  url: `api/v1/${realmApiRoute}/warehouse/V2/${table}/${warehouseId}`
+})
+
+export const ADD_WAREHOUSE_V2 = (
+  realmApiRoute: string,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/warehouse/v2/${table}`
+})
+
+export const UPDATE_WAREHOUSE_BY_ID_V2 = (
+  realmApiRoute: string,
+  warehouseId: number,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/${realmApiRoute}/warehouse${realmApiRoute === 'collectors' ? `/V3/` : `/V2/`}${table}/${warehouseId}`
 })
 
 export const MANUFACTURER_GET_ALL_WAREHOUSE = (
@@ -484,8 +502,8 @@ export const UPDATE_WAREHOUSE_STATUS_BY_ID = (
   warehouseId: number,
   table: string
 ): AxiosRequestConfig => ({
-  method: 'put',
-  url: `api/v1/collectors/warehouse/${table}/${warehouseId}/status`
+  method: 'patch',
+  url: `api/v1/collectors/warehouse/V2/${table}/${warehouseId}/status`
 })
 
 export const NEW_GET_ALL_HEADER_CHECKOUT_REQUESTS = (
@@ -537,7 +555,7 @@ export const UPDATE_CHECKOUT_REQUEST_STATUS = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/${realmApiRoute}/checkout/${table}/status/${chkOutId}`
+  url: `api/v1/${realmApiRoute}/checkout/V2/${table}/status/${chkOutId}`
 })
 
 //get checkout reason list
@@ -603,6 +621,11 @@ export const GET_LOGISTIC_VEHICLE_BY_ID = (
   url: `api/v1/logistic/vehicle/${table}/${vehicleId}`
 })
 
+export const GET_VEHICLE_PHOTO =  (table: string, vehicleId: number): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/vehicle/${table}/photo/${vehicleId}`
+})
+
 export const SEARCH_LOGISTIC_VEHICLE = (
   table: string,
   vehicleId: string
@@ -610,6 +633,26 @@ export const SEARCH_LOGISTIC_VEHICLE = (
   method: 'get',
   url: `api/v1/logistic/vehicle/${table}/${vehicleId}`
 })
+
+export const NEW_SEARCH_LOGISTIC_VEHICLE = (
+  table: string,
+  vehicleId?: string,
+  deviceId?: string
+): AxiosRequestConfig => {
+  let url = `api/v1/logistic/vehicle/${table}/search`
+  // if (vehicleId !== undefined) {
+  //   url += `?vehicleId=${vehicleId}`;
+  // }
+
+  // if (deviceId) {
+  //   url += vehicleId ? `&deviceId=${deviceId}` : `?deviceId=${deviceId}`;
+  // }
+
+  return {
+    method: 'get',
+    url: `${url}`
+  }
+}
 
 export const CREATE_LOGISTIC_VEHICLE = (table: string): AxiosRequestConfig => ({
   method: 'post',
@@ -621,7 +664,7 @@ export const EDIT_LOGISTIC_VEHICLE = (
   vehicleId: number
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/logistic/vehicle/${table}/${vehicleId}`
+  url: `api/v1/logistic/vehicle/V2/${table}/${vehicleId}`
 })
 
 export const DELETE_LOGISTIC_VEHICLE = (
@@ -629,7 +672,7 @@ export const DELETE_LOGISTIC_VEHICLE = (
   vehicleId: number
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/logistic/vehicle/${table}/${vehicleId}/status`
+  url: `api/v1/logistic/vehicle/V2/${table}/${vehicleId}/status`
 })
 
 export const DELETE_VEHICLE = (
@@ -647,7 +690,7 @@ export const EDIT_VEHICLE = (
   vehicleId: number
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/vehicle/${table}/${vehicleId}`
+  url: `api/v1/${realmApiRoute}/vehicle${realmApiRoute === 'collectors' ? '/V2/' : '/'}${table}/${vehicleId}`
 })
 
 //inventory
@@ -673,7 +716,7 @@ export const GET_ITEM_TRACK_INVENTORY = (
   itemId: number
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/inventory/tracking/${table}/${itemId}`
+  url: `api/v1/${realmApiRoute}/inventory/trackingV2/${table}/${itemId}`
 })
 
 //process records
@@ -724,7 +767,7 @@ export const EDIT_PROCESS_OUT_DETAIL_ITEM = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/processout/${table}/processout/${processOutId}/proecessoutDtl/${processOutDtlId}`
+  url: `api/v1/${realmApiRoute}/processout/V2/${table}/${processOutId}/proecessoutDtl/${processOutDtlId}`
 })
 
 export const DELETE_PROCESS_OUT_RECORD = (
@@ -742,7 +785,7 @@ export const DELETE_PROCESS_OUT_DETAIL_ITEM = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/${realmApiRoute}/processoutDetail/${table}/${processOutDtlId}/status`
+  url: `api/v1/${realmApiRoute}/processoutDetail/V2/${table}/${processOutDtlId}/status`
 })
 
 // WAREHOUSE DASHBOARD
@@ -826,6 +869,11 @@ export const GET_FUNCTION = (): AxiosRequestConfig => ({
   url: `api/v1/administrator/function`
 })
 
+export const GET_FUNCTION_FILTERED = (tenantTypeId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/function/t/functionWithReason/${tenantTypeId}`
+})
+
 export const CREATE_USER_GROUP = (): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/administrator/userGroup`
@@ -860,8 +908,8 @@ export const EDIT_STAFF = (
   staffId: string,
   realmApi: string
 ): AxiosRequestConfig => ({
-  method: realmApi === 'logistic' ? 'put' : 'patch',
-  url: `api/v1/${realmApi}/staff/${tenantId}/${staffId}`
+  method: realmApi === 'logistic' ? 'put' : realmApi === 'customer' ? 'put' : realmApi === 'collectors' ? 'put' : 'patch',
+  url: `api/v1/${realmApi}/staff/V2/${tenantId}/${staffId}`
 })
 
 export const GET_LOGINID_LIST = (tenantId: string): AxiosRequestConfig => ({
@@ -965,18 +1013,10 @@ export const DELETE_USER_ACCOUNT = (loginId: string): AxiosRequestConfig => ({
 
 export const GET_CHECKIN_CHECKOUT_LIST = (
   table: string,
-  picoId: string,
-  page: number,
-  size: number,
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApiRoute}/checkinout/searching/${table}`,
-  params: {
-    picoId: picoId ?? '',
-    page,
-    size
-  }
 })
 
 export const GET_CHECKIN_BY_ID = (
@@ -985,7 +1025,7 @@ export const GET_CHECKIN_BY_ID = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/checkin/${table}/${chkInId}`
+  url: `api/v1/${realmApiRoute}/checkin/${table}/${chkInId}`
 })
 
 export const GET_CHECKOUT_BY_ID = (
@@ -994,7 +1034,7 @@ export const GET_CHECKOUT_BY_ID = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/checkout/${table}/${chkOutId}`
+  url: `api/v1/${realmApiRoute}/checkout/${table}/${chkOutId}`
 })
 
 export const GET_ALL_RECYCLE_TYPE = (): AxiosRequestConfig => ({
@@ -1036,7 +1076,7 @@ export const GET_ALL_REASON = (
 //logistic/jobOrder
 export const GET_ALL_JOB_ORDER = (table: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/logistic/jo/search/${table}`
+  url: `api/v1/logistic/jo/searchV2/${table}`
 })
 
 export const UPDATE_JOB_ORDER_STATUS = (
@@ -1086,6 +1126,16 @@ export const GET_DRIVER = (table: string): AxiosRequestConfig => ({
   url: `/api/v1/logistic/driver/{table}?table=${table}`
 })
 
+export const GET_DRIVER_DATA = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/logistic/driverInfo/${tenantId}`
+})
+
+export const GET_VEHICLE_PLATE_LIST = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/vehicleInfo/${tenantId}`
+})
+
 export const GET_VEHICLE_LOGISTIC = (table: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/logistic/vehicle/${table}`
@@ -1096,7 +1146,7 @@ export const GET_LIST_NOTIF_TEMPLATE_PO = (
   path: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${path}/notiTemplate/${tenantId}`
+  url: `api/v1/${path}/notiTemplate/search/${tenantId}`
 })
 
 export const GET_LIST_NOTIF_TEMPLATE_STAFF = (
@@ -1104,7 +1154,7 @@ export const GET_LIST_NOTIF_TEMPLATE_STAFF = (
   path: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${path}/notiTemplate/${tenantId}`
+  url: `api/v1/${path}/notiTemplate/search/${tenantId}`
 })
 
 //get denial reason
@@ -1140,7 +1190,7 @@ export const UPDATE_DENIAL_REASON = (
   reasonId: number
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/reason/${tenantId}/${reasonId}`
+  url: `/api/v1/${realmApiRoute}/reason/V2/${tenantId}/${reasonId}`
 })
 
 //get staff title
@@ -1177,7 +1227,7 @@ export const UPDATE_STAFF_TITLE = (
   titleId: string
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/stafftitle/${table}/${titleId}`
+  url: `/api/v1/${realmApiRoute}/stafftitle/V2/${table}/${titleId}`
 })
 
 //get disposal location
@@ -1205,7 +1255,7 @@ export const UPDATE_DISPOSAL_LOCATION = (
   disposalLocId: string
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/disposallocation/${table}/${disposalLocId}`
+  url: `/api/v1/${realmApiRoute}/disposallocation/V2/${table}/${disposalLocId}`
 })
 
 //get company (collectorlist || logisticlist || manulist || customerlist)
@@ -1236,7 +1286,7 @@ export const UPDATE_COMPANY = (
   companyId: string
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/${companyType}/${table}/${companyId}`
+  url: `/api/v1/${realmApiRoute}/${companyType}/V2/${table}/${companyId}`
 })
 
 export const GET_CONTRACT_LIST = (
@@ -1258,7 +1308,7 @@ export const EDIT_CONTRACT = (
   contractNo: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/contract/${tenantId}/${contractNo}`
+  url: `api/v1/${realmApiRoute}/contract/V2/${tenantId}/${contractNo}`
 })
 
 export const DELETE_CONTRACT = (
@@ -1267,7 +1317,7 @@ export const DELETE_CONTRACT = (
   contractNo: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/${realmApiRoute}/contract/${tenantId}/${contractNo}/status`
+  url: `api/v1/${realmApiRoute}/contract/V2/${tenantId}/${contractNo}/status`
 })
 
 export const GET_PACKAGING_LIST = (
@@ -1291,7 +1341,7 @@ export const EDIT_PACKAGING = (
   packagingTypeId: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/packaginglist/${tenantId}/${packagingTypeId}`
+  url: `api/v1/${realmApiRoute}/packaginglist/V2/${tenantId}/${packagingTypeId}`
 })
 
 export const GET_DETAIL_NOTIF_TEMPLATE = (
@@ -1309,7 +1359,7 @@ export const UPDATE_NOTIF_TEMPLATE = (
   path: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${path}/notiTemplate/${tenantId}/${templateId}`
+  url: `api/v1/${path}/notiTemplate/V2/${tenantId}/${templateId}`
 })
 
 //logistics driver
@@ -1328,7 +1378,7 @@ export const EDIT_DRIVER = (
   driverId: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/logistic/driver/${tableId}/${driverId}`
+  url: `api/v1/logistic/driver/V2/${tableId}/${driverId}`
 })
 
 export const DELETE_DRIVER = (
@@ -1336,7 +1386,7 @@ export const DELETE_DRIVER = (
   driverId: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/logistic/driver/${tableId}/${driverId}`
+  url: `api/v1/logistic/driver/V2/${tableId}/${driverId}`
 })
 
 export const UPDATE_NOTIF_TEMPLATE_BROADCAST = (
@@ -1345,7 +1395,7 @@ export const UPDATE_NOTIF_TEMPLATE_BROADCAST = (
   path: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${path}/notiTemplate/${tenantId}/${templateId}`
+  url: `api/v1/${path}/notiTemplate/V2/${tenantId}/${templateId}`
 })
 
 // STAFF ENQUIRY
@@ -1364,7 +1414,7 @@ export const EDIT_STAFF_ENQUIRY = (
   staffId: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/logistic/staff/${tenantId}/${staffId}`
+  url: `api/v1/logistic/staff/V2/${tenantId}/${staffId}`
 })
 
 export const DELETE_STAFF_ENQUIRY = (
@@ -1372,7 +1422,7 @@ export const DELETE_STAFF_ENQUIRY = (
   staffId: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/logistic/staff/${tenantId}/${staffId}`
+  url: `api/v1/logistic/staff/V2/${tenantId}/${staffId}`
 })
 
 //USER ACCOUNT API
@@ -1393,14 +1443,14 @@ export const UPDATE_USER_MANUFACTURER = (
   loginId: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/manufacturer/staff/${tenantId}/${loginId}`
+  url: `api/v1/manufacturer/staff/V2/${tenantId}/${loginId}`
 })
 
 export const DELETE_USER_MANUFACTURER = (
   loginId: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/manufacturer/staff/${loginId}`
+  url: `api/v1/manufacturer/staff/V2/${loginId}`
 })
 
 //PURCHASE ORDER MANUFACTURER
@@ -1414,14 +1464,14 @@ export const SEARCH_PURCHASE_ORDER = (
 
 export const GET_PURCHASE_ORDER_BY_ID = (poId: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/administrator/po/${poId}`
+  url: `api/v1/administrator/po/withoutDeletedDtl/${poId}`
 })
 
 export const UPDATE_PURCHASE_ORDER_STATUS = (
   poId: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/po/${poId}`
+  url: `api/v1/administrator/po/V2/${poId}`
 })
 
 export const GET_ALL_REASON_MANUFACTURER = (
@@ -1443,12 +1493,12 @@ export const CREATE_RECYC_CODE: AxiosRequestConfig = {
 
 export const UPDATE_RECYC_CODE = (codeId: number): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/recycCode/${codeId}`
+  url: `api/v1/administrator/recycCode/V2/${codeId}`
 })
 
 export const DELETE_RECYC_CODE = (codeId: number): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/recycCode/${codeId}`
+  url: `api/v1/administrator/recycCode/V2/${codeId}`
 })
 
 export const GET_WEIGHT_UNIT: AxiosRequestConfig = {
@@ -1463,12 +1513,12 @@ export const CREATE_WEIGHT_UNIT: AxiosRequestConfig = {
 
 export const UPDATE_WEIGHT_UNIT = (unitId: number): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/weightUnit/${unitId}`
+  url: `api/v1/administrator/weightUnit/V2/${unitId}`
 })
 
 export const DELETE_WEIGHT_UNIT = (unitId: number): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/weightUnit/${unitId}`
+  url: `api/v1/administrator/weightUnit/V2/${unitId}`
 })
 
 export const CREATE_CURRENCY: AxiosRequestConfig = {
@@ -1478,12 +1528,12 @@ export const CREATE_CURRENCY: AxiosRequestConfig = {
 
 export const EDIT_CURRENCY = (currencyId: number): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/currencyList/${currencyId}`
+  url: `api/v1/administrator/currencyList/V2/${currencyId}`
 })
 
 export const DELETE_CURRENCY = (currencyId: number): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/currencyList/${currencyId}`
+  url: `api/v1/administrator/currencyList/V2/${currencyId}`
 })
 
 export const GET_DECIMAL_VALUE: AxiosRequestConfig = {
@@ -1500,7 +1550,7 @@ export const UPDATE_DECIMAL_VALUE = (
   decimalValId: number
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/decimalVal/${decimalValId}`
+  url: `api/v1/administrator/decimalVal/V2/${decimalValId}`
 })
 
 export const GET_DATE_FORMAT: AxiosRequestConfig = {
@@ -1517,7 +1567,7 @@ export const UPDATE_DATE_FORMAT = (
   dateFormatId: number
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/dateFormat/${dateFormatId}`
+  url: `api/v1/administrator/dateFormat/V2/${dateFormatId}`
 })
 
 export const GET_WEIGHT_TOLERANCE: AxiosRequestConfig = {
@@ -1529,7 +1579,7 @@ export const UPDATE_WEIGHT_TOLERANCE = (
   weightId: number
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/weightTolerance/${weightId}`
+  url: `api/v1/administrator/weightTolerance/V2/${weightId}`
 })
 // get upload img setting
 export const GET_IMG_SETTINGS = (tenantId: string): AxiosRequestConfig => ({
@@ -1539,7 +1589,7 @@ export const GET_IMG_SETTINGS = (tenantId: string): AxiosRequestConfig => ({
 
 export const UPDATE_PURCHASE_ORDER = (poId: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/po/${poId}`
+  url: `api/v1/administrator/po/V3/${poId}`
 })
 
 export const GET_COLPOINTRECYCABLES_DASHBOARD = (
@@ -1654,10 +1704,30 @@ export const UPDATE_DENIAL_REASON_COLLECTORS = (
   reasonId: number
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/collectors/reason/${tenantId}/${reasonId}/new`
+  url: `/api/v1/collectors/reason/V3/${tenantId}/${reasonId}`
 })
 
 export const CREATE_USER_ACTIVITY = (loginId: string): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/administrator/userActivity/${loginId}`
+})
+
+export const CREATE_PROCESS_TYPE_DATA = (realmApiRoute: string): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/processtype`
+})
+
+export const GET_PROCESS_TYPE_DATA = (realmApiRoute: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/processtype`
+})
+
+export const UPDATE_PROCESS_TYPE_DATA = (realmApiRoute: string, processTypeId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/${realmApiRoute}/processtype/${processTypeId}`
+})
+
+export const DELETE_PROCESS_TYPE_DATA = (realmApiRoute: string, processTypeId: string): AxiosRequestConfig => ({
+  method: 'delete',
+  url: `api/v1/${realmApiRoute}/processtype/${processTypeId}`
 })

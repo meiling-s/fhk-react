@@ -62,15 +62,17 @@ import LogisticVehicleDashboard from './pages/Logistic/Dashboard/dashboard'
 //manufacturer
 import PurchaseOrder from './pages/Manufacturer/PurchaseOrder/PurchaseOrder'
 import CustomerAccount from './pages/Logistic/Account'
-import CreatePurchaseOrder from "./pages/Manufacturer/PurchaseOrder/CreatePurchaseOrder";
-import EditPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/EditPurchaseOrder";
-import PickupPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PickupPurchaseOrder"
-import DashboardRecyclables from "./pages/Collector/Dashboard/Recyclables";
-import ManufacturerDashboard from "./pages/Manufacturer/Dashboard/Dashboard";
-import RecyclablesAstd from "./pages/ASTD/Dashboard/RecyclablesAstd";
-import PageNotFound from "./pages/Common/PageNotFound";
-import MaintenancePage from "./pages/Common/MaintenancePage";
-import AuthCheck from "./components/AuthCheck";
+import CreatePurchaseOrder from './pages/Manufacturer/PurchaseOrder/CreatePurchaseOrder'
+import EditPurchaseOrder from './pages/Manufacturer/PurchaseOrder/EditPurchaseOrder'
+import PickupPurchaseOrder from './pages/Manufacturer/PurchaseOrder/PickupPurchaseOrder'
+import DashboardRecyclables from './pages/Collector/Dashboard/Recyclables'
+import ManufacturerDashboard from './pages/Manufacturer/Dashboard/Dashboard'
+import RecyclablesAstd from './pages/ASTD/Dashboard/RecyclablesAstd'
+import PageNotFound from './pages/Common/PageNotFound'
+import MaintenancePage from './pages/Common/MaintenancePage'
+import AuthCheck from './components/AuthCheck'
+
+import LoadingPage from './pages/GeneralModule/LoadingPage'
 
 const Router = () => {
   return (
@@ -80,9 +82,15 @@ const Router = () => {
           <Route path="/" element={<Login />} />
           <Route path="/changePassword" element={<ChangePassword />} />
           <Route path="/resetPassword" element={<ResetPassword />} />
-          <Route path="/confirmNewPassword" element={<ConfirmResetPassword />} />
+          <Route
+            path="/confirmNewPassword"
+            element={<ConfirmResetPassword />}
+          />
           {/* <Route element={<AuthGuard />}> */}
-          <Route path="/changePassword/:idReset?" element={<ChangePassword />} />
+          <Route
+            path="/changePassword/:idReset?"
+            element={<ChangePassword />}
+          />
           {/* tenant page */}
           <Route
             path="/register/details/:tenantId"
@@ -90,6 +98,7 @@ const Router = () => {
           />
           <Route path="/register/result" element={<RegisterResult />} />
           <Route path="/register/result" element={<RegisterResult />} />
+          <Route path="/loadPage" element={<LoadingPage />} />
 
           {/* collector admin */}
           <Route element={<MainLayout />}>
@@ -98,7 +107,10 @@ const Router = () => {
               path="/collector/collectionPoint"
               element={<CollectionPoint />}
             />
-            <Route path="/:realmApiRoute/processRecord" element={<ProcessRecord />} />
+            <Route
+              path="/:realmApiRoute/processRecord"
+              element={<ProcessRecord />}
+            />
             <Route path="/collector/pickupOrder" element={<PickupOrder />} />
             <Route
               path="/collector/createPickupOrder"
@@ -126,17 +138,29 @@ const Router = () => {
               element={<CheckInAndCheckOut />}
             />
             <Route path="/collector/notice/" element={<Notice />} />
-            <Route path="/collector/notice/:type/:templateId" element={<UpdateTemplate />} />
+            <Route
+              path="/collector/notice/:type/:templateId"
+              element={<UpdateTemplate />}
+            />
             <Route path="/collector/staff" element={<StaffManagement />} />
-            <Route path="/collector/dashboard" element={<DashboardRecyclables />} />
-            <Route path="/collector/warehouse" element={<WarehouseDashboard />} />
+            <Route
+              path="/collector/dashboard"
+              element={<DashboardRecyclables />}
+            />
+            <Route
+              path="/collector/warehouse"
+              element={<WarehouseDashboard />}
+            />
           </Route>
 
           <Route element={<MainLayout />}>
             <Route path="/astd" element={<CompanyManage />} />
             <Route path="/astd/company" element={<CompanyManage />} />
             <Route path="/astd/notice/" element={<Notice />} />
-            <Route path="/astd/notice/:type/:templateId" element={<UpdateTemplate />} />
+            <Route
+              path="/astd/notice/:type/:templateId"
+              element={<UpdateTemplate />}
+            />
             <Route path="/astd/report" element={<Report />} />
             <Route path="/astd/statistics/recyclables" element={<></>} />
             <Route path="/astd/statistics/convoy" element={<></>} />
@@ -144,12 +168,21 @@ const Router = () => {
             <Route path="/astd/statistics/recyclePlant" element={<></>} />
             <Route path="/astd/setting" element={<Settings />} />
             <Route path="/astd/account" element={<></>} />
-            <Route path="/astd/createPicoLogistic" element={<CreatePickupOrder />} />
-            <Route path="/astd/editPicoLogistic" element={<EditPickupOrder />} />
+            <Route
+              path="/astd/createPicoLogistic"
+              element={<CreatePickupOrder />}
+            />
+            <Route
+              path="/astd/editPicoLogistic"
+              element={<EditPickupOrder />}
+            />
             <Route path="/astd/inventory/" element={<Inventory />} />
             <Route path="/astd/warehouse" element={<WarehouseDashboard />} />
             <Route path="/astd/dashboard" element={<RecyclablesAstd />} />
-            <Route path="/astd/vehicleDashboard" element={<AstdVehicleDashboard />} />
+            <Route
+              path="/astd/vehicleDashboard"
+              element={<AstdVehicleDashboard />}
+            />
           </Route>
 
           <Route element={<MainLayout />}>
@@ -166,45 +199,99 @@ const Router = () => {
           <Route element={<MainLayout />}>
             <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
             <Route path="/logistic/jobOrder" element={<JobOrder />} />
-            <Route path="/logistic/createJobOrder/:picoId" element={<CreateOrUpdateJobOrder />} />
-            <Route path="/logistic/createPickupOrder" element={<CreatePickupOrder />} />
-            <Route path="/logistic/editPickupOrder" element={<EditPickupOrder />} />
+            <Route
+              path="/logistic/createJobOrder/:picoId"
+              element={<CreateOrUpdateJobOrder />}
+            />
+            <Route
+              path="/logistic/createPickupOrder"
+              element={<CreatePickupOrder />}
+            />
+            <Route
+              path="/logistic/editPickupOrder"
+              element={<EditPickupOrder />}
+            />
             <Route path="/logistic/account" element={<LogisticAccount />} />
             <Route path="/logistic/driver" element={<Driver />} />
             <Route path="/logistic/notice/" element={<Notice />} />
-            <Route path="/logistic/notice/:type/:templateId" element={<UpdateTemplate />} />
+            <Route
+              path="/logistic/notice/:type/:templateId"
+              element={<UpdateTemplate />}
+            />
             <Route path="/logistic/staff" element={<StaffManagement />} />
-            <Route path="/logistic/vehicleDashboard" element={<LogisticVehicleDashboard />} />
+            <Route
+              path="/logistic/vehicleDashboard"
+              element={<LogisticVehicleDashboard />}
+            />
             <Route path="/logistic/report" element={<Report />} />
           </Route>
 
           <Route element={<MainLayout />}>
             <Route path="/manufacturer/pickupOrder" element={<PickupOrder />} />
-            <Route path="/manufacturer/createPickupOrder" element={<CreatePickupOrder />} />
-            <Route path="/manufacturer/editPickupOrder" element={<EditPickupOrder />} />
-            <Route path="/manufacturer/shipment" element={<RecycleShipment />} />
-            <Route path="/manufacturer/checkout" element={<CheckoutRequest />} />
+            <Route
+              path="/manufacturer/createPickupOrder"
+              element={<CreatePickupOrder />}
+            />
+            <Route
+              path="/manufacturer/editPickupOrder"
+              element={<EditPickupOrder />}
+            />
+            <Route
+              path="/manufacturer/shipment"
+              element={<RecycleShipment />}
+            />
+            <Route
+              path="/manufacturer/checkout"
+              element={<CheckoutRequest />}
+            />
             <Route path="/manufacturer/account" element={<LogisticAccount />} />
             <Route path="/manufacturer/inventory" element={<Inventory />} />
             <Route path="/manufacturer/setting" element={<Settings />} />
-            <Route path="/manufacturer/purchaseOrder" element={<PurchaseOrder />} />
+            <Route
+              path="/manufacturer/purchaseOrder"
+              element={<PurchaseOrder />}
+            />
             <Route path="/manufacturer/notice/" element={<Notice />} />
-            <Route path="/manufacturer/notice/:type/:templateId" element={<UpdateTemplate />} />
+            <Route
+              path="/manufacturer/notice/:type/:templateId"
+              element={<UpdateTemplate />}
+            />
             <Route path="/manufacturer/staff" element={<StaffManagement />} />
-            <Route path="/manufacturer/approvePurchaseOrder" element={<PickupPurchaseOrder />} />
-            <Route path="/manufacturer/warehouse" element={<WarehouseDashboard />} />
-            <Route path="/manufacturer/dashboard" element={<ManufacturerDashboard />} />
-            <Route path="/manufacturer/checkInAndCheckout" element={<CheckInAndCheckOut />}/>
+            <Route
+              path="/manufacturer/approvePurchaseOrder"
+              element={<PickupPurchaseOrder />}
+            />
+            <Route
+              path="/manufacturer/warehouse"
+              element={<WarehouseDashboard />}
+            />
+            <Route
+              path="/manufacturer/dashboard"
+              element={<ManufacturerDashboard />}
+            />
+            <Route
+              path="/manufacturer/checkInAndCheckout"
+              element={<CheckInAndCheckOut />}
+            />
             <Route path="/manufacturer/report" element={<Report />} />
           </Route>
 
           <Route element={<MainLayout />}>
             <Route path="/customer/purchaseOrder" element={<PurchaseOrder />} />
-            <Route path="/customer/createPurchaseOrder" element={<CreatePurchaseOrder />} />
-            <Route path="/customer/editPurchaseOrder" element={<EditPurchaseOrder />} />
+            <Route
+              path="/customer/createPurchaseOrder"
+              element={<CreatePurchaseOrder />}
+            />
+            <Route
+              path="/customer/editPurchaseOrder"
+              element={<EditPurchaseOrder />}
+            />
             <Route path="/customer/account" element={<CustomerAccount />} />
             <Route path="/customer/notice/" element={<Notice />} />
-            <Route path="/customer/notice/:type/:templateId" element={<UpdateTemplate />} />
+            <Route
+              path="/customer/notice/:type/:templateId"
+              element={<UpdateTemplate />}
+            />
             <Route path="/customer/staff" element={<StaffManagement />} />
             <Route path="/customer/report" element={<Report />} />
           </Route>

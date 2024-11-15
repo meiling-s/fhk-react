@@ -87,11 +87,11 @@ const EditPurchaseOrder = () => {
       return await UpdatePurchaseOrder(poId, values)
     } catch (error:any) {
       const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    } else {
-      return null
-    }
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]){
+        showErrorToast(error.response.data.message);
+      }
     }
   }
   
@@ -100,8 +100,6 @@ const EditPurchaseOrder = () => {
     initialValues: {
       poId: '',
       picoId: '',
-      receiverAddr: '',
-      receiverAddrGps: [0],
       sellerTenantId: '',
       senderAddr: '',
       senderAddrGps: [0],
@@ -119,7 +117,8 @@ const EditPurchaseOrder = () => {
       updatedBy: loginId,
       createdAt: currentDate,
       updatedAt: currentDate,
-      purchaseOrderDetail: []
+      purchaseOrderDetail: [],
+      version: 0
     },
     // validationSchema: validateSchema,
     onSubmit: async (values: PurChaseOrder) => {
@@ -127,8 +126,6 @@ const EditPurchaseOrder = () => {
       const result = await submitUpdatePurchaseOrder(values.poId, values)
       if (result) {
         navigate(`/${realm}/purchaseOrder`, { state: 'updated' })
-      } else {
-        showErrorToast('fail to update purchase order')
       }
     }
   })
@@ -136,7 +133,7 @@ const EditPurchaseOrder = () => {
   const setPickupOrderDetail = () => {
     const picoDetails: PurchaseOrderDetail[] =
       poInfo?.purchaseOrderDetail?.map((item) => ({
-        id: item.id,
+        id: item.poDtlId,
         poDtlId: item.poDtlId,
         recycTypeId: item.recycTypeId,
         recyclableNameTchi: item.recyclableNameTchi,
@@ -154,7 +151,11 @@ const EditPurchaseOrder = () => {
         createdBy: item.createdBy,
         updatedBy: loginId,
         pickupAt: item.pickupAt,
-        receiverAddr: poInfo.receiverAddr,
+        receiverAddr: item.receiverAddr,
+        receiverAddrGps: item.receiverAddrGps,
+        version: poInfo.version,
+        status: item.status,
+
       })) || []
 
     setAddRow(picoDetails)
@@ -169,8 +170,6 @@ const EditPurchaseOrder = () => {
         poId: poInfo.poId,
         picoId: poInfo.picoId,
         cusTenantId: poInfo.cusTenantId,
-        receiverAddr: poInfo.receiverAddr,
-        receiverAddrGps: poInfo.receiverAddrGps,
         sellerTenantId: poInfo.sellerTenantId,
         senderAddr: poInfo.senderAddr,
         senderAddrGps: poInfo.senderAddrGps,
@@ -188,7 +187,8 @@ const EditPurchaseOrder = () => {
         updatedBy: loginId,
         createdAt: currentDate,
         updatedAt: currentDate,
-        purchaseOrderDetail: []
+        purchaseOrderDetail: [],
+        version: poInfo.version
       })
     }
   }, [poInfo])

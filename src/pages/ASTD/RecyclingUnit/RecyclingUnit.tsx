@@ -62,6 +62,7 @@ import {
   getRecycCode,
   getWeightUnit
 } from '../../../APICalls/ASTD/recycling'
+import CircularLoading from '../../../components/CircularLoading'
 import WeightFormat from './WeightFormat'
 import PackagingFormat from './PackagingFormat'
 import CodeFormat from './CodeFormat'
@@ -70,6 +71,7 @@ import CustomButton from '../../../components/FormComponents/CustomButton'
 import { useNavigate } from 'react-router-dom'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import DeleteModalSub from '../../../components/FormComponents/deleteModal'
+import SemiFinishProduct from './SemiFinishProduct'
 interface CodeFormatProps {
   createdAt: string
   createdBy: string
@@ -82,6 +84,7 @@ interface CodeFormatProps {
   status: string
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 interface PackagingUnitProps {
@@ -97,6 +100,7 @@ interface PackagingUnitProps {
   tenantId: string
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 interface WeightFormatProps {
@@ -113,6 +117,7 @@ interface WeightFormatProps {
   updatedAt: string
   updatedBy: string
   weight: number
+  version: number
 }
 
 interface recyleSubtyeData {
@@ -141,6 +146,7 @@ interface recyleTypeData {
   updatedAt: string
   updatedBy: string
   recycSubTypeId: string
+  version: number
 }
 
 type DeleteForm = {
@@ -185,6 +191,10 @@ const RecyclingUnit: FunctionComponent = () => {
   const { localeTextDataGrid } = useLocaleTextDataGrid()
   const [openDelete, setOpenDelete] = useState<boolean>(false)
   const [recycSubTypeIdValue, setRecycSubTypeIdValue] = useState<any>(null)
+  const [subTypeVersion, setSubTypeVersion] = useState<number>(0)
+  const [isLoadingPackaging, setIsLoadingPackaging] = useState<boolean>(false)
+  const [isLoadingRecycling, setIsLoadingRecycling] = useState<boolean>(false)
+  const [isLoadingWeight, setIsLoadingWeight] = useState<boolean>(false)
 
   useEffect(() => {
     initRecycTypeList()
@@ -211,6 +221,7 @@ const RecyclingUnit: FunctionComponent = () => {
   }
 
   const initRecycCode = async () => {
+    setIsLoadingRecycling(true)
     try {
       const result = await getRecycCode(page - 1, pageSize)
       const data = result?.data
@@ -222,9 +233,11 @@ const RecyclingUnit: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoadingRecycling(false)
   }
 
   const initPackagingUnit = async () => {
+    setIsLoadingPackaging(true)
     try {
       const result = await getAllPackagingUnit(page - 1, pageSize)
       const data = result?.data.content
@@ -236,9 +249,11 @@ const RecyclingUnit: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoadingPackaging(false)
   }
 
   const initWeightUnit = async () => {
+    setIsLoadingWeight(true)
     try {
       const result = await getWeightUnit(page - 1, pageSize)
       const data = result?.data
@@ -250,6 +265,7 @@ const RecyclingUnit: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoadingWeight(false)
   }
 
   const codeColumns: GridColDef[] = [
@@ -277,7 +293,7 @@ const RecyclingUnit: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} data-testid='astd-code-edit-button-6691'>
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
@@ -297,7 +313,7 @@ const RecyclingUnit: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} data-testid='astd-code-delete-button-8979'>
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
@@ -350,7 +366,7 @@ const RecyclingUnit: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} data-testid='astd-packaging-unit-edit-button-5410'>
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
@@ -370,7 +386,7 @@ const RecyclingUnit: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} data-testid='astd-packaging-unit-delete-button-6095'>
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
@@ -438,6 +454,7 @@ const RecyclingUnit: FunctionComponent = () => {
                 handleAction(params, 'edit', 'weight')
               }}
               style={{ cursor: 'pointer' }}
+              data-testid='astd-weight-edit-button-8782'
             />
           </div>
         )
@@ -458,6 +475,7 @@ const RecyclingUnit: FunctionComponent = () => {
                 handleAction(params, 'delete', 'weight')
               }}
               style={{ cursor: 'pointer' }}
+              data-testid='astd-weight-delete-button-7204'
             />
           </div>
         )
@@ -466,7 +484,7 @@ const RecyclingUnit: FunctionComponent = () => {
   ]
 
   const onDeleteModal = () => {
-    setOpenDelete(prev => !prev)
+    setOpenDelete((prev) => !prev)
   }
 
   const onDeleteClick = async () => {
@@ -474,7 +492,8 @@ const RecyclingUnit: FunctionComponent = () => {
 
     const recyclingForm = {
       status: 'INACTIVE',
-      updatedBy: token.loginId
+      updatedBy: token.loginId,
+      version: subTypeVersion
     }
 
     const response = await deleteSubRecyc(recyclingForm, recycSubTypeIdValue)
@@ -596,6 +615,7 @@ const RecyclingUnit: FunctionComponent = () => {
       setSwitchValue(null)
       setRecycSubTypeIdValue(value.recycSubTypeId)
       setOpenDelete(true)
+      setSubTypeVersion(value.version)
     }
   }
 
@@ -604,8 +624,10 @@ const RecyclingUnit: FunctionComponent = () => {
     const recycId = selectedRecyclingRow && selectedRecyclingRow.recycTypeId
     const recyclingForm = {
       status: 'INACTIVE',
-      updatedBy: token.loginId
+      updatedBy: token.loginId,
+      version: selectedRecyclingRow?.version !== undefined ? selectedRecyclingRow?.version : switchValue.version
     }
+
     if (switchValue !== null) {
       try {
         const response = await deleteRecyc(
@@ -617,8 +639,15 @@ const RecyclingUnit: FunctionComponent = () => {
           handleOnSubmitData('recycle')
           setSwitchValue(null)
         }
-      } catch (error) {
-        showErrorToast(t('notify.errorDeleted'))
+      } catch (error: any) {
+        const { state } = extractError(error)
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]) {
+          showErrorToast(error.response.data.message)
+        }  else {
+          showErrorToast(t('notify.errorDeleted'))
+        }
       }
     } else if (recycId !== null) {
       try {
@@ -632,8 +661,9 @@ const RecyclingUnit: FunctionComponent = () => {
         const { state } = extractError(error)
         if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]) {
+          showErrorToast(error.response.data.message)
         } else {
-          console.error(error)
           showErrorToast(t('notify.errorDeleted'))
         }
       }
@@ -676,6 +706,7 @@ const RecyclingUnit: FunctionComponent = () => {
               setRecycDrawerOpen(true)
               setAction('add')
             }}
+            data-testid='astd-recyclable-new-button-5393'
           >
             <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
@@ -689,6 +720,7 @@ const RecyclingUnit: FunctionComponent = () => {
             />
           </Box>
         </div>
+        <SemiFinishProduct />
         <Box
           sx={{
             display: 'flex',
@@ -713,47 +745,54 @@ const RecyclingUnit: FunctionComponent = () => {
               setCodeDrawerOpen(true)
               setAction('add')
             }}
+            data-testid='astd-code-new-button-4949'
           >
             <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={code}
-              getRowId={(row) => row.recycCodeId}
-              hideFooter
-              columns={codeColumns}
-              onRowClick={codeHandleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedCodeRow && params.id === selectedCodeRow.recycCodeId ? 'selected-row' : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
-                  }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
+            {isLoadingRecycling ? (
+              <CircularLoading />
+            ) : (
+              <DataGrid
+                rows={code}
+                getRowId={(row) => row.recycCodeId}
+                hideFooter
+                columns={codeColumns}
+                onRowClick={codeHandleSelectRow}
+                getRowSpacing={getRowSpacing}
+                localeText={localeTextDataGrid}
+                getRowClassName={(params) =>
+                  selectedCodeRow && params.id === selectedCodeRow.recycCodeId
+                    ? 'selected-row'
+                    : ''
+                }
+                sx={{
+                  border: 'none',
+                  '& .MuiDataGrid-cell': {
+                    border: 'none'
+                  },
+                  '& .MuiDataGrid-row': {
+                    bgcolor: 'white',
+                    borderRadius: '10px'
+                  },
+                  '&>.MuiDataGrid-main': {
+                    '&>.MuiDataGrid-columnHeaders': {
+                      borderBottom: 'none'
+                    }
+                  },
+                  '.MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold !important',
+                    overflow: 'visible !important'
+                  },
+                  '& .selected-row': {
                     backgroundColor: '#F6FDF2 !important',
                     border: '1px solid #79CA25'
                   }
-              }}
-            />
+                }}
+              />
+            )}
           </Box>
           <Box
             sx={{
@@ -779,6 +818,7 @@ const RecyclingUnit: FunctionComponent = () => {
                 setPackagingDrawerOpen(true)
                 setAction('add')
               }}
+              data-testid='astd-packaging-unit-new-button-1985'
             >
               <ADD_ICON /> {t('top_menu.add_new')}
             </Button>
@@ -786,41 +826,48 @@ const RecyclingUnit: FunctionComponent = () => {
         </div>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={packagingUnit}
-              getRowId={(row) => row.packagingTypeId}
-              hideFooter
-              columns={columns}
-              onRowClick={packagingHandleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedPackagingRow && params.id === selectedPackagingRow.packagingTypeId ? 'selected-row' : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
-                  }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
+            {isLoadingPackaging ? (
+              <CircularLoading />
+            ) : (
+              <DataGrid
+                rows={packagingUnit}
+                getRowId={(row) => row.packagingTypeId}
+                hideFooter
+                columns={columns}
+                onRowClick={packagingHandleSelectRow}
+                getRowSpacing={getRowSpacing}
+                localeText={localeTextDataGrid}
+                getRowClassName={(params) =>
+                  selectedPackagingRow &&
+                  params.id === selectedPackagingRow.packagingTypeId
+                    ? 'selected-row'
+                    : ''
+                }
+                sx={{
+                  border: 'none',
+                  '& .MuiDataGrid-cell': {
+                    border: 'none'
+                  },
+                  '& .MuiDataGrid-row': {
+                    bgcolor: 'white',
+                    borderRadius: '10px'
+                  },
+                  '&>.MuiDataGrid-main': {
+                    '&>.MuiDataGrid-columnHeaders': {
+                      borderBottom: 'none'
+                    }
+                  },
+                  '.MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold !important',
+                    overflow: 'visible !important'
+                  },
+                  '& .selected-row': {
                     backgroundColor: '#F6FDF2 !important',
                     border: '1px solid #79CA25'
                   }
-              }}
-            />
+                }}
+              />
+            )}
           </Box>
           <Box
             sx={{
@@ -846,6 +893,7 @@ const RecyclingUnit: FunctionComponent = () => {
                 setWeightDrawerOpen(true)
                 setAction('add')
               }}
+              data-testid='astd-weight-new-button-1075'
             >
               <ADD_ICON /> {t('top_menu.add_new')}
             </Button>
@@ -853,50 +901,54 @@ const RecyclingUnit: FunctionComponent = () => {
         </div>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={weightUnit}
-              getRowId={(row) => row.unitId}
-              hideFooter
-              columns={weightColumns}
-              onRowClick={weightHandleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.unitId ? 'selected-row' : ''
+          {isLoadingWeight ? (
+            <CircularLoading />
+          ) : (<DataGrid
+            rows={weightUnit}
+            getRowId={(row) => row.unitId}
+            hideFooter
+            columns={weightColumns}
+            onRowClick={weightHandleSelectRow}
+            getRowSpacing={getRowSpacing}
+            localeText={localeTextDataGrid}
+            getRowClassName={(params) =>
+              selectedRow && params.id === selectedRow.unitId
+                ? 'selected-row'
+                : ''
+            }
+            sx={{
+              border: 'none',
+              '& .MuiDataGrid-cell': {
+                border: 'none'
+              },
+              '& .MuiDataGrid-row': {
+                bgcolor: 'white',
+                borderRadius: '10px'
+              },
+              '&>.MuiDataGrid-main': {
+                '&>.MuiDataGrid-columnHeaders': {
+                  borderBottom: 'none'
+                }
+              },
+              '.MuiDataGrid-columnHeaderTitle': {
+                fontWeight: 'bold !important',
+                overflow: 'visible !important'
+              },
+              '& .selected-row': {
+                backgroundColor: '#F6FDF2 !important',
+                border: '1px solid #79CA25'
               }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
-                  }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
-              }}
-            />
+            }}
+          />)}
           </Box>
         </div>
       </Box>
       <DeleteModalSub
-          open={openDelete}
-          onClose={onDeleteModal}
-          onDelete={onDeleteClick}
-          deleteText={t('common.deleteMessage')}
-        />
+        open={openDelete}
+        onClose={onDeleteModal}
+        onDelete={onDeleteClick}
+        deleteText={t('common.deleteMessage')}
+      />
       <RecyclingFormat
         drawerOpen={recycDrawerOpen}
         handleDrawerClose={() => setRecycDrawerOpen(false)}
@@ -907,23 +959,35 @@ const RecyclingUnit: FunctionComponent = () => {
         mainCategory={isMainCategory}
         setDeleteModal={setDeleteModal}
       />
+
+ 
+
       <CodeFormat
         drawerOpen={codeDrawerOpen}
-        handleDrawerClose={() => {setCodeDrawerOpen(false); setSelectedCodeRow(null)}}
+        handleDrawerClose={() => {
+          setCodeDrawerOpen(false)
+          setSelectedCodeRow(null)
+        }}
         action={action}
         onSubmitData={handleOnSubmitData}
         selectedItem={selectedCodeRow}
       />
       <PackagingFormat
         drawerOpen={packagingDrawerOpen}
-        handleDrawerClose={() => {setPackagingDrawerOpen(false); setSelectedPackagingRow(null)}}
+        handleDrawerClose={() => {
+          setPackagingDrawerOpen(false)
+          setSelectedPackagingRow(null)
+        }}
         action={action}
         onSubmitData={handleOnSubmitData}
         selectedItem={selectedPackagingRow}
       />
       <WeightFormat
         drawerOpen={weightDrawerOpen}
-        handleDrawerClose={() => {setWeightDrawerOpen(false); setSelectedRow(null)}}
+        handleDrawerClose={() => {
+          setWeightDrawerOpen(false)
+          setSelectedRow(null)
+        }}
         action={action}
         onSubmitData={handleOnSubmitData}
         rowId={rowId}
@@ -975,23 +1039,31 @@ const CustomDataGrid = ({
   ]
 
   return (
-    <div style={{
-      display: 'flex', flexDirection: 'column',
-      borderRadius: '4px',
-      overflow: 'hidden'
-    }}>
-      <div style={{
+    <div
+      style={{
         display: 'flex',
+        flexDirection: 'column',
+        borderRadius: '4px',
+        overflow: 'hidden'
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
 
-        fontWeight: 'bold'
-      }}>
-        <input type='checkbox' />
-        {columns.map(column => (
-          <div key={column.key} style={{
-            flex: `0 0 ${column.width}`,
-            padding: '8px',
-            fontSize: 13
-          }}>
+          fontWeight: 'bold'
+        }}
+      >
+        <input type="checkbox" />
+        {columns.map((column) => (
+          <div
+            key={column.key}
+            style={{
+              flex: `0 0 ${column.width}`,
+              padding: '8px',
+              fontSize: 13
+            }}
+          >
             {column.label}
           </div>
         ))}
@@ -1004,6 +1076,7 @@ const CustomDataGrid = ({
       >
         {data.map((item: any, index: any) => (
           <div
+            key={index}
             style={{
               backgroundColor: '#fff',
               marginBottom: 15,
@@ -1011,7 +1084,6 @@ const CustomDataGrid = ({
             }}
           >
             <div
-              key={index}
               style={{
                 display: 'flex',
                 borderBottom: '1px solid #ccc',
@@ -1042,16 +1114,17 @@ const CustomDataGrid = ({
                   alignItems: 'center'
                 }}
               >
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex' }} data-testid={`astd-recyclable-edit-button-5941` + index}>
                   <EDIT_OUTLINED_ICON
                     fontSize="small"
                     className="cursor-pointer text-grey-dark mr-5"
                     onClick={() =>
                       customGridHandleAction(item, 'edit', 'mainCategory')
                     }
+                    
                   />
                 </div>
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex' }} data-testid={`astd-recyclable-delete-button-2955` + index}>
                   <DELETE_OUTLINED_ICON
                     fontSize="small"
                     className="cursor-pointer text-grey-dark mr-2"
@@ -1102,11 +1175,11 @@ const CustomDataGrid = ({
                     style={{
                       display: 'flex',
                       flexDirection: 'row',
-                      alignItems: 'center',
+                      alignItems: 'center'
                       //marginLeft: -10
                     }}
                   >
-                    <div style={{ display: 'flex' }}>
+                    <div style={{ display: 'flex' }} data-testid={`astd-subrecyclable-edit-button-5941` + index}>
                       <EDIT_OUTLINED_ICON
                         fontSize="small"
                         className="cursor-pointer text-grey-dark mr-5"
@@ -1115,7 +1188,7 @@ const CustomDataGrid = ({
                         }
                       />
                     </div>
-                    <div style={{ display: 'flex' }}>
+                    <div style={{ display: 'flex' }} data-testid={`astd-subrecyclable-delete-button-2955` + index}>
                       <DELETE_OUTLINED_ICON
                         fontSize="small"
                         className="cursor-pointer text-grey-dark mr-2"
@@ -1175,6 +1248,7 @@ const DeleteModal: React.FC<DeleteForm> = ({
                 handleConfirmDelete()
                 onClose()
               }}
+              dataTestId='astd-recyclable-confirm-delete-button-4166'
             />
             <CustomButton
               text={t('check_in.cancel')}
@@ -1184,6 +1258,7 @@ const DeleteModal: React.FC<DeleteForm> = ({
               onClick={() => {
                 onClose()
               }}
+              dataTestId='astd-recyclable-cancel-delete-button-4338'
             />
           </Box>
         </Stack>

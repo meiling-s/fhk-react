@@ -1,5 +1,5 @@
 import { useEffect, useState, FunctionComponent, useCallback } from 'react'
-import { Box, Button, Checkbox, Typography, Pagination } from '@mui/material'
+import { Box, Button, Typography, Pagination } from '@mui/material'
 import {
   DataGrid,
   GridColDef,
@@ -21,13 +21,12 @@ import {
   Functions
 } from '../../../interfaces/userGroup'
 import { ToastContainer, toast } from 'react-toastify'
-
+import CircularLoading from '../../../components/CircularLoading'
 import { useTranslation } from 'react-i18next'
 import {
   getAllFunction,
   getAllUserGroup
 } from '../../../APICalls/Collector/userGroup'
-import { IconButton } from '@mui/joy'
 import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
 import { extractError } from '../../../utils/utils'
@@ -50,7 +49,8 @@ function createUserGroup(
   updatedBy: string,
   updatedAt: string,
   userAccount: object[],
-  functions: Functions[]
+  functions: Functions[],
+  isAdmin: boolean
 ): UserGroupItem {
   return {
     groupId,
@@ -63,7 +63,8 @@ function createUserGroup(
     updatedBy,
     updatedAt,
     userAccount,
-    functions
+    functions,
+    isAdmin
   }
 }
 
@@ -82,6 +83,7 @@ const UserGroup: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     initFunctionList()
@@ -102,12 +104,13 @@ const UserGroup: FunctionComponent = () => {
   }
 
   const initUserGroupList = async () => {
+    setIsLoading(true)
     try {
       const result = await getAllUserGroup(page - 1, pageSize)
       const data = result?.data
       let tempGroupList: string[] = []
       if (data) {
-        var userGroupMapping: UserGroupItem[] = []
+        let userGroupMapping: UserGroupItem[] = []
         data.content.map((item: any) => {
           userGroupMapping.push(
             createUserGroup(
@@ -121,7 +124,8 @@ const UserGroup: FunctionComponent = () => {
               item?.updatedBy,
               item?.updatedAt,
               item?.userAccount,
-              item?.functions
+              item?.functions,
+              item?.isAdmin
             )
           )
 
@@ -137,6 +141,7 @@ const UserGroup: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   const columns: GridColDef[] = [
@@ -145,17 +150,20 @@ const UserGroup: FunctionComponent = () => {
       headerName: t('userGroup.groupName'),
       width: 200,
       type: 'string'
-      // renderCell: (params) => {
-      //   return (
-      //     <div>{params.row.serviceType}</div>
-      //   )
-      // }
     },
     {
       field: 'description',
       headerName: t('userGroup.description'),
       width: 200,
       type: 'string'
+    },
+    {
+      field: 'isAdmin',
+      headerName: t('userAccount.isAdmin'),
+      width: 250,
+      type: 'string',
+      valueGetter: (params) =>
+        params.row?.isAdmin ? t('common.yes') : t('common.no')
     },
     {
       field: 'functions',
@@ -187,6 +195,7 @@ const UserGroup: FunctionComponent = () => {
       renderCell: (params) => {
         return (
           <Button
+            data-testid="astd-user-group-edit-button-9924"
             onClick={(event) => {
               event.stopPropagation()
               handleAction(params, 'edit')
@@ -208,6 +217,7 @@ const UserGroup: FunctionComponent = () => {
       renderCell: (params) => {
         return (
           <Button
+            data-testid="astd-user-group-delete-button-7688"
             onClick={(event) => {
               event.stopPropagation()
               handleAction(params, 'delete')
@@ -283,9 +293,9 @@ const UserGroup: FunctionComponent = () => {
   }, [])
 
   useEffect(() => {
-    if(userGroupList.length === 0 && page > 1){
+    if (userGroupList.length === 0 && page > 1) {
       // move backward to previous page once data deleted from last page (no data left on last page)
-      setPage(prev => prev - 1)
+      setPage((prev) => prev - 1)
     }
   }, [userGroupList])
 
@@ -320,6 +330,7 @@ const UserGroup: FunctionComponent = () => {
                 height: '40px'
               }
             ]}
+            data-testid="astd-user-group-new-button-8674"
             variant="outlined"
             onClick={() => {
               setDrawerOpen(true)
@@ -331,49 +342,58 @@ const UserGroup: FunctionComponent = () => {
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={userGroupList}
-              getRowId={(row) => row.groupId}
-              hideFooter
-              columns={columns}
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.groupId ? 'selected-row' : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                {' '}
+                <DataGrid
+                  rows={userGroupList}
+                  getRowId={(row) => row.groupId}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.groupId
+                      ? 'selected-row'
+                      : ''
                   }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         {rowId != 0 && (

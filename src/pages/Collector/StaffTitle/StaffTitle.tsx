@@ -15,6 +15,7 @@ import {
   EDIT_OUTLINED_ICON,
   DELETE_OUTLINED_ICON
 } from '../../../themes/icons'
+import CircularLoading from '../../../components/CircularLoading'
 import { getAllStaffTitle } from '../../../APICalls/Collector/staffTitle'
 import { StaffTitle as StaffTitleItem } from '../../../interfaces/staffTitle'
 import CreateStaffTitle from './CreateStaffTitle'
@@ -36,7 +37,8 @@ function createStaffTitle(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
+  version?: number,
 ): StaffTitleItem {
   return {
     titleId,
@@ -51,7 +53,8 @@ function createStaffTitle(
     createdBy,
     updatedBy,
     createdAt,
-    updatedAt
+    updatedAt,
+    version
   }
 }
 
@@ -61,6 +64,7 @@ const StaffTitle: FunctionComponent = () => {
   const pageSize = 10
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [totalData, setTotalData] = useState<number>(0)
   const [StaffTitleList, setStaffTitleList] = useState<StaffTitleItem[]>([])
@@ -72,6 +76,7 @@ const StaffTitle: FunctionComponent = () => {
   const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const initStaffTitleList = async () => {
+    setIsLoading(true)
     try {
       const result = await getAllStaffTitle(page - 1, pageSize)
       const data = result?.data
@@ -96,7 +101,8 @@ const StaffTitle: FunctionComponent = () => {
               item?.createdBy,
               item?.updatedBy,
               item?.createdAt,
-              item?.updatedAt
+              item?.updatedAt,
+              item?.version,
             )
           )
 
@@ -123,6 +129,7 @@ const StaffTitle: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
   useEffect(() => {
     initStaffTitleList()
@@ -268,8 +275,8 @@ const StaffTitle: FunctionComponent = () => {
   }, [])
 
   useEffect(() => {
-    if(StaffTitleList.length === 0 && page > 1){
-      setPage(page -1 )
+    if (StaffTitleList.length === 0 && page > 1) {
+      setPage(page - 1)
     }
   }, [StaffTitleList])
 
@@ -315,55 +322,66 @@ const StaffTitle: FunctionComponent = () => {
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={StaffTitleList}
-              getRowId={(row) => row.titleId}
-              hideFooter
-              columns={columns}
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.titleId ? 'selected-row' : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                <DataGrid
+                  rows={StaffTitleList}
+                  getRowId={(row) => row.titleId}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.titleId
+                      ? 'selected-row'
+                      : ''
                   }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         {rowId != 0 && (
           <CreateStaffTitle
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
+            handleDrawerClose={() => {
+              setDrawerOpen(false)
+              setSelectedRow(null)
+            }}
             action={action}
             selectedItem={selectedRow}
             onSubmitData={onSubmitData}

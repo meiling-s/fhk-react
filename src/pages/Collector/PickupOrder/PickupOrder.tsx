@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import PickupOrderForm from '../../../components/FormComponents/PickupOrderFormCustom'
 import StatusCard from '../../../components/StatusCard'
-
+import CircularLoading from '../../../components/CircularLoading'
 import { PickupOrder, queryPickupOrder } from '../../../interfaces/pickupOrder'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
@@ -33,7 +33,8 @@ import {
   extractError,
   getPrimaryColor,
   showErrorToast,
-  showSuccessToast
+  showSuccessToast,
+  debounce
 } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
 import {
@@ -47,7 +48,9 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleText from '../../../hooks/useLocaleTextDataGrid'
 import { weekDs } from '../../../components/SpecializeComponents/RoutineSelect/predefinedOption'
+import RejectForm from '../../../components/logistic/RejectForm'
 import { getAllTenant } from '../../../APICalls/tenantManage'
+import { useNavigation } from 'react-router-dom'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -56,16 +59,18 @@ type Approve = {
   open: boolean
   onClose: () => void
   selectedRow: any
+  navigate: (url: string) => void
 }
 
-const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow }) => {
+const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow, navigate }) => {
   const { t } = useTranslation()
 
   const onApprove = async () => {
     const updatePoStatus = {
       status: 'CONFIRMED',
       reason: selectedRow.reason,
-      updatedBy: selectedRow.updatedBy
+      updatedBy: selectedRow.updatedBy,
+      version: selectedRow.version
     }
     try {
       const result = await editPickupOrderStatus(
@@ -85,8 +90,13 @@ const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow }) => {
         })
         onClose()
       }
-    } catch (error) {
-      console.error('Error approve:', error)
+    } catch (error: any) {
+      const {state} = extractError(error);
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]){
+        showErrorToast(error.response.data.message);
+      }
     }
   }
 
@@ -152,98 +162,108 @@ type rejectForm = {
   onClose: () => void
   selectedRow: any
   reasonList: any
+  navigate: (url: string) => void
 }
 
-function RejectForm({ open, onClose, selectedRow, reasonList }: rejectForm) {
-  const { t } = useTranslation()
-  const [rejectReasonId, setRejectReasonId] = useState<string>('')
-  const handleConfirmRejectOnClick = async (rejectReasonId: string) => {
-    const rejectReasonItem = reasonList.find(
-      (item: { id: string }) => item.id === rejectReasonId
-    )
-    const reason = rejectReasonItem?.name || ''
-    const updatePoStatus = {
-      status: 'REJECTED',
-      reason: reason,
-      updatedBy: selectedRow.updatedBy
-    }
-    try {
-      const result = await editPickupOrderStatus(
-        selectedRow.picoId,
-        updatePoStatus
-      )
-      if (result) {
-        toast.info(t('pick_up_order.rejected_success'), {
-          position: 'top-center',
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'light'
-        })
-        onClose()
-      }
-    } catch (error) {
-      console.error('Error reject:', error)
-    }
-  }
+// function RejectForm({ open, onClose, selectedRow, reasonList, navigate }: rejectForm) {
+//   const { t } = useTranslation();
+//   const [rejectReasonId, setRejectReasonId] = useState<string>('');
 
-  return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={localstyles.modal}>
-        <Stack spacing={2}>
-          <Box>
-            <Typography
-              id="modal-modal-title"
-              variant="h6"
-              component="h2"
-              sx={{ fontWeight: 'bold' }}
-            >
-              {t('pick_up_order.confirm_reject_title')}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography sx={localstyles.typo}>
-              {t('pick_up_order.reject_reasons')}
-              <Required />
-            </Typography>
-            <CustomItemList
-              items={reasonList}
-              singleSelect={setRejectReasonId}
-            />
-          </Box>
+//   const handleConfirmRejectOnClick = async (rejectReasonId: string) => {
+//     const rejectReasonItem = reasonList.find(
+//       (item: { id: string }) => item.id === rejectReasonId
+//     );
+//     const reason = rejectReasonItem?.name || '';
+//     const updatePoStatus = {
+//       status: 'REJECTED',
+//       reason: reason,
+//       updatedBy: selectedRow.updatedBy,
+//       version: selectedRow.version,
+//     };
+//     try {
+//       const result = await editPickupOrderStatus(
+//         selectedRow.picoId,
+//         updatePoStatus
+//       );
+//       if (result) {
+//         toast.info(t('pick_up_order.rejected_success'), {
+//           position: 'top-center',
+//           autoClose: 3000,
+//           hideProgressBar: true,
+//           closeOnClick: true,
+//           pauseOnHover: true,
+//           draggable: true,
+//           progress: undefined,
+//           theme: 'light',
+//         });
+//         onClose();
+//       }
+//     } catch (error: any) {
+//       const { state } = extractError(error);
+//       if (state.code === STATUS_CODE[503]) {
+//         navigate('/maintenance');
+//       } else if (state.code === STATUS_CODE[409]) {
+//         showErrorToast(error.response.data.message);
+//       }
+//     }
+//   };
 
-          <Box sx={{ alignSelf: 'center' }}>
-            <button
-              className="primary-btn mr-2 cursor-pointer"
-              onClick={() => {
-                handleConfirmRejectOnClick(rejectReasonId)
-                onClose()
-              }}
-            >
-              {t('pick_up_order.confirm_reject')}
-            </button>
-            <button
-              className="secondary-btn mr-2 cursor-pointer"
-              onClick={() => {
-                onClose()
-              }}
-            >
-              {t('pick_up_order.cancel')}
-            </button>
-          </Box>
-        </Stack>
-      </Box>
-    </Modal>
-  )
-}
+//   return (
+//     <Modal
+//       open={open}
+//       onClose={onClose}
+//       aria-labelledby="modal-modal-title"
+//       aria-describedby="modal-modal-description"
+//     >
+//       <Box sx={localstyles.modal}>
+//         <Stack spacing={2}>
+//           <Box>
+//             <Typography
+//               id="modal-modal-title"
+//               variant="h6"
+//               component="h2"
+//               sx={{ fontWeight: 'bold' }}
+//             >
+//               {t('pick_up_order.confirm_reject_title')}
+//             </Typography>
+//           </Box>
+//           <Box>
+//             <Typography sx={localstyles.typo}>
+//               {t('pick_up_order.reject_reasons')}
+//               <Required />
+//             </Typography>
+//             <CustomItemList
+//               items={reasonList}
+//               singleSelect={setRejectReasonId}
+//             />
+//           </Box>
+
+//           <Box sx={{ alignSelf: 'center' }}>
+//             <button
+//               className="primary-btn mr-2 cursor-pointer"
+
+//               onClick={() => {
+//                 handleConfirmRejectOnClick(rejectReasonId);
+//                 onClose();
+//               }}
+//               disabled={!rejectReasonId}
+//             >
+//               {t('pick_up_order.confirm_reject')}
+//             </button>
+//             <button
+//               className="secondary-btn mr-2 cursor-pointer"
+//               onClick={() => {
+//                 onClose();
+//               }}
+//             >
+//               {t('pick_up_order.cancel')}
+//             </button>
+//           </Box>
+//         </Stack>
+//       </Box>
+//     </Modal>
+//   );
+// }
 
 interface Option {
   value: string
@@ -271,6 +291,7 @@ const PickupOrders = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const [showOperationColumn, setShowOperationColumn] = useState<Boolean>(false)
   const role = localStorage.getItem(localStorgeKeyName.role)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   let columns: GridColDef[] = [
     {
       field: 'createdAt',
@@ -496,6 +517,7 @@ const PickupOrders = () => {
   }
 
   const initPickupOrderRequest = async () => {
+    setIsLoading(true)
     try {
       // setPickupOrder([])
       setTotalData(0)
@@ -650,6 +672,7 @@ const PickupOrders = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   const showApproveModal = (row: any) => {
@@ -836,8 +859,6 @@ const PickupOrders = () => {
   }
 
   useEffect(() => {
-    // const mappingData = () => {
-
     const tempRows: any[] = (
       pickupOrder?.map((item) => ({
         ...item,
@@ -959,8 +980,8 @@ const PickupOrders = () => {
     }
   }, [])
   const handleCloses = () => {
-    setOpenModal(false)
     setSelectedRow(null)
+    setOpenModal(false)
   }
   const handleRowClick = (params: GridRowParams) => {
     const row = params.row as PickupOrder
@@ -972,24 +993,15 @@ const PickupOrders = () => {
     setQuery({ ...query, ...newQuery })
   }
 
-  const handleSearch = (keyName: string, value: string) => {
+  const handleSearch = debounce((keyName: string, value: string) => {
     setPage(1)
     if (keyName == 'status') {
-      // const statusMapping: { [key: string]: number } = {
-      //   CREATED: 0,
-      //   STARTED: 1,
-      //   CONFIRMED: 2,
-      //   REJECTED: 3,
-      //   COMPLETED: 4,
-      //   CLOSED: 5,
-      //   OUTSTANDING: 6
-      // };
       const mappedStatus = value != '' ? parseInt(value) : null
       updateQuery({ ...query, [keyName]: mappedStatus })
     } else {
       updateQuery({ [keyName]: value })
     }
-  }
+  }, 1000)
 
   function getStatusOpion() {
     const options: Option[] = statusList.map((item) => {
@@ -1021,11 +1033,13 @@ const PickupOrders = () => {
       const updatePoStatus = {
         status: 'CLOSED',
         reason: selectedRow.reason,
-        updatedBy: selectedRow.updatedBy
+        updatedBy: selectedRow.updatedBy,
+        version: selectedRow.version
       }
       const updatePoDtlStatus = {
         status: 'CLOSED',
-        updatedBy: selectedRow.updatedBy
+        updatedBy: selectedRow.updatedBy,
+        version: selectedRow.version
       }
       try {
         const result = await editPickupOrderStatus(
@@ -1048,9 +1062,13 @@ const PickupOrders = () => {
         }
 
         // navigate('/collector/PickupOrder')
-      } catch (error) {
-        showErrorToast(t('pick_up_order.error.failedDeletePickupOrder'))
-        //console.error('Error updating field:', error)
+      } catch (error: any) {
+        const {state} = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
+        }
       }
     } else {
       alert('No selected pickup order')
@@ -1058,9 +1076,9 @@ const PickupOrders = () => {
   }
 
   useEffect(() => {
-    if(pickupOrder && pickupOrder.length === 0 && page > 1){
+    if (pickupOrder && pickupOrder.length === 0 && page > 1) {
       // move backward to previous page once data deleted from last page (no data left on last page)
-      setPage(prev => prev - 1)
+      setPage((prev) => prev - 1)
     }
   }, [pickupOrder])
 
@@ -1097,6 +1115,7 @@ const PickupOrders = () => {
               marginLeft: '20px'
             }}
             variant="contained"
+            data-testId={'astd-pickup-order-new-button-5743'}
           >
             + {t('col.create')}
           </Button>
@@ -1117,56 +1136,63 @@ const PickupOrders = () => {
           ))}
         </Stack>
         <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
-          <DataGrid
-            rows={filteredPico}
-            columns={columns}
-            disableRowSelectionOnClick
-            onRowClick={handleRowClick}
-            getRowSpacing={getRowSpacing}
-            hideFooter
-            localeText={localeTextDataGrid}
-            getRowClassName={(params) =>
-              selectedRow && params.id === selectedRow.picoId
-                ? 'selected-row'
-                : ''
-            }
-            sx={{
-              border: 'none',
-              '& .MuiDataGrid-cell': {
-                border: 'none' // Remove the borders from the cells
-              },
-              '& .MuiDataGrid-row': {
-                bgcolor: 'white',
-                borderRadius: '10px'
-              },
-              '&>.MuiDataGrid-main': {
-                '&>.MuiDataGrid-columnHeaders': {
-                  borderBottom: 'none'
+          {isLoading ? (
+            <CircularLoading />
+          ) : (
+            <Box>
+              <DataGrid
+                rows={filteredPico}
+                columns={columns}
+                disableRowSelectionOnClick
+                onRowClick={handleRowClick}
+                getRowSpacing={getRowSpacing}
+                hideFooter
+                localeText={localeTextDataGrid}
+                getRowClassName={(params) =>
+                  selectedRow && params.id === selectedRow.picoId
+                    ? 'selected-row'
+                    : ''
                 }
-              },
-              '.MuiDataGrid-columnHeaderTitle': {
-                fontWeight: 'bold !important',
-                overflow: 'visible !important'
-              },
-              '& .selected-row': {
-                backgroundColor: '#F6FDF2 !important',
-                border: '1px solid #79CA25'
-              }
-            }}
-          />
-          <Pagination
-            count={Math.ceil(totalData)}
-            page={page}
-            onChange={(_, newPage) => {
-              setPage(newPage)
-            }}
-          />
+                sx={{
+                  border: 'none',
+                  '& .MuiDataGrid-cell': {
+                    border: 'none' // Remove the borders from the cells
+                  },
+                  '& .MuiDataGrid-row': {
+                    bgcolor: 'white',
+                    borderRadius: '10px'
+                  },
+                  '&>.MuiDataGrid-main': {
+                    '&>.MuiDataGrid-columnHeaders': {
+                      borderBottom: 'none'
+                    }
+                  },
+                  '.MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold !important',
+                    overflow: 'visible !important'
+                  },
+                  '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
+                }}
+              />
+              <Pagination
+                count={Math.ceil(totalData)}
+                page={page}
+                onChange={(_, newPage) => {
+                  setPage(newPage)
+                }}
+              />
+            </Box>
+          )}
         </Box>
 
         <ApproveModal
           open={approveModal}
           onClose={resetPage}
           selectedRow={selectedRow}
+          navigate={navigate}
         />
         <RejectForm
           open={rejectModal}
@@ -1176,6 +1202,7 @@ const PickupOrders = () => {
           }}
           selectedRow={selectedRow}
           reasonList={reasonList}
+          navigate={navigate}
         />
         <DeleteModal
           open={openDelete}
@@ -1228,6 +1255,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               onClick={() => {
                 if (selectedRow) onDelete()
               }}
+              data-testId='astd-pickup-order-sidebar-confirm-delete-button-5711'
             >
               {t('check_in.confirm')}
             </button>
@@ -1236,6 +1264,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               onClick={() => {
                 onClose()
               }}
+              data-testId='astd-pickup-order-sidebar-cancel-delete-button-9361'
             >
               {t('check_out.cancel')}
             </button>

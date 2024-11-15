@@ -45,8 +45,9 @@ import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { createRecyc, deleteWeightUnit, editWeightUnit, sendWeightUnit } from '../../../APICalls/ASTD/recycling'
 import { paletteColors } from '../../../themes/palette'
 import { STATUS_CODE } from '../../../constants/constant'
+import { version } from 'os'
 
-interface WeightFormat {
+interface WeightFormatData {
     createdAt: string
     createdBy: string
     description: string
@@ -60,6 +61,7 @@ interface WeightFormat {
     updatedAt: string
     updatedBy: string
     weight: number
+    version: number
 }
 
 interface WeightFormatProps {
@@ -68,8 +70,8 @@ interface WeightFormatProps {
     action?: 'add' | 'edit' | 'delete'
     onSubmitData: (type: string) => void
     rowId?: number,
-    selectedItem: WeightFormat | null
-  }
+    selectedItem: WeightFormatData | null
+}
 
 const WeightFormat: FunctionComponent<WeightFormatProps> = ({
     drawerOpen,
@@ -84,16 +86,17 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
     const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
     const [errorMsgList, setErrorMsgList] = useState<string[]>([])
     const [openDelete, setOpenDelete] = useState<boolean>(false)
-    const [trySubmited, setTrySubmitted] = useState(false)
-    const [tChineseName, setTChineseName] = useState('')
-    const [sChineseName, setSChineseName] = useState('')
-    const [englishName, setEnglishName] = useState('')
-    const [equivalent, setEquivalent] = useState('')
-    const [description, setDescription] = useState('')
-    const [remark, setRemark] = useState('')
+    const [trySubmited, setTrySubmitted] = useState<boolean>(false)
+    const [tChineseName, setTChineseName] = useState<string>('')
+    const [sChineseName, setSChineseName] = useState<string>('')
+    const [englishName, setEnglishName] = useState<string>('')
+    const [equivalent, setEquivalent] = useState<string>('')
+    const [description, setDescription] = useState<string>('')
+    const [remark, setRemark] = useState<string>('')
+    const [version, setVersion] = useState<number>(0)
     const [isMainCategory, setMainCategory] = useState(true)
     const [chosenRecyclableType, setChosenRecyclableType] = useState('')
-    const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
+    const [validation, setValidation] = useState<{ field: string; error: string, dataTestId: string }[]>([])
     const isInitialRender = useRef(true) // Add this line
     const navigate = useNavigate();
 
@@ -103,7 +106,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
 
     useEffect(() => {
         setTrySubmitted(false)
-        if (action === 'edit') {
+        if (action === 'edit' || action === 'delete') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 setTChineseName(selectedItem.unitNameTchi)
                 setSChineseName(selectedItem.unitNameSchi)
@@ -111,6 +114,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                 setEquivalent(selectedItem.weight.toString())
                 setDescription(selectedItem.description)
                 setRemark(selectedItem.remark)
+                setVersion(selectedItem.version)
             }
         } else if (action === 'add') {
             resetForm()
@@ -124,6 +128,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
         setEquivalent('')
         setDescription('')
         setRemark('')
+        setVersion(0)
     }
 
     const checkString = (s: string) => {
@@ -140,7 +145,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
             return false
         }
         return s >= 0
-        
+
     }
 
     const getFormErrorMsg = () => {
@@ -154,14 +159,15 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
     }
 
     useEffect(() => {
-        const tempV: { field: string; error: string }[] = []
+        const tempV: { field: string; error: string, dataTestId: string }[] = []
 
         tChineseName.trim() === '' &&
             tempV.push({
                 field: `${t(`common.traditionalChineseName`)}`,
                 error: `${t(
                     'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}`,
+                dataTestId: 'astd-weight-form-tc-err-warning-3284'
             })
 
         sChineseName.trim() === '' &&
@@ -169,7 +175,8 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                 field: `${t(`common.simplifiedChineseName`)} `,
                 error: `${t(
                     'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}`,
+                dataTestId: 'astd-weight-form-sc-err-warning-2369'
             })
 
         englishName.trim() === '' &&
@@ -177,20 +184,23 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                 field: `${t(`common.englishName`)} `,
                 error: `${t(
                     'add_warehouse_page.shouldNotEmpty'
-                )}`
+                )}`,
+                dataTestId: 'astd-weight-form-en-err-warning-5134'
             })
-        
+
         Number(equivalent) < 0 &&
             tempV.push({
                 field: `${t(`pick_up_order.card_detail.weight`)}`,
-                error: `${t('recycling_unit.weight_error')}`
+                error: `${t('recycling_unit.weight_error')}`,
+                dataTestId: 'astd-weight-form-weight-err-warning-7858'
             })
 
         equivalent === '' &&
-        tempV.push({
-            field: `${t(`pick_up_order.card_detail.weight`)}`,
-            error: `${t( 'add_warehouse_page.shouldNotEmpty')}`
-        })
+            tempV.push({
+                field: `${t(`pick_up_order.card_detail.weight`)}`,
+                error: `${t('add_warehouse_page.shouldNotEmpty')}`,
+                dataTestId: 'astd-weight-form-weight-err-warning-7858'
+            })
 
         setValidation(tempV)
     }, [tChineseName, sChineseName, englishName, equivalent, i18n, currentLanguage])
@@ -199,7 +209,8 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
         const token = returnApiToken()
         const weightForm = {
             status: 'DELETED',
-            updatedBy: token.loginId
+            updatedBy: token.loginId,
+            version: version
         }
 
         try {
@@ -208,20 +219,20 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                 onSubmitData('weight')
                 showSuccessToast(t('notify.successDeleted'))
             }
-        } catch (error:any) {
-            const {state} = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
+        } catch (error: any) {
+            const { state } = extractError(error)
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-            } else {
-                showErrorToast(t('notify.errorDeleted'))
+            } else if (state.code === STATUS_CODE[409]) {
+                showErrorToast(error.response.data.message);
             }
-            
+
         }
     }
 
     const handleSubmit = () => {
         const { loginId } = returnApiToken();
-        
+
         const weightForm = {
             unitNameTchi: tChineseName,
             unitNameSchi: sChineseName,
@@ -232,6 +243,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
             status: "ACTIVE",
             createdBy: loginId,
             updatedBy: loginId,
+            ...(action === 'edit' && { version: version })
         }
 
         const isError = validation.length == 0
@@ -253,9 +265,9 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                 onSubmitData('weight')
                 showSuccessToast(t('notify.successCreated'))
             }
-        } catch (error:any) {
-            const {state} = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
+        } catch (error: any) {
+            const { state } = extractError(error)
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
             } else {
                 console.error(error)
@@ -271,13 +283,12 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                 onSubmitData('weight')
                 showSuccessToast(t('notify.SuccessEdited'))
             }
-        } catch (error:any) {
-            const {state} = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
+        } catch (error: any) {
+            const { state } = extractError(error)
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-            } else {
-                console.error(error)
-                showErrorToast(t('errorCreated.errorEdited'))
+            } else if (state.code === STATUS_CODE[409]) {
+                showErrorToast(error.response.data.message);
             }
 
         }
@@ -317,6 +328,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                                 placeholder={t('packaging_unit.traditional_chinese_name_placeholder')}
                                 onChange={(event) => setTChineseName(event.target.value)}
                                 error={checkString(tChineseName)}
+                                dataTestId='astd-weight-form-tc-input-field-2894'
                             />
                         </CustomField>
                     </Box>
@@ -329,6 +341,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                                 placeholder={t('packaging_unit.simplified_chinese_name_placeholder')}
                                 onChange={(event) => setSChineseName(event.target.value)}
                                 error={checkString(sChineseName)}
+                                dataTestId='astd-weight-form-sc-input-field-7938'
                             />
                         </CustomField>
                     </Box>
@@ -341,6 +354,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                                 placeholder={t('packaging_unit.english_name_placeholder')}
                                 onChange={(event) => setEnglishName(event.target.value)}
                                 error={checkString(englishName)}
+                                dataTestId='astd-weight-form-en-input-field-9676'
                             />
                         </CustomField>
                     </Box>
@@ -354,11 +368,12 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                                 placeholder={t('recycling_unit.enter_weight')}
                                 onChange={(event) => setEquivalent(event.target.value)}
                                 error={checkNumber(Number(equivalent))}
+                                dataTestId='astd-weight-form-weight-input-field-8988'
                             />
                         </CustomField>
                     </Box>
                     {Number(equivalent) < 0 && (
-                        <Typography sx={{color: paletteColors.Red1}}>{t('recycling_unit.weight_error')}</Typography>
+                        <Typography sx={{ color: paletteColors.Red1 }}>{t('recycling_unit.weight_error')}</Typography>
                     )}
                     <Box sx={{ marginY: 2 }}>
                         <CustomField label={t('packaging_unit.introduction')}>
@@ -368,6 +383,8 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                                 onChange={(event) => setDescription(event.target.value)}
                                 multiline={true}
                                 defaultValue={description}
+                                disabled={action === 'delete'}
+                                dataTestId='astd-weight-form-intro-input-field-8003'
                             />
                         </CustomField>
                     </Box>
@@ -379,18 +396,21 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                                 onChange={(event) => setRemark(event.target.value)}
                                 multiline={true}
                                 defaultValue={remark}
+                                disabled={action === 'delete'}
+                                dataTestId='astd-weight-form-remark-input-field-9721'
                             />
                         </CustomField>
                     </Box>
                     <Grid item sx={{ width: '92%' }}>
                         {trySubmited &&
                             validation.map((val, index) => (
-                            <FormErrorMsg
-                                key={index}
-                                field={t(val.field)}
-                                errorMsg={val.error}
-                                type={'error'}
-                            />
+                                <FormErrorMsg
+                                    key={index}
+                                    field={t(val.field)}
+                                    errorMsg={val.error}
+                                    type={'error'}
+                                    dataTestId={val.dataTestId}
+                                />
                             ))}
                     </Grid>
                 </Box>

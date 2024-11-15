@@ -1,6 +1,6 @@
 export type PurchaseOrderDetail = {
   id?: any;
-  poDtlId: number
+  poDtlId?: number
   recycTypeId: string
   recyclableNameTchi: string
   recyclableNameSchi: string
@@ -18,14 +18,14 @@ export type PurchaseOrderDetail = {
   updatedBy: string
   pickupAt?: string
   receiverAddr?: string
+  receiverAddrGps?: number[]
+  status?: string
 }
 
 export type PurChaseOrder = {
   poId: string
   picoId: string
   cusTenantId?: string
-  receiverAddr: string
-  receiverAddrGps: [0]
   sellerTenantId: string
   senderAddr: string
   senderAddrGps: [0]
@@ -44,6 +44,7 @@ export type PurChaseOrder = {
   createdAt: string
   updatedAt: string
   purchaseOrderDetail: PurchaseOrderDetail[]
+  version?: number
 }
 
 export type queryPurchaseOrder = {

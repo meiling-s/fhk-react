@@ -180,6 +180,6 @@ export const updateTenantDetail = async (data: any, tenantId: string) => {
     return response
   } catch (e) {
     console.error('Tenant info details update failed:', e)
-    return null
+    throw (e)
   }
 }

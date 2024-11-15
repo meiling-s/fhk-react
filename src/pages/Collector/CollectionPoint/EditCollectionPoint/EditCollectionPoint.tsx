@@ -35,7 +35,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import {
   findCollectionPointExistByName,
   findCollectionPointExistByContractAndAddress,
-  updateCollectionPoint
+  updateCollectionPoint,
+  getCollectionPointDetail
 } from '../../../../APICalls/collectionPointManage'
 import { useTranslation } from 'react-i18next'
 import {
@@ -60,6 +61,7 @@ import CustomItemList from '../../../../components/FormComponents/CustomItemList
 import {
   displayCreatedDate,
   extractError,
+  showErrorToast,
   validDayjsISODate
 } from '../../../../utils/utils'
 
@@ -97,6 +99,7 @@ function CreateCollectionPoint() {
   const [listPlace, setListPlace] = useState<any[]>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
+  const [version, setVersion] = useState<number>(0)
   const [skipValidation, setSkipValidation] = useState<string[]>([]) //store the fields of validation that are going to skip
   const [typeList, setTypeList] = useState<{
     colPoint: colPointType[]
@@ -122,6 +125,7 @@ function CreateCollectionPoint() {
 
   useEffect(() => {
     initType()
+    initCollectionPointDetail()
     setRecyclables(colInfo.colPtRecyc)
   }, [])
 
@@ -153,6 +157,31 @@ function CreateCollectionPoint() {
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
+    }
+  }
+
+  const initCollectionPointDetail = async () => {
+    const result = await getCollectionPointDetail(colInfo.colId)
+    const data = result.data as collectionPoint
+    
+    if (data) {
+      setCOLType(data.colPointTypeId)
+      setAddress(data.address)
+      setGPSCode(data.gpsCode)
+      // setOpeningPeriod({
+      //   startDate: data.effFrmDate,
+      //   endDate: data.effToDate
+      // })
+      setSiteType(data.siteTypeId)
+      setContractNo(data.contractNo)
+      setPremiseName(data.premiseName)
+      setPremiseType(data.premiseTypeId)
+      setPremiseRemark(data.premiseRemark)
+      setRecyclables(data.colPtRecyc)
+      setStaffNum(data.noOfStaff)
+      setEPDEnable(data.epdFlg)
+      setServiceFlg(data.serviceFlg)
+      setVersion(data.version)
     }
   }
 
@@ -275,10 +304,8 @@ function CreateCollectionPoint() {
   }
 
   const checkEffectiveDate = () => {
-    const startDate = dayjs(openingPeriod.startDate)
-      .subtract(1, 'day')
-      .startOf('day')
-    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day')
+    const startDate = dayjs(openingPeriod.startDate).startOf('day')
+    const endDate = dayjs(openingPeriod.endDate).endOf('day')
 
     if (startDate.isAfter(endDate)) {
       return false
@@ -295,7 +322,6 @@ function CreateCollectionPoint() {
   }
 
   const isOpeningPeriodEmpty = () => {
-    console.log('isOpeningPeriodEmpty', openingPeriod.startDate)
     return !openingPeriod.startDate || !openingPeriod.endDate
   }
 
@@ -642,7 +668,8 @@ function CreateCollectionPoint() {
           normalFlg: true,
           updatedBy: loginId,
           colPtRecyc: recyclables,
-          roster: []
+          roster: [],
+          version: version
         }
         const result = await updateCollectionPoint(colInfo.colId, cp)
         const data = result?.data
@@ -659,6 +686,8 @@ function CreateCollectionPoint() {
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error.response.data.message)
       }
     }
   }
@@ -691,6 +720,14 @@ function CreateCollectionPoint() {
   const createdDate = colInfo.createdAt
     ? displayCreatedDate(colInfo.createdAt)
     : dayjs(new Date()).format(format.dateFormat1)
+
+  const isIncludeOthersPremis = () => {
+    return (
+      premiseType === 'PT00009' ||
+      premiseType === 'PT00027' ||
+      premiseType === 'PT00028'
+    )
+  }
 
   return (
     <>
@@ -731,7 +768,7 @@ function CreateCollectionPoint() {
               <ColPointTypeList
                 setState={setCOLType}
                 colPointTypes={typeList.colPoint}
-                defaultValue={colInfo.colPointTypeId}
+                defaultValue={colType}
                 editable={false}
               />
             </CustomField>
@@ -741,7 +778,7 @@ function CreateCollectionPoint() {
                 setState={setSiteType}
                 siteTypes={typeList.site}
                 error={checkString(siteType)}
-                defaultValue={colInfo.siteTypeId}
+                defaultValue={siteType}
                 editable={false}
               />
             </CustomField>
@@ -810,8 +847,8 @@ function CreateCollectionPoint() {
             <CustomField label={t('col.effFromDate')} mandatory={true}>
               <CustomPeriodSelect
                 setDate={setOpeningPeriod}
-                defaultStartDate={colInfo.effFrmDate}
-                defaultEndDate={colInfo.effToDate}
+                defaultStartDate={openingPeriod.startDate}
+                defaultEndDate={openingPeriod.endDate}
               />
             </CustomField>
 
@@ -845,7 +882,7 @@ function CreateCollectionPoint() {
                 placeholder={t('col.enterName')}
                 onChange={(event) => setPremiseName(event.target.value)}
                 error={checkString(premiseName)}
-                defaultValue={colInfo.premiseName}
+                defaultValue={premiseName}
               />
             </CustomField>
 
@@ -854,22 +891,29 @@ function CreateCollectionPoint() {
                 setState={setPremiseType}
                 premiseTypes={typeList.premise}
                 error={checkString(premiseType)}
-                defaultValue={colInfo.premiseTypeId}
+                defaultValue={premiseType}
                 editable={false}
               />
             </CustomField>
 
-            {premiseType === 'PT00009' && (
+            {isIncludeOthersPremis() && (
               <Grid item>
                 {/* <Collapse in={premiseType == "PT00010"} > */}
-                <CustomField label={t('col.premiseRemark')} mandatory={false}>
+                <CustomField
+                  label={
+                    premiseType === 'PT00027'
+                      ? t('col.otherResidentialPremise')
+                      : t('col.otherNonResidentialPremise')
+                  }
+                  mandatory={false}
+                >
                   <CustomTextField
                     id="premiseRemark"
                     disabled={true}
                     placeholder={t('col.enterText')}
                     onChange={(event) => setPremiseRemark(event.target.value)}
-                    defaultValue={colInfo.premiseRemark}
-                    error={checkString(premiseName)}
+                    defaultValue={premiseRemark}
+                    error={checkString(premiseRemark)}
                   />
                 </CustomField>
                 {/* </Collapse> */}
@@ -900,7 +944,7 @@ function CreateCollectionPoint() {
                 recycL={typeList.recyc}
                 subTypeRequired={true}
                 setState={setRecyclables}
-                defaultRecycL={colInfo.colPtRecyc}
+                defaultRecycL={recyclables}
               />
             </CustomField>
 
@@ -921,7 +965,7 @@ function CreateCollectionPoint() {
                   setStaffNum(value)
                 }}
                 error={checkNumber(staffNum)}
-                defaultValue={colInfo.noOfStaff}
+                defaultValue={staffNum}
               />
             </CustomField>
 
@@ -940,7 +984,7 @@ function CreateCollectionPoint() {
                 disablePortal
                 id="contractNo"
                 options={contractList.map((contract) => contract.contractNo)}
-                defaultValue={colInfo.contractNo}
+                defaultValue={contractNo}
                 onChange={(event, value) => {
                   //console.log(value)
                   if (value) {

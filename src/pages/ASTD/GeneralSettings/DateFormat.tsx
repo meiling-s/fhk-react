@@ -18,8 +18,6 @@ import {
 } from '@mui/material'
 import dayjs from 'dayjs'
 import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
-import ImageUploading, { ImageListType } from 'react-images-uploading'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
@@ -54,6 +52,7 @@ interface DateFormat {
   dateFormatId: number
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 interface DateFormatProps {
@@ -76,6 +75,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
   const [dateFormatList, setDateFormatList] = useState<DateFormat[]>([])
   const [dateFormatId, setDateFormatId] = useState(0)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
+  const [version, setVersion] = useState<number>(0)
   const navigate = useNavigate();
   
   useEffect (() => {
@@ -84,6 +84,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
       if (dateformat) {
         setDateFormat(dateformat.dateFormat)
         setDateFormatId(dateformat.dateFormatId)
+        setVersion(dateformat.version)
       }
     }
   }, [dateformat, action, drawerOpen])
@@ -106,6 +107,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
           dateFormatId: item.dateFormatId,
           updatedAt: item.updatedAt,
           updatedBy: item.updatedBy,
+          version: item.version
         })
       })
       setDateFormatList(dateList);
@@ -129,7 +131,8 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
 
     const formData = {
       status: "ACTIVE",
-      updatedBy: loginId
+      updatedBy: loginId,
+      version: version
     }
 
     if (formData) {
@@ -149,8 +152,10 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
     }
    } catch (error:any) {
     const {state } = extractError(error);
-    if(state.code === STATUS_CODE[503] ){
+    if (state.code === STATUS_CODE[503]) {
       navigate('/maintenance')
+    } else if (state.code === STATUS_CODE[409]){
+      showErrorToast(error.response.data.message);
     }
    }
   }
@@ -185,6 +190,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
                       if (selectedDateFormat) {
                         setDateFormat(selectedDateFormat.dateFormat);
                         setDateFormatId(selectedDateFormat.dateFormatId);
+                        setVersion(selectedDateFormat.version)
                       }
                     }
                 }}
