@@ -55,6 +55,7 @@ function createVehicles(
   photo: string[],
   status: string,
   deviceId: string,
+  compactor: 1 | 0,
   netWeight: number,
   createdBy: string,
   updatedBy: string,
@@ -70,6 +71,7 @@ function createVehicles(
     photo,
     status,
     deviceId,
+    compactor,
     createdBy,
     updatedBy,
     createdAt,
@@ -95,23 +97,21 @@ const Vehicles: FunctionComponent = () => {
   const [isSearching, setSearching] = useState(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
-
+  
   useEffect(() => {
     initVehicleList()
     //initAllVehicleList()
   }, [page])
-
-  // useEffect(() => {
-  //   initAllVehicleList()
-  // }, [])
+  
+  useEffect(() => {
+    initAllVehicleList()
+  }, [])
 
   const initVehicleList = useCallback(async () => {
     setIsLoading(true)
     setVehicleList([])
     const result = await getAllVehicles(page - 1, pageSize)
     const data = result?.data
-    const newPlateList: string[] = []
-    const newDeviceIdList: string[] = []
     const table = localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
   
     if (data) {
@@ -128,6 +128,7 @@ const Vehicles: FunctionComponent = () => {
               vehicleImages.photo,
               item?.status,
               item?.deviceId,
+              item?.compactor,
               item?.netWeight,
               item?.createdBy,
               item?.updatedBy,
@@ -135,8 +136,6 @@ const Vehicles: FunctionComponent = () => {
               item?.updatedAt,
               item?.version,
             )
-            newPlateList.push(item?.plateNo)
-            newDeviceIdList.push(item?.deviceId)
             return vehicle
           }
           return null
@@ -154,38 +153,41 @@ const Vehicles: FunctionComponent = () => {
    
   }, [page, pageSize])
 
-  // const initAllVehicleList = useCallback(async () => {
-  //   setIsLoading(true)
-  //   const result = await getAllVehicles(0, 1000)
-  //   const data = result?.data
-  //   const newPlateList: string[] = []
-  //   const newDeviceIdList: string[] = []
-  //   if (data) {
-  //     var vehicleMapping: VehicleItem[] = []
-  //     data.content.map((item: any) => {
-  //       vehicleMapping.push(
-  //         createVehicles(
-  //           item?.vehicleId,
-  //           item?.vehicleTypeId,
-  //           item?.plateNo,
-  //           item?.photo,
-  //           item?.status,
-  //           item?.deviceId,
-  //           item?.netWeight,
-  //           item?.createdBy,
-  //           item?.updatedBy,
-  //           item?.createdAt,
-  //           item?.updatedAt,
-  //           item?.version
-  //         )
-  //       )
-  //       newPlateList.push(item?.plateNo)
-  //       newDeviceIdList.push(item?.deviceId)
-  //     })
-  //     setPlateList(newPlateList)
-  //     setDeviceIdList(newDeviceIdList)
-  //   }
-  // }, [])
+  const initAllVehicleList = useCallback(async () => {
+    const result = await getAllVehicles(0, 1000)
+    const data = result?.data
+    const newPlateList: string[] = []
+    const newDeviceIdList: string[] = []
+    if (data) {
+      var vehicleMapping: VehicleItem[] = []
+      data.content.map((item: any) => {
+        vehicleMapping.push(
+          createVehicles(
+            item?.vehicleId,
+            item?.vehicleTypeId,
+            item?.plateNo,
+            item?.photo,
+            item?.status,
+            item?.deviceId,
+            item?.compactor,
+            item?.netWeight,
+            item?.createdBy,
+            item?.updatedBy,
+            item?.createdAt,
+            item?.updatedAt,
+            item?.version
+          )
+        )
+
+        //mappping plate list
+        newPlateList.push(item?.plateNo)
+        newDeviceIdList.push(item?.deviceId)
+      })
+      // setVehicleList(vehicleMapping)
+      setPlateList(newPlateList)
+      setDeviceIdList(newDeviceIdList)
+    }
+  }, [])
 
   const columns: GridColDef[] = [
     {
@@ -231,15 +233,6 @@ const Vehicles: FunctionComponent = () => {
         }
 
         return <div>{vehicleName}</div>
-      }
-    },
-    {
-      field: 'isCompactor',
-      headerName: t('driver.vehicleMenu.isCompactor'),
-      width: 200,
-      type: 'string',
-      renderCell: (params) => {
-        return <div>{`NO`}</div>
       }
     },
     {
@@ -403,6 +396,7 @@ const Vehicles: FunctionComponent = () => {
               vehicleImages.photo,
               item?.status,
               item?.deviceId, 
+              item?.compactor,
               item?.netWeight,
               item?.createdBy,
               item?.updatedBy,

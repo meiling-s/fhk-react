@@ -67,7 +67,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   deviceIdListExist
 }) => {
   const { t } = useTranslation()
-  console.log('selected', selectedItem)
+  // console.log('selected', selectedItem)
   const [vehicleTypeId, setVehicleTypeId] = useState<string>('')
   const [selectedVehicle, setSelectedVehicle] = useState<il_item>({
     id: '1',
@@ -91,6 +91,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       setVehicleTypeId(selectedItem.vehicleTypeId)
       setVehicleWeight(selectedItem.netWeight.toString())
       setVersion(selectedItem.version)
+      setIsCompactor(selectedItem.compactor === 1)
 
       const imageList: any = selectedItem.photo.map(
         (url: string, index: number) => {
@@ -133,6 +134,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     setVehicleTypeId('')
     setVehicleWeight('')
     setDeviceId('')
+    setIsCompactor(false)
     setPictures([])
     setValidation([])
   }
@@ -298,6 +300,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       updatedBy: loginId,
       vehicleTypeId: vehicleTypeId,
       deviceId: deviceId,
+      compactor: isCompactor ? 1 : 0,
       netWeight: Number(vehicleWeight),
       ...(action === 'edit' && {version: version}),
       ...(action === 'delete' && {version: version})
