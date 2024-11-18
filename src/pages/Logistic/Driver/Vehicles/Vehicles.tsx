@@ -236,6 +236,19 @@ const Vehicles: FunctionComponent = () => {
       }
     },
     {
+      field: 'compactor',
+      headerName: t('driver.vehicleMenu.isCompactor'),
+      width: 200,
+      type: 'string',
+      renderCell: (params) => {
+        if (params.row.compactor === 1){
+          return <div>{t('common.yes')}</div>
+        } else {
+          return <div>{t('common.no')}</div>
+        }
+      }
+    },
+    {
       field: 'netWeight',
       headerName: t('driver.vehicleMenu.vehicle_cargo_capacity'),
       width: 200,

@@ -448,6 +448,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   labelId="vehicleType"
                   id="vehicleType"
                   value={vehicleTypeId}
+                  displayEmpty
                   sx={{
                     borderRadius: '12px'
                   }}
