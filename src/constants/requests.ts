@@ -1731,3 +1731,29 @@ export const DELETE_PROCESS_TYPE_DATA = (realmApiRoute: string, processTypeId: s
   method: 'delete',
   url: `api/v1/${realmApiRoute}/processtype/${processTypeId}`
 })
+
+export const GET_FACTORY_LIST_DATA = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/factory/getFactories/${tenantId}`
+})
+
+export const GET_FACTORY_WAREHOUSE_LIST_DATA = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/factory/getWarehouseList?tenantId=${tenantId}`
+})
+
+export const CREATE_FACTORY_DATA = (): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/factory/createFactory`
+})
+
+export const UPDATE_FACTORY_DATA = (factoryId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/factory/updateFactory?factoryId=${factoryId}`
+})
+
+export const DELETE_FACTORY_DATA = (factoryId: string): AxiosRequestConfig => ({
+  method: 'delete',
+  url: `api/v1/factory/delFactory?factoryId=${factoryId}`
+})
+

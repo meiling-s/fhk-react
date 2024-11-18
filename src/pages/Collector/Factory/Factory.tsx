@@ -1,7 +1,8 @@
-import React, { FunctionComponent, useState, useEffect } from 'react'
+import React, { FunctionComponent, useState, useEffect, useCallback } from 'react'
 import {
   DataGrid,
   GridColDef,
+  GridRenderCellParams,
   GridRowParams,
   GridRowSpacingParams
 } from '@mui/x-data-grid'
@@ -18,20 +19,33 @@ import CircularLoading from '../../../components/CircularLoading'
 import { styles } from '../../../constants/styles'
 
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
-import { ToastContainer } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import DetailFactory from './DetailFactory'
+import { FactoryData, FactoryWarehouseData } from '../../../interfaces/factory'
+import { getAllFactories, getAllFactoriesWarehouse } from '../../../APICalls/Collector/factory'
 
 type TableRow = {
   id: number
   [key: string]: any
 }
 
+interface PaginatedResponse {
+  content: FactoryData[]
+  totalPages: number
+  totalElements: number
+  size: number
+  number: number
+}
+
 const Factory: FunctionComponent = () => {
   const { t } = useTranslation()
   const { i18n } = useTranslation()
   const navigate = useNavigate()
-
+  const [selectedRow, setSelectedRow] = useState<FactoryData | null>(null)
+  const [factoryDataList, setFactoryDataList] = useState<FactoryData[]>([])
+  const [warehouseDataList, setWarehouseDataList] = useState<FactoryWarehouseData[]>([])
+  const [warehouseMap, setWarehouseMap] = useState<Record<number, string>>({});
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
@@ -41,63 +55,96 @@ const Factory: FunctionComponent = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
 
-  const dummyData = [
-    {
-      id: '1',
-      tcName: '火炭工場',
-      scName: '火炭工場',
-      enName: 'Fo Tan',
-      place: '火炭拗背灣街14號',
-      warehouse: '貨倉1、貨倉2'
-    },
-    {
-      id: '2',
-      tcName: '火炭工場',
-      scName: '火炭工場',
-      enName: 'Fo Tan',
-      place: '火炭拗背灣街14號',
-      warehouse: '貨倉1、貨倉2'
-    },
-    {
-      id: '3',
-      tcName: '火炭工場',
-      scName: '火炭工場',
-      enName: 'Fo Tan',
-      place: '火炭拗背灣街14號',
-      warehouse: '貨倉1、貨倉2'
+  useEffect(() => {
+    initFactoryList()
+    initWarehouseList()
+  }, [page])
+
+  const initFactoryList = (async () => {
+    setIsLoading(true)
+    setFactoryDataList([])
+    const result = await getAllFactories(page-1, pageSize)
+    const data = result?.data as PaginatedResponse
+  
+    if (data) {
+      setFactoryDataList(data.content)
+      setTotalData(data.totalPages)
+      setIsLoading(false)
+    }   
+  })
+
+  const initWarehouseList = (async () => {
+    setIsLoading(true)
+    setFactoryDataList([])
+    const result = await getAllFactoriesWarehouse()
+    const data = result?.data 
+  
+    if (data) {
+      setWarehouseDataList(data)
+      setIsLoading(false)
+    }   
+  })
+
+  const getLocalizedWarehouseName = (warehouse: FactoryWarehouseData): string => {
+    switch (i18n.language) {
+      case 'enus':
+        return warehouse.warehouseNameEng || ''
+      case 'zhch':
+        return warehouse.warehouseNameSchi || ''
+      default:
+        return warehouse.warehouseNameTchi || ''
     }
-  ]
+  }
+
+  const getWarehouseNames = (factoryWarehouses: any[]): string => {
+    console.log('Input factoryWarehouses:', factoryWarehouses);
+    console.log('Available warehouseDataList:', warehouseDataList);
+    
+    if (!factoryWarehouses || !Array.isArray(factoryWarehouses)) return ''
+    
+    return factoryWarehouses.map(fw => {
+      const warehouse = warehouseDataList.find(w => w.warehouseId === fw.warehouseId)
+      console.log(`Looking for warehouseId ${fw.warehouseId}, found:`, warehouse);
+      return warehouse ? getLocalizedWarehouseName(warehouse) : ''
+    }).filter(name => name).join(', ')
+}
+
+  
 
   const columns: GridColDef[] = [
     {
-      field: 'tcName',
+      field: 'factoryNameTchi',
       headerName: t('common.traditionalChineseName'),
       width: 200,
       type: 'string'
     },
     {
-      field: 'scName',
+      field: 'factoryNameSchi',
       headerName: t('common.simplifiedChineseName'),
       width: 200,
       type: 'string'
     },
     {
-      field: 'enName',
+      field: 'factoryNameEng',
       headerName: t('common.englishName'),
       width: 250,
       type: 'string'
     },
     {
-      field: 'place',
+      field: 'address',
       headerName: t('warehouse_page.place'),
       width: 250,
       type: 'string'
     },
     {
-      field: 'warehouse',
+      field: 'factoryWarehouse',
       headerName: t('factory.warehouse'),
       width: 300,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        const warehouses = params.value
+        return getWarehouseNames(warehouses)
+      }
     },
     {
       field: 'actions',
@@ -112,7 +159,7 @@ const Factory: FunctionComponent = () => {
               className="cursor-pointer text-grey-dark mr-2"
               onClick={(event) => {
                 event.stopPropagation()
-                handleEdit(params.row.loginId)
+                handleAction(params, 'edit')
               }}
               style={{ cursor: 'pointer' }}
             />
@@ -121,7 +168,7 @@ const Factory: FunctionComponent = () => {
               className="cursor-pointer text-grey-dark"
               onClick={(event) => {
                 event.stopPropagation()
-                handleDelete(params.row.loginId)
+                handleAction(params, 'delete')
               }}
               style={{ cursor: 'pointer' }}
             />
@@ -131,21 +178,63 @@ const Factory: FunctionComponent = () => {
     }
   ]
 
-  const handleEdit = (rowId: string) => {
+  const handleAction = (
+    params: GridRenderCellParams,
+    action: 'add' | 'edit' | 'delete'
+  ) => {
+    setAction(action)
+    setRowId(params.row.id)
+    setSelectedRow(params.row)
     setDrawerOpen(true)
   }
 
   const handleSelectRow = (params: GridRowParams) => {
+    const row = params.row 
+    setAction('edit')
+    setSelectedRow(row)
     setDrawerOpen(true)
   }
 
-  const handleDelete = (rowId: string) => {
-    setDrawerOpen(true)
+  const handleDrawerClose = () => {
+    setDrawerOpen(false)
+    setSelectedRow(null)
   }
 
-  const handleDrawerClose = () => {}
+  const showErrorToast = (msg: string) => {
+    toast.error(msg, {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light'
+    })
+  }
 
-  const onSubmitData = () => {}
+  const showSuccessToast = (msg: string) => {
+    toast.info(msg, {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light'
+    })
+  }
+
+  const onSubmitData = (type: string, msg: string) => {
+    initFactoryList()
+    setSelectedRow(null)
+    if (type == 'success') {
+      showSuccessToast(msg)
+    } else {
+      showErrorToast(msg)
+    }
+  }
 
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
@@ -189,6 +278,7 @@ const Factory: FunctionComponent = () => {
             onClick={() => {
               setDrawerOpen(true)
               setAction('add')
+              setSelectedRow(null)
             }}
           >
             <ADD_ICON /> {t('top_menu.add_new')}
@@ -201,13 +291,19 @@ const Factory: FunctionComponent = () => {
             ) : (
               <Box>
                 <DataGrid
-                  rows={dummyData}
-                  getRowId={(row) => row.id}
+                  rows={factoryDataList}
+                  getRowId={(row) => row.factoryId}
                   hideFooter
+                  loading={isLoading}
                   columns={columns}
                   onRowClick={handleSelectRow}
                   getRowSpacing={getRowSpacing}
                   localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.factoryId
+                      ? 'selected-row'
+                      : ''
+                  }
                   sx={{
                     border: 'none',
                     '& .MuiDataGrid-cell': {
@@ -246,9 +342,11 @@ const Factory: FunctionComponent = () => {
         </div>
         <DetailFactory
           drawerOpen={drawerOpen}
-          handleDrawerClose={() => setDrawerOpen(false)}
+          selectedItem={selectedRow}
+          handleDrawerClose={handleDrawerClose}
           action={action}
           onSubmitData={onSubmitData}
+          warehouseList={warehouseDataList}
         />
       </Box>
     </>

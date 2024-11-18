@@ -11,12 +11,21 @@ import { STATUS_CODE, formErr } from '../../../constants/constant'
 import {
   extractError,
   returnApiToken,
-  returnErrorMsg
+  returnErrorMsg,
 } from '../../../utils/utils'
 import { localStorgeKeyName } from '../../../constants/constant'
 import { useNavigate } from 'react-router-dom'
 import i18n from '../../../setups/i18n'
 import CustomItemList from '../../../components/FormComponents/CustomItemList'
+import { FactoryData, FactoryWarehouse, FactoryWarehouseData } from '../../../interfaces/factory'
+import { editFactory, createFactory, deleteFactory } from '../../../APICalls/Collector/factory'
+import { toast } from 'react-toastify'
+import Warehouse from '../Warehouse/Warehouse'
+
+interface IListItem {
+  id: string;
+  name: string;
+}
 
 interface Props {
   drawerOpen: boolean
@@ -25,6 +34,7 @@ interface Props {
   onSubmitData: (type: string, msg: string) => void
   rowId?: number
   selectedItem?: any | null
+  warehouseList: FactoryWarehouseData[]
 }
 
 const DetailFactory: FunctionComponent<Props> = ({
@@ -33,24 +43,60 @@ const DetailFactory: FunctionComponent<Props> = ({
   action,
   onSubmitData,
   rowId,
-  selectedItem
+  selectedItem,
+  warehouseList
 }) => {
   const { t } = useTranslation()
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
-  const [titleNameTchi, setTitleNameTchi] = useState<string>('')
-  const [titleNameSchi, setTitleNameSchi] = useState<string>('')
-  const [titleNameEng, setTitleNameEng] = useState<string>('')
-  const [place, setPlace] = useState<string>('')
-  const [introduction, setIntroduction] = useState<string>('')
-  const [remark, setRemark] = useState<string>('')
-  const [warehouse, setWarehouse] = useState<string>('')
+  const [titleNameTchi, setTitleNameTchi] = useState<string>("")
+  const [titleNameSchi, setTitleNameSchi] = useState<string>("")
+  const [titleNameEng, setTitleNameEng] = useState<string>("")
+  const [place, setPlace] = useState<string>("")
+  const [introduction, setIntroduction] = useState<string>("")
+  const [remark, setRemark] = useState<string>("")
+  const [warehouse, setWarehouse] = useState<string>("")
+  const [selectedWarehouses, setSelectedWarehouses] = useState<string[]>([])
+  const [formattedWarehouseList, setFormattedWarehouseList] = useState<IListItem[]>([])
 
   var realm = localStorage.getItem(localStorgeKeyName.realm) || 'collector'
   const navigate = useNavigate()
 
+  useEffect(() => {
+    if (warehouseList && warehouseList.length > 0) {
+      const formatted: IListItem[] = warehouseList.map(warehouse => ({
+        id: warehouse.warehouseId.toString(),
+        name: getLocalizedWarehouseName(warehouse)
+      }))
+      setFormattedWarehouseList(formatted)
+    }
+  }, [warehouseList, i18n.language])
+
+  const getLocalizedWarehouseName = (warehouse: FactoryWarehouseData): string => {
+    switch (i18n.language) {
+      case 'enus':
+        return warehouse.warehouseNameEng || '';
+      case 'zhch':
+        return warehouse.warehouseNameSchi || '';
+      default:
+        return warehouse.warehouseNameTchi || '';
+    }
+  }
+
   const mappingData = () => {
     if (selectedItem != null) {
+      setTitleNameEng(selectedItem.factoryNameEng)
+      setTitleNameSchi(selectedItem.factoryNameSchi)
+      setTitleNameTchi(selectedItem.factoryNameTchi)
+      setPlace(selectedItem.address)
+      setIntroduction(selectedItem.description)
+      setRemark(selectedItem.remark)
+      if (selectedItem.factoryWarehouse && Array.isArray(selectedItem.factoryWarehouse)) {
+        const selectedWarehouseIds = selectedItem.factoryWarehouse.map(
+          (warehouse: FactoryWarehouse) => warehouse.warehouseId.toString()
+        )
+        setSelectedWarehouses(selectedWarehouseIds)
+      }
     }
   }
 
@@ -65,7 +111,15 @@ const DetailFactory: FunctionComponent<Props> = ({
     }
   }, [drawerOpen])
 
-  const resetData = () => {}
+  const resetData = () => {
+    setTitleNameEng('')
+    setTitleNameSchi('')
+    setTitleNameTchi('')
+    setPlace('')
+    setIntroduction('')
+    setRemark('')
+    setSelectedWarehouses([])
+  }
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -77,77 +131,141 @@ const DetailFactory: FunctionComponent<Props> = ({
   useEffect(() => {
     const validate = async () => {
       const tempV: formValidate[] = []
-      //   roleName?.toString() == '' &&
-      //     tempV.push({
-      //       field: t('userGroup.groupName'),
-      //       problem: formErr.empty,
-      //       dataTestId: 'astd-user-group-form-group-name-err-warning-3882',
-      //       type: 'error'
-      //     })
+        if (titleNameEng?.toString() == '') {
+          tempV.push({
+            field: t('common.englishName'),
+            problem: formErr.empty,
+            dataTestId: 'astd-user-group-form-group-name-err-warning-3882',
+            type: 'error'
+          })
+        } if (titleNameTchi?.toString() == '') {
+          tempV.push({
+            field: t('common.traditionalChineseName'),
+            problem: formErr.empty,
+            dataTestId: 'astd-user-group-form-group-name-err-warning-3882',
+            type: 'error'
+          })
+        }
 
-      // console.log("tempV", tempV)
+      console.log("tempV", tempV)
       setValidation(tempV)
     }
 
     validate()
-  }, [])
+  }, [titleNameEng, titleNameSchi, titleNameTchi, i18n.language])
 
   const handleSubmit = () => {
     const token = returnApiToken()
 
-    // if (action == 'add') {
-    //   const formData: CreateUserGroupProps = {
-    //     realm: realm,
-    //     tenantId: token.tenantId,
-    //     roleName: roleName,
-    //     description: description,
-    //     functions: functions,
-    //     createdBy: token.loginId,
-    //     status: 'ACTIVE',
-    //     isAdmin: isAdmin
-    //   }
-    //   handleCreateUserGroup(formData)
-    // } else {
-    //   const formData: EditUserGroupProps = {
-    //     functions: functions,
-    //     roleName: roleName,
-    //     description: description,
-    //     updatedBy: token.loginId,
-    //     status: 'ACTIVE',
-    //     isAdmin: isAdmin
-    //   }
-    //   handleEditUserGroup(formData)
-    // }
+    const selectedWarehouseData: FactoryWarehouse[] = selectedWarehouses
+    .filter(id => id) 
+    .map(id => {
+      const warehouse = warehouseList.find(w => w.warehouseId.toString() === id)
+      if (warehouse) {
+        return {
+          factoryWarehouseId: 0,
+          warehouseId: warehouse.warehouseId,
+          createdBy: token.loginId,
+          updatedBy: token.loginId
+        }
+      }
+      return null
+    })
+    .filter((warehouse): warehouse is FactoryWarehouse => warehouse !== null)
+
+    const formData: FactoryData = {
+      factoryId: selectedItem?.factoryId ? selectedItem?.factoryId : 0,
+      tenantId: Number(token.tenantId),
+      factoryNameEng: titleNameEng,
+      factoryNameSchi: titleNameSchi,
+      factoryNameTchi: titleNameTchi,
+      address: place,
+      factoryWarehouse: selectedWarehouseData,
+      description: introduction,
+      remark: remark,
+      createdBy: token.loginId,
+      updatedBy: token.loginId,
+    }
+
+    if (action == 'add') {
+      handleCreateUserGroup(formData)
+    } else {
+      handleEditUserGroup(formData)
+    }
   }
 
-  const handleCreateUserGroup = async () => {}
-
-  const handleEditUserGroup = async () => {
-    // try {
-    //   if (validation.length === 0) {
-    //     if (selectedItem != null) {
-    //       const result = await editUserGroup(formData, selectedItem.groupId!)
-    //       if (result) {
-    //         onSubmitData('success', t('notify.SuccessEdited'))
-    //         resetData()
-    //         handleDrawerClose()
-    //       } else {
-    //         setTrySubmited(true)
-    //         onSubmitData('error', t('notify.errorEdited'))
-    //       }
-    //     }
-    //   } else {
-    //     setTrySubmited(true)
-    //   }
-    // } catch (error: any) {
-    //   const { state, realm } = extractError(error)
-    //   if (state.code === STATUS_CODE[503]) {
-    //     navigate('/maintenance')
-    //   }
-    // }
+  const handleCreateUserGroup = async (formData: FactoryData) => {
+    if (validation.length === 0) {
+      const result = await createFactory(formData)
+      if (result) {
+        onSubmitData('success', t('common.saveSuccessfully'))
+        resetData()
+        handleDrawerClose()
+      } else {
+        onSubmitData('error', t('common.saveFailed'))
+      }
+    } else {
+      setTrySubmited(true)
+    }
   }
 
-  const handleDelete = async () => {}
+  const handleEditUserGroup = async (formData: FactoryData) => {
+    try {
+      if (validation.length === 0) {
+        if (selectedItem != null) {
+          const result = await editFactory(formData.factoryId.toString(), formData)
+          if (result) {
+            onSubmitData('success', t('notify.SuccessEdited'))
+            resetData()
+            handleDrawerClose()
+          } else {
+            setTrySubmited(true)
+            onSubmitData('error', t('notify.errorEdited'))
+          }
+        }
+      } else {
+        setTrySubmited(true)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+    }
+  }
+
+  const handleDelete = async () => {
+    try {
+      if (selectedItem != null) {
+        const result = await deleteFactory(selectedItem.factoryId)
+        if (result) {
+          onSubmitData('success', t('common.deletedSuccessfully'))
+          resetData()
+          handleDrawerClose()
+        }
+      }
+    } catch (error: any) {
+      const {state} = extractError(error);
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]){
+        showErrorToast(error.response.data.message);
+      }
+    }
+  }
+
+  const showErrorToast = (msg: string) => {
+    toast.error(msg, {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
 
   return (
     <div className="add-factory">
@@ -187,7 +305,7 @@ const DetailFactory: FunctionComponent<Props> = ({
             }}
             className="sm:ml-0 mt-o w-full"
           >
-            <CustomField label={t('common.traditionalChineseName')}>
+            <CustomField label={t('common.traditionalChineseName')} mandatory>
               <CustomTextField
                 id="titleNameTchi"
                 value={titleNameTchi}
@@ -199,10 +317,10 @@ const DetailFactory: FunctionComponent<Props> = ({
                 error={checkString(titleNameTchi)}
               />
             </CustomField>
-            <CustomField label={t('common.simplifiedChineseName')}>
+            <CustomField label={t('common.simplifiedChineseName')} mandatory>
               <CustomTextField
                 id="titleNameSchi"
-                value={titleNameTchi}
+                value={titleNameSchi}
                 disabled={action === 'delete'}
                 placeholder={t(
                   'settings_page.recycling.simplified_chinese_name'
@@ -211,10 +329,10 @@ const DetailFactory: FunctionComponent<Props> = ({
                 error={checkString(titleNameSchi)}
               />
             </CustomField>
-            <CustomField label={t('common.englishName')}>
+            <CustomField label={t('common.englishName')} mandatory>
               <CustomTextField
                 id="titleNameEng"
-                value={titleNameTchi}
+                value={titleNameEng}
                 disabled={action === 'delete'}
                 placeholder={t(
                   'settings_page.recycling.english_name_placeholder'
@@ -223,7 +341,7 @@ const DetailFactory: FunctionComponent<Props> = ({
                 error={checkString(titleNameEng)}
               />
             </CustomField>
-            <CustomField label={t('warehouse_page.place')}>
+            <CustomField label={t('warehouse_page.place')} mandatory>
               <CustomTextField
                 id="place"
                 value={place}
@@ -232,19 +350,18 @@ const DetailFactory: FunctionComponent<Props> = ({
                 multiline={true}
               />
             </CustomField>
-            <CustomField label={t('factory.warehouse')}>
-              <CustomItemList
-                items={[
-                  { id: '1', name: '貨倉1' },
-                  { id: '2', name: '貨倉2' }
-                ]}
-                singleSelect={(selectedItem) => {
-                  setWarehouse(selectedItem)
-                }}
-                editable={action != 'delete'}
-                defaultSelected={warehouse}
-                needPrimaryColor={true}
-              />
+            <CustomField label={t('factory.warehouse')} mandatory>
+              {warehouseList && (
+                <CustomItemList
+                  items={formattedWarehouseList}
+                  multiSelect={(selectedItems) => {
+                    setSelectedWarehouses(selectedItems)
+                  }}
+                  editable={action !== 'delete'}
+                  defaultSelected={selectedWarehouses}
+                  needPrimaryColor={true}
+                />
+              )}
             </CustomField>
             <CustomField label={t('factory.introduction')}>
               <CustomTextField
