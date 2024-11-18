@@ -100,12 +100,8 @@ const Vehicles: FunctionComponent = () => {
   
   useEffect(() => {
     initVehicleList()
-    //initAllVehicleList()
-  }, [page])
-  
-  useEffect(() => {
     initAllVehicleList()
-  }, [])
+  }, [page])
 
   const initVehicleList = useCallback(async () => {
     setIsLoading(true)
@@ -369,6 +365,7 @@ const Vehicles: FunctionComponent = () => {
 
   const onSubmitData = (type: string, msg: string) => {
     initVehicleList()
+    initAllVehicleList()
     if (type == 'success') {
       showSuccessToast(msg)
     } else {
