@@ -142,7 +142,7 @@ const Factory: FunctionComponent = () => {
     },
     {
       field: 'address',
-      headerName: t('warehouse_page.place'),
+      headerName: t('report.address'),
       width: 250,
       type: 'string'
     },

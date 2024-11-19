@@ -171,7 +171,7 @@ const DetailFactory: FunctionComponent<Props> = ({
           })
         }  if (place?.toString() === '') {
           tempV.push({
-            field: t('warehouse_page.place'),
+            field: t('report.address'),
             problem: formErr.empty,
             dataTestId: 'astd-factory-form-place-err-warning-4412',
             type: 'error'
@@ -408,14 +408,15 @@ const DetailFactory: FunctionComponent<Props> = ({
                 error={checkString(titleNameEng)}
               />
             </CustomField>
-            <CustomField label={t('warehouse_page.place')} mandatory>
+            <CustomField label={t('report.address')} mandatory>
               <CustomTextField
                 dataTestId='astd-factory-form-place-input-field-2208'
                 id="place"
                 value={place}
-                placeholder={'火炭拗背灣街14號'}
+                placeholder={t('report.pleaseEnterAddress')}
                 onChange={(event) => setPlace(event.target.value)}
                 multiline={true}
+                disabled={action === 'delete'}
               />
             </CustomField>
             <CustomField label={t('factory.warehouse')} mandatory>
@@ -441,9 +442,10 @@ const DetailFactory: FunctionComponent<Props> = ({
                 dataTestId='astd-factory-form-introduction-input-field-1184'
                 id="introduction"
                 value={introduction}
-                placeholder={t('common.enterText')}
+                placeholder={t('packaging_unit.introduction_placeholder')}
                 onChange={(event) => setIntroduction(event.target.value)}
                 multiline={true}
+                disabled={action === 'delete'}
               />
             </CustomField>
             <CustomField label={t('common.remark')}>
@@ -451,9 +453,10 @@ const DetailFactory: FunctionComponent<Props> = ({
                 dataTestId='astd-factory-form-remark-input-field-1164'
                 id="remark"
                 value={remark}
-                placeholder={t('common.enterText')}
+                placeholder={t('packaging_unit.remark_placeholder')}
                 onChange={(event) => setRemark(event.target.value)}
                 multiline={true}
+                disabled={action === 'delete'}
               />
             </CustomField>
 
