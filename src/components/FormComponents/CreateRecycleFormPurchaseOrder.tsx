@@ -611,8 +611,10 @@ const CreateRecycleForm = ({
                     defaultValue={isRecyc}
                     setState={(newValue) => {
                       const id = formik?.values?.id
+                      const poDtlId = formik?.values?.poDtlId
                       resetAllField()
                       formik.setFieldValue('id', id);
+                      formik.setFieldValue('poDtlId', poDtlId);
                       formik.setFieldValue('itemCategory', newValue === true ? 'Recyclables' : 'Product');
                       setRecycType(newValue)
                     }}

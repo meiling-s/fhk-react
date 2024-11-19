@@ -746,8 +746,12 @@ const CreateRecycleForm = ({
                     defaultValue={isRecyc}
                     setState={(newValue) => {
                       const id = formik?.values?.id
+                      const picoDtlId = formik?.values?.picoDtlId
+                      const picoHisId = formik?.values?.picoHisId
                       resetAllField()
                       formik.setFieldValue('id', id);
+                      formik.setFieldValue('picoDtlId', picoDtlId);
+                      formik.setFieldValue('picoHisId', picoHisId);
                       formik.setFieldValue('itemCategory', newValue === true ? 'Recyclables' : 'Product');
                       setRecycType(!isRecyc)
                     }}
