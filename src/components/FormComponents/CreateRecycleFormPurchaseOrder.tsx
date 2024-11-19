@@ -374,6 +374,7 @@ const CreateRecycleForm = ({
       }
 
       setState(newData)
+      
       resetForm()
       onClose && onClose()
     }
@@ -457,12 +458,16 @@ const CreateRecycleForm = ({
 
   const { marginTop } = useContainer(NotifContainer)
 
-  const onHandleDrawer = () => {
+  const resetAllField = () =>{
     setEditRow(undefined)
     setDefaultRecyc(undefined)
     setDefaultProduct(undefined)
     resetModal()
     formik.resetForm()
+  }
+
+  const onHandleDrawer = () => {
+    resetAllField()
     onClose && onClose()
   }
 
@@ -604,7 +609,13 @@ const CreateRecycleForm = ({
                     onText={t('recyclables')}
                     offText={t('product')}
                     defaultValue={isRecyc}
-                    setState={(newValue) => setRecycType(newValue)}
+                    setState={(newValue) => {
+                      const id = formik?.values?.id
+                      resetAllField()
+                      formik.setFieldValue('id', id);
+                      formik.setFieldValue('itemCategory', newValue === true ? 'Recyclables' : 'Product');
+                      setRecycType(newValue)
+                    }}
                   />
                 </CustomField>
                 <Grid item>

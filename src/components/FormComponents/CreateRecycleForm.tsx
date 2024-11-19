@@ -543,11 +543,7 @@ const CreateRecycleForm = ({
 
       }
 
-      setEditRow(null)
-      setDefaultRecyc(undefined)
-      setDefaultProduct(undefined)
-      resetForm()
-      resetModal()
+      resetAllField()
       onClose && onClose()
     }
   })
@@ -586,14 +582,16 @@ const CreateRecycleForm = ({
       .minute(Number(times[1]))
       .second(Number(times[2]))
   }
-
-  const onHandleDrawer = () => {
-    onClose && onClose()
+  const resetAllField = () =>{
     setEditRow(null)
     setDefaultRecyc(undefined)
     setDefaultProduct(undefined)
     resetModal()
     formik.resetForm()
+  }
+  const onHandleDrawer = () => {
+    resetAllField()
+    onClose && onClose()
   }
 
   const validateIsDataExist = () => {
@@ -747,6 +745,9 @@ const CreateRecycleForm = ({
                     offText={t('product')}
                     defaultValue={isRecyc}
                     setState={(newValue) => {
+                      const id = formik?.values?.id
+                      resetAllField()
+                      formik.setFieldValue('id', id);
                       formik.setFieldValue('itemCategory', newValue === true ? 'Recyclables' : 'Product');
                       setRecycType(!isRecyc)
                     }}
