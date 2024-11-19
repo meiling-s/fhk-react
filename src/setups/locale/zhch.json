@@ -1526,5 +1526,10 @@
     "createdAt": "送出入日期及时间",
     "shippingCompany": "状态",
     "inventoryLocation": "送出地点"
+  },
+  "factory": {
+    "factory": "工场",
+    "warehouse": "貨倉",
+    "introduction": "簡介"
   }
 }
