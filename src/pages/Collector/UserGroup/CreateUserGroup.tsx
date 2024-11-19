@@ -83,7 +83,6 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       const allFunctionIds = functionList.map(
         (item: Functions) => item.functionId
       )
-      console.log('allFunctionIds', functionList)
       setFunctions(allFunctionIds)
     } else {
       let prevItem: number[] = []
@@ -102,6 +101,13 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     } else {
       setTrySubmited(false)
       resetData()
+
+      if (isAdmin) {
+        const allFunctionIds = functionList.map(
+          (item: Functions) => item.functionId
+        )
+        setFunctions(allFunctionIds)
+      }
     }
 
     //set groupRoleNameList
@@ -111,6 +117,8 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     } else {
       setGroupList(groupNameList)
     }
+
+    //set all funtion selected when drawer open
   }, [drawerOpen])
 
   const resetData = () => {

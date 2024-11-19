@@ -40,7 +40,6 @@ export default function SpecificDate({
 
   const handleDatePick = (day: dayjs.Dayjs[]) => {
     var newSpecificDates = day.map((date) => {
-      console.log(date.format(dateFormat))
       return date.format(dateFormat)
     })
     setSpecificDates(newSpecificDates)

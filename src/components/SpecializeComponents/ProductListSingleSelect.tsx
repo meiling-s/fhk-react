@@ -7,6 +7,7 @@ import CustomItemList, { il_item } from '../FormComponents/CustomItemList';
 import { useTranslation } from 'react-i18next';
 import CustomField from '../FormComponents/CustomField';
 import CustomTextField from '../FormComponents/CustomTextField';
+import ConfirmModal from './ConfirmationModal';
 
 export type itemList = {
   bgColor: string
@@ -17,8 +18,10 @@ export type singleProduct = {
   productTypeId: string
   productSubTypeId: string
   productAddonId: string
-  productSubtypeRemark: string
-  productAddonRemark: string
+  productSubTypeRemark: string
+  productAddonTypeRemark: string
+  isProductSubTypeOthers?: boolean
+  isProductAddonTypeOthers?: boolean
 }
 
 interface ProductListSingleSelectProps {
@@ -46,10 +49,14 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({ optio
   const [productSubType, setProductSubType] = useState<string>('')
   const [productAddon, setProductAddon] = useState<string>('')
   const [choosenProductType, setChoosenProductType] = useState<Products | null>(null)
+  
   const [choosenProductSubType, setChoosenSubProductType] = useState<ProductSubType | null>(null)
+  console.log("🚀 ~ file: ProductListSingleSelect.tsx ~ line 54 ~ choosenProductSubType", choosenProductSubType)
   const [choosenProductAddon, setChoosenProductAddon] = useState<ProductAddon | null>(null)
+  console.log("🚀 ~ file: ProductListSingleSelect.tsx ~ line 56 ~ choosenProductAddon", choosenProductAddon)
+
   const [productSubTypeRemark, setProductSubTypeRemark] = useState<string>('')
-  const [productAddonRemark, setProductAddonRemark] = useState<string>('')
+  const [productAddonTypeRemark, setProductAddonRemark] = useState<string>('')
   const { t, i18n } = useTranslation()
 
   useEffect(() => {
@@ -79,16 +86,16 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({ optio
       setProductType(defaultProduct.productTypeId)
       setCurSubProduct(defaultProduct.productSubTypeId)
       setProductSubType(defaultProduct.productSubTypeId)
-      setProductSubTypeRemark(defaultProduct.productSubtypeRemark)
+      setProductSubTypeRemark(defaultProduct.productSubTypeRemark)
       setCurAddonProduct(defaultProduct.productAddonId)
       setProductAddon(defaultProduct.productAddonId)
-      setProductAddonRemark(defaultProduct.productAddonRemark)
+      setProductAddonRemark(defaultProduct.productAddonTypeRemark)
     }
   }, [defaultProduct])
 
   useEffect(() => {
     setState(toSingleProduct())
-  }, [productType, productSubType, productAddon, productSubTypeRemark, productAddonRemark])
+  }, [productType, productSubType, productAddon, productSubTypeRemark, productAddonTypeRemark, choosenProductAddon, choosenProductSubType])
 
   const returnProductTypes = () => {
     const products: productItem[] = []
@@ -147,10 +154,15 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({ optio
       productTypeId: productType,
       productSubTypeId: productSubType,
       productAddonId: productAddon,
-      productSubtypeRemark: productSubTypeRemark,
-      productAddonRemark: productAddonRemark
-      
+      productSubTypeRemark: productSubTypeRemark,
+      productAddonTypeRemark: productAddonTypeRemark,
+      isProductSubTypeOthers: choosenProductSubType?.productNameEng === 'Others',
+      isProductAddonTypeOthers: choosenProductAddon?.productNameEng === 'Others',
     }
+    console.log("🚀 ~ file: ProductListSingleSelect.tsx ~ line 162 ~ toSingleProduct ~ singleProduct", singleProduct)
+    console.log("🚀 ~ file: ProductListSingleSelect.tsx ~ line 160 ~ toSingleProduct ~ choosenProductSubType", choosenProductSubType)
+    console.log("🚀 ~ file: ProductListSingleSelect.tsx ~ line 162 ~ toSingleProduct ~ choosenProductAddon", choosenProductAddon)
+
     return singleProduct
   }
   const getNameFromProductId = (id: string) => {
@@ -279,6 +291,7 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({ optio
           <CustomField
             label={getNameFromProductSubId(curSubProduct) + ' ' + t('pick_up_order.product_type.subtype') + ' ' + t('general_settings.remark')}
             mandatory={false}
+            style={{ my: '1rem' }}
           >
             <CustomTextField
               id="subtype-remark"
@@ -322,7 +335,7 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({ optio
               id="addon-remark"
               placeholder={getNameFromProductAddon(curAddonProduct) + ' ' + t('pick_up_order.product_type.add-on') + ' ' + t('general_settings.remark')}
               onChange={(event) => setProductAddonRemark(event.target.value)}
-              value={productAddonRemark}
+              value={productAddonTypeRemark}
               dataTestId='astd-create-edit-pickup-order-product-addon-remark'
             />
           </CustomField>

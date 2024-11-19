@@ -47,7 +47,6 @@ export default function PicoRoutineSelect({
       routineType: rType,
       routineContent: rContent
     }
-    console.log(picoRoutine)
     return picoRoutine
   }
 
