@@ -115,11 +115,12 @@ const DetailFactory: FunctionComponent<Props> = ({
 
   useEffect(() => {
     setValidation([])
-    initWarehouseList()
     if (action !== 'add') {
       mappingData()
+      initWarehouseList()
     } else {
       setTrySubmited(false)
+      initWarehouseList()
       resetData()
     }
   }, [drawerOpen])
