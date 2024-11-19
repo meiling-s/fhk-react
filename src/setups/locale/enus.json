@@ -1222,6 +1222,7 @@
   "purchase_order": {
     "all_order": "All Orders",
     "enquiry_po": "Order",
+    "missing_arrived": "Arrived info should not be empty",
     "table": {
       "created_datetime": "Created Datetime",
       "order_number": "Order Number",

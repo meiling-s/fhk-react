@@ -10,6 +10,7 @@ import { PurChaseOrder, PurchaseOrderDetail } from '../../../interfaces/purchase
 import { UpdatePurchaseOrder } from '../../../APICalls/Customer/purchaseOrder'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import { refactorPurchaseOrderDetail } from './utils'
 
 const EditPurchaseOrder = () => {
   const { t } = useTranslation()
@@ -30,58 +31,7 @@ const EditPurchaseOrder = () => {
         return field + ' ' + t('form.error.isInWrongFormat')
     }
   }
-
-  const validateSchema = Yup.object().shape({
-    effFrmDate: Yup.string().required('This effFrmDate is required'),
-    effToDate: Yup.string().required('This effToDate is required'),
-
-    routine: Yup.lazy((value, schema) => {
-      const routineType = schema.parent.routineType
-      if (routineType === 'specificDate') {
-        return Yup.array()
-          .required('routine is required')
-          .test(
-            'is-in-range',
-            t('pick_up_order.out_of_date_range'),
-            function (value) {
-              const { effFrmDate, effToDate } = schema.parent
-              const fromDate = new Date(effFrmDate)
-              const toDate = new Date(effToDate)
-
-              const datesInDateObjects = value.map((date) => new Date(date))
-
-              return datesInDateObjects.every(
-                (date) => date >= fromDate && date <= toDate
-              )
-            }
-          )
-      } else {
-        return Yup.array().required('routine is required')
-      }
-    }),
-    logisticName: Yup.string().required(
-      getErrorMsg(t('pick_up_order.choose_logistic'), 'empty')
-    ),
-    vehicleTypeId: Yup.string().required(
-      getErrorMsg(t('pick_up_order.vehicle_category'), 'empty')
-    ),
-    platNo: Yup.string().required(
-      getErrorMsg(t('pick_up_order.plat_number'), 'empty')
-    ),
-    contactNo: Yup.number().required(
-      getErrorMsg(t('pick_up_order.contact_number'), 'empty')
-    ),
-    createPicoDetail: Yup.array()
-      .required(getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty'))
-      .test(
-        'has-rows',
-        getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty')!!,
-        (value) => {
-          return value.length > 0 || addRow.length > 0
-        }
-      )
-  })
-
+ 
   const submitUpdatePurchaseOrder = async (poId: string, values: PurChaseOrder) => {
     try {
       return await UpdatePurchaseOrder(poId, values)
@@ -122,7 +72,7 @@ const EditPurchaseOrder = () => {
     },
     // validationSchema: validateSchema,
     onSubmit: async (values: PurChaseOrder) => {
-      values.purchaseOrderDetail = addRow
+      values.purchaseOrderDetail = refactorPurchaseOrderDetail(addRow)
       const result = await submitUpdatePurchaseOrder(values.poId, values)
       if (result) {
         navigate(`/${realm}/purchaseOrder`, { state: 'updated' })
@@ -132,7 +82,7 @@ const EditPurchaseOrder = () => {
 
   const setPickupOrderDetail = () => {
     const picoDetails: PurchaseOrderDetail[] =
-      poInfo?.purchaseOrderDetail?.map((item) => ({
+      poInfo?.purchaseOrderDetail?.map((item: PurchaseOrderDetail) => ({
         id: item.poDtlId,
         poDtlId: item.poDtlId,
         recycTypeId: item.recycTypeId,
@@ -155,7 +105,20 @@ const EditPurchaseOrder = () => {
         receiverAddrGps: item.receiverAddrGps,
         version: poInfo.version,
         status: item.status,
-
+        productType: item?.productType, // => id
+        productNameTchi: item?.productNameTchi,
+        productNameSchi: item?.productNameSchi,
+        productNameEng: item?.productNameEng,
+        productSubType: item?.productSubType, // => id
+        productSubNameTchi: item?.productSubNameTchi,
+        productSubNameSchi: item?.productSubNameSchi,
+        productSubNameEng: item?.productSubNameEng,
+        productAddOnType: item?.productAddOnType, // => id
+        productAddOnNameTchi: item?.productAddOnNameTchi,
+        productAddOnNameSchi: item?.productAddOnNameSchi,
+        productAddOnNameEng: item?.productAddOnNameEng,
+        productSubTypeRemark: item?.productSubTypeRemark,
+        productAddOnTypeRemark: item?.productAddOnTypeRemark,
       })) || []
 
     setAddRow(picoDetails)
