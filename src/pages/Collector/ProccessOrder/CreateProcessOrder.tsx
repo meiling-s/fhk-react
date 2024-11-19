@@ -24,15 +24,18 @@ import {
   getThemeColorRole,
   getPrimaryColor,
   showErrorToast,
-  showSuccessToast
+  showSuccessToast,
+  formatWeight
 } from '../../../utils/utils'
 import { localStorgeKeyName, STATUS_CODE } from '../../../constants/constant'
 import {
   CreatePorForm,
-  PorDetail,
-  CreateProcessOrderDetail
+  CreateProcessOrderDetailPairs
 } from '../../../interfaces/processOrderQuery'
-import { createProcessOrder } from '../../../APICalls/processOrder'
+import {
+  createProcessOrder,
+  getFactories
+} from '../../../APICalls/processOrder'
 
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -45,12 +48,12 @@ import { useContainer } from 'unstated-next'
 import { DELETE_OUTLINED_ICON, EDIT_OUTLINED_ICON } from 'src/themes/icons'
 
 type rowPorDtl = {
-  id: number
-  processTypeLabel: string
+  id: string
   processTypeId: string
+  processAction: string
   datetime: string
-  warehouse: string[]
-  weight: string
+  warehouse: string
+  weight: string | number
   itemCategory: string
   mainCategory: string
   subCategory: string
@@ -69,16 +72,15 @@ const CreateProcessOrder = ({}: {}) => {
   const [inputProcessDrawer, setInputProcessDrawer] = useState<boolean>(false)
   const [warehouseList, setWarehouseList] = useState<il_item[]>([])
   const [processStartAt, setProcessStartAt] = useState<dayjs.Dayjs>(dayjs())
-  const [selectedWarehouse, setSelectedWarehouse] = useState<il_item | null>(
-    null
-  )
+  const [factoryList, setFactoryList] = useState<il_item[]>([])
+  const [selectedFactory, setSelectedFactory] = useState<il_item | null>(null)
   const [processOrderDtlSource, setProcessOrderDtlSource] = useState<
-    PorDetail[]
+    CreateProcessOrderDetailPairs[]
   >([])
 
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
   const colorTheme: string = getThemeColorRole(role)
-  const { dateFormat, getProcessTypeList, processTypeListData } =
+  const { dateFormat, decimalVal, getProcessTypeList, processTypeListData } =
     useContainer(CommonTypeContainer)
   const [processTypeList, setProcessTypeList] = useState<il_item[]>([])
   const [processInDetailData, setProcessInDetailData] = useState<
@@ -114,11 +116,18 @@ const CreateProcessOrder = ({}: {}) => {
 
   const columns: GridColDef[] = [
     {
-      field: 'processTypeLabel',
+      field: 'processAction',
       headerName: '',
       width: 150,
       renderCell: (params) => {
-        return t('processOrder.table.processIn')
+        let processLabel = ''
+        if (params.row.processAction != '') {
+          processLabel =
+            params.row.processAction === 'PROCESS_IN'
+              ? t('processOrder.table.processIn')
+              : t('processOrder.table.processOut')
+        }
+        return processLabel
       }
     },
 
@@ -127,10 +136,12 @@ const CreateProcessOrder = ({}: {}) => {
       headerName: t('processOrder.table.startOrFinishDate'),
       width: 180,
       renderCell: (params) => {
-        return dayjs
-          .utc(params.row.datetime)
-          .tz('Asia/Hong_Kong')
-          .format(`${dateFormat} HH:mm`)
+        return params.row.datetime
+          ? dayjs
+              .utc(params.row.datetime)
+              .tz('Asia/Hong_Kong')
+              .format(`${dateFormat} HH:mm`)
+          : ''
       }
     },
     {
@@ -141,13 +152,15 @@ const CreateProcessOrder = ({}: {}) => {
     { field: 'weight', headerName: t('inventory.weight'), width: 100 },
     {
       field: 'itemCategory',
-      headerName: t('processOrder.create.itemCategory'),
+      headerName: t('processOrder.details.itemCategory'),
       width: 150,
       renderCell: (params) => {
         const categoryLabel =
-          params.row.itemCategory === 'product'
-            ? t('processOrder.create.product')
-            : t('processOrder.create.recycling')
+          params.row.itemCategory != ''
+            ? params.row.itemCategory === 'product'
+              ? t('processOrder.create.product')
+              : t('processOrder.create.recycling')
+            : '-'
         return categoryLabel
       }
     },
@@ -213,7 +226,7 @@ const CreateProcessOrder = ({}: {}) => {
           name: t('check_in.any')
         })
         setWarehouseList(warehouse)
-        if (warehouse.length > 0) setSelectedWarehouse(warehouse[0])
+        //if (warehouse.length > 0) setSelectedWarehouse(warehouse[0])
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -223,106 +236,195 @@ const CreateProcessOrder = ({}: {}) => {
     }
   }
 
+  const initFactory = async () => {
+    const result = await getFactories(0, 1000)
+    console.log('result', result)
+    if (result) {
+      let factory: il_item[] = []
+      const data = result.data.content
+      data.forEach((item: any) => {
+        var factoryName =
+          i18n.language === 'zhhk'
+            ? item.factoryNameTchi
+            : i18n.language === 'zhch'
+            ? item.factoryNameSchi
+            : item.factoryNameEng
+
+        factory.push({
+          id: item.factoryId.toString(),
+          name: factoryName
+        })
+      })
+
+      console.log(factory)
+
+      setFactoryList(factory)
+      if (factory.length > 0) setSelectedFactory(factory[0])
+    }
+  }
+
   useEffect(() => {
     getProcessTypeList()
     initWarehouse()
     initProcessType()
+    initFactory()
   }, [])
 
-  const mappingProcessDtl = (updatedProcessOrderDtlSource: PorDetail[]) => {
-    let rowData: rowPorDtl[] = []
-    updatedProcessOrderDtlSource.map((item: PorDetail) => {
-      rowData.push({
-        id: item.id,
-        processTypeLabel: '',
-        processTypeId: item.processTypeId,
-        datetime: item.plannedStartAt,
-        warehouse: item.processOrderDetailWarehouse,
-        weight: item.estInWeight,
-        itemCategory: item.itemCategory,
-        mainCategory:
-          item.processOrderDetailProduct.productTypeId != ''
-            ? item.processOrderDetailProduct.productTypeId
-            : item.processOrderDetailRecyc.recycTypeId,
-        subCategory:
-          item.processOrderDetailProduct.productSubTypeId != ''
-            ? item.processOrderDetailProduct.productSubTypeId
-            : item.processOrderDetailRecyc.recycSubTypeId,
-        additionalInfo: item.processOrderDetailProduct.productAddonId
-      })
-    })
+  const mappingProcessOrderDtl = (
+    updatedSource: CreateProcessOrderDetailPairs[]
+  ) => {
+    //mappingProcessDtl()
 
     let rawProcessOrderInDtl: ProcessInDtlData[] = []
-    processTypeList.map((item) => {
-      const selectedRow = rowData.filter((it) => it.processTypeId === item.id)
-      if (selectedRow.length > 0) {
-        rawProcessOrderInDtl.push({
-          id: item.id,
-          name: item.name,
-          rows: selectedRow
+    let rowData: rowPorDtl[] = []
+
+    updatedSource.map((item: CreateProcessOrderDetailPairs) => {
+      rowData = []
+      Object.entries(item).map(([key, value]) => {
+        // constract product
+        value.processOrderDetailProduct.map((val1, idx1) => {
+          if (idx1 == 0) {
+            rowData.push({
+              id: value.processAction + value.processTypeId,
+              processTypeId: value.processTypeId,
+              processAction: value.processAction,
+              datetime:
+                value.processAction === 'PROCESS_IN'
+                  ? item.processIn.plannedStartAt
+                  : item.processOut.plannedEndAt,
+              warehouse: value.processOrderDetailWarehouse
+                .map((item) => item.warehouseId)
+                .join(','),
+              weight:
+                value.processAction === 'PROCESS_IN'
+                  ? item.processIn.estInWeight
+                  : item.processOut.estOutWeight,
+              itemCategory: value.itemCategory ?? '-',
+              mainCategory: val1.productTypeId,
+              subCategory: val1.productSubTypeId,
+              additionalInfo: val1.productAddonTypeId ?? '-'
+            })
+          } else {
+            rowData.push({
+              id: 'product-' + val1.productTypeId + idx1,
+              processTypeId: '',
+              processAction: '',
+              datetime: '',
+              warehouse: '',
+              weight: '',
+              itemCategory: value.itemCategory ?? '-',
+              mainCategory: val1.productTypeId,
+              subCategory: val1.productSubTypeId,
+              additionalInfo: val1.productAddonTypeId ?? '-'
+            })
+          }
         })
-      }
+
+        // constract recylcling
+        value.processOrderDetailRecyc.map((val1, idx1) => {
+          if (idx1 == 0) {
+            rowData.push({
+              id: value.processAction + value.processTypeId,
+              processTypeId: value.processTypeId,
+              processAction: value.processAction,
+              datetime:
+                value.processAction === 'PROCESS_IN'
+                  ? item.processIn.plannedStartAt
+                  : item.processOut.plannedEndAt,
+              warehouse: value.processOrderDetailWarehouse
+                .map((item) => item.warehouseId)
+                .join(','),
+              weight:
+                value.processAction === 'PROCESS_IN'
+                  ? item.processIn.estInWeight
+                  : item.processOut.estOutWeight,
+              itemCategory: value.itemCategory ?? '-',
+              mainCategory: val1.recycSubTypeId,
+              subCategory: val1.recycTypeId,
+              additionalInfo: '-'
+            })
+          } else {
+            rowData.push({
+              id: 'recyling-' + val1.recycTypeId + idx1,
+              processTypeId: '',
+              processAction: '',
+              datetime: '',
+              warehouse: '',
+              weight: '',
+              itemCategory: value.itemCategory ?? '-',
+              mainCategory: val1.recycTypeId,
+              subCategory: val1.recycSubTypeId,
+              additionalInfo: '-'
+            })
+          }
+        })
+      })
+
+      /**set process name */
+      const processType = processTypeListData?.find(
+        (type) => type.processTypeId === item.processIn.processTypeId
+      )
+
+      const processName =
+        i18n.language === 'zhhk'
+          ? processType?.processTypeNameTchi
+          : i18n.language === 'zhch'
+          ? processType?.processTypeNameSchi
+          : processType?.processTypeNameEng
+
+      rawProcessOrderInDtl.push({
+        id: item.processIn.processTypeId,
+        name: processName ?? '-',
+        rows: rowData
+      })
     })
 
     setProcessInDetailData(rawProcessOrderInDtl)
   }
 
-  const onSaveProcessDtl = async (data: any) => {
-    setProcessOrderDtlSource((prevProcessOrderDtlSource) => {
-      const updatedProcessOrderDtlSource: PorDetail[] = [
-        ...prevProcessOrderDtlSource,
-        ...data
-      ].flat()
-      mappingProcessDtl(updatedProcessOrderDtlSource)
-      debugger
-      return updatedProcessOrderDtlSource
+  const onSaveProcessDtl = (data: CreateProcessOrderDetailPairs[]) => {
+    const updatedSource =
+      processOrderDtlSource.length > 0
+        ? [...processOrderDtlSource, ...data]
+        : data
+
+    setProcessOrderDtlSource(updatedSource)
+    mappingProcessOrderDtl(updatedSource)
+  }
+
+  const processOrderDetailTemp = (
+    details: CreateProcessOrderDetailPairs[]
+  ): CreateProcessOrderDetailPairs[] => {
+    return details.map((detail) => {
+      const { itemCategory, ...processInWithoutItemCategory } = detail.processIn
+      const {
+        itemCategory: outItemCategory,
+        ...processOutWithoutItemCategory
+      } = detail.processOut
+
+      return {
+        processIn: {
+          ...processInWithoutItemCategory,
+          estInWeight: formatWeight(detail.processIn.estInWeight, decimalVal)
+        },
+        processOut: {
+          ...processOutWithoutItemCategory,
+          estOutWeight: formatWeight(detail.processOut.estOutWeight, decimalVal)
+        }
+      }
     })
   }
 
   const submitProcessOrder = async () => {
-    //constract detail data
-    let processOrderDetailTemp: CreateProcessOrderDetail[] = []
-    processInDetailData.map((item) => {
-      item.rows.map((row) => {
-        processOrderDetailTemp.push({
-          processTypeId: row.processTypeId,
-          estInWeight: parseFloat(row.weight),
-          estOutWeight: 0,
-          plannedStartAt: row.datetime,
-          processOrderDetailProduct:
-            row.itemCategory === 'product'
-              ? [
-                  {
-                    productTypeId: row.mainCategory,
-                    productSubTypeId: row.subCategory,
-                    productAddonTypeId: row.additionalInfo
-                  }
-                ]
-              : [],
-          processOrderDetailRecyc:
-            row.itemCategory === 'recycling'
-              ? [
-                  {
-                    recycTypeId: row.mainCategory,
-                    recycSubTypeId: row.subCategory
-                  }
-                ]
-              : [],
-          processOrderDetailWarehouse: row.warehouse.map((wr) => ({
-            warehouseId: parseInt(wr)
-          }))
-        })
-      })
-    })
+    const processedDetailsPair = processOrderDetailTemp(processOrderDtlSource)
     const formData: CreatePorForm = {
-      factoryId: 0,
+      factoryId: selectedFactory ? parseInt(selectedFactory.id) : null,
       processStartAt: formattedDate(processStartAt),
       createdBy: role,
-      processOrderDetail: processOrderDetailTemp
+      processOrderDetailPairs: processedDetailsPair
     }
 
     const result = await createProcessOrder(formData)
-    console.log('result', result)
     if (result) {
       showSuccessToast(t('common.saveSuccessfully'))
       navigate(-1)
@@ -338,15 +440,14 @@ const CreateProcessOrder = ({}: {}) => {
   const handleEdit = (item: ProcessInDtlData) => {}
 
   const handleDelete = (item: ProcessInDtlData) => {
-    let updateDeleteRow = processInDetailData.filter(
-      (row) => row.id !== item.id
-    )
-
-    let updateDeleteSource = processOrderDtlSource.filter(
-      (it) => it.processTypeId === item.id
-    )
-    setProcessInDetailData(updateDeleteRow)
-    setProcessOrderDtlSource(updateDeleteSource)
+    // let updateDeleteRow = processInDetailData.filter(
+    //   (row) => row.id !== item.id
+    // )
+    // let updateDeleteSource = processOrderDtlSource.filter(
+    //   (it) => it.processTypeId === item.id
+    // )
+    // setProcessInDetailData(updateDeleteRow)
+    // setProcessOrderDtlSource(updateDeleteSource)
   }
 
   return (
@@ -402,24 +503,29 @@ const CreateProcessOrder = ({}: {}) => {
                   labelId="workshop"
                   id="workshop"
                   placeholder="Select warehouse"
-                  value={''}
+                  value={selectedFactory?.id || ''}
                   sx={{
                     borderRadius: '12px',
                     width: '309px',
                     background: 'white'
                   }}
                   onChange={(event: SelectChangeEvent<string>) => {
-                    const selectedValue = warehouseList.find(
+                    const selectedValue = factoryList.find(
                       (item) => item.id === event.target.value
                     )
                     if (selectedValue) {
-                      setSelectedWarehouse(selectedValue)
+                      setSelectedFactory(selectedValue)
                     }
                   }}
                 >
-                  <MenuItem disabled value="">
+                  {factoryList.map((item) => (
+                    <MenuItem disabled value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                  {/* <MenuItem disabled value="">
                     <em>{t('common.noOptions')}</em>
-                  </MenuItem>
+                  </MenuItem> */}
                 </Select>
               </FormControl>
             </Grid>
@@ -480,10 +586,11 @@ const CreateProcessOrder = ({}: {}) => {
                   <DataGrid
                     rows={item.rows}
                     columns={columns}
+                    getRowId={(row) => row.id}
                     hideFooter
                     checkboxSelection={false}
                     getRowClassName={(params) =>
-                      params.indexRelativeToCurrentPage % 2 === 1
+                      params.row.processAction === 'PROCESS_OUT'
                         ? 'row-divider'
                         : ''
                     }
@@ -494,7 +601,7 @@ const CreateProcessOrder = ({}: {}) => {
                       },
                       '& .row-divider': {
                         borderRadius: '0px !important',
-                        borderBottom: '1px solid #e0e0e0' // Divider style
+                        borderTop: '1px solid #e0e0e0' // Divider style
                       },
                       '& .MuiDataGrid-row': {
                         bgcolor: 'white',
@@ -520,7 +627,7 @@ const CreateProcessOrder = ({}: {}) => {
               <InputProcessForm
                 drawerOpen={inputProcessDrawer}
                 handleDrawerClose={() => setInputProcessDrawer(false)}
-                plannedStartAt={formattedDate(processStartAt)}
+                plannedStartAtInput={formattedDate(processStartAt)}
                 dataSet={processOrderDtlSource}
                 onSave={onSaveProcessDtl}
               ></InputProcessForm>

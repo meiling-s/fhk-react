@@ -58,7 +58,9 @@ const ProcessOrder = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [detailDrawer, setDetailDrawer] = useState<boolean>(false)
-  const [selectedRow, setSelectedRow] = useState<ProcessOrderItem | null>(null)
+  const [selectedRow, setSelectedRow] = useState<ProcessOrderItem | undefined>(
+    undefined
+  )
   const [processOrderList, setProcessOrderList] = useState<ProcessOrderItem[]>(
     []
   )
@@ -92,15 +94,36 @@ const ProcessOrder = () => {
       headerName: t('processOrder.porCategory'),
       width: 200,
       renderCell: (params) => {
-        const processTypeRow = processTypeListData?.find(
-          (item) => item.processTypeId === params.row.processTypeId
+        const processTypeIds: string[] = Array.from(
+          new Set(
+            params.row.processOrderDetail.flatMap(
+              (detail: any) => detail.processTypeId
+            )
+          )
         )
-        let name = '-'
-        if (processTypeRow) {
-          name = processTypeRow.processTypeNameEng
-        }
-        console.log('processTypeRow', processTypeRow)
-        return name
+
+        const processTypeRow = processTypeIds
+          .map((id: string) => {
+            const processName = processTypeListData?.find(
+              (it) => it.processTypeId === id
+            )
+            return processName
+              ? i18n.language === 'zhhk'
+                ? processName.processTypeNameTchi
+                : i18n.language === 'zhch'
+                ? processName.processTypeNameSchi
+                : processName.processTypeNameEng
+              : null
+          })
+          .filter(Boolean)
+          .join(', ')
+        return (
+          <div>
+            {params.row.processOrderDetail.length > 0 && (
+              <div>{processTypeIds ? `${processTypeRow}` : '-'}</div>
+            )}
+          </div>
+        )
       }
     },
     {
@@ -129,7 +152,6 @@ const ProcessOrder = () => {
           .filter(Boolean)
           .join(', ')
 
-       
         return (
           <div>
             {params.row.processOrderDetail.length > 0 && (

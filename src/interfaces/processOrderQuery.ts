@@ -24,18 +24,18 @@ type ProcessOrderDetailWarehouse = {
   warehouseId: number
 }
 
-type ProcessOrderDetailRecyc = {
+export type ProcessOrderDetailRecyc = {
   recycTypeId: string
   recycSubTypeId: string
 }
 
-type ProcessOrderDetailProduct = {
+export type ProcessOrderDetailProduct = {
   productTypeId: string
   productSubTypeId: string
   productAddonTypeId: string
 }
 
-type ProcessOrderDetail = {
+export type ProcessOrderDetail = {
   processOrderDtlId: number
   processTypeId: string
   processAction: string
@@ -48,6 +48,7 @@ type ProcessOrderDetail = {
   processOrderDetailProduct: ProcessOrderDetailProduct[]
   processOrderDetailRecyc: ProcessOrderDetailRecyc[]
   processOrderDetailWarehouse: ProcessOrderDetailWarehouse[]
+  refProcessIn: number | null
 }
 
 type ProcessOrderRejectReason = {
@@ -70,24 +71,41 @@ export type ProcessOrderItem = {
   processOrderRejectReason: ProcessOrderRejectReason[]
 }
 
-export type CreateProcessOrderDetail = {
+type ProcessInItem = {
   processTypeId: string
-  estInWeight: number
-  estOutWeight: number
+  itemCategory?: string
+  processAction: string
+  estInWeight: string | number
   plannedStartAt: string
   processOrderDetailProduct: ProcessOrderDetailProduct[]
   processOrderDetailRecyc: ProcessOrderDetailRecyc[]
   processOrderDetailWarehouse: ProcessOrderDetailWarehouse[]
 }
 
-export type CreatePorForm = {
-  factoryId: number
-  processStartAt: string
-  createdBy: string
-  processOrderDetail: CreateProcessOrderDetail[]
+type ProcessOutItem = {
+  processTypeId: string
+  itemCategory?: string
+  processAction: string
+  estOutWeight: string | number
+  plannedEndAt: string
+  processOrderDetailProduct: ProcessOrderDetailProduct[]
+  processOrderDetailRecyc: ProcessOrderDetailRecyc[]
+  processOrderDetailWarehouse: ProcessOrderDetailWarehouse[]
 }
 
-export type PorDetail = {
+export type CreateProcessOrderDetailPairs = {
+  processIn: ProcessInItem
+  processOut: ProcessOutItem
+}
+
+export type CreatePorForm = {
+  factoryId: number | null
+  processStartAt: string
+  createdBy: string
+  processOrderDetailPairs: CreateProcessOrderDetailPairs[]
+}
+
+export type CreateProcessOrderDetailPairsPorDetail = {
   id: number
   processTypeId: string
   itemCategory: string
@@ -97,4 +115,10 @@ export type PorDetail = {
   processOrderDetailProduct: singleProduct
   processOrderDetailRecyc: singleRecyclable
   processOrderDetailWarehouse: string[]
+}
+
+export type QueryEstEndDatetime = {
+  processTypeId: string
+  estInWeight: number
+  plannedStartAt: string
 }

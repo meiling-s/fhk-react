@@ -15,7 +15,8 @@ import RecyclingIcon from '@mui/icons-material/Recycling'
 import {
   ProcessOrderItem,
   CancelFormPor,
-  PorReason
+  PorReason,
+  ProcessOrderDetail
 } from '../../../interfaces/processOrderQuery'
 import {
   getPrimaryColor,
@@ -240,7 +241,7 @@ const DetailProcessOrder = ({
 }: {
   drawerOpen: boolean
   handleDrawerClose: () => void
-  selectedRow: ProcessOrderItem | null
+  selectedRow: ProcessOrderItem | undefined
   onSubmitReason: () => void
   processTypeListData: ProcessType[] | undefined
   warehouseSource: any[]
@@ -301,20 +302,17 @@ const DetailProcessOrder = ({
   }
 
   const mappingDetail = () => {
-    setPorDetails([])
     let rawPorDetails: DetailPOR[] = []
     processTypeList.map((type) => {
       let selectedItem = selectedRow?.processOrderDetail.filter(
         (it) => type.id === it.processTypeId
       )
       let rawItem: DetailPORItem[] = []
-
       if (selectedItem && selectedItem?.length > 0) {
         selectedItem.map((it) => {
           const warehouseIds = selectedRow?.processOrderDetail
             .flatMap((detail: any) => detail.processOrderDetailWarehouse)
             .map((warehouse: any) => warehouse.warehouseId)
-
           const warehouseListName = warehouseIds
             ?.map((id: string) => {
               const warehouse = warehouseList.find(
@@ -324,12 +322,11 @@ const DetailProcessOrder = ({
             })
             .filter(Boolean)
             .join(', ')
-
           rawItem.push({
             procesAction: it.processAction,
             startTime: it.plannedStartAt,
             warehouse: warehouseListName ?? '-',
-            weight: it.estInWeight.toString(),
+            weight: it.estInWeight ? it.estInWeight.toString() : '0',
             porItem: {
               productTypeId:
                 it.processOrderDetailProduct[0]?.productTypeId ?? '-',
@@ -349,6 +346,7 @@ const DetailProcessOrder = ({
         })
       }
     })
+
     setPorDetails(rawPorDetails)
   }
 
@@ -454,9 +452,11 @@ const DetailProcessOrder = ({
                     </Typography>
                     <Divider></Divider>
                     {it.item.map((item: DetailPORItem, index: number) => (
-                      <Box key={index}>
+                      <Box>
                         <Typography sx={localStyles.header2}>
-                          {t('processOrder.table.processIn')}
+                          {item.procesAction === 'PROCESS_IN'
+                            ? t('processOrder.table.processIn')
+                            : t('processOrder.table.processOut')}
                         </Typography>
 
                         <Box sx={localStyles.label}>
@@ -514,9 +514,11 @@ const DetailProcessOrder = ({
                             <Typography
                               sx={{ ...localStyles.value, marginBottom: 1 }}
                             >
-                              回收物
+                              {item.porItem.productTypeId}
                             </Typography>
-                            <Typography sx={localStyles.value}>產品</Typography>
+                            <Typography sx={localStyles.value}>
+                              {item.porItem.recycTypeId}
+                            </Typography>
                           </Box>
                         </Box>
 
@@ -532,10 +534,10 @@ const DetailProcessOrder = ({
                             <Typography
                               sx={{ ...localStyles.value, marginBottom: 1 }}
                             >
-                              報紙
+                              {item.porItem.productSubTypeId}
                             </Typography>
                             <Typography sx={localStyles.value}>
-                              1號膠
+                              {item.porItem.recycSubTypeId}
                             </Typography>
                           </Box>
                         </Box>
@@ -549,8 +551,11 @@ const DetailProcessOrder = ({
                             </Typography>
                           </div>
                           <Box>
-                            <Typography sx={localStyles.value}>廢紙</Typography>
-                            <Typography sx={localStyles.value}>水樽</Typography>
+                            <Typography sx={localStyles.value}>
+                              {' '}
+                              {item.porItem.productAddonTypeId}
+                            </Typography>
+                            {/* <Typography sx={localStyles.value}>水樽</Typography> */}
                           </Box>
                         </Box>
                       </Box>

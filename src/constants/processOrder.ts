@@ -6,19 +6,28 @@ export const GET_PROCESS_ORDER = (tenantId: number): AxiosRequestConfig => ({
 })
 
 export const GET_PROCESS_ORDER_BY_ID = (
-    processOrderId: number
-  ): AxiosRequestConfig => ({
-    method: 'get',
-    url: `api/v1/factory/processOrder/details/${processOrderId}`
-  })
+  processOrderId: number
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/factory/processOrder/details/${processOrderId}`
+})
+
+export const GET_PROCESS_ORDER_ESTENDDATETIME = (): AxiosRequestConfig => ({
+  method: 'get',
+  url: 'api/v1/factory/processOrder/estEndDatetime'
+})
+
+export const GET_FACTORIES_LIST = (tenantId: number): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/factory/getFactories/${tenantId}`
+})
 
 export const CREATE_PROCESSE_ORDER = (
   tenantId: number
 ): AxiosRequestConfig => ({
   method: 'post',
-  url: `api/v1/factory/processOrder/in/${tenantId}`
+  url: `api/v1/factory/processOrder/header/${tenantId}`
 })
-
 
 export const DELETE_PROCESS_ORDER = (
   tenantId: number,

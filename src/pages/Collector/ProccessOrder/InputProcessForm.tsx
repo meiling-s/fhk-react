@@ -11,8 +11,15 @@ import CustomField from '../../../components/FormComponents/CustomField'
 
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import RecyclablesListSingleSelect from '../../../components/SpecializeComponents/RecyclablesListSingleSelect'
-import { singleRecyclable } from '../../../interfaces/collectionPoint'
-import { PorDetail } from '../../../interfaces/processOrderQuery'
+import {
+  recyclable,
+  singleRecyclable
+} from '../../../interfaces/collectionPoint'
+import {
+  CreateProcessOrderDetailPairs,
+  ProcessOrderDetailRecyc,
+  QueryEstEndDatetime
+} from '../../../interfaces/processOrderQuery'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import { getAllWarehouse } from '../../../APICalls/warehouseManage'
@@ -27,21 +34,24 @@ import { useNavigate } from 'react-router-dom'
 import ProductListSingleSelect, {
   singleProduct
 } from '../../../components/SpecializeComponents/ProductListSingleSelect'
+import RecyclablesList from 'src/components/SpecializeComponents/RecyclablesList'
+import { getEstimateWeight } from 'src/APICalls/processOrder'
 
 const InputProcessForm = ({
   drawerOpen,
   handleDrawerClose,
-  plannedStartAt,
+  plannedStartAtInput,
   formType = 'create',
   onSave,
   dataSet
 }: {
   drawerOpen: boolean
   handleDrawerClose: () => void
-  plannedStartAt: string
+  plannedStartAtInput: string
   formType?: string
-  onSave: (processOrderDtl: PorDetail[]) => void
-  dataSet: PorDetail[]
+  onSave: (processOrderDtl: CreateProcessOrderDetailPairs[]) => void
+  //dataSet: PorDetail[]
+  dataSet: CreateProcessOrderDetailPairs[]
 }) => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
@@ -71,50 +81,34 @@ const InputProcessForm = ({
     ]
     return colList
   }
-  const initDetail: PorDetail[] = [
+
+  const initDetail: CreateProcessOrderDetailPairs[] = [
     {
-      id: 0,
-      processTypeId: processTypeId,
-      itemCategory: '',
-      estInWeight: '0',
-      estOutWeight: 0,
-      plannedStartAt: plannedStartAt,
-      processOrderDetailProduct: {
-        productTypeId: '',
-        productSubTypeId: '',
-        productAddonId: '',
-        productSubTypeRemark: '',
-        productAddonTypeRemark: ''
+      processIn: {
+        processTypeId: '',
+        itemCategory: 'recycling',
+        processAction: 'PROCESS_IN',
+        estInWeight: '0',
+        plannedStartAt: plannedStartAtInput,
+        processOrderDetailProduct: [],
+        processOrderDetailRecyc: [],
+        processOrderDetailWarehouse: []
       },
-      processOrderDetailRecyc: {
-        recycTypeId: '',
-        recycSubTypeId: ''
-      },
-      processOrderDetailWarehouse: []
-    },
-    {
-      id: 0,
-      processTypeId: processTypeId,
-      itemCategory: '',
-      estInWeight: '0',
-      estOutWeight: 0,
-      plannedStartAt: plannedStartAt,
-      processOrderDetailProduct: {
-        productTypeId: '',
-        productSubTypeId: '',
-        productAddonId: '',
-        productSubTypeRemark: '',
-        productAddonTypeRemark: ''
-      },
-      processOrderDetailRecyc: {
-        recycTypeId: '',
-        recycSubTypeId: ''
-      },
-      processOrderDetailWarehouse: []
+      processOut: {
+        processTypeId: '',
+        itemCategory: 'product',
+        processAction: 'PROCESS_OUT',
+        estOutWeight: '0',
+        plannedEndAt: '',
+        processOrderDetailProduct: [],
+        processOrderDetailRecyc: [],
+        processOrderDetailWarehouse: []
+      }
     }
   ]
+
   const [processOrderDetail, setProcessOrderDetail] =
-    useState<PorDetail[]>(initDetail)
+    useState<CreateProcessOrderDetailPairs[]>(initDetail)
 
   const initWarehouse = async () => {
     try {
@@ -151,7 +145,6 @@ const InputProcessForm = ({
 
   const initProcessType = async () => {
     let processList: il_item[] = []
-    console.log('processTypeListData222', processTypeListData)
     if (processTypeListData) {
       processTypeListData?.forEach((item: any) => {
         var name =
@@ -175,72 +168,154 @@ const InputProcessForm = ({
     getProductType()
     initWarehouse()
     initProcessType()
-  }, [])
+  }, [drawerOpen])
 
   useEffect(() => {
     setProcessTypeId('')
     setProcessOrderDetail(initDetail)
   }, [handleDrawerClose])
 
-  const handleInputChange = (
-    index: number,
-    field: string,
-    value: string | string[]
+  const onChangeItemCategory = (
+    key: 'processIn' | 'processOut',
+    selectedItem: string
   ) => {
     setProcessOrderDetail((prev) =>
-      prev.map((item, idx) =>
-        idx === index ? { ...item, [field]: value } : item
-      )
+      prev.map((item) => ({
+        ...item,
+        [key]: {
+          ...item[key],
+          itemCategory: selectedItem
+        }
+      }))
     )
   }
 
-  const handleProductChange = (
-    index: number,
-    field: string,
-    value: singleProduct
-  ) => {
-    setProcessOrderDetail((prev) =>
-      prev.map((item, idx) =>
-        idx === index
-          ? {
-              ...item,
-              processOrderDetailProduct: {
-                ...item.processOrderDetailProduct
-              },
-              [field]: value
-            }
-          : item
-      )
+  //to do : change to multiple product select
+  const handleProductChange = (type: string, value: singleProduct) => {
+    const tempProduct = value
+    setProcessOrderDetail((prevDetails) =>
+      prevDetails.map((detail) => ({
+        ...detail,
+        [type]: {
+          ...detail[type as keyof CreateProcessOrderDetailPairs],
+          processOrderDetailProduct: [tempProduct]
+        }
+      }))
     )
   }
 
-  const handleRecycChange = (
-    index: number,
-    field: string,
-    value: singleRecyclable
-  ) => {
-    setProcessOrderDetail((prev) =>
-      prev.map((item, idx) =>
-        idx === index
-          ? {
-              ...item,
-              processOrderDetailRecyc: {
-                ...item.processOrderDetailRecyc
-              },
-              [field]: value
+  const handleRecycChange = (type: string, value: recyclable[]) => {
+    let tempRecy: any[] = []
+    tempRecy = value.flatMap((item) =>
+      item.recycSubTypeId.length > 0
+        ? item.recycSubTypeId.map((subType) => ({
+            recycTypeId: item.recycTypeId,
+            recycSubTypeId: subType
+          }))
+        : [
+            {
+              recycTypeId: item.recycTypeId,
+              recycSubTypeId: ''
             }
-          : item
-      )
+          ]
+    )
+
+    //update to data to recy key
+    setProcessOrderDetail((prevDetails) =>
+      prevDetails.map((detail) => ({
+        ...detail,
+        [type]: {
+          ...detail[type as keyof CreateProcessOrderDetailPairs],
+          processOrderDetailRecyc: tempRecy
+        }
+      }))
     )
   }
+
+  const updateWarehouseIds = (newWarehouseIds: string[]) => {
+    const parsedWarehouseIds = newWarehouseIds.map((id) => parseInt(id, 10))
+    setProcessOrderDetail((prevDetails) =>
+      prevDetails.map((detail) => ({
+        ...detail,
+        processIn: {
+          ...detail.processIn,
+          processOrderDetailWarehouse: parsedWarehouseIds.map((id) => ({
+            warehouseId: id
+          }))
+        },
+        processOut: {
+          ...detail.processOut,
+          processOrderDetailWarehouse: parsedWarehouseIds.map((id) => ({
+            warehouseId: id
+          }))
+        }
+      }))
+    )
+  }
+
+  const handleWeightChange = (
+    value: string,
+    field: 'estInWeight' | 'estOutWeight',
+    idx: number
+  ) => {
+    setProcessOrderDetail((prevState) => {
+      const newState = [...prevState]
+
+      if (field === 'estInWeight') {
+        newState[idx].processIn.estInWeight = value
+      } else if (field === 'estOutWeight') {
+        newState[idx].processOut.estOutWeight = value
+      }
+
+      return newState
+    })
+  }
+
+  // const getEstimateEndDate = async (plannedStartAt: string) => {
+  //   const params: QueryEstEndDatetime = {
+  //     processTypeId: processTypeId,
+  //     estInWeight: Number(processOrderDetail[0].processIn.estInWeight),
+  //     plannedStartAt: plannedStartAt
+  //   }
+  //   let plannedEndAt = ''
+  //   const result = await getEstimateWeight(params)
+  //   if (result) {
+  //     plannedEndAt = result.data
+  //   }
+
+  //   return plannedEndAt
+  // }
 
   const handleSaveItem = () => {
-    const idx = dataSet.length
-    processOrderDetail.map((item, index) => {
-      item.id = index + idx
-      item.processTypeId = processTypeId
-      item.plannedStartAt = plannedStartAt
+    /** note :
+     * eg: PAIR A
+     * plannedEndAtData = plannedStartAt(from input) + duration (from api)
+     * next pair eg: PAIR B
+     * plannedStartAt = plannedEndAtData B
+     * plannedEndAtData = plannedEndAtData B + duration
+     * and continues sequence
+     * **/
+    const plannedStartAtData =
+      dataSet.length === 0
+        ? plannedStartAtInput
+        : dataSet[dataSet.length - 1].processOut.plannedEndAt
+    // const estEndTime = getEstimateEndDate(plannedStartAtData)
+
+    //dummy plus 1 month
+    const startDate = new Date(plannedStartAtData)
+    startDate.setMonth(startDate.getMonth() + 1)
+
+    const plannedEndAtData = startDate.toISOString()
+
+    Object.entries(processOrderDetail[0]).map(([key, value]) => {
+      value.processTypeId = processTypeId
+      processOrderDetail[0].processIn.plannedStartAt = plannedStartAtData
+      processOrderDetail[0].processOut.plannedEndAt = plannedEndAtData
     })
+
+    console.log('estEndTime', plannedStartAtData)
+    console.log('estEndTime', plannedEndAtData)
+
     onSave(processOrderDetail)
     handleDrawerClose()
   }
@@ -293,129 +368,144 @@ const InputProcessForm = ({
                 </CustomField>
               </Grid>
               {/* item card */}
-              {processOrderDetail.map((item: PorDetail, idx) => (
-                <Grid item key={idx}>
-                  <div className="p-4 bg-[#D1D1D1] rounded-t-lg max-w-max text-white font-bold">
-                    {t('processOrder.create.itemToProcess')}
-                  </div>
-                  <Box
-                    sx={{
-                      border: '1px solid #D1D1D1',
-                      padding: 2,
-                      borderTopRightRadius: '16px',
-                      borderBottomLeftRadius: '16px',
-                      WebkitBorderBottomRightRadius: '16px'
-                    }}
-                  >
-                    <Grid item sx={{ marginBottom: 2 }}>
-                      <CustomField
-                        label={t('processOrder.create.itemCategory')}
-                      >
-                        <CustomItemList
-                          items={itemCategory()}
-                          singleSelect={(selectedItem) => {
-                            handleInputChange(idx, 'itemCategory', selectedItem)
-                          }}
-                          defaultSelected={item.itemCategory}
-                          needPrimaryColor={true}
-                        />
-                      </CustomField>
-                    </Grid>
-                    {item.itemCategory === 'recycling' ? (
-                      <Grid item>
-                        <CustomField label={t('col.recycType')}>
-                          <RecyclablesListSingleSelect
-                            recycL={recycType ?? []}
-                            setState={(values) => {
-                              handleRecycChange(
-                                idx,
-                                'processOrderDetailRecyc',
-                                values
-                              )
+              {Object.entries(processOrderDetail[0]).map(([key, value]) => {
+                const processKey = key as keyof CreateProcessOrderDetailPairs
+                return (
+                  <Grid item key={key}>
+                    <div className="p-4 bg-[#D1D1D1] rounded-t-lg max-w-max text-white font-bold">
+                      {t('processOrder.create.itemToProcess')}
+                    </div>
+                    <Box
+                      sx={{
+                        border: '1px solid #D1D1D1',
+                        padding: 2,
+                        borderTopRightRadius: '16px',
+                        borderBottomLeftRadius: '16px',
+                        WebkitBorderBottomRightRadius: '16px'
+                      }}
+                    >
+                      {/* item category */}
+                      <Grid item sx={{ marginBottom: 2 }}>
+                        <CustomField
+                          label={t('processOrder.create.itemCategory')}
+                        >
+                          <CustomItemList
+                            items={itemCategory()}
+                            singleSelect={(selectedItem) => {
+                              onChangeItemCategory(processKey, selectedItem)
                             }}
-                            //defaultRecycL={item.processOrderDetailRecyc}
+                            defaultSelected={value.itemCategory}
+                            needPrimaryColor={true}
                           />
                         </CustomField>
                       </Grid>
-                    ) : item.itemCategory === 'product' ? (
-                      <CustomField
-                        label={t('pick_up_order.product_type.product')}
-                        mandatory
-                      >
-                        <ProductListSingleSelect
+                      {/* item category product / recyle */}
+                      {value.itemCategory === 'recycling' ? (
+                        <Grid item>
+                          <CustomField label={t('col.recycType')}>
+                            <RecyclablesList
+                              recycL={recycType || []}
+                              setState={(value) => {
+                                const keyType =
+                                  key === 'processIn'
+                                    ? 'processIn'
+                                    : 'processOut'
+                                handleRecycChange(keyType, value)
+                              }}
+                            />
+                          </CustomField>
+                        </Grid>
+                      ) : value.itemCategory === 'product' ? (
+                        <CustomField
                           label={t('pick_up_order.product_type.product')}
-                          options={productType ?? []}
-                          setState={(values) => {
-                            handleProductChange(
-                              idx,
-                              'processOrderDetailProduct',
-                              values
-                            )
-                          }}
-                          itemColor={{
-                            bgColor: customListTheme
-                              ? customListTheme.bgColor
-                              : '#E4F6DC',
-                            borderColor: customListTheme
-                              ? customListTheme.border
-                              : '79CA25'
-                          }}
-                          //defaultProduct={item.processOrderDetailProduct}
-                        />
-                      </CustomField>
-                    ) : (
-                      <div></div>
-                    )}
-                    {/* warehouse */}
-                    <Grid item sx={{ marginBottom: 2, marginTop: 2 }}>
-                      <CustomField label={t('processOrder.create.warehouse')}>
-                        <CustomItemList
-                          items={warehouseOption ?? []}
-                          multiSelect={(selectedItems: string[]) =>
-                            handleInputChange(
-                              idx,
-                              'processOrderDetailWarehouse',
-                              selectedItems
-                            )
-                          }
-                          defaultSelected={processTypeId}
-                          needPrimaryColor={false}
-                        />
-                      </CustomField>
-                    </Grid>
-                    {/* weight */}
-                    <Grid item sx={{ marginBottom: 2 }}>
-                      <CustomField label={t('pick_up_order.recyclForm.weight')}>
-                        <CustomTextField
-                          id="weight"
-                          placeholder={t('userAccount.pleaseEnterNumber')}
-                          onChange={(event) => {
-                            onChangeWeight(
-                              event.target.value,
-                              decimalVal,
-                              (value: string) => {
-                                handleInputChange(idx, 'estInWeight', value)
-                              }
-                            )
-                          }}
-                          onBlur={(event) => {
-                            const value = formatWeight(
-                              event.target.value,
-                              decimalVal
-                            )
-                            handleInputChange(idx, 'estInWeight', value)
-                          }}
-                          value={item.estInWeight}
-                          sx={{ width: '100%' }}
-                          endAdornment={
-                            <InputAdornment position="end">kg</InputAdornment>
-                          }
-                        ></CustomTextField>
-                      </CustomField>
-                    </Grid>
-                  </Box>
-                </Grid>
-              ))}
+                          mandatory
+                        >
+                          <ProductListSingleSelect
+                            label={t('pick_up_order.product_type.product')}
+                            options={productType ?? []}
+                            setState={(values) => {
+                              const keyType =
+                                key === 'processIn' ? 'processIn' : 'processOut'
+                              handleProductChange(keyType, values)
+                            }}
+                            itemColor={{
+                              bgColor: customListTheme
+                                ? customListTheme.bgColor
+                                : '#E4F6DC',
+                              borderColor: customListTheme
+                                ? customListTheme.border
+                                : '79CA25'
+                            }}
+                          />
+                        </CustomField>
+                      ) : (
+                        <div></div>
+                      )}
+
+                      {/* warehouse */}
+                      <Grid item sx={{ marginBottom: 2, marginTop: 2 }}>
+                        <CustomField label={t('processOrder.create.warehouse')}>
+                          <CustomItemList
+                            items={warehouseOption ?? []}
+                            multiSelect={(selectedItems: string[]) =>
+                              updateWarehouseIds(selectedItems)
+                            }
+                            defaultSelected={processTypeId}
+                            needPrimaryColor={false}
+                          />
+                        </CustomField>
+                      </Grid>
+
+                      {/* weight */}
+                      <Grid item sx={{ marginBottom: 2 }}>
+                        <CustomField
+                          label={t('pick_up_order.recyclForm.weight')}
+                        >
+                          <CustomTextField
+                            id="weight"
+                            placeholder={t('userAccount.pleaseEnterNumber')}
+                            onChange={(event) => {
+                              onChangeWeight(
+                                event.target.value,
+                                decimalVal,
+                                (value: string) => {
+                                  const field =
+                                    key === 'processIn'
+                                      ? 'estInWeight'
+                                      : 'estOutWeight'
+                                  const idx = key === 'processIn' ? 0 : 1
+                                  handleWeightChange(value, field, 0)
+                                }
+                              )
+                            }}
+                            onBlur={(event) => {
+                              const value = formatWeight(
+                                event.target.value,
+                                decimalVal
+                              )
+                              const field =
+                                key === 'processIn'
+                                  ? 'estInWeight'
+                                  : 'estOutWeight'
+                              const idx = key === 'processIn' ? 0 : 1
+                              handleWeightChange(value, field, 0)
+                            }}
+                            value={
+                              key === 'processIn'
+                                ? processOrderDetail[0].processIn.estInWeight
+                                : processOrderDetail[0].processOut.estOutWeight
+                            }
+                            sx={{ width: '100%' }}
+                            endAdornment={
+                              <InputAdornment position="end">kg</InputAdornment>
+                            }
+                          ></CustomTextField>
+                        </CustomField>
+                      </Grid>
+                    </Box>
+                  </Grid>
+                )
+              })}
             </Grid>
           </Box>
         </RightOverlayForm>

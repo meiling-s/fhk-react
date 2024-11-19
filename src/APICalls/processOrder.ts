@@ -2,11 +2,17 @@ import {
   GET_PROCESS_ORDER,
   CREATE_PROCESSE_ORDER,
   GET_PROCESS_ORDER_BY_ID,
-  DELETE_PROCESS_ORDER
+  DELETE_PROCESS_ORDER,
+  GET_PROCESS_ORDER_ESTENDDATETIME,
+  GET_FACTORIES_LIST
 } from '../constants/processOrder'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
-import { PorQuery, CancelFormPor } from '../interfaces/processOrderQuery'
+import {
+  PorQuery,
+  CancelFormPor,
+  QueryEstEndDatetime
+} from '../interfaces/processOrderQuery'
 
 export const getProcessOrder = async (
   page: number,
@@ -19,7 +25,7 @@ export const getProcessOrder = async (
     const params: any = {
       page: page,
       size: size,
-      sort: 'string'
+      sort: ''
     }
     if (query?.labelId) params.labelId = query.labelId
     if (query?.frmCreatedDate) params.frmCreatedDate = query.frmCreatedDate
@@ -85,6 +91,51 @@ export const deleteProcessOrder = async (
     return response
   } catch (e: any) {
     console.error('DELETE POR failed:', e)
+    throw e
+  }
+}
+
+export const getEstimateWeight = async (
+  queryEstEndDatetime: QueryEstEndDatetime
+) => {
+  const token = returnApiToken()
+  const params: any = {
+    tenantId: token.tenantId,
+    processTypeId: queryEstEndDatetime.processTypeId,
+    estInWeight: queryEstEndDatetime.estInWeight,
+    plannedStartAt: queryEstEndDatetime.plannedStartAt
+  }
+
+  try {
+    const response = await axiosInstance({
+      baseURL: window.baseURL.collector,
+      ...GET_PROCESS_ORDER_ESTENDDATETIME(),
+      params: params
+    })
+
+    return response
+  } catch (e) {
+    console.error('Get getEstimateWeight failed:', e)
+    throw e
+  }
+}
+
+export const getFactories = async (page: number, size: number) => {
+  const token = returnApiToken()
+
+  try {
+    const response = await axiosInstance({
+      baseURL: window.baseURL.collector,
+      ...GET_FACTORIES_LIST(parseInt(token.tenantId)),
+      params: {
+        page: page,
+        size: size
+      }
+    })
+
+    return response
+  } catch (e) {
+    console.error('Get factories failed:', e)
     throw e
   }
 }

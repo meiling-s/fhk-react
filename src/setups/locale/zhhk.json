@@ -1537,6 +1537,7 @@
       "itemToProcess": "預計待處理物品",
       "itemCategory": "物品類別 (按一下類別顯示子類別，按兩下取消選擇)",
       "recycling": "回收物",
+      "product": "產品",
       "warehouse": "貨倉"
     },
     "details": {
@@ -1548,7 +1549,8 @@
     },
     "table": {
       "startOrFinishDate": "開始/結束日期",
-      "processIn": "處理輸入"
+      "processIn": "處理輸入",
+      "processOut": "處理出"
     }
   }
 }

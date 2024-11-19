@@ -1555,7 +1555,8 @@
     },
     "table": {
       "startOrFinishDate": "開始/結束日期",
-      "processIn": "进程"
+      "processIn": "进程",
+      "processOut": "处理出"
     }
   }
 }
