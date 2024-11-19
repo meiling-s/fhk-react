@@ -55,6 +55,7 @@ function createVehicles(
   photo: string[],
   status: string,
   deviceId: string,
+  compactor: 1 | 0,
   netWeight: number,
   createdBy: string,
   updatedBy: string,
@@ -70,6 +71,7 @@ function createVehicles(
     photo,
     status,
     deviceId,
+    compactor,
     createdBy,
     updatedBy,
     createdAt,
@@ -96,8 +98,10 @@ const Vehicles: FunctionComponent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
   
+  
   useEffect(() => {
     initVehicleList()
+    initAllVehicleList()
     initAllVehicleList()
   }, [page])
 
@@ -122,6 +126,7 @@ const Vehicles: FunctionComponent = () => {
               vehicleImages.photo,
               item?.status,
               item?.deviceId,
+              item?.compactor,
               item?.netWeight,
               item?.createdBy,
               item?.updatedBy,
@@ -162,6 +167,7 @@ const Vehicles: FunctionComponent = () => {
             item?.photo,
             item?.status,
             item?.deviceId,
+            item?.compactor,
             item?.netWeight,
             item?.createdBy,
             item?.updatedBy,
@@ -171,6 +177,15 @@ const Vehicles: FunctionComponent = () => {
           )
         )
 
+        //mappping plate list
+        newPlateList.push(item?.plateNo)
+        newDeviceIdList.push(item?.deviceId)
+      })
+      // setVehicleList(vehicleMapping)
+      setPlateList(newPlateList)
+      setDeviceIdList(newDeviceIdList)
+    }
+  }, [])
         //mappping plate list
         newPlateList.push(item?.plateNo)
         newDeviceIdList.push(item?.deviceId)
@@ -225,6 +240,19 @@ const Vehicles: FunctionComponent = () => {
         }
 
         return <div>{vehicleName}</div>
+      }
+    },
+    {
+      field: 'compactor',
+      headerName: t('driver.vehicleMenu.isCompactor'),
+      width: 200,
+      type: 'string',
+      renderCell: (params) => {
+        if (params.row.compactor === 1){
+          return <div>{t('common.yes')}</div>
+        } else {
+          return <div>{t('common.no')}</div>
+        }
       }
     },
     {
@@ -349,6 +377,7 @@ const Vehicles: FunctionComponent = () => {
   const onSubmitData = (type: string, msg: string) => {
     initVehicleList()
     initAllVehicleList()
+    initAllVehicleList()
     if (type == 'success') {
       showSuccessToast(msg)
     } else {
@@ -389,6 +418,7 @@ const Vehicles: FunctionComponent = () => {
               vehicleImages.photo,
               item?.status,
               item?.deviceId, 
+              item?.compactor,
               item?.netWeight,
               item?.createdBy,
               item?.updatedBy,
