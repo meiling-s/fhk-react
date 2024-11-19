@@ -524,13 +524,13 @@ const CreateRecycleForm = ({
                       bgcolor: 'white',
                       borderColor: colorTheme
                     }}
-                    onClick={() => onClose && onClose()}
+                    onClick={onHandleDrawer}
                   >
                     {t('col.cancel')}
                   </Button>
                   <IconButton
                     sx={{ ml: '25px' }}
-                    onClick={() => onClose && onClose()}
+                    onClick={onHandleDrawer}
                   >
                     <KeyboardTabIcon sx={{ fontSize: '30px' }} />
                   </IconButton>
