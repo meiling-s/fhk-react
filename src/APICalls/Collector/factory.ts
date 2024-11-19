@@ -4,12 +4,14 @@ import {
     CREATE_FACTORY_DATA,
     UPDATE_FACTORY_DATA,
     DELETE_FACTORY_DATA,
-    GET_FACTORY_WAREHOUSE_LIST_DATA
+    GET_FACTORY_WAREHOUSE_LIST_DATA,
+    GET_ALL_FACTORY_WAREHOUSE_LIST_DATA
 } from "../../constants/requests";
 import { returnApiToken } from "../../utils/utils";
 import axiosInstance from "../../constants/axiosInstance";
 import { CreateCompany, UpdateCompany } from "../../interfaces/company";
 import { FactoryData } from "../../interfaces/factory";
+import { factory } from "typescript";
 
 export const getAllFactories = async (page?: number, size?: number) => {
     const auth = returnApiToken()
@@ -35,14 +37,39 @@ export const getAllFactories = async (page?: number, size?: number) => {
     }
 };
 
-export const getAllFactoriesWarehouse = async () => {
+export const getFactoriesWarehouse = async (factoryId?: string) => {
+    const auth = returnApiToken()
+    const tenantId = auth.tenantId
+    const params: any = {}
+    if (tenantId) params.tenantId = tenantId
+    if (factoryId) params.factoryId = factoryId
+    
+    try {
+        const token = returnApiToken();
+        const response = await axiosInstance({
+        baseURL: window.baseURL.collector,
+        ...GET_FACTORY_WAREHOUSE_LIST_DATA(),
+        params: params,
+        headers: {
+            AuthToken: token.authToken,
+        },
+        });
+
+        return response;
+    } catch (e) {
+        console.error("Get all company failed:", e);
+        throw(e)
+    }
+};
+
+export const getAllFactoriesWarehouse = async (factoryId?: string) => {
     const auth = returnApiToken()
     const tenantId = auth.tenantId
     try {
         const token = returnApiToken();
         const response = await axiosInstance({
         baseURL: window.baseURL.collector,
-        ...GET_FACTORY_WAREHOUSE_LIST_DATA(tenantId),
+        ...GET_ALL_FACTORY_WAREHOUSE_LIST_DATA(tenantId),
         headers: {
             AuthToken: token.authToken,
         },

@@ -44,6 +44,7 @@ const Factory: FunctionComponent = () => {
   const navigate = useNavigate()
   const [selectedRow, setSelectedRow] = useState<FactoryData | null>(null)
   const [factoryDataList, setFactoryDataList] = useState<FactoryData[]>([])
+  const [allFactoryDataList, setAllFactoryDataList] = useState<FactoryData[]>([])
   const [warehouseDataList, setWarehouseDataList] = useState<FactoryWarehouseData[]>([])
   const [warehouseMap, setWarehouseMap] = useState<Record<number, string>>({});
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -58,6 +59,7 @@ const Factory: FunctionComponent = () => {
   useEffect(() => {
     initFactoryList()
     initWarehouseList()
+    initAllFactoryList()
   }, [page])
 
   const initFactoryList = (async () => {
@@ -69,6 +71,18 @@ const Factory: FunctionComponent = () => {
     if (data) {
       setFactoryDataList(data.content)
       setTotalData(data.totalPages)
+      setIsLoading(false)
+    }   
+  })
+
+  const initAllFactoryList = (async () => {
+    setIsLoading(true)
+    setAllFactoryDataList([])
+    const result = await getAllFactories(0, 1000)
+    const data = result?.data as PaginatedResponse
+  
+    if (data) {
+      setAllFactoryDataList(data.content)
       setIsLoading(false)
     }   
   })
@@ -97,14 +111,10 @@ const Factory: FunctionComponent = () => {
   }
 
   const getWarehouseNames = (factoryWarehouses: any[]): string => {
-    console.log('Input factoryWarehouses:', factoryWarehouses);
-    console.log('Available warehouseDataList:', warehouseDataList);
-    
     if (!factoryWarehouses || !Array.isArray(factoryWarehouses)) return ''
     
     return factoryWarehouses.map(fw => {
       const warehouse = warehouseDataList.find(w => w.warehouseId === fw.warehouseId)
-      console.log(`Looking for warehouseId ${fw.warehouseId}, found:`, warehouse);
       return warehouse ? getLocalizedWarehouseName(warehouse) : ''
     }).filter(name => name).join(', ')
 }
@@ -228,6 +238,8 @@ const Factory: FunctionComponent = () => {
 
   const onSubmitData = (type: string, msg: string) => {
     initFactoryList()
+    initWarehouseList()
+    initAllFactoryList()
     setSelectedRow(null)
     if (type == 'success') {
       showSuccessToast(msg)
@@ -346,7 +358,7 @@ const Factory: FunctionComponent = () => {
           handleDrawerClose={handleDrawerClose}
           action={action}
           onSubmitData={onSubmitData}
-          warehouseList={warehouseDataList}
+          allFactoriesData={allFactoryDataList}
         />
       </Box>
     </>

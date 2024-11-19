@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useEffect, useMemo } from 'react'
-import { Box, Divider, Grid } from '@mui/material'
+import { Box, Divider, Grid, Skeleton } from '@mui/material'
 
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
@@ -18,9 +18,9 @@ import { useNavigate } from 'react-router-dom'
 import i18n from '../../../setups/i18n'
 import CustomItemList from '../../../components/FormComponents/CustomItemList'
 import { FactoryData, FactoryWarehouse, FactoryWarehouseData } from '../../../interfaces/factory'
-import { editFactory, createFactory, deleteFactory } from '../../../APICalls/Collector/factory'
+import { editFactory, createFactory, deleteFactory, getFactoriesWarehouse } from '../../../APICalls/Collector/factory'
 import { toast } from 'react-toastify'
-import Warehouse from '../Warehouse/Warehouse'
+import CircularLoading from '../../../components/CircularLoading'
 
 interface IListItem {
   id: string;
@@ -34,7 +34,7 @@ interface Props {
   onSubmitData: (type: string, msg: string) => void
   rowId?: number
   selectedItem?: any | null
-  warehouseList: FactoryWarehouseData[]
+  allFactoriesData: any[]
 }
 
 const DetailFactory: FunctionComponent<Props> = ({
@@ -44,7 +44,7 @@ const DetailFactory: FunctionComponent<Props> = ({
   onSubmitData,
   rowId,
   selectedItem,
-  warehouseList
+  allFactoriesData
 }) => {
   const { t } = useTranslation()
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
@@ -58,9 +58,22 @@ const DetailFactory: FunctionComponent<Props> = ({
   const [warehouse, setWarehouse] = useState<string>("")
   const [selectedWarehouses, setSelectedWarehouses] = useState<string[]>([])
   const [formattedWarehouseList, setFormattedWarehouseList] = useState<IListItem[]>([])
-
+  const [warehouseList, setWarehouseList] = useState<FactoryWarehouseData[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   var realm = localStorage.getItem(localStorgeKeyName.realm) || 'collector'
   const navigate = useNavigate()
+
+  const initWarehouseList = (async () => {
+    setIsLoading(true)
+    setWarehouseList([])
+    const result = await getFactoriesWarehouse(selectedItem?.factoryId || '' )
+    const data = result?.data 
+  
+    if (data) {
+      setWarehouseList(data)
+      setIsLoading(false)
+    }   
+  })
 
   useEffect(() => {
     if (warehouseList && warehouseList.length > 0) {
@@ -102,7 +115,7 @@ const DetailFactory: FunctionComponent<Props> = ({
 
   useEffect(() => {
     setValidation([])
-
+    initWarehouseList()
     if (action !== 'add') {
       mappingData()
     } else {
@@ -125,34 +138,85 @@ const DetailFactory: FunctionComponent<Props> = ({
     if (!trySubmited) {
       return false
     }
-    return s == ''
+    return s === ''
   }
 
   useEffect(() => {
+    const otherFactories = allFactoriesData.filter(factory => 
+      factory.factoryId !== selectedItem?.factoryId
+    )
+
     const validate = async () => {
       const tempV: formValidate[] = []
-        if (titleNameEng?.toString() == '') {
+        if (titleNameEng?.toString() === '') {
           tempV.push({
             field: t('common.englishName'),
             problem: formErr.empty,
             dataTestId: 'astd-user-group-form-group-name-err-warning-3882',
             type: 'error'
           })
-        } if (titleNameTchi?.toString() == '') {
+        } if (titleNameTchi?.toString() === '') {
           tempV.push({
             field: t('common.traditionalChineseName'),
             problem: formErr.empty,
             dataTestId: 'astd-user-group-form-group-name-err-warning-3882',
             type: 'error'
           })
+        }  if (titleNameSchi?.toString() === '') {
+          tempV.push({
+            field: t('common.simplifiedChineseName'),
+            problem: formErr.empty,
+            dataTestId: 'astd-user-group-form-group-name-err-warning-3882',
+            type: 'error'
+          })
+        }  if (place?.toString() === '') {
+          tempV.push({
+            field: t('warehouse_page.place'),
+            problem: formErr.empty,
+            dataTestId: 'astd-user-group-form-group-name-err-warning-3882',
+            type: 'error'
+          })
+        } if (selectedWarehouses.length === 0) {
+          tempV.push({
+            field: t('factory.warehouse'),
+            problem: formErr.empty,
+            dataTestId: 'factory-warehouse-empty',
+            type: 'error'
+          })
+        } if (titleNameEng && otherFactories.some(factory => 
+          factory.factoryNameEng.toLowerCase() === titleNameEng.toLowerCase()
+        )) {
+          tempV.push({
+            field: t('common.englishName'),
+            problem: formErr.alreadyExist,
+            dataTestId: 'factory-eng-name-duplicate',
+            type: 'error'
+          })
+        }  if (titleNameSchi && otherFactories.some(factory => 
+          factory.factoryNameSchi === titleNameSchi
+        )) {
+          tempV.push({
+            field: t('common.simplifiedChineseName'),
+            problem: formErr.alreadyExist,
+            dataTestId: 'factory-schi-name-duplicate',
+            type: 'error'
+          })
+        } if (titleNameTchi && otherFactories.some(factory => 
+          factory.factoryNameTchi === titleNameTchi
+        )) {
+          tempV.push({
+            field: t('common.traditionalChineseName'),
+            problem: formErr.alreadyExist,
+            dataTestId: 'factory-tchi-name-duplicate',
+            type: 'error'
+          })
         }
 
-      console.log("tempV", tempV)
       setValidation(tempV)
     }
 
     validate()
-  }, [titleNameEng, titleNameSchi, titleNameTchi, i18n.language])
+  }, [titleNameEng, titleNameSchi, titleNameTchi, selectedWarehouses, i18n.language])
 
   const handleSubmit = () => {
     const token = returnApiToken()
@@ -163,7 +227,7 @@ const DetailFactory: FunctionComponent<Props> = ({
       const warehouse = warehouseList.find(w => w.warehouseId.toString() === id)
       if (warehouse) {
         return {
-          factoryWarehouseId: 0,
+          factoryWarehouseId: selectedItem?.factoryId || 0,
           warehouseId: warehouse.warehouseId,
           createdBy: token.loginId,
           updatedBy: token.loginId
@@ -187,7 +251,7 @@ const DetailFactory: FunctionComponent<Props> = ({
       updatedBy: token.loginId,
     }
 
-    if (action == 'add') {
+    if (action === 'add') {
       handleCreateUserGroup(formData)
     } else {
       handleEditUserGroup(formData)
@@ -276,9 +340,9 @@ const DetailFactory: FunctionComponent<Props> = ({
         action={action}
         headerProps={{
           title:
-            action == 'add'
+            action === 'add'
               ? t('top_menu.add_new')
-              : action == 'edit'
+              : action === 'edit'
               ? t('userGroup.change')
               : t('userGroup.delete'),
           subTitle: t('factory.factory'),
@@ -351,8 +415,12 @@ const DetailFactory: FunctionComponent<Props> = ({
               />
             </CustomField>
             <CustomField label={t('factory.warehouse')} mandatory>
-              {warehouseList && (
-                <CustomItemList
+              {isLoading ?         
+                <Box style={{display: 'flex', flexDirection: 'row', gap: '5px'}}>
+                  <Skeleton variant="rounded" height={30} width="30%"/>
+                  <Skeleton variant="rounded" height={30} width="30%"/>
+                </Box> : (warehouseList && 
+                (<CustomItemList
                   items={formattedWarehouseList}
                   multiSelect={(selectedItems) => {
                     setSelectedWarehouses(selectedItems)
@@ -361,7 +429,7 @@ const DetailFactory: FunctionComponent<Props> = ({
                   defaultSelected={selectedWarehouses}
                   needPrimaryColor={true}
                 />
-              )}
+              )) }
             </CustomField>
             <CustomField label={t('factory.introduction')}>
               <CustomTextField

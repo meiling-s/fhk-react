@@ -1737,9 +1737,14 @@ export const GET_FACTORY_LIST_DATA = (tenantId: string): AxiosRequestConfig => (
   url: `api/v1/factory/getFactories/${tenantId}`
 })
 
-export const GET_FACTORY_WAREHOUSE_LIST_DATA = (tenantId: string): AxiosRequestConfig => ({
+export const GET_FACTORY_WAREHOUSE_LIST_DATA = (): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/factory/getWarehouseList?tenantId=${tenantId}`
+  url: `api/v1/factory/getWarehouseList`
+})
+
+export const GET_ALL_FACTORY_WAREHOUSE_LIST_DATA = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/factory/getAllWarehouseList?tenantId=${tenantId}`
 })
 
 export const CREATE_FACTORY_DATA = (): AxiosRequestConfig => ({
