@@ -83,7 +83,6 @@ export const ValidateSchemaCreateRecycleFormPurchaseOrder = ({
               if (value !== 'Invalid Date') return true
               if (value === undefined) return true
               return false
-              // return value !== t('pick_up_order.error.invalid_date')
             }
           ),
         receiverAddr: Yup.string()
@@ -97,7 +96,7 @@ export const ValidateSchemaCreateRecycleFormPurchaseOrder = ({
           .typeError(t('pick_up_order.error.productSubType'))
           .when('productType', {
             is: (value: string) => {
-              const item: any = productType && productType?.length > 0 && productType?.find((item: any) => item.productType == value)
+              const item: any = productType && productType?.length > 0 && productType?.find((item: any) => item.productTypeId == value)
               const isValid = item?.productSubType?.length > 0
               return isValid
             },
@@ -106,11 +105,11 @@ export const ValidateSchemaCreateRecycleFormPurchaseOrder = ({
                 .required(t('pick_up_order.error.productSubType')),
           })
         ,
-        productAddon: Yup.string()
+        productAddOnType: Yup.string()
           .when(['productType', 'productSubType'], {
             is: (value: string, value2: string) => {
-              const itemProductType: any = productType && productType?.length > 0 && productType?.find((item: any) => item.productType == value)
-              const itemSubProductType: any = itemProductType?.productSubType?.length > 0 && itemProductType?.productSubType?.find((item: any) => item.productSubType == value2)
+              const itemProductType: any = productType && productType?.length > 0 && productType?.find((item: any) => item.productTypeId == value)
+              const itemSubProductType: any = itemProductType?.productSubType?.length > 0 && itemProductType?.productSubType?.find((item: any) => item.productSubTypeId == value2)
               const isValid = itemSubProductType?.productAddonType?.length > 0
               return isValid
 

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 type TypeModalConfirmRemarksEmpty = {
   openConfirmModal: TypeModalState
-  setOpenConfirmModal: (params: TypeModalState) => void
+  setOpenConfirmModal?: (params: TypeModalState) => void
   values?: {
     productSubTypeRemark?: string,
     productAddOnTypeRemark?: string,
@@ -12,7 +12,7 @@ type TypeModalConfirmRemarksEmpty = {
 }
 
 
-const validateRemarks = ({ openConfirmModal, setOpenConfirmModal, values }: TypeModalConfirmRemarksEmpty): boolean => {
+const validateRemarks = ({ openConfirmModal, values }: TypeModalConfirmRemarksEmpty): boolean => {
 
   try {
 
@@ -38,10 +38,6 @@ const validateRemarks = ({ openConfirmModal, setOpenConfirmModal, values }: Type
     if (isTypeOthers && !isConfirmed && isRemarksMissing) {
 
       isValid = false
-      setOpenConfirmModal({
-        ...openConfirmModal,
-        isOpen: true,
-      })
 
     }
     return isValid
@@ -94,6 +90,7 @@ const Component = ({
       isOpen={openConfirmModal?.isOpen}
       message={t('pick_up_order.confirm_empty_remarks')}
       onConfirm={async () => {
+        if(setOpenConfirmModal)
         setOpenConfirmModal({
           isOpen: false,
           tempData: {
@@ -102,8 +99,9 @@ const Component = ({
           }
         })
         onConfirm()
+
       }}
-      onCancel={() => setOpenConfirmModal({
+      onCancel={() => setOpenConfirmModal && setOpenConfirmModal({
         ...openConfirmModal,
         isOpen: false,
       })}

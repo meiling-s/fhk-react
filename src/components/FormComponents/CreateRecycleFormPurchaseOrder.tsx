@@ -29,7 +29,7 @@ import RecyclablesListSingleSelect from '../SpecializeComponents/RecyclablesList
 import { collectorList, manuList } from '../../interfaces/common'
 import dayjs, { Dayjs } from 'dayjs'
 import { Languages, format } from '../../constants/constant'
-import { localStorgeKeyName } from '../../constants/constant'
+import { localStorgeKeyName, configDateFormatFull } from '../../constants/constant'
 import {
   formatWeight,
   getPrimaryColor,
@@ -235,75 +235,79 @@ const CreateRecycleForm = ({
     setDefaultRecyc(defRecyc)
   }
 
+  const assignDataEditRow = ({ newDataEditRow }: { newDataEditRow: any }) => {
+
+    try {
+
+      if (newDataEditRow) {
+        onHandleError('recycTypeId', 'succeed')
+        onHandleError('recycSubTypeId', 'succeed')
+
+        const refactorDataFormik = {
+          id:  -1,
+          poDtlId: newDataEditRow.poDtlId ?? 0,
+          recycTypeId: newDataEditRow.recycTypeId,
+          recycSubTypeId: newDataEditRow.recycSubTypeId,
+          unitId: newDataEditRow.unitId,
+          unitNameTchi: newDataEditRow.unitNameTchi,
+          unitNameSchi: newDataEditRow.unitNameSchi,
+          unitNameEng: newDataEditRow.unitNameEng,
+          weight: formatWeight(newDataEditRow.weight, decimalVal),
+          pickupAt: newDataEditRow?.pickupAt || '',
+          createdBy: newDataEditRow.createdBy,
+          updatedBy: newDataEditRow.updatedBy,
+          receiverAddr: newDataEditRow.receiverAddr || '',
+          receiverAddrGps: newDataEditRow.receiverAddrGps || [0],
+          status: newDataEditRow.status === null ? 'CREATED' : newDataEditRow.status ?? 'CREATED',
+          itemCategory: newDataEditRow.itemCategory || 'Recyclables',
+          productType: newDataEditRow?.productType, // => first value for edit from API , second value from create newDataEditRow row
+          productSubType: newDataEditRow?.productSubType,
+          productSubTypeRemark: newDataEditRow?.productSubTypeRemark,
+          productAddOnTypeRemark: newDataEditRow?.productAddOnTypeRemark,
+          productAddOnType: newDataEditRow?.productAddOnType,
+        }
+
+        formik.setValues(refactorDataFormik)
+
+        setRecycType((newDataEditRow.itemCategory === 'Recyclables' || (!refactorDataFormik?.productType)) ? true : false)
+      }
+
+    }
+    catch (err) {
+
+
+    }
+  }
 
   useEffect(() => {
     if (editRowId == null) {
+
       formik.setValues(initValue)
       onHandleError('recycTypeId', 'succeed')
       onHandleError('recycSubTypeId', 'succeed')
+
     } else {
-      const editR = data.find(value => value?.poDtlId === editRowId)
+
+      const editR = data.find(value => value?.id === editRowId)
+
       if (editR) {
         setDefProd({
           dataProduct: editR,
           setDefaultProduct,
         })
         setDefRecyc(editR)
+        assignDataEditRow({ newDataEditRow: editR })
         setEditRow(editR)
         formik.setFieldValue(
           'pickupAt',
           editR.pickupAt
-            ? dayjs.utc(editR.pickupAt).tz('Asia/Hong_Kong').format()
+            ? dayjs.utc(editR.pickupAt).tz('Asia/Hong_Kong').format(configDateFormatFull)
             : ''
         )
       }
     }
   }, [editRowId])
 
-  const handleOverlayClick = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
-    if (event.target === event.currentTarget) {
-      // If the overlay is clicked (not its children), close the modal
-      onClose && onClose()
-    }
-  }
-
-  useEffect(() => {
-    if (editRow) {
-      onHandleError('recycTypeId', 'succeed')
-      onHandleError('recycSubTypeId', 'succeed')
-      const index = data.indexOf(editRow)
-
-      const refactorDataFormik = {
-        id: index,
-        poDtlId: editRow.poDtlId ?? 0,
-        recycTypeId: editRow.recycTypeId,
-        recycSubTypeId: editRow.recycSubTypeId,
-        unitId: editRow.unitId,
-        unitNameTchi: editRow.unitNameTchi,
-        unitNameSchi: editRow.unitNameSchi,
-        unitNameEng: editRow.unitNameEng,
-        weight: formatWeight(editRow.weight, decimalVal),
-        pickupAt: editRow?.pickupAt || '',
-        createdBy: editRow.createdBy,
-        updatedBy: editRow.updatedBy,
-        receiverAddr: editRow.receiverAddr || '',
-        receiverAddrGps: editRow.receiverAddrGps || [0],
-        status: editRow.status === null ? 'CREATED' : editRow.status ?? 'CREATED',
-        itemCategory: editRow.itemCategory || 'Recyclables',
-        productType: editRow?.productType, // => first value for edit from API , second value from create data row
-        productSubType: editRow?.productSubType,
-        productSubTypeRemark: editRow?.productSubTypeRemark,
-        productAddOnTypeRemark: editRow?.productAddOnTypeRemark,
-        productAddOnType: editRow?.productAddOnType,
-      }
-
-      formik.setValues(refactorDataFormik)
-
-      setRecycType((editRow.itemCategory === 'Recyclables' || (!refactorDataFormik?.productType)) ? true : false)
-    }
-  }, [editRow])
 
 
 
@@ -321,19 +325,34 @@ const CreateRecycleForm = ({
 
     onSubmit: (values, { resetForm }) => {
 
-      if (!validateRemarks({
+      const isRemarksConfirmed = validateRemarks({
         openConfirmModal,
-        setOpenConfirmModal,
         values: {
           productSubTypeRemark: formik?.values?.productSubTypeRemark,
           productAddOnTypeRemark: formik?.values?.productAddOnTypeRemark,
-        },
-      })) return
+        }
+      })
+
+
+      if (!isRemarksConfirmed) {
+        
+        setOpenConfirmModal({
+          ...openConfirmModal,
+          isOpen: true,
+        })
+        return
+      }
+      else{
+        resetModal()
+      }
+
+
 
       if (isEditing) {
         const updatedData: any = data.map((row, id) => {
           return id === values.id ? values : row
         })
+        
         setState(updatedData)
       } else {
         let updatedValues: any = values;
@@ -702,11 +721,13 @@ const CreateRecycleForm = ({
                           options={getWeightUnits()}
                           getOptionLabel={(option) => option.lang}
                           onChange={(event, value) => {
+                            
+                            formik.setFieldValue('unitId', value?.unitId || 0)
+
                             if (value?.unitId) {
                               onChangeContent('unitId', value?.unitId)
-                            } else {
-                              formik.setFieldValue('unitId', 0)
                             }
+                            
                           }}
                           renderInput={(params) => (
                             <TextField
