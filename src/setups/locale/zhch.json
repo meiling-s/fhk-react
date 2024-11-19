@@ -1099,6 +1099,7 @@
     "vehicleMenu": {
       "vehicle_number": "车辆编码",
       "imei":"IMEI 号码",
+      "isCompactor":"是否压缩车",
       "license_plate_number": "车牌号码",
       "vehicle_type": "车辆种类",
       "vehicle_cargo_capacity": "车辆载货量",
@@ -1527,5 +1528,10 @@
     "createdAt": "送出入日期及时间",
     "shippingCompany": "状态",
     "inventoryLocation": "送出地点"
+  },
+  "factory": {
+    "factory": "工场",
+    "warehouse": "貨倉",
+    "introduction": "簡介"
   }
 }
