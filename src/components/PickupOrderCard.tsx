@@ -15,78 +15,12 @@ import CommonTypeContainer from '../contexts/CommonTypeContainer'
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import RecycleTypeCardItem from './RecycleTypeCardItem';
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-const CardItem = ({
-  index,
-  localstyles,
-  dataPico,
-  type,
-}: any) => {
 
-  const { t } = useTranslation()
-
-  let label = {
-    typeLabel: '',
-    subTypeLabel: '',
-    addonTypeLabel: '',
-  }
-
-  switch (type) {
-
-    case 'recyclable': {
-      label.typeLabel = t('pick_up_order.card_detail.main_category')
-      label.subTypeLabel = t('pick_up_order.card_detail.subcategory')
-    } break
-    case 'product': {
-      label.typeLabel = t('pick_up_order.card_detail.product_type_label')
-      label.subTypeLabel = t('pick_up_order.card_detail.sub_product_type_label')
-      label.addonTypeLabel = t('pick_up_order.card_detail.addon_product_type_label')
-    } break
-
-  }
-
-  const dataPicoValid = dataPico?.length > 0 && dataPico[index]
-  console.log("🚀 ~ file: PickupOrderCard.tsx ~ line 52 ~ dataPicoValid", dataPicoValid)
-
-  const subtType = dataPicoValid?.subTypeName
-  const addonTypeName = dataPicoValid?.addonTypeName
-
-  return (
-    <Box key={index}>
-      <CustomField
-        label={label?.typeLabel}
-      >
-        <Typography sx={localstyles.typo_fieldContent}>
-          {dataPico?.length != 0 && dataPico
-            ? dataPico[index]?.typeName
-            : '-'}
-        </Typography>
-      </CustomField>
-      <CustomField
-        label={label?.subTypeLabel}
-        style={{ marginTop: '12px' }}
-      >
-        <Typography sx={localstyles.typo_fieldContent}>
-          {subtType || '-'}
-        </Typography>
-      </CustomField>
-      {
-        addonTypeName &&
-        <CustomField
-          label={label?.addonTypeLabel}
-          style={{ marginTop: '12px' }}
-        >
-          <Typography sx={localstyles.typo_fieldContent}>
-            {addonTypeName || '-'}
-          </Typography>
-        </CustomField>
-      }
-    </Box>
-  )
-}
 
 const PickupOrderCard = ({
   pickupOrderDetail,
@@ -144,10 +78,10 @@ const PickupOrderCard = ({
           >
             <Box display="flex" justifyContent="space-between">
               <Box>
-                <CardItem
+                <RecycleTypeCardItem
                   index={index}
                   localstyles={localstyles}
-                  dataPico={dataPico}
+                  data={dataPico}
                   type={podetail?.productType ? 'product' : 'recyclable'}
                 />
               </Box>

@@ -1217,6 +1217,7 @@
   "purchase_order": {
     "all_order": "所有訂單",
     "enquiry_po": "訂單",
+    "missing_arrived": "到達資訊不能為空",
     "table": {
       "created_datetime": "建立日期",
       "order_number": "訂單編號",
