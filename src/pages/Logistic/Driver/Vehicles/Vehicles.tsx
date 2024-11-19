@@ -98,8 +98,10 @@ const Vehicles: FunctionComponent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
   
+  
   useEffect(() => {
     initVehicleList()
+    initAllVehicleList()
     initAllVehicleList()
   }, [page])
 
@@ -175,6 +177,15 @@ const Vehicles: FunctionComponent = () => {
           )
         )
 
+        //mappping plate list
+        newPlateList.push(item?.plateNo)
+        newDeviceIdList.push(item?.deviceId)
+      })
+      // setVehicleList(vehicleMapping)
+      setPlateList(newPlateList)
+      setDeviceIdList(newDeviceIdList)
+    }
+  }, [])
         //mappping plate list
         newPlateList.push(item?.plateNo)
         newDeviceIdList.push(item?.deviceId)
@@ -366,6 +377,7 @@ const Vehicles: FunctionComponent = () => {
   const onSubmitData = (type: string, msg: string) => {
     initVehicleList()
     initAllVehicleList()
+    initAllVehicleList()
     if (type == 'success') {
       showSuccessToast(msg)
     } else {
@@ -431,6 +443,7 @@ const Vehicles: FunctionComponent = () => {
       //setSearching(false)
       setVehicleList([])
       initVehicleList()
+      initAllVehicleList()
     }
   }
 

@@ -65,7 +65,7 @@ export default function Weekly({
                 default:
                     name = weekDay.tchiName;        //default fallback language is zhhk
             }
-            return {name: name, id: weekDay.id}
+            return {name: name, id: weekDay.id, dataTestId: 'astd-create-edit-pickup-order-routine-weekly-date-select-button-7572'}
         })
         return weekD
     }

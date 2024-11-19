@@ -27,7 +27,7 @@ export const EDIT_PRODUCT_SUBTYPE = (productSubtypeId: string): AxiosRequestConf
 
 export const GET_PRODUCT_SUBTYPE_LIST: AxiosRequestConfig = {
   method: 'get',
-  url: `api/v1/administrator/productSubtypes`,
+  url: `api/v1/administrator/productSubTypes`,
 };
 
 export const CREATE_PRODUCT_ADDON_TYPE = (productSubtypeId: string): AxiosRequestConfig => ({
@@ -58,4 +58,14 @@ export const GET_PRODUCT_SUBTYPE = (productSubtypeId: string): AxiosRequestConfi
 export const GET_PRODUCT_ADDON_TYPE = (productAddonTypeId: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/productAddonType/${productAddonTypeId}`,
+});
+
+export const GET_PRODUCT_SUBTYPES_BY_PRODUCT_TYPE = (productTypeId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/productSubTypesByProductType/${productTypeId}`,
+});
+
+export const GET_PRODUCT_ADDON_TYPES_BY_PRODUCT_SUBTYPE = (productSubTypeId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/productAddonTypesByProductSubType/${productSubTypeId}`,
 });

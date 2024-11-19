@@ -46,7 +46,9 @@
     "vehicle": "車輛",
     "theNameAlreadyExist": "員工職位名稱已存在",
     "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失",
-     "noData": "沒有數據"
+     "noData": "沒有數據",
+     "category": "類別",
+    "subCategory": "次類別"
   },
   "col": {
     "createCP": "建立回收點",
@@ -178,7 +180,7 @@
     "recycling": {
       "semi_finish_product": "半成品 ・ 產品類別",
       "remarks": "備註",
-      "new": "新",
+      "remark_placeholder": "請輸入備註",
       "add_new": "新增",
       "product_category": "產品類別",
       "traditional_chinese_name": "繁體中文名稱",
@@ -197,7 +199,8 @@
       "plastic_no_2": "2號膠",
       "enter_text": "請輸入文字",
       "water_bottle": "水",
-      "film": "菲林"
+      "film": "菲林",
+      "edit": "修改"
     }
   },
   "warehouse_page": {
@@ -392,6 +395,9 @@
     },
     "card_detail": {
       "main_category": "回收物主類別",
+      "product_type_label": "產品類型",
+      "sub_product_type_label": "產品子類型",
+      "addon_product_type_label": "產品插件",
       "subcategory": "回收物次類別",
       "shipping_time": "預計運送時間",
       "weight": "預計重量",
@@ -489,13 +495,15 @@
       "receiver": "收件公司",
       "arrived": "到達地點",
       "placeholder": "請輸入地點",
+      "placeholder_shipping_company": "請輸入寄件公司",
+      "placeholder_receiver_company": "請輸入收貨公司",
       "select_po": "選擇運單",
       "item_category": "物品類別"
     },
     "product_type": {
-      "Product": "製成品類別",
-      "Subtype": "次類別",
-      "Add-on": "追加類別"
+      "product": "製成品類別",
+      "subtype": "次類別",
+      "add-on": "追加類別"
     },
     "select_po": "選擇運單",
     "search_company_name": "輸入寄件者公司",
@@ -504,6 +512,7 @@
     "confirm_reject": "確認拒絕",
     "confirm_approve_title": "確認接受嗎？",
     "confirm_reject_title": "確認拒絕嗎？",
+    "confirm_empty_remarks": "確認備註為空白嗎？",
     "approved_success": "接受成功",
     "rejected_success": "拒絕成功",
     "reject_reasons": "拒絕原因",
@@ -519,6 +528,9 @@
       "receiverAddr": "此接收者位址 不應留白",
       "recycType": "此可回收類型 不應留白",
       "recycSubType": "此可回收子類型 不應留白",
+      "productType": "該產品類型不能為空",
+      "productSubType": "此產品子類型不應為空",
+      "productAddon": "該產品插件不應為空",
       "weight": "該重量 不應留白",
       "weightGreaterThanZero": "這個權重應該大於零",
       "invalid_date": "失效日期",

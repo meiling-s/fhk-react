@@ -6,7 +6,7 @@ export interface ProductAddon {
     productNameEng: string;
     description: string;
     remark: string;
-    status: number;
+    status: string;
     version?: number;
   };
   
@@ -18,7 +18,7 @@ export interface ProductAddon {
     productNameEng: string;
     description: string;
     remark: string;
-    status: number;
+    status: string;
     version?: number;
     productAddonType?: ProductAddon[];
   };
@@ -31,7 +31,7 @@ export interface ProductAddon {
     productNameEng: string;
     description: string;
     remark: string;
-    status: number;
+    status: string;
     productSubType?: ProductSubType[];
     version?: number;
   };

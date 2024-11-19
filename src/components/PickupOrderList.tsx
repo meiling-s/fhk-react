@@ -214,6 +214,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                       }}
                       value={selectedPico}
                       inputValue={selectedPico}
+                      dataTestId='astd-create-edit-pickup-order-related-po-form-choose-logistic-2149'
                     />
                   </CustomField>
                 </div>
@@ -228,6 +229,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                             item.picoId
                           )
                         }}
+                        data-testid={'astd-create-edit-pickup-order-related-po-form-choose-po-9526' + index}
                         className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4 w-[450px]"
                       >
                         <div className="font-bold text-mini mb-2">

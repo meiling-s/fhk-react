@@ -340,11 +340,13 @@ const PickupOrderForm = ({
                         onClick={() => {
                           selectedRow && handleRowClick()
                         }}
+                        dataTestId='astd-pickup-order-sidebar-edit-button-4354'
                       />
                       <CustomButton
                         text={t('pick_up_order.item.delete')}
                         outlined
                         onClick={onDeleteModal}
+                        dataTestId='astd-pickup-order-sidebar-delete-button-8775'
                       />
                     </>
                   ) : role !== 'logistic' &&
@@ -356,11 +358,13 @@ const PickupOrderForm = ({
                         onClick={() => {
                           selectedRow && handleRowClick()
                         }}
+                        dataTestId='astd-pickup-order-sidebar-edit-button-4354'
                       ></CustomButton>
                       <CustomButton
                         text={t('pick_up_order.item.delete')}
                         outlined
                         onClick={onDeleteModal}
+                        dataTestId='astd-pickup-order-sidebar-delete-button-8775'
                       ></CustomButton>
                     </>
                   ) : null}
