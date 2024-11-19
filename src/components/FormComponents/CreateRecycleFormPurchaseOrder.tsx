@@ -236,7 +236,7 @@ const CreateRecycleForm = ({
   }
 
   const assignDataEditRow = ({ newDataEditRow }: { newDataEditRow: any }) => {
-
+    
     try {
 
       if (newDataEditRow) {
@@ -244,7 +244,7 @@ const CreateRecycleForm = ({
         onHandleError('recycSubTypeId', 'succeed')
 
         const refactorDataFormik = {
-          id:  -1,
+          id: newDataEditRow.id,
           poDtlId: newDataEditRow.poDtlId ?? 0,
           recycTypeId: newDataEditRow.recycTypeId,
           recycSubTypeId: newDataEditRow.recycSubTypeId,
@@ -283,6 +283,7 @@ const CreateRecycleForm = ({
     if (editRowId == null) {
 
       formik.setValues(initValue)
+      setRecycType(true)
       onHandleError('recycTypeId', 'succeed')
       onHandleError('recycSubTypeId', 'succeed')
 
@@ -335,25 +336,30 @@ const CreateRecycleForm = ({
 
 
       if (!isRemarksConfirmed) {
-        
+
         setOpenConfirmModal({
           ...openConfirmModal,
           isOpen: true,
         })
         return
       }
-      else{
+      else {
         resetModal()
       }
 
 
-
+      let newData = []
       if (isEditing) {
+
         const updatedData: any = data.map((row, id) => {
-          return id === values.id ? values : row
-        })
+
         
-        setState(updatedData)
+          return row?.id === values.id ? values : row
+
+        })
+
+        newData = [...updatedData]
+
       } else {
         let updatedValues: any = values;
 
@@ -364,8 +370,10 @@ const CreateRecycleForm = ({
 
         updatedValues.id = data.length;
 
-        setState([...data, updatedValues]);
+        newData = [...data, updatedValues]
       }
+
+      setState(newData)
       resetForm()
       onClose && onClose()
     }
@@ -450,12 +458,12 @@ const CreateRecycleForm = ({
   const { marginTop } = useContainer(NotifContainer)
 
   const onHandleDrawer = () => {
-    onClose && onClose()
     setEditRow(undefined)
     setDefaultRecyc(undefined)
     setDefaultProduct(undefined)
     resetModal()
     formik.resetForm()
+    onClose && onClose()
   }
 
   return (
@@ -640,6 +648,7 @@ const CreateRecycleForm = ({
                         label={t('pick_up_order.product_type.product')}
                         options={productType ?? []}
                         setState={(values) => {
+
                           setOpenConfirmModal({
                             ...openConfirmModal,
                             tempData: {
@@ -721,13 +730,13 @@ const CreateRecycleForm = ({
                           options={getWeightUnits()}
                           getOptionLabel={(option) => option.lang}
                           onChange={(event, value) => {
-                            
+
                             formik.setFieldValue('unitId', value?.unitId || 0)
 
                             if (value?.unitId) {
                               onChangeContent('unitId', value?.unitId)
                             }
-                            
+
                           }}
                           renderInput={(params) => (
                             <TextField

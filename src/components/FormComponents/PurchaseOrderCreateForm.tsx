@@ -321,6 +321,7 @@ const PurchaseOrderCreateForm = ({
   }
 
   const handleDeleteRow = (id: any) => {
+    
     if (editMode) {
       //let updateDeleteRow = state.filter((row, index) => row.id == id)
       // let updateDeleteRow: CreatePicoDetail[] = []
@@ -333,7 +334,7 @@ const PurchaseOrderCreateForm = ({
         }))
       setState(updateDeleteRow)
     } else {
-      let updateDeleteRow = state.filter((row) => row.poDtlId !== id)
+      let updateDeleteRow = state.filter((row) => row.id !== id)
       setState(updateDeleteRow)
     }
   }
@@ -393,7 +394,8 @@ const PurchaseOrderCreateForm = ({
       editable: true,
       valueGetter: ({ row }) => {
 
-        let name = LocalizeRecycleProductTypePO({ data: row })?.typeName
+        const dataRowName =LocalizeRecycleProductTypePO({ data: row })
+        let name = dataRowName?.typeName
 
         if (!name) {
 
@@ -401,7 +403,7 @@ const PurchaseOrderCreateForm = ({
           const matchingProductType = getProductTypeFromDataRow({ row, dataProductType: productType })
           const resultData = row?.productType ? matchingProductType : matchingRecycType
           const dataName = LocalizeRecycleProductTypePO({ data: resultData })
-          name = dataName?.typeName
+          name = dataName?.subTypeName || dataName?.typeName
 
         }
 
@@ -417,7 +419,8 @@ const PurchaseOrderCreateForm = ({
       editable: true,
       valueGetter: ({ row }) => {
 
-        let name = LocalizeRecycleProductTypePO({ data: row })?.typeName
+        const dataRowName =LocalizeRecycleProductTypePO({ data: row })
+        let name = dataRowName?.subTypeName || dataRowName?.typeName
 
         if (!name) {
 
@@ -425,7 +428,7 @@ const PurchaseOrderCreateForm = ({
           const matchingProductType = getProductSubTypeFromDataRow({ row, dataProductType: productType })
           const resultData = row?.productType ? matchingProductType : matchingRecycType
           const dataName = LocalizeRecycleProductTypePO({ data: resultData })
-          name = dataName?.typeName
+          name = dataName?.subTypeName || dataName?.typeName
 
         }
 
@@ -1135,6 +1138,7 @@ const PurchaseOrderCreateForm = ({
                     <AddCircleIcon sx={{ ...endAdornmentIcon, pr: 1 }} />
                   }
                   onClick={() => {
+                    setEditRowId(null)
                     setIsEditing(false)
                     setOpenModal(true)
                   }}
