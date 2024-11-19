@@ -164,24 +164,28 @@ const Factory: FunctionComponent = () => {
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
-            <EDIT_OUTLINED_ICON
-              fontSize="small"
-              className="cursor-pointer text-grey-dark mr-2"
-              onClick={(event) => {
-                event.stopPropagation()
-                handleAction(params, 'edit')
-              }}
-              style={{ cursor: 'pointer' }}
-            />
-            <DELETE_OUTLINED_ICON
-              fontSize="small"
-              className="cursor-pointer text-grey-dark"
-              onClick={(event) => {
-                event.stopPropagation()
-                handleAction(params, 'delete')
-              }}
-              style={{ cursor: 'pointer' }}
-            />
+            <div data-testid="astd-factory-edit-button-5715">
+              <EDIT_OUTLINED_ICON
+                fontSize="small"
+                className="cursor-pointer text-grey-dark mr-2"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  handleAction(params, 'edit')
+                }}
+                style={{ cursor: 'pointer' }}
+              />
+            </div>
+            <div data-testid="astd-factory-delete-button-5887">
+              <DELETE_OUTLINED_ICON
+                fontSize="small"
+                className="cursor-pointer text-grey-dark"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  handleAction(params, 'delete')
+                }}
+                style={{ cursor: 'pointer' }}
+              />
+            </div>
           </div>
         )
       }
@@ -292,6 +296,7 @@ const Factory: FunctionComponent = () => {
               setAction('add')
               setSelectedRow(null)
             }}
+            data-testid="astd-factory-new-button-6700"
           >
             <ADD_ICON /> {t('top_menu.add_new')}
           </Button>

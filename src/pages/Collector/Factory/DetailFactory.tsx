@@ -152,35 +152,35 @@ const DetailFactory: FunctionComponent<Props> = ({
           tempV.push({
             field: t('common.englishName'),
             problem: formErr.empty,
-            dataTestId: 'astd-user-group-form-group-name-err-warning-3882',
+            dataTestId: 'astd-factory-form-en-err-warning-9879',
             type: 'error'
           })
         } if (titleNameTchi?.toString() === '') {
           tempV.push({
             field: t('common.traditionalChineseName'),
             problem: formErr.empty,
-            dataTestId: 'astd-user-group-form-group-name-err-warning-3882',
+            dataTestId: 'astd-factory-form-tc-err-warning-8786',
             type: 'error'
           })
         }  if (titleNameSchi?.toString() === '') {
           tempV.push({
             field: t('common.simplifiedChineseName'),
             problem: formErr.empty,
-            dataTestId: 'astd-user-group-form-group-name-err-warning-3882',
+            dataTestId: 'astd-factory-form-sc-err-warning-9438',
             type: 'error'
           })
         }  if (place?.toString() === '') {
           tempV.push({
             field: t('warehouse_page.place'),
             problem: formErr.empty,
-            dataTestId: 'astd-user-group-form-group-name-err-warning-3882',
+            dataTestId: 'astd-factory-form-place-err-warning-4412',
             type: 'error'
           })
         } if (selectedWarehouses.length === 0) {
           tempV.push({
             field: t('factory.warehouse'),
             problem: formErr.empty,
-            dataTestId: 'factory-warehouse-empty',
+            dataTestId: 'astd-factory-form-warehouse-err-warning-5123',
             type: 'error'
           })
         } if (titleNameEng && otherFactories.some(factory => 
@@ -189,25 +189,25 @@ const DetailFactory: FunctionComponent<Props> = ({
           tempV.push({
             field: t('common.englishName'),
             problem: formErr.alreadyExist,
-            dataTestId: 'factory-eng-name-duplicate',
+            dataTestId: 'astd-factory-form-en-err-warning-9879',
             type: 'error'
           })
         }  if (titleNameSchi && otherFactories.some(factory => 
           factory.factoryNameSchi === titleNameSchi
         )) {
           tempV.push({
-            field: t('common.simplifiedChineseName'),
+            field: t('astd-factory-form-sc-err-warning-9438'),
             problem: formErr.alreadyExist,
-            dataTestId: 'factory-schi-name-duplicate',
+            dataTestId: '',
             type: 'error'
           })
         } if (titleNameTchi && otherFactories.some(factory => 
           factory.factoryNameTchi === titleNameTchi
         )) {
           tempV.push({
-            field: t('common.traditionalChineseName'),
+            field: t('astd-factory-form-tc-err-warning-8786'),
             problem: formErr.alreadyExist,
-            dataTestId: 'factory-tchi-name-duplicate',
+            dataTestId: '',
             type: 'error'
           })
         }
@@ -377,12 +377,14 @@ const DetailFactory: FunctionComponent<Props> = ({
                 placeholder={t(
                   'settings_page.recycling.traditional_chinese_name_placeholder'
                 )}
+                dataTestId='astd-factory-form-tc-input-field-7241'
                 onChange={(event) => setTitleNameTchi(event.target.value)}
                 error={checkString(titleNameTchi)}
               />
             </CustomField>
             <CustomField label={t('common.simplifiedChineseName')} mandatory>
               <CustomTextField
+              dataTestId='astd-factory-form-sc-input-field-4510'
                 id="titleNameSchi"
                 value={titleNameSchi}
                 disabled={action === 'delete'}
@@ -395,6 +397,7 @@ const DetailFactory: FunctionComponent<Props> = ({
             </CustomField>
             <CustomField label={t('common.englishName')} mandatory>
               <CustomTextField
+                dataTestId='astd-factory-form-en-input-field-5215'
                 id="titleNameEng"
                 value={titleNameEng}
                 disabled={action === 'delete'}
@@ -407,6 +410,7 @@ const DetailFactory: FunctionComponent<Props> = ({
             </CustomField>
             <CustomField label={t('warehouse_page.place')} mandatory>
               <CustomTextField
+                dataTestId='astd-factory-form-place-input-field-2208'
                 id="place"
                 value={place}
                 placeholder={'火炭拗背灣街14號'}
@@ -421,6 +425,7 @@ const DetailFactory: FunctionComponent<Props> = ({
                   <Skeleton variant="rounded" height={30} width="30%"/>
                 </Box> : (warehouseList && 
                 (<CustomItemList
+                  dataTestId='astd-factory-form-warehouse-select-button-2819'
                   items={formattedWarehouseList}
                   multiSelect={(selectedItems) => {
                     setSelectedWarehouses(selectedItems)
@@ -433,6 +438,7 @@ const DetailFactory: FunctionComponent<Props> = ({
             </CustomField>
             <CustomField label={t('factory.introduction')}>
               <CustomTextField
+                dataTestId='astd-factory-form-introduction-input-field-1184'
                 id="introduction"
                 value={introduction}
                 placeholder={t('common.enterText')}
@@ -442,6 +448,7 @@ const DetailFactory: FunctionComponent<Props> = ({
             </CustomField>
             <CustomField label={t('common.remark')}>
               <CustomTextField
+                dataTestId='astd-factory-form-remark-input-field-1164'
                 id="remark"
                 value={remark}
                 placeholder={t('common.enterText')}
