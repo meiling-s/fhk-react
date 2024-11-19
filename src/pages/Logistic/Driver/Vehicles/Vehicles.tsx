@@ -186,15 +186,6 @@ const Vehicles: FunctionComponent = () => {
       setDeviceIdList(newDeviceIdList)
     }
   }, [])
-        //mappping plate list
-        newPlateList.push(item?.plateNo)
-        newDeviceIdList.push(item?.deviceId)
-      })
-      // setVehicleList(vehicleMapping)
-      setPlateList(newPlateList)
-      setDeviceIdList(newDeviceIdList)
-    }
-  }, [])
 
   const columns: GridColDef[] = [
     {
@@ -479,7 +470,7 @@ const Vehicles: FunctionComponent = () => {
             ]}
             variant="outlined"
             onClick={() => {
-              setDrawerOpen(true)
+              setDrawerOpen(true);
               setAction('add')
             }}
           >
