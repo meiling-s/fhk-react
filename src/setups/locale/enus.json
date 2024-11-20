@@ -48,7 +48,10 @@
     "leaveConfirmMsg": "Are you sure you want to leave this page? Unsaved changes will be lost",
     "noData": "No Data",
     "category": "Category",
-    "subCategory": "Sub Category"
+    "subCategory": "Sub Category",
+    "pageUnderConstruction": "Page Under Construction",
+    "vehicleRouteTracker":"Vehicle Route Tracker",
+    "jobOrderScheduleBoard":"Job Order Schedule Board"
   },
   "col": {
     "createCP": "Create Collection Point",

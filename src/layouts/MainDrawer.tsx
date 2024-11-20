@@ -26,7 +26,7 @@ import logo_company from '../logo_company.png'
 import { useNavigate } from 'react-router-dom'
 import React, { useState } from 'react'
 import { Collapse, createTheme } from '@mui/material'
-import { ExpandLess, ExpandMore, Login, StarBorder } from '@mui/icons-material'
+import { CalendarTodayOutlined, ExpandLess, ExpandMore, FmdGoodOutlined, Login, StarBorder } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -165,6 +165,22 @@ function MainDrawer() {
         collapse: false,
         path: `/${realm}/jobOrder`,
         functionName: 'Job order'
+      },
+      'Vehicle mapping': {
+        name: t('common.vehicleRouteTracker'),
+        icon: <FmdGoodOutlined />,
+        onClick: () => navigate(`/${realm}/vehicleRouteTracker`),
+        collapse: false,
+        path: `/${realm}/vehicleRouteTracker`,
+        functionName: 'Vehicle mapping'
+      },
+      'Schedule board': {
+        name: t('common.jobOrderScheduleBoard'),
+        icon: <CalendarTodayOutlined />,
+        onClick: () => navigate(`/${realm}/jobOrderScheduleBoard`),
+        collapse: false,
+        path: `/${realm}/jobOrderScheduleBoard`,
+        functionName: 'Schedule board'
       },
       'Request check-in': {
         name: t('check_in.request_check_in'),
