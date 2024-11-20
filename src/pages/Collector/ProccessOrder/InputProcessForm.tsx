@@ -119,40 +119,10 @@ const InputProcessForm = ({
     useState<CreateProcessOrderDetailPairs[]>(initDetail)
 
   const mappingData = () => {
-    console.log('edit', editedValue)
+    // console.log('edit', editedValue)
     if (editedValue) {
-      // Ensure the processTypeId and other properties are updated correctly
       setProcessTypeId(editedValue[0].processIn.processTypeId)
       setProcessOrderDetail(editedValue)
-      // setProcessOrderDetail((prevDetails) => {
-      //   return prevDetails.map((item, index) => {
-      //     const updatedItem = { ...item } // Create a copy of the item
-
-      //     if (editedValue[index]) {
-      //       //update processIn
-      //       updatedItem.processIn.idPair = editedValue[index].processIn.idPair
-      //       updatedItem.processIn.processTypeId =
-      //         editedValue[index].processIn.processTypeId
-      //       updatedItem.processIn.itemCategory =
-      //         editedValue[index].processIn.itemCategory
-      //       updatedItem.processIn.estInWeight =
-      //         editedValue[index].processIn.estInWeight
-      //       updatedItem.processIn.processOrderDetailWarehouse =
-      //         editedValue[index].processIn.processOrderDetailWarehouse
-
-      //       //update processIn
-      //       updatedItem.processOut.idPair = editedValue[index].processOut.idPair
-      //       updatedItem.processOut.processTypeId =
-      //         editedValue[index].processOut.processTypeId
-      //       updatedItem.processOut.itemCategory =
-      //         editedValue[index].processOut.itemCategory
-      //       updatedItem.processOut.estOutWeight =
-      //         editedValue[index].processOut.estOutWeight
-      //     }
-
-      //     return updatedItem // Return updated item
-      //   })
-      // })
     }
   }
 
@@ -220,11 +190,6 @@ const InputProcessForm = ({
     }
   }, [drawerOpen])
 
-  // useEffect(() => {
-  //   setProcessTypeId('')
-  //   setProcessOrderDetail(initDetail)
-  // }, [handleDrawerClose])
-
   const resetForm = () => {
     setProcessTypeId('')
     setProcessOrderDetail(initDetail)
@@ -247,13 +212,16 @@ const InputProcessForm = ({
 
   //to do : change to multiple product select
   const handleProductChange = (type: string, value: singleProduct) => {
-    const tempProduct = value
+    let tempProduct: any[] = []
+    if (value.productTypeId && value.productSubTypeId != '')
+      tempProduct.push(value)
+
     setProcessOrderDetail((prevDetails) =>
       prevDetails.map((detail) => ({
         ...detail,
         [type]: {
           ...detail[type as keyof CreateProcessOrderDetailPairs],
-          processOrderDetailProduct: [tempProduct]
+          processOrderDetailProduct: tempProduct
         }
       }))
     )
@@ -371,6 +339,8 @@ const InputProcessForm = ({
       processOrderDetail[0].processOut.plannedEndAt = plannedEndAtData
       value.idPair = tempRandomId
     })
+
+    console.log('lala', processOrderDetail)
 
     onSave(processOrderDetail, isUpdate)
     resetForm()

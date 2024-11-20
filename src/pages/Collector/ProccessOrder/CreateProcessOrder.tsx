@@ -25,9 +25,14 @@ import {
   getPrimaryColor,
   showErrorToast,
   showSuccessToast,
-  formatWeight
+  formatWeight,
+  returnErrorMsg
 } from '../../../utils/utils'
-import { localStorgeKeyName, STATUS_CODE } from '../../../constants/constant'
+import {
+  formErr,
+  localStorgeKeyName,
+  STATUS_CODE
+} from '../../../constants/constant'
 import {
   CreatePorForm,
   CreateProcessOrderDetailPairs
@@ -46,6 +51,8 @@ import dayjs from 'dayjs'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import { DELETE_OUTLINED_ICON, EDIT_OUTLINED_ICON } from 'src/themes/icons'
+import { formValidate } from 'src/interfaces/common'
+import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
 
 type rowPorDtl = {
   id: string
@@ -90,6 +97,8 @@ const CreateProcessOrder = ({}: {}) => {
   const [selectedDetailPOR, setSelectedPOR] = useState<
     CreateProcessOrderDetailPairs[] | null
   >(null)
+  const [trySubmited, setTrySubmited] = useState<boolean>(false)
+  const [validation, setValidation] = useState<formValidate[]>([])
 
   const buttonFilledCustom = {
     borderRadius: '40px',
@@ -274,6 +283,22 @@ const CreateProcessOrder = ({}: {}) => {
     initFactory()
   }, [])
 
+  useEffect(() => {
+    const validate = async () => {
+      const tempV: formValidate[] = []
+      processOrderDtlSource.length === 0 &&
+        tempV.push({
+          field: t('processOrder.porCategory'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+
+      setValidation(tempV)
+    }
+
+    validate()
+  }, [processOrderDtlSource])
+
   const mappingProcessOrderDtl = (
     updatedSource: CreateProcessOrderDetailPairs[]
   ) => {
@@ -406,6 +431,7 @@ const CreateProcessOrder = ({}: {}) => {
           : data
     }
 
+    console.log("lllll", updatedSource)
     setProcessOrderDtlSource(updatedSource)
     mappingProcessOrderDtl(updatedSource)
   }
@@ -434,6 +460,11 @@ const CreateProcessOrder = ({}: {}) => {
   }
 
   const submitProcessOrder = async () => {
+    if (validation.length !== 0) {
+      setTrySubmited(true)
+      return
+    }
+
     const processedDetailsPair = processOrderDetailTemp(processOrderDtlSource)
     const formData: CreatePorForm = {
       factoryId: selectedFactory ? parseInt(selectedFactory.id) : null,
@@ -719,6 +750,18 @@ const CreateProcessOrder = ({}: {}) => {
               >
                 {t('pick_up_order.cancel')}
               </Button>
+            </Grid>
+            <Grid item sx={{ width: '100%' }}>
+              {trySubmited &&
+                validation.map((val, index) => (
+                  <FormErrorMsg
+                    key={index}
+                    field={t(val.field)}
+                    errorMsg={returnErrorMsg(val.problem, t)}
+                    type={val.type}
+                    dataTestId={val.dataTestId}
+                  />
+                ))}
             </Grid>
           </Grid>
         </LocalizationProvider>
