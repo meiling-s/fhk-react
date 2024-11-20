@@ -197,18 +197,18 @@ const DetailFactory: FunctionComponent<Props> = ({
           factory.factoryNameSchi === titleNameSchi
         )) {
           tempV.push({
-            field: t('astd-factory-form-sc-err-warning-9438'),
+            field: t('common.simplifiedChineseName'),
             problem: formErr.alreadyExist,
-            dataTestId: '',
+            dataTestId: 'astd-factory-form-sc-err-warning-9438',
             type: 'error'
           })
         } if (titleNameTchi && otherFactories.some(factory => 
           factory.factoryNameTchi === titleNameTchi
         )) {
           tempV.push({
-            field: t('astd-factory-form-tc-err-warning-8786'),
+            field: t('common.traditionalChineseName'),
             problem: formErr.alreadyExist,
-            dataTestId: '',
+            dataTestId: 'astd-factory-form-tc-err-warning-8786',
             type: 'error'
           })
         }
@@ -217,7 +217,7 @@ const DetailFactory: FunctionComponent<Props> = ({
     }
 
     validate()
-  }, [titleNameEng, titleNameSchi, titleNameTchi, selectedWarehouses, i18n.language])
+  }, [titleNameEng, titleNameSchi, titleNameTchi, selectedWarehouses, place, i18n.language])
 
   const handleSubmit = () => {
     const token = returnApiToken()
