@@ -72,6 +72,7 @@ export type ProcessOrderItem = {
 }
 
 type ProcessInItem = {
+  idPair : number
   processTypeId: string
   itemCategory?: string
   processAction: string
@@ -83,6 +84,7 @@ type ProcessInItem = {
 }
 
 type ProcessOutItem = {
+  idPair : number
   processTypeId: string
   itemCategory?: string
   processAction: string

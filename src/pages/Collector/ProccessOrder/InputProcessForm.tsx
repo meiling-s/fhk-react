@@ -36,6 +36,7 @@ import ProductListSingleSelect, {
 } from '../../../components/SpecializeComponents/ProductListSingleSelect'
 import RecyclablesList from 'src/components/SpecializeComponents/RecyclablesList'
 import { getEstimateWeight } from 'src/APICalls/processOrder'
+import dayjs from 'dayjs'
 
 const InputProcessForm = ({
   drawerOpen,
@@ -43,15 +44,20 @@ const InputProcessForm = ({
   plannedStartAtInput,
   formType = 'create',
   onSave,
-  dataSet
+  dataSet,
+  editedValue
 }: {
   drawerOpen: boolean
   handleDrawerClose: () => void
   plannedStartAtInput: string
   formType?: string
-  onSave: (processOrderDtl: CreateProcessOrderDetailPairs[]) => void
+  onSave: (
+    processOrderDtl: CreateProcessOrderDetailPairs[],
+    isUpdate: boolean
+  ) => void
   //dataSet: PorDetail[]
   dataSet: CreateProcessOrderDetailPairs[]
+  editedValue: CreateProcessOrderDetailPairs[] | null
 }) => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
@@ -68,6 +74,7 @@ const InputProcessForm = ({
   const [warehouseOption, setWarehouseOption] = useState<il_item[]>([])
   const [processTypeList, setProcessTypeList] = useState<il_item[]>([])
   const [processTypeId, setProcessTypeId] = useState<string>('')
+  console.log('plannedStartAtInput', plannedStartAtInputg)
   const itemCategory = () => {
     const colList: il_item[] = [
       {
@@ -85,6 +92,7 @@ const InputProcessForm = ({
   const initDetail: CreateProcessOrderDetailPairs[] = [
     {
       processIn: {
+        idPair: 0,
         processTypeId: '',
         itemCategory: 'recycling',
         processAction: 'PROCESS_IN',
@@ -95,6 +103,7 @@ const InputProcessForm = ({
         processOrderDetailWarehouse: []
       },
       processOut: {
+        idPair: 0,
         processTypeId: '',
         itemCategory: 'product',
         processAction: 'PROCESS_OUT',
@@ -109,6 +118,44 @@ const InputProcessForm = ({
 
   const [processOrderDetail, setProcessOrderDetail] =
     useState<CreateProcessOrderDetailPairs[]>(initDetail)
+
+  const mappingData = () => {
+    console.log('edit', editedValue)
+    if (editedValue) {
+      // Ensure the processTypeId and other properties are updated correctly
+      setProcessTypeId(editedValue[0].processIn.processTypeId)
+      setProcessOrderDetail(editedValue)
+      // setProcessOrderDetail((prevDetails) => {
+      //   return prevDetails.map((item, index) => {
+      //     const updatedItem = { ...item } // Create a copy of the item
+
+      //     if (editedValue[index]) {
+      //       //update processIn
+      //       updatedItem.processIn.idPair = editedValue[index].processIn.idPair
+      //       updatedItem.processIn.processTypeId =
+      //         editedValue[index].processIn.processTypeId
+      //       updatedItem.processIn.itemCategory =
+      //         editedValue[index].processIn.itemCategory
+      //       updatedItem.processIn.estInWeight =
+      //         editedValue[index].processIn.estInWeight
+      //       updatedItem.processIn.processOrderDetailWarehouse =
+      //         editedValue[index].processIn.processOrderDetailWarehouse
+
+      //       //update processIn
+      //       updatedItem.processOut.idPair = editedValue[index].processOut.idPair
+      //       updatedItem.processOut.processTypeId =
+      //         editedValue[index].processOut.processTypeId
+      //       updatedItem.processOut.itemCategory =
+      //         editedValue[index].processOut.itemCategory
+      //       updatedItem.processOut.estOutWeight =
+      //         editedValue[index].processOut.estOutWeight
+      //     }
+
+      //     return updatedItem // Return updated item
+      //   })
+      // })
+    }
+  }
 
   const initWarehouse = async () => {
     try {
@@ -168,12 +215,21 @@ const InputProcessForm = ({
     getProductType()
     initWarehouse()
     initProcessType()
+
+    if (editedValue) {
+      mappingData()
+    }
   }, [drawerOpen])
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   setProcessTypeId('')
+  //   setProcessOrderDetail(initDetail)
+  // }, [handleDrawerClose])
+
+  const resetForm = () => {
     setProcessTypeId('')
     setProcessOrderDetail(initDetail)
-  }, [handleDrawerClose])
+  }
 
   const onChangeItemCategory = (
     key: 'processIn' | 'processOut',
@@ -271,22 +327,22 @@ const InputProcessForm = ({
     })
   }
 
-  // const getEstimateEndDate = async (plannedStartAt: string) => {
-  //   const params: QueryEstEndDatetime = {
-  //     processTypeId: processTypeId,
-  //     estInWeight: Number(processOrderDetail[0].processIn.estInWeight),
-  //     plannedStartAt: plannedStartAt
-  //   }
-  //   let plannedEndAt = ''
-  //   const result = await getEstimateWeight(params)
-  //   if (result) {
-  //     plannedEndAt = result.data
-  //   }
+  const getEstimateEndDate = async (plannedStartAt: string) => {
+    const params: QueryEstEndDatetime = {
+      processTypeId: processTypeId,
+      estInWeight: Number(processOrderDetail[0].processIn.estInWeight),
+      plannedStartAt: dayjs(plannedStartAt).format('YYYY-MM-DDTHH:mm:ss')
+    }
+    let plannedEndAt = ''
+    const result = await getEstimateWeight(params)
+    if (result) {
+      plannedEndAt = result.data
+    }
 
-  //   return plannedEndAt
-  // }
+    return plannedEndAt
+  }
 
-  const handleSaveItem = () => {
+  const handleSaveItem = async () => {
     /** note :
      * eg: PAIR A
      * plannedEndAtData = plannedStartAt(from input) + duration (from api)
@@ -299,24 +355,26 @@ const InputProcessForm = ({
       dataSet.length === 0
         ? plannedStartAtInput
         : dataSet[dataSet.length - 1].processOut.plannedEndAt
-    // const estEndTime = getEstimateEndDate(plannedStartAtData)
+    const estEndTime = await getEstimateEndDate(plannedStartAtData)
+    const plannedEndAtData = dayjs(estEndTime).format(
+      'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
+    )
 
-    //dummy plus 1 month
-    const startDate = new Date(plannedStartAtData)
-    startDate.setMonth(startDate.getMonth() + 1)
-
-    const plannedEndAtData = startDate.toISOString()
-
+    let tempRandomId = Math.floor(Math.random() * 90000) + 10000
+    let isUpdate = false
+    if (processOrderDetail[0].processIn.idPair) {
+      tempRandomId = processOrderDetail[0].processIn.idPair
+      isUpdate = true
+    }
     Object.entries(processOrderDetail[0]).map(([key, value]) => {
       value.processTypeId = processTypeId
       processOrderDetail[0].processIn.plannedStartAt = plannedStartAtData
       processOrderDetail[0].processOut.plannedEndAt = plannedEndAtData
+      value.idPair = tempRandomId
     })
 
-    console.log('estEndTime', plannedStartAtData)
-    console.log('estEndTime', plannedEndAtData)
-
-    onSave(processOrderDetail)
+    onSave(processOrderDetail, isUpdate)
+    resetForm()
     handleDrawerClose()
   }
 
@@ -450,7 +508,15 @@ const InputProcessForm = ({
                             multiSelect={(selectedItems: string[]) =>
                               updateWarehouseIds(selectedItems)
                             }
-                            defaultSelected={processTypeId}
+                            defaultSelected={
+                              key === 'processIn'
+                                ? processOrderDetail[0].processIn.processOrderDetailWarehouse
+                                    .map((item) => item.warehouseId)
+                                    .join(',')
+                                : processOrderDetail[0].processOut.processOrderDetailWarehouse
+                                    .map((item) => item.warehouseId)
+                                    .join(',')
+                            }
                             needPrimaryColor={false}
                           />
                         </CustomField>

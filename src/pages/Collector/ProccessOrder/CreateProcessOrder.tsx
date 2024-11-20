@@ -63,6 +63,7 @@ type rowPorDtl = {
 type ProcessInDtlData = {
   id: string
   name: string
+  idPair: number
   rows: rowPorDtl[]
 }
 
@@ -86,6 +87,9 @@ const CreateProcessOrder = ({}: {}) => {
   const [processInDetailData, setProcessInDetailData] = useState<
     ProcessInDtlData[]
   >([])
+  const [selectedDetailPOR, setSelectedPOR] = useState<
+    CreateProcessOrderDetailPairs[] | null
+  >(null)
 
   const buttonFilledCustom = {
     borderRadius: '40px',
@@ -375,6 +379,7 @@ const CreateProcessOrder = ({}: {}) => {
       rawProcessOrderInDtl.push({
         id: item.processIn.processTypeId,
         name: processName ?? '-',
+        idPair: item.processIn.idPair,
         rows: rowData
       })
     })
@@ -382,11 +387,24 @@ const CreateProcessOrder = ({}: {}) => {
     setProcessInDetailData(rawProcessOrderInDtl)
   }
 
-  const onSaveProcessDtl = (data: CreateProcessOrderDetailPairs[]) => {
-    const updatedSource =
-      processOrderDtlSource.length > 0
-        ? [...processOrderDtlSource, ...data]
-        : data
+  const onSaveProcessDtl = (
+    data: CreateProcessOrderDetailPairs[],
+    isUpdate: boolean
+  ) => {
+    let updatedSource = []
+    if (isUpdate) {
+      updatedSource = processOrderDtlSource.map((item) => {
+        if (item.processIn.idPair === data[0].processIn.idPair) {
+          item = data[0]
+        }
+        return item
+      })
+    } else {
+      updatedSource =
+        processOrderDtlSource.length > 0
+          ? [...processOrderDtlSource, ...data]
+          : data
+    }
 
     setProcessOrderDtlSource(updatedSource)
     mappingProcessOrderDtl(updatedSource)
@@ -437,17 +455,25 @@ const CreateProcessOrder = ({}: {}) => {
     return dateData.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
   }
 
-  const handleEdit = (item: ProcessInDtlData) => {}
+  const handleEdit = (item: ProcessInDtlData) => {
+    const selectedProcessOrderDtlSource = processOrderDtlSource.filter(
+      (it) => it.processIn.idPair === item.idPair
+    )
+    setSelectedPOR(selectedProcessOrderDtlSource)
+    setInputProcessDrawer(true)
+  }
 
   const handleDelete = (item: ProcessInDtlData) => {
-    // let updateDeleteRow = processInDetailData.filter(
-    //   (row) => row.id !== item.id
-    // )
-    // let updateDeleteSource = processOrderDtlSource.filter(
-    //   (it) => it.processTypeId === item.id
-    // )
-    // setProcessInDetailData(updateDeleteRow)
-    // setProcessOrderDtlSource(updateDeleteSource)
+    const idPair = item.idPair
+    const updatedProcessInDetailData = processInDetailData.filter(
+      (item) => item.idPair !== idPair
+    )
+    const updatedProcessOrderDtlSource = processOrderDtlSource.filter(
+      (item) => item.processIn.idPair !== idPair
+    )
+
+    setProcessInDetailData(updatedProcessInDetailData)
+    setProcessOrderDtlSource(updatedProcessOrderDtlSource)
   }
 
   return (
@@ -630,6 +656,7 @@ const CreateProcessOrder = ({}: {}) => {
                 plannedStartAtInput={formattedDate(processStartAt)}
                 dataSet={processOrderDtlSource}
                 onSave={onSaveProcessDtl}
+                editedValue={selectedDetailPOR}
               ></InputProcessForm>
               <Button
                 variant="outlined"
@@ -639,6 +666,7 @@ const CreateProcessOrder = ({}: {}) => {
                   />
                 }
                 onClick={() => {
+                  setSelectedPOR(null)
                   setInputProcessDrawer(true)
                 }}
                 sx={{
