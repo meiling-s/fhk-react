@@ -20,7 +20,7 @@ export type CancelFormPor = {
   version: number
 }
 
-type ProcessOrderDetailWarehouse = {
+export type ProcessOrderDetailWarehouse = {
   warehouseId: number
 }
 

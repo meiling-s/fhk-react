@@ -18,6 +18,7 @@ import {
 import {
   CreateProcessOrderDetailPairs,
   ProcessOrderDetailRecyc,
+  ProcessOrderDetailWarehouse,
   QueryEstEndDatetime
 } from '../../../interfaces/processOrderQuery'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
@@ -27,9 +28,14 @@ import {
   extractError,
   formatWeight,
   getThemeCustomList,
-  onChangeWeight
+  onChangeWeight,
+  returnErrorMsg
 } from '../../../utils/utils'
-import { localStorgeKeyName, STATUS_CODE } from '../../../constants/constant'
+import {
+  formErr,
+  localStorgeKeyName,
+  STATUS_CODE
+} from '../../../constants/constant'
 import { useNavigate } from 'react-router-dom'
 import ProductListSingleSelect, {
   singleProduct
@@ -37,6 +43,8 @@ import ProductListSingleSelect, {
 import RecyclablesList from 'src/components/SpecializeComponents/RecyclablesList'
 import { getEstimateWeight } from 'src/APICalls/processOrder'
 import dayjs from 'dayjs'
+import { formValidate } from 'src/interfaces/common'
+import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
 
 const InputProcessForm = ({
   drawerOpen,
@@ -87,6 +95,8 @@ const InputProcessForm = ({
     ]
     return colList
   }
+  const [trySubmited, setTrySubmited] = useState<boolean>(false)
+  const [validation, setValidation] = useState<formValidate[]>([])
 
   const initDetail: CreateProcessOrderDetailPairs[] = [
     {
@@ -184,6 +194,7 @@ const InputProcessForm = ({
     getProductType()
     initWarehouse()
     initProcessType()
+    setValidation([])
 
     if (editedValue) {
       mappingData()
@@ -193,7 +204,44 @@ const InputProcessForm = ({
   const resetForm = () => {
     setProcessTypeId('')
     setProcessOrderDetail(initDetail)
+    setValidation([])
   }
+
+  useEffect(() => {
+    const validate = async () => {
+      const tempV: formValidate[] = []
+      processTypeId === '' &&
+        tempV.push({
+          field: t('processOrder.porCategory'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+
+      processOrderDetail[0].processIn.processOrderDetailWarehouse.length ===
+        0 &&
+        tempV.push({
+          field:
+            t('processOrder.create.warehouse') +
+            t('processOrder.table.processIn'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+
+      processOrderDetail[0].processOut.processOrderDetailWarehouse.length ===
+        0 &&
+        tempV.push({
+          field:
+            t('processOrder.create.warehouse') +
+            t('processOrder.table.processOut'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+
+      setValidation(tempV)
+    }
+
+    validate()
+  }, [processTypeId])
 
   const onChangeItemCategory = (
     key: 'processIn' | 'processOut',
@@ -294,6 +342,22 @@ const InputProcessForm = ({
     })
   }
 
+  const checkString = (s: string) => {
+    if (!trySubmited) {
+      //before first submit, don't check the validation
+      return false
+    }
+    return s == ''
+  }
+
+  const valLength = (s: string[] | ProcessOrderDetailWarehouse[]) => {
+    if (!trySubmited) {
+      //before first submit, don't check the validation
+      return false
+    }
+    return s.length === 0
+  }
+
   const getEstimateEndDate = async (plannedStartAt: string) => {
     const params: QueryEstEndDatetime = {
       processTypeId: processTypeId,
@@ -310,6 +374,11 @@ const InputProcessForm = ({
   }
 
   const handleSaveItem = async () => {
+    if (validation.length !== 0) {
+      setTrySubmited(true)
+      return
+    }
+
     /** note :
      * eg: PAIR A
      * plannedEndAtData = plannedStartAt(from input) + duration (from api)
@@ -391,6 +460,7 @@ const InputProcessForm = ({
                     }}
                     defaultSelected={processTypeId}
                     needPrimaryColor={true}
+                    error={trySubmited && checkString(processTypeId)}
                   />
                 </CustomField>
               </Grid>
@@ -487,6 +557,16 @@ const InputProcessForm = ({
                                     .join(',')
                             }
                             needPrimaryColor={false}
+                            error={
+                              trySubmited &&
+                              valLength(
+                                key === 'processIn'
+                                  ? processOrderDetail[0].processIn
+                                      .processOrderDetailWarehouse
+                                  : processOrderDetail[0].processOut
+                                      .processOrderDetailWarehouse
+                              )
+                            }
                           />
                         </CustomField>
                       </Grid>
@@ -541,6 +621,18 @@ const InputProcessForm = ({
                   </Grid>
                 )
               })}
+              <Grid item sx={{ width: '100%' }}>
+                {trySubmited &&
+                  validation.map((val, index) => (
+                    <FormErrorMsg
+                      key={index}
+                      field={t(val.field)}
+                      errorMsg={returnErrorMsg(val.problem, t)}
+                      type={val.type}
+                      dataTestId={val.dataTestId}
+                    />
+                  ))}
+              </Grid>
             </Grid>
           </Box>
         </RightOverlayForm>
