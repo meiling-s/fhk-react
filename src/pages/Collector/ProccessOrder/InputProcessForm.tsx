@@ -74,7 +74,6 @@ const InputProcessForm = ({
   const [warehouseOption, setWarehouseOption] = useState<il_item[]>([])
   const [processTypeList, setProcessTypeList] = useState<il_item[]>([])
   const [processTypeId, setProcessTypeId] = useState<string>('')
-  console.log('plannedStartAtInput', plannedStartAtInputg)
   const itemCategory = () => {
     const colList: il_item[] = [
       {
