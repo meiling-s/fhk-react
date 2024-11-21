@@ -40,6 +40,7 @@ import axios from 'axios'
 import { createUserActivity } from '../../APICalls/userAccount'
 import { UserActivity } from '../../interfaces/common'
 import JSEncrypt from 'jsencrypt'
+import { getUserAccountById } from 'src/APICalls/Collector/userGroup'
 
 const Login = () => {
   const { i18n } = useTranslation()
@@ -125,6 +126,15 @@ const Login = () => {
     return lang
   }
 
+  const getUserDetail = async (loginId: string) => {
+    const result = await getUserAccountById(loginId)
+    if (result) {
+      return result.data
+    }
+
+    return null
+  }
+
   const removeNonJsonChar = (dataString: string) => {
     return dataString.substring(
       dataString.indexOf('{'),
@@ -183,7 +193,6 @@ const Login = () => {
           }
           // await initBroadcastMessage();
           setWarningMsg(' ')
-          //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
           localStorage.setItem(
             localStorgeKeyName.keycloakToken,
             result?.access_token || ''
@@ -212,6 +221,12 @@ const Login = () => {
             localStorgeKeyName.decodeKeycloack,
             azpValue || ''
           )
+
+          //set isAdmin status
+          const userAccount = await getUserDetail(userName)
+          const isAdmin = userAccount ? userAccount.userGroup.isAdmin : false
+          localStorage.setItem(localStorgeKeyName.isAdmin, isAdmin)
+
           // 20240129 add function list daniel keung start
           const tenantID = azpValue.substring(7)
           localStorage.setItem(localStorgeKeyName.tenantId, tenantID || '')
