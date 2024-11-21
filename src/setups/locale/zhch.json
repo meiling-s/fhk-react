@@ -48,7 +48,9 @@
     "leaveConfirmMsg": "您确定要离开此页面吗？未保存的更改将会丢失",
     "noData": "没有数据",
     "category": "类别",
-    "subCategory": "次类别"
+    "subCategory": "次类别",
+    "idleDays": "空闲的日子",
+    "filledIdleDays": "输入闲置天数"
   },
   "col": {
     "createCP": "建立回收点",

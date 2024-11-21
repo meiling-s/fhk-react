@@ -46,9 +46,11 @@
     "vehicle": "車輛",
     "theNameAlreadyExist": "員工職位名稱已存在",
     "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失",
-     "noData": "沒有數據",
-     "category": "類別",
-    "subCategory": "次類別"
+    "noData": "沒有數據",
+    "category": "類別",
+    "subCategory": "次類別",
+    "idleDays": "空閒的日子",
+    "filledIdleDays": "輸入空閒天數"
   },
   "col": {
     "createCP": "建立回收點",
@@ -1097,8 +1099,8 @@
     },
     "vehicleMenu": {
       "vehicle_number": "車輛編碼",
-      "imei":"IMEI 號碼",
-      "isCompactor":"是否壓縮車",
+      "imei": "IMEI 號碼",
+      "isCompactor": "是否壓縮車",
       "license_plate_number": "車牌號碼",
       "vehicle_type": "車輛類型",
       "vehicle_cargo_capacity": "車輛載貨量",

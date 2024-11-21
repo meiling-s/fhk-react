@@ -48,7 +48,9 @@
     "leaveConfirmMsg": "Are you sure you want to leave this page? Unsaved changes will be lost",
     "noData": "No Data",
     "category": "Category",
-    "subCategory": "Sub Category"
+    "subCategory": "Sub Category",
+    "idleDays": "Idle Days",
+    "filledIdleDays": "Enter the number of idle days"
   },
   "col": {
     "createCP": "Create Collection Point",
