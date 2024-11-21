@@ -894,7 +894,7 @@ const PickupOrderCreateForm = ({
                 ''
               )} */}
             </Grid>
-            <Grid item>
+            {/* <Grid item>
               <CustomField
                 label={t('pick_up_order.plat_number')}
                 mandatory={false}
@@ -916,8 +916,8 @@ const PickupOrderCreateForm = ({
                 <ErrorMessage message={errorsField.platNo.message} />
               ) : (
                 ''
-              )} */}
-            </Grid>
+              )} 
+            </Grid> */}
             <Grid item>
               <CustomField
                 label={t('pick_up_order.contact_number')}
