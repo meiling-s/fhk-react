@@ -193,7 +193,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                         Array.from(
                           new Set(
                             filteredPico
-                              ?.filter((item) => item.status !== 'CLOSED')
+                              ?.filter((item) => item.status === 'OUTSTANDING')
                               .map((item) => item.senderName)
                           )
                         ) ?? []
@@ -220,7 +220,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                 </div>
                 <Box>
                   {filteredPico.map((item, index) =>
-                    item.status != 'CLOSED' ? (
+                    item.status === 'OUTSTANDING' ? (
                       <div
                         key={index}
                         onClick={() => {
