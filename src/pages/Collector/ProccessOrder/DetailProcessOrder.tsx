@@ -16,12 +16,14 @@ import {
   ProcessOrderItem,
   CancelFormPor,
   PorReason,
-  ProcessOrderDetail
+  ProcessOrderDetail,
+  ProcessOrderDetailRecyc,
+  ProcessOrderDetailProduct
 } from '../../../interfaces/processOrderQuery'
 import {
   getPrimaryColor,
-  showErrorToast,
-  showSuccessToast
+  returnErrorMsg,
+  showErrorToast
 } from '../../../utils/utils'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
@@ -33,15 +35,16 @@ import {
   DenialReason,
   DenialReasonCollectors
 } from 'src/interfaces/denialReason'
-import { localStorgeKeyName } from 'src/constants/constant'
+import { formErr, localStorgeKeyName } from 'src/constants/constant'
 import { getDenialReasonCollectors } from 'src/APICalls/Collector/denialReasonCollectors'
 import { getAllDenialReason } from 'src/APICalls/Collector/denialReason'
 import { deleteProcessOrder } from 'src/APICalls/processOrder'
 import { il_item } from 'src/components/FormComponents/CustomItemListRecyble'
 import i18n from 'src/setups/i18n'
-import { common } from '@mui/material/colors'
 import CustomTextField from 'src/components/FormComponents/CustomTextField'
 import { ProcessType } from 'src/interfaces/common'
+import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
+import { factory } from 'typescript'
 
 type CancelForm = {
   open: boolean
@@ -126,18 +129,16 @@ const CancelModal: React.FC<CancelForm> = ({
     }
 
     if (showRemark && remarkVal === '') {
-      showErrorToast(
-        t('common.remark') + ' ' + t('purchase_order.create.is_required')
-      )
       return
     }
 
     const result = await deleteProcessOrder(form, processOrderId!!)
     if (result) {
+      setTrySubmited(false)
       onClose()
       onRejected()
     } else {
-      showErrorToast(t('common.deleteFailed'))
+      setTrySubmited(true)
     }
   }
 
@@ -188,6 +189,17 @@ const CancelModal: React.FC<CancelForm> = ({
             )}
           </Box>
 
+          <Grid item sx={{ width: '100%' }}>
+            {showRemark && remarkVal === '' && trySubmited && (
+              <FormErrorMsg
+                key={'remark'}
+                field={t('common.remark')}
+                errorMsg={returnErrorMsg(formErr.empty, t)}
+                type={'error'}
+              />
+            )}
+          </Grid>
+
           <Box sx={{ alignSelf: 'center' }}>
             <CustomButton
               text={t('check_in.confirm')}
@@ -217,11 +229,11 @@ type DetailPORItem = {
   warehouse: string
   weight: string
   porItem: {
-    productTypeId: string
-    productSubTypeId: string
-    productAddonTypeId: string
-    recycTypeId: string
-    recycSubTypeId: string
+    productTypeIds: string[]
+    productSubTypeIds: ProcessOrderDetailProduct[]
+    productAddonTypeIds: ProcessOrderDetailProduct[]
+    recycTypeIds: string[]
+    recycSubTypeIds: ProcessOrderDetailRecyc[]
   }
 }
 
@@ -237,7 +249,8 @@ const DetailProcessOrder = ({
   selectedRow,
   onSubmitReason,
   processTypeListData,
-  warehouseSource
+  warehouseSource,
+  factoriesSource
 }: {
   drawerOpen: boolean
   handleDrawerClose: () => void
@@ -245,13 +258,17 @@ const DetailProcessOrder = ({
   onSubmitReason: () => void
   processTypeListData: ProcessType[] | undefined
   warehouseSource: any[]
+  factoriesSource: any[]
 }) => {
   const { t } = useTranslation()
   const [cancelModalOpen, setCancelModalOpen] = useState<boolean>(false)
-  const { dateFormat } = useContainer(CommonTypeContainer)
+  const { dateFormat, recycType, productType, getProductType } =
+    useContainer(CommonTypeContainer)
   const [processTypeList, setProcessTypeList] = useState<il_item[]>([])
   const [porDetails, setPorDetails] = useState<DetailPOR[]>([])
   const [warehouseList, setWarehouseList] = useState<il_item[]>([])
+  const [factoryList, setFactoryList] = useState<il_item[]>([])
+  const [selectedFactory, setSelectedFactory] = useState<string>('')
 
   const onDeleteData = () => {
     setCancelModalOpen(true)
@@ -301,8 +318,40 @@ const DetailProcessOrder = ({
     }
   }
 
+  const initFactory = async () => {
+    if (factoriesSource) {
+      let factory: il_item[] = []
+      factoriesSource.forEach((item: any) => {
+        var factoryName =
+          i18n.language === 'zhhk'
+            ? item.factoryNameTchi
+            : i18n.language === 'zhch'
+            ? item.factoryNameSchi
+            : item.factoryNameEng
+
+        factory.push({
+          id: item.factoryId.toString(),
+          name: factoryName
+        })
+      })
+      if (factory.length > 0) {
+        setFactoryList(factory)
+      }
+    }
+    mappingDetail()
+  }
+
   const mappingDetail = () => {
     let rawPorDetails: DetailPOR[] = []
+
+    //set factories
+    if (selectedRow?.factoryId) {
+      setSelectedFactory(
+        factoryList?.find((item) => parseInt(item.id) === selectedRow.factoryId)
+          ?.name || '-'
+      )
+    }
+
     processTypeList.map((type) => {
       let selectedItem = selectedRow?.processOrderDetail.filter(
         (it) => type.id === it.processTypeId
@@ -310,6 +359,7 @@ const DetailProcessOrder = ({
       let rawItem: DetailPORItem[] = []
       if (selectedItem && selectedItem?.length > 0) {
         selectedItem.map((it) => {
+          //set warehouse data
           const warehouseIds = selectedRow?.processOrderDetail
             .flatMap((detail: any) => detail.processOrderDetailWarehouse)
             .map((warehouse: any) => warehouse.warehouseId)
@@ -322,20 +372,22 @@ const DetailProcessOrder = ({
             })
             .filter(Boolean)
             .join(', ')
+
           rawItem.push({
             procesAction: it.processAction,
             startTime: it.plannedStartAt,
             warehouse: warehouseListName ?? '-',
             weight: it.estInWeight ? it.estInWeight.toString() : '0',
             porItem: {
-              productTypeId:
-                it.processOrderDetailProduct[0]?.productTypeId ?? '-',
-              productSubTypeId:
-                it.processOrderDetailProduct[0]?.productTypeId ?? '-',
-              productAddonTypeId:
-                it.processOrderDetailProduct[0]?.productTypeId ?? '-',
-              recycTypeId: it.processOrderDetailRecyc[0]?.recycTypeId ?? '-',
-              recycSubTypeId: it.processOrderDetailRecyc[0]?.recycTypeId ?? '-'
+              productTypeIds: it.processOrderDetailProduct.map(
+                (p) => p.productTypeId
+              ),
+              productSubTypeIds: it.processOrderDetailProduct,
+              productAddonTypeIds: it.processOrderDetailProduct,
+              recycTypeIds: it.processOrderDetailRecyc.flatMap(
+                (r) => r.recycTypeId
+              ),
+              recycSubTypeIds: it.processOrderDetailRecyc
             }
           })
         })
@@ -348,24 +400,152 @@ const DetailProcessOrder = ({
     })
 
     setPorDetails(rawPorDetails)
+    console.log('rawPorDetails', rawPorDetails)
   }
 
   useEffect(() => {
-    if (processTypeListData && warehouseSource) {
+    if (processTypeListData && warehouseSource && factoriesSource) {
       initProcessType()
       initWarehouse()
+      initFactory()
+      getProductType()
     }
-  }, [processTypeListData, warehouseSource])
+  }, [processTypeListData, warehouseSource, factoriesSource, i18n.language])
 
   useEffect(() => {
-    if (warehouseList.length > 0 && processTypeList.length > 0 && selectedRow) {
+    if (
+      warehouseList.length > 0 &&
+      processTypeList.length > 0 &&
+      selectedRow &&
+      factoriesSource
+    ) {
       mappingDetail()
     }
-  }, [warehouseList, processTypeList, selectedRow])
+  }, [warehouseList, processTypeList, selectedRow, factoriesSource])
 
   const onDeleteReason = () => {
     handleDrawerClose()
     onSubmitReason()
+  }
+
+  //todo: move to utils
+
+  const mappingRecy = (typeId: string) => {
+    const matchingRecycType = recycType?.find(
+      (item) => item.recycTypeId === typeId
+    )
+    if (matchingRecycType) {
+      let name =
+        i18n.language === 'enus'
+          ? matchingRecycType.recyclableNameEng
+          : i18n.language === 'zhch'
+          ? matchingRecycType.recyclableNameSchi
+          : i18n.language === 'zhhk'
+          ? matchingRecycType.recyclableNameTchi
+          : matchingRecycType.recyclableNameTchi
+      return name
+    }
+    return '-'
+  }
+
+  const mappingSubRecy = (recycTypeId: string, subTypeId: string) => {
+    const matchingRecycType = recycType?.find(
+      (item) => item.recycTypeId === recycTypeId
+    )
+    if (matchingRecycType) {
+      const matchrecycSubType = matchingRecycType.recycSubType?.find(
+        (subtype) => subtype.recycSubTypeId === subTypeId
+      )
+      if (matchrecycSubType) {
+        let name =
+          i18n.language === 'enus'
+            ? matchrecycSubType.recyclableNameEng
+            : i18n.language === 'zhch'
+            ? matchrecycSubType.recyclableNameSchi
+            : i18n.language === 'zhhk'
+            ? matchrecycSubType.recyclableNameTchi
+            : matchrecycSubType.recyclableNameTchi
+        return name
+      }
+    }
+    return '-'
+  }
+
+  const mappingProductType = (id: string) => {
+    const matchingProductType = productType?.find(
+      (item) => item.productTypeId === id
+    )
+    if (matchingProductType) {
+      let name =
+        i18n.language === 'enus'
+          ? matchingProductType.productNameEng
+          : i18n.language === 'zhch'
+          ? matchingProductType.productNameTchi
+          : i18n.language === 'zhhk'
+          ? matchingProductType.productNameTchi
+          : matchingProductType.productNameEng
+      return name
+    }
+    return '-'
+  }
+
+  const mappingSubProductType = (productTypeId: string, subId: string) => {
+    const matchingProductType = productType?.find(
+      (item: any) => item.productTypeId === productTypeId
+    )
+    if (matchingProductType) {
+      const matchingProductSubType = matchingProductType.productSubType?.find(
+        (subtype: any) => subtype.productSubTypeId === subId
+      )
+
+      if (matchingProductSubType) {
+        let name =
+          i18n.language === 'enus'
+            ? matchingProductSubType.productNameEng
+            : i18n.language === 'zhch'
+            ? matchingProductSubType.productNameTchi
+            : i18n.language === 'zhhk'
+            ? matchingProductSubType.productNameTchi
+            : matchingProductSubType.productNameEng
+        return name
+      }
+    }
+    return '-'
+  }
+
+  const mappingAddOnsType = (
+    productTypeId: string,
+    productSubTypeId: string,
+    addOnId: string
+  ) => {
+    const matchingProductType = productType?.find(
+      (item: any) => item.productTypeId === productTypeId
+    )
+    if (matchingProductType) {
+      const matchingProductSubType = matchingProductType.productSubType?.find(
+        (subtype: any) => subtype.productSubTypeId === productSubTypeId
+      )
+
+      if (matchingProductSubType) {
+        const matchingProductAddon =
+          matchingProductSubType?.productAddonType?.find(
+            (item: any) => item.productAddonTypeId === addOnId
+          )
+
+        if (matchingProductAddon) {
+          let name =
+            i18n.language === 'enus'
+              ? matchingProductAddon.productNameEng
+              : i18n.language === 'zhch'
+              ? matchingProductAddon.productNameTchi
+              : i18n.language === 'zhhk'
+              ? matchingProductAddon.productNameTchi
+              : matchingProductAddon.productNameEng
+          return name
+        }
+      }
+    }
+    return '-'
   }
 
   return (
@@ -383,7 +563,7 @@ const DetailProcessOrder = ({
             onSubmit: onDeleteData,
             onDelete: handleDrawerClose,
             onCloseHeader: handleDrawerClose,
-            submitText: t('common.delete'),
+            submitText: t('common.cancel'),
             cancelText: '',
             statusLabel: selectedRow?.status
           }}
@@ -425,7 +605,9 @@ const DetailProcessOrder = ({
               </Grid>
               <Grid item>
                 <CustomField label={t('processOrder.workshop')}>
-                  <Typography sx={localStyles.textField}>{'-'}</Typography>
+                  <Typography sx={localStyles.textField}>
+                    {selectedFactory}
+                  </Typography>
                 </CustomField>
               </Grid>
               <Grid item>
@@ -505,20 +687,24 @@ const DetailProcessOrder = ({
 
                         <Box sx={localStyles.label}>
                           <div className="flex items-normal w-44">
-                            <RecyclingIcon sx={localStyles.labelIcon} />
+                            <RecyclingIcon
+                              sx={(localStyles.labelIcon, { color: '#79CA25' })}
+                            />
                             <Typography sx={localStyles.label}>
                               {t('processOrder.details.itemCategory')}
                             </Typography>
                           </div>
                           <Box>
-                            <Typography
-                              sx={{ ...localStyles.value, marginBottom: 1 }}
-                            >
-                              {item.porItem.productTypeId}
-                            </Typography>
-                            <Typography sx={localStyles.value}>
-                              {item.porItem.recycTypeId}
-                            </Typography>
+                            {item.porItem.productTypeIds.map((p) => (
+                              <Typography sx={{ ...localStyles.value }}>
+                                {mappingProductType(p)}
+                              </Typography>
+                            ))}
+                            {item.porItem.recycTypeIds.map((r) => (
+                              <Typography sx={{ ...localStyles.value }}>
+                                {mappingRecy(r)}
+                              </Typography>
+                            ))}
                           </Box>
                         </Box>
 
@@ -531,14 +717,24 @@ const DetailProcessOrder = ({
                             </Typography>
                           </div>
                           <Box>
-                            <Typography
-                              sx={{ ...localStyles.value, marginBottom: 1 }}
-                            >
-                              {item.porItem.productSubTypeId}
-                            </Typography>
-                            <Typography sx={localStyles.value}>
-                              {item.porItem.recycSubTypeId}
-                            </Typography>
+                            {item.porItem.recycSubTypeIds.map((r) => (
+                              <Typography sx={{ ...localStyles.value }}>
+                                {mappingSubRecy(
+                                  r.recycTypeId,
+                                  r.recycSubTypeId
+                                )}
+                              </Typography>
+                            ))}
+                            {item.porItem.productSubTypeIds.map((p) => (
+                              <Typography
+                                sx={{ ...localStyles.value, marginBottom: 1 }}
+                              >
+                                {mappingSubProductType(
+                                  p.productTypeId,
+                                  p.productSubTypeId
+                                )}
+                              </Typography>
+                            ))}
                           </Box>
                         </Box>
 
@@ -551,11 +747,17 @@ const DetailProcessOrder = ({
                             </Typography>
                           </div>
                           <Box>
-                            <Typography sx={localStyles.value}>
-                              {' '}
-                              {item.porItem.productAddonTypeId}
-                            </Typography>
-                            {/* <Typography sx={localStyles.value}>水樽</Typography> */}
+                            {item.porItem.productAddonTypeIds.map((p) => (
+                              <Typography
+                                sx={{ ...localStyles.value, marginBottom: 1 }}
+                              >
+                                {mappingAddOnsType(
+                                  p.productTypeId,
+                                  p.productSubTypeId,
+                                  p.productAddonTypeId
+                                )}
+                              </Typography>
+                            ))}
                           </Box>
                         </Box>
                       </Box>

@@ -8,6 +8,8 @@
     "saveFailed": "Saved failed",
     "editSuccessfully": "Edited successfully",
     "editFailed": "Edited failed",
+    "cancelSuccessfully": "Cancel Successfully",
+    "cancelFailed": "Cancel Failed",
     "deletedSuccessfully": "Deleted successfully",
     "deleteFailed": "Deleted failed",
     "enterName": "Please enter name",

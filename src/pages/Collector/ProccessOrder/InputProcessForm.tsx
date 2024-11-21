@@ -241,7 +241,7 @@ const InputProcessForm = ({
     }
 
     validate()
-  }, [processTypeId])
+  }, [processTypeId, processOrderDetail[0]])
 
   const onChangeItemCategory = (
     key: 'processIn' | 'processOut',
@@ -621,7 +621,7 @@ const InputProcessForm = ({
                   </Grid>
                 )
               })}
-              <Grid item sx={{ width: '100%' }}>
+              <Grid item>
                 {trySubmited &&
                   validation.map((val, index) => (
                     <FormErrorMsg

@@ -28,7 +28,7 @@ import {
   showSuccessToast
 } from '../../../utils/utils'
 import DetailProcessOrder from './DetailProcessOrder'
-import { getProcessOrder } from '../../../APICalls/processOrder'
+import { getFactories, getProcessOrder } from '../../../APICalls/processOrder'
 import {
   PorQuery,
   ProcessOrderItem
@@ -66,6 +66,7 @@ const ProcessOrder = () => {
   )
   const [warehouseList, setWarehouseList] = useState<il_item[]>([])
   const [warehouseSource, setWarehouseSource] = useState<il_item[]>([])
+  const [factoriesSource, setFactoriesSource] = useState<il_item[]>([])
   const [searchQuery, setSearchQuery] = useState<PorQuery | null>({
     labelId: '',
     frmCreatedDate: '',
@@ -251,6 +252,16 @@ const ProcessOrder = () => {
     }
   }
 
+  const initFactory = async () => {
+    const result = await getFactories(0, 1000)
+    if (result) {
+      let factory: il_item[] = []
+      const data = result.data.content
+      setFactoriesSource(data)
+  
+    }
+  }
+
   const initProcessOrderList = async () => {
     setIsLoading(true)
     const result = await getProcessOrder(page - 1, pageSize, searchQuery)
@@ -270,6 +281,7 @@ const ProcessOrder = () => {
 
   useEffect(() => {
     initWarehouse()
+    initFactory()
     getProcessTypeList()
   }, [])
 
@@ -289,7 +301,7 @@ const ProcessOrder = () => {
   }
 
   const onSubmitReason = () => {
-    showSuccessToast(t('common.deletedSuccessfully'))
+    showSuccessToast(t('common.cancelSuccessfully'))
     initProcessOrderList()
   }
 
@@ -399,6 +411,7 @@ const ProcessOrder = () => {
           onSubmitReason={onSubmitReason}
           processTypeListData={processTypeListData}
           warehouseSource={warehouseSource}
+          factoriesSource={factoriesSource}
         ></DetailProcessOrder>
       </Box>
     </>

@@ -8,6 +8,8 @@
     "saveFailed": "保存失敗",
     "editSuccessfully": "編輯成功",
     "editFailed": "編輯失敗",
+    "cancelSuccessfully": "取消成功",
+    "cancelFailed": "取消失敗",
     "deletedSuccessfully": "刪除成功",
     "deleteFailed": "刪除失敗",
     "enterName": "請輸入名稱",
@@ -1522,7 +1524,7 @@
     "inventoryLocation": "送出地點"
   },
   "processOrder": {
-    "title": "Process Order",
+    "title": "处理订单",
     "processOrder": "處理訂單",
     "enterOrderNumber": "輸入訂單編號",
     "porDatetime": "處理日期及時間",

@@ -251,7 +251,6 @@ const CreateProcessOrder = ({}: {}) => {
 
   const initFactory = async () => {
     const result = await getFactories(0, 1000)
-    console.log('result', result)
     if (result) {
       let factory: il_item[] = []
       const data = result.data.content
@@ -269,7 +268,6 @@ const CreateProcessOrder = ({}: {}) => {
         })
       })
 
-      console.log(factory)
 
       setFactoryList(factory)
       if (factory.length > 0) setSelectedFactory(factory[0])
@@ -431,7 +429,7 @@ const CreateProcessOrder = ({}: {}) => {
           : data
     }
 
-    console.log("lllll", updatedSource)
+    console.log('lllll', updatedSource)
     setProcessOrderDtlSource(updatedSource)
     mappingProcessOrderDtl(updatedSource)
   }
@@ -576,9 +574,7 @@ const CreateProcessOrder = ({}: {}) => {
                   }}
                 >
                   {factoryList.map((item) => (
-                    <MenuItem disabled value={item.id}>
-                      {item.name}
-                    </MenuItem>
+                    <MenuItem value={item.id}>{item.name}</MenuItem>
                   ))}
                   {/* <MenuItem disabled value="">
                     <em>{t('common.noOptions')}</em>
