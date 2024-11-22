@@ -457,7 +457,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                   })}
                 </Box>
               </Grid>
-              <Grid item>
+              {/* <Grid item>
                 <Button
                   variant="outlined"
                   onClick={() => {
@@ -479,7 +479,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                     {t('pick_up_order.new')}
                   </div>
                 </Button>
-              </Grid>
+              </Grid> */}
             </Grid>
           </Box>
           <EditRecyclableForm

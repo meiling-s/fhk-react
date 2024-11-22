@@ -587,3 +587,22 @@ export const porStatusList: StatusPickUpOrder[] = [
 export const cloneData = (data: any) => {
   return JSON.parse(JSON.stringify(data))
 }
+
+
+export const objectFilter = (data: object, arr: string[]) => {
+
+  try{
+
+    const result = Object.keys(data)
+      .filter(key => !arr.includes(key))
+      .reduce((obj: any, key) => {
+        obj[key] = data[key as keyof object];
+        return obj;
+      }, {})
+      return result 
+
+  }
+  catch(err){
+
+  }
+}

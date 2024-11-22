@@ -1,6 +1,6 @@
 import { useFormik } from 'formik'
 import PurchaseOrderCreateForm from '../../../components/FormComponents/PurchaseOrderCreateForm'
-import { PurChaseOrder, PurchaseOrderDetail} from '../../../interfaces/purchaseOrder'
+import { PurChaseOrder, PurchaseOrderDetail } from '../../../interfaces/purchaseOrder'
 import { useNavigate } from 'react-router'
 import { useState } from 'react'
 import * as Yup from 'yup'
@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { extractError, returnApiToken, showErrorToast } from '../../../utils/utils'
 import { STATUS_CODE, Status, localStorgeKeyName } from '../../../constants/constant'
 import { postPurchaseOrder } from '../../../APICalls/Manufacturer/purchaseOrder'
+import { refactorPurchaseOrderDetail } from './utils'
 
 
 const CreatePurchaseOrder = () => {
@@ -38,23 +39,23 @@ const CreatePurchaseOrder = () => {
 
   const validateSchema = Yup.object().shape({
     receiverName: Yup.string().required(
-      t('purchase_order.create.this') + ' ' + 
-      t('purchase_order.create.receiving_company_name') + ' ' + 
+      t('purchase_order.create.this') + ' ' +
+      t('purchase_order.create.receiving_company_name') + ' ' +
       t('purchase_order.create.is_required')
     ),
     contactName: Yup.string().required(
-      t('purchase_order.create.this') + ' ' + 
-      t('purchase_order.create.contact_name') + ' ' + 
+      t('purchase_order.create.this') + ' ' +
+      t('purchase_order.create.contact_name') + ' ' +
       t('purchase_order.create.is_required')
     ),
     contactNo: Yup.string().required(
-      t('purchase_order.create.this') + ' ' + 
-      t('purchase_order.create.contact_number') + ' ' + 
+      t('purchase_order.create.this') + ' ' +
+      t('purchase_order.create.contact_number') + ' ' +
       t('purchase_order.create.is_required')
     ),
     paymentType: Yup.string().required(
-      t('purchase_order.create.this') + ' ' + 
-      t('purchase_order.create.payment_method') + ' ' + 
+      t('purchase_order.create.this') + ' ' +
+      t('purchase_order.create.payment_method') + ' ' +
       t('purchase_order.create.is_required')
     ),
     purchaseOrderDetail: Yup.array()
@@ -71,16 +72,16 @@ const CreatePurchaseOrder = () => {
   const submitPurchaseOrder = async (values: PurChaseOrder) => {
     try {
       return await postPurchaseOrder(values)
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error);
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
         return null
       }
     }
   }
-  
+
 
   const currentDate = new Date().toISOString()
   const createPurchaseOrder = useFormik({
@@ -105,12 +106,13 @@ const CreatePurchaseOrder = () => {
       updatedBy: loginId,
       createdAt: currentDate,
       updatedAt: currentDate,
-      purchaseOrderDetail: []
+      purchaseOrderDetail: [],
     },
     // validationSchema: validateSchema,
     onSubmit: async (values: PurChaseOrder) => {
 
-      values.purchaseOrderDetail = addRow
+      const refactorDetail  = refactorPurchaseOrderDetail(addRow)
+      values.purchaseOrderDetail = refactorDetail
       const result = await submitPurchaseOrder(values)
       const data = result?.data
 

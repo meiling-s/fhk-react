@@ -447,11 +447,11 @@ const PickupOrderForm = ({
               {vehicleType}
             </Typography>
           </CustomField>
-          <CustomField label={t('pick_up_order.item.plat_number')}>
+          {/* <CustomField label={t('pick_up_order.item.plat_number')}>
             <Typography sx={localstyles.typo_fieldContent}>
               {selectedPickupOrder?.platNo}
             </Typography>
-          </CustomField>
+          </CustomField> */}
           <CustomField label={t('pick_up_order.item.contact_number')}>
             <Typography sx={localstyles.typo_fieldContent}>
               {selectedPickupOrder?.contactNo}

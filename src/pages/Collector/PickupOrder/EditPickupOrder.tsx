@@ -124,7 +124,6 @@ const EditPickupOrder = () => {
           values.specificDates = []
         }
       }
-      console.log("🚀 ~ file: EditPickupOrder.tsx ~ line 128 ~ onSubmit: ~ values", values)
       const result = await submitEditPickUpOrder(poInfo.picoId, values)
 
       const data = result?.data
@@ -160,7 +159,7 @@ const EditPickupOrder = () => {
         productSubType: item.productSubType,
         productAddonType: item.productAddonType,
         productSubTypeRemark: item.productSubTypeRemark,
-        productAddonTypeRemark: item.productAddonTypeRemark,
+        productAddOnTypeRemark: item.productAddOnTypeRemark,
         weight: formatWeight(item.weight, decimalVal),
         newDetail: false,
         version: poInfo.version

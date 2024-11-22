@@ -430,6 +430,7 @@ const PickupOrderCreateForm = ({
         const itemCategory = row?.productType ? t('product') : t('recyclables')
 
         return itemCategory
+        
       },
       width: 150,
     },
@@ -608,16 +609,14 @@ const PickupOrderCreateForm = ({
       width: 100,
       filterable: false,
       renderCell: (params) => (
-        <IconButton>
+        <IconButton
+          onClick={() => {
+            setIndex(params.row.id)
+            handleEditRow(params.row.picoDtlId)
+          }}
+          data-testId={'astd-create-edit-pickup-order-edit-recycling-3943' + params.row.id}
+        >
           <EDIT_OUTLINED_ICON
-            onClick={() => {
-              setIndex(params.row.id)
-              handleEditRow(params.row.picoDtlId)
-            }}
-            data-testId={
-              'astd-create-edit-pickup-order-edit-recycling-3943' +
-              params.row.id
-            }
           />
         </IconButton>
       )
@@ -628,9 +627,6 @@ const PickupOrderCreateForm = ({
       filterable: false,
       width: 100,
       renderCell: (params) => (
-        // <IconButton onClick={() => handleDeleteRow(params.row.id)}>
-        //   <DELETE_OUTLINED_ICON />
-        // </IconButton>
         <IconButton
           onClick={() => {
             setOpenDelete(true)
@@ -824,7 +820,7 @@ const PickupOrderCreateForm = ({
                       routineContent: selectedPo?.routine ?? []
                     }}
                     itemColor={{
-                      bgColor: customListTheme.bgColor,
+                      bgColor: customListTheme?.bgColor,
                       borderColor: customListTheme
                         ? customListTheme.border
                         : '#79CA25'
@@ -912,7 +908,7 @@ const PickupOrderCreateForm = ({
                 ''
               )} */}
             </Grid>
-            <Grid item>
+            {/* <Grid item>
               <CustomField
                 label={t('pick_up_order.plat_number')}
                 mandatory={false}
@@ -934,8 +930,8 @@ const PickupOrderCreateForm = ({
                 <ErrorMessage message={errorsField.platNo.message} />
               ) : (
                 ''
-              )} */}
-            </Grid>
+              )} 
+            </Grid> */}
             <Grid item>
               <CustomField
                 label={t('pick_up_order.contact_number')}

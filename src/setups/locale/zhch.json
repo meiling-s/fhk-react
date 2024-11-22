@@ -168,7 +168,7 @@
     "general_settings": "一般设定",
     "packaging_unit": "包装单位",
     "process_type": "处理方式",
-    "workshop": "工场",
+    "workshop": "仓库",
     "vehicles": "车辆",
     "company": "公司",
     "waste_disposal": "废弃点",
@@ -1100,7 +1100,8 @@
     },
     "vehicleMenu": {
       "vehicle_number": "车辆编码",
-      "imei": "IMEI 号码",
+      "imei":"IMEI 号码",
+      "isCompactor":"是否压缩车",
       "license_plate_number": "车牌号码",
       "vehicle_type": "车辆种类",
       "vehicle_cargo_capacity": "车辆载货量",
@@ -1226,6 +1227,7 @@
   "purchase_order": {
     "all_order": "所有订单",
     "enquiry_po": "订单",
+    "missing_arrived": "到达信息不能为空",
     "table": {
       "created_datetime": "建立日期",
       "order_number": "訂單編號",
@@ -1560,5 +1562,10 @@
       "processIn": "进程",
       "processOut": "处理出"
     }
+  },
+  "factory": {
+    "factory": "工场",
+    "warehouse": "貨倉",
+    "introduction": "簡介"
   }
 }

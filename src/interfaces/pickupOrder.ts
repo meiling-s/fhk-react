@@ -128,7 +128,7 @@ export interface CreatePicoDetail {
     productAddon?: any | string;
     productAddonType?: any;
     productSubTypeRemark?: string;
-    productAddonTypeRemark?: string
+    productAddOnTypeRemark?: string
     
 }
 

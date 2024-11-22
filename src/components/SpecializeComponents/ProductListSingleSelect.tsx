@@ -23,7 +23,7 @@ export type singleProduct = {
   productSubTypeId: string
   productAddonId: string
   productSubTypeRemark: string
-  productAddonTypeRemark: string
+  productAddOnTypeRemark: string
   isProductSubTypeOthers?: boolean
   isProductAddonTypeOthers?: boolean
 }
@@ -59,19 +59,13 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
   const [productType, setProductType] = useState<string>('')
   const [productSubType, setProductSubType] = useState<string>('')
   const [productAddon, setProductAddon] = useState<string>('')
-  const [choosenProductType, setChoosenProductType] = useState<Products | null>(
-    null
-  )
+  const [choosenProductType, setChoosenProductType] = useState<Products | null>(null)
 
-  const [choosenProductSubType, setChoosenSubProductType] =
-    useState<ProductSubType | null>(null)
-  //console.log("🚀 ~ file: ProductListSingleSelect.tsx ~ line 54 ~ choosenProductSubType", choosenProductSubType)
-  const [choosenProductAddon, setChoosenProductAddon] =
-    useState<ProductAddon | null>(null)
-  //console.log("🚀 ~ file: ProductListSingleSelect.tsx ~ line 56 ~ choosenProductAddon", choosenProductAddon)
+  const [choosenProductSubType, setChoosenSubProductType] = useState<ProductSubType | null>(null)
+  const [choosenProductAddon, setChoosenProductAddon] = useState<ProductAddon | null>(null)
 
   const [productSubTypeRemark, setProductSubTypeRemark] = useState<string>('')
-  const [productAddonTypeRemark, setProductAddonRemark] = useState<string>('')
+  const [productAddOnTypeRemark, setProductAddonRemark] = useState<string>('')
   const { t, i18n } = useTranslation()
 
   useEffect(() => {
@@ -114,21 +108,13 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
       setProductSubTypeRemark(defaultProduct.productSubTypeRemark)
       setCurAddonProduct(defaultProduct.productAddonId)
       setProductAddon(defaultProduct.productAddonId)
-      setProductAddonRemark(defaultProduct.productAddonTypeRemark)
+      setProductAddonRemark(defaultProduct.productAddOnTypeRemark)
     }
   }, [defaultProduct])
 
   useEffect(() => {
     setState(toSingleProduct())
-  }, [
-    productType,
-    productSubType,
-    productAddon,
-    productSubTypeRemark,
-    productAddonTypeRemark,
-    choosenProductAddon,
-    choosenProductSubType
-  ])
+  }, [productType, productSubType, productAddon, productSubTypeRemark, productAddOnTypeRemark, choosenProductAddon, choosenProductSubType])
 
   const returnProductTypes = () => {
     const products: productItem[] = []
@@ -188,14 +174,10 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
       productSubTypeId: productSubType,
       productAddonId: productAddon,
       productSubTypeRemark: productSubTypeRemark,
-      productAddonTypeRemark: productAddonTypeRemark,
-      isProductSubTypeOthers:
-        choosenProductSubType?.productNameEng === 'Others',
-      isProductAddonTypeOthers: choosenProductAddon?.productNameEng === 'Others'
+      productAddOnTypeRemark: productAddOnTypeRemark,
+      isProductSubTypeOthers: choosenProductSubType?.productNameEng === 'Others',
+      isProductAddonTypeOthers: choosenProductAddon?.productNameEng === 'Others',
     }
-    // console.log("🚀 ~ file: ProductListSingleSelect.tsx ~ line 162 ~ toSingleProduct ~ singleProduct", singleProduct)
-    // console.log("🚀 ~ file: ProductListSingleSelect.tsx ~ line 160 ~ toSingleProduct ~ choosenProductSubType", choosenProductSubType)
-    // console.log("🚀 ~ file: ProductListSingleSelect.tsx ~ line 162 ~ toSingleProduct ~ choosenProductAddon", choosenProductAddon)
 
     return singleProduct
   }
@@ -398,6 +380,7 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
               t('general_settings.remark')
             }
             mandatory={false}
+            style={{ mt: '1rem', mb: '0.5rem' }}
           >
             <CustomTextField
               id="addon-remark"
@@ -409,8 +392,8 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
                 t('general_settings.remark')
               }
               onChange={(event) => setProductAddonRemark(event.target.value)}
-              value={productAddonTypeRemark}
-              dataTestId="astd-create-edit-pickup-order-product-addon-remark"
+              value={productAddOnTypeRemark}
+              dataTestId='astd-create-edit-pickup-order-product-addon-remark'
             />
           </CustomField>
         )}

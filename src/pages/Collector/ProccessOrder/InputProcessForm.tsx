@@ -522,7 +522,7 @@ const InputProcessForm = ({
           productSubTypeId: selectedProduct?.productSubTypeId,
           productAddonId: selectedProduct?.productAddonId,
           productSubTypeRemark: '',
-          productAddonTypeRemark: ''
+          productAddOnTypeRemark: ''
         }
         return product
       }

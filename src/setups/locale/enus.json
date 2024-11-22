@@ -1103,7 +1103,8 @@
     },
     "vehicleMenu": {
       "vehicle_number": "Vehicle ID",
-      "imei": "IMEI Number",
+      "imei":"IMEI Number",
+      "isCompactor":"Is Compactor",
       "license_plate_number": "License Plate No.",
       "vehicle_type": "Vehicle Type",
       "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
@@ -1223,6 +1224,7 @@
   "purchase_order": {
     "all_order": "All Orders",
     "enquiry_po": "Order",
+    "missing_arrived": "Arrived info should not be empty",
     "table": {
       "created_datetime": "Created Datetime",
       "order_number": "Order Number",
@@ -1561,5 +1563,10 @@
       "processIn": "Pending",
       "processOut": "After Processing"
     }
+  },
+  "factory": {
+    "factory": "Factory",
+    "warehouse": "Warehouse",
+    "introduction": "Introduction"
   }
 }
