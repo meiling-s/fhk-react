@@ -196,7 +196,7 @@ const CancelModal: React.FC<CancelForm> = ({
             )}
           </Box>
 
-          <Grid item sx={{ width: '100%' }}>
+          <Grid item sx={{ width: '100%', paddingRight: '42px' }}>
             {showRemark && remarkVal === '' && trySubmited && (
               <FormErrorMsg
                 key={'remark'}
@@ -245,6 +245,7 @@ type DetailPORItem = {
 }
 
 type DetailPOR = {
+  refProcessIn?: string
   processTypeId: string
   processTypeLabel: string
   item: DetailPORItem[]
@@ -359,55 +360,60 @@ const DetailProcessOrder = ({
       )
     }
 
-    processTypeList.map((type) => {
-      let selectedItem = selectedRow?.processOrderDetail.filter(
-        (it) => type.id === it.processTypeId
+    let rawItem: {
+      [key: string | number]: DetailPORItem[]
+    } = {}
+    selectedRow?.processOrderDetail.map((it) => {
+      //set warehouse data
+      let warehouseListName: string | undefined = ''
+      let warehouseIds: string[] = []
+      warehouseIds = it.processOrderDetailWarehouse.map((w) =>
+        w.warehouseId.toString()
       )
-      let rawItem: DetailPORItem[] = []
-      if (selectedItem && selectedItem?.length > 0) {
-        selectedItem.map((it) => {
-          //set warehouse data
-          const warehouseIds = selectedRow?.processOrderDetail
-            .flatMap((detail: any) => detail.processOrderDetailWarehouse)
-            .map((warehouse: any) => warehouse.warehouseId)
-          const warehouseListName = warehouseIds
-            ?.map((id: string) => {
-              const warehouse = warehouseList.find(
-                (it) => it.id === id.toString()
-              )
-              return warehouse ? warehouse.name : null
-            })
-            .filter(Boolean)
-            .join(', ')
-
-          rawItem.push({
-            procesAction: it.processAction,
-            startTime: it.plannedStartAt,
-            warehouse: warehouseListName ?? '-',
-            weight: it.estInWeight ? it.estInWeight.toString() : '0',
-            porItem: {
-              productTypeIds: it.processOrderDetailProduct.map(
-                (p) => p.productTypeId
-              ),
-              productSubTypeIds: it.processOrderDetailProduct,
-              productAddonTypeIds: it.processOrderDetailProduct,
-              recycTypeIds: it.processOrderDetailRecyc.flatMap(
-                (r) => r.recycTypeId
-              ),
-              recycSubTypeIds: it.processOrderDetailRecyc
-            }
-          })
+      warehouseListName = warehouseIds
+        ?.map((id: string) => {
+          const warehouse = warehouseList.find((it) => it.id === id.toString())
+          return warehouse ? warehouse.name : null
         })
+        .filter(Boolean)
+        .join(', ')
+
+      const item = {
+        procesAction: it.processAction,
+        startTime: it.plannedStartAt,
+        warehouse: warehouseListName ?? '-',
+        weight:
+          it.processAction === 'PROCESS_IN'
+            ? it.estInWeight.toString()
+            : it.estOutWeight.toString(),
+        porItem: {
+          productTypeIds: it.processOrderDetailProduct.map(
+            (p) => p.productTypeId
+          ),
+          productSubTypeIds: it.processOrderDetailProduct,
+          productAddonTypeIds: it.processOrderDetailProduct,
+          recycTypeIds: it.processOrderDetailRecyc.flatMap(
+            (r) => r.recycTypeId
+          ),
+          recycSubTypeIds: it.processOrderDetailRecyc
+        }
+      }
+
+      if (!it.refProcessIn) {
+        rawItem[it.processOrderDtlId] = [item]
+      } else {
+        console.log(it.refProcessIn)
+        rawItem[it.refProcessIn].push(item)
         rawPorDetails.push({
-          processTypeId: type.id,
-          processTypeLabel: type.name,
-          item: rawItem
+          processTypeId: it.processTypeId,
+          processTypeLabel:
+            processTypeList.find((v) => v.id == it.processTypeId)?.name || '-',
+          item: rawItem[it.refProcessIn]
         })
       }
     })
 
     setPorDetails(rawPorDetails)
-    console.log('rawPorDetails', rawPorDetails)
   }
 
   useEffect(() => {
@@ -515,7 +521,7 @@ const DetailProcessOrder = ({
                     {selectedRow?.processStartAt
                       ? dayjs
                           .utc(selectedRow?.processStartAt)
-                          .tz('Asia/Hong_Kong')
+                          // .tz('Asia/Hong_Kong')
                           .format(`${dateFormat} HH:mm`)
                       : ''}
                   </Typography>

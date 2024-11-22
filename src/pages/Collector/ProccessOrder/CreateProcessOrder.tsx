@@ -165,9 +165,24 @@ const CreateProcessOrder = ({}: {}) => {
       headerName: t('processOrder.table.startOrFinishDate'),
       width: 180,
       renderCell: (params) => {
-        return params.row.datetime
-          ? dayjs.utc(params.row.datetime).format(`${dateFormat} HH:mm`)
-          : ''
+        let dateTime = ''
+        if (params.row.processAction !== '') {
+          if (params.row.processAction === 'PROCESS_IN') {
+            dateTime = params.row.datetime
+              ? dayjs.utc(params.row.datetime).format(`${dateFormat} HH:mm`)
+              : dayjs
+                  .utc(params.row?.datetime)
+                  .tz('Asia/Hong_Kong')
+                  .format(`${dateFormat} HH:mm`)
+          } else {
+            dateTime = dayjs
+              .utc(params.row?.datetime)
+              .tz('Asia/Hong_Kong')
+              .format(`${dateFormat} HH:mm`)
+          }
+        }
+
+        return dateTime
       }
     },
     {

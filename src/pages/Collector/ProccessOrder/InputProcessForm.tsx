@@ -185,10 +185,6 @@ const InputProcessForm = ({
             name: warehouseName
           })
         })
-        warehouse.push({
-          id: '',
-          name: t('check_in.any')
-        })
         setWarehouseOption(warehouse)
       }
     } catch (error: any) {
@@ -238,7 +234,7 @@ const InputProcessForm = ({
       setTrySubmited(false)
       resetForm()
     }
-  }, [drawerOpen])
+  }, [drawerOpen, i18n.language])
 
   useEffect(() => {
     const validate = async () => {
@@ -297,34 +293,6 @@ const InputProcessForm = ({
             problem: formErr.empty,
             type: 'error'
           })
-
-      // validation sub-rectype and sub-product type type
-
-      processOrderDetail[0].processIn.itemCategory === 'recycling' &&
-        processOrderDetail[0].processIn.processOrderDetailRecyc.forEach(
-          (item) => {
-            const selectedRecy = recycType?.find(
-              (r) => r.recycTypeId === item.recycTypeId
-            )
-
-            if (selectedRecy && selectedRecy.recycTypeId.length > 0) {
-              // Ensure recycSubTypeId cannot be empty unless its length is explicitly []
-              if (
-                !(item.recycSubTypeId && item.recycSubTypeId.length > 0) &&
-                selectedRecy.recycSubType.length > 0
-              ) {
-                tempV.push({
-                  field:
-                    t('processOrder.create.sub') +
-                    ' - ' +
-                    t('processOrder.table.processIn'),
-                  problem: formErr.empty,
-                  type: 'error'
-                })
-              }
-            }
-          }
-        )
 
       //warehouse validation
       processOrderDetail[0].processIn.processOrderDetailWarehouse.length ===
@@ -418,19 +386,17 @@ const InputProcessForm = ({
     )
   }
 
-  const updateWarehouseIds = (newWarehouseIds: string[]) => {
+  const updateWarehouseIds = (
+    newWarehouseIds: string[],
+    key: 'processIn' | 'processOut'
+  ) => {
     const parsedWarehouseIds = newWarehouseIds.map((id) => parseInt(id, 10))
+
     setProcessOrderDetail((prevDetails) =>
       prevDetails.map((detail) => ({
         ...detail,
-        processIn: {
-          ...detail.processIn,
-          processOrderDetailWarehouse: parsedWarehouseIds.map((id) => ({
-            warehouseId: id
-          }))
-        },
-        processOut: {
-          ...detail.processOut,
+        [key]: {
+          ...detail[key],
           processOrderDetailWarehouse: parsedWarehouseIds.map((id) => ({
             warehouseId: id
           }))
@@ -523,6 +489,7 @@ const InputProcessForm = ({
       processOrderDetail[0].processOut.plannedEndAt = plannedEndAtData
       value.idPair = tempRandomId
     })
+    console.log(processOrderDetail)
 
     onSave(processOrderDetail, isUpdate)
     handleDrawerClose()
@@ -717,7 +684,10 @@ const InputProcessForm = ({
                           <CustomItemList
                             items={warehouseOption ?? []}
                             multiSelect={(selectedItems: string[]) =>
-                              updateWarehouseIds(selectedItems)
+                              updateWarehouseIds(
+                                selectedItems,
+                                key as keyof CreateProcessOrderDetailPairs
+                              )
                             }
                             defaultSelected={getDefaultWarehouse(key)}
                             needPrimaryColor={false}
