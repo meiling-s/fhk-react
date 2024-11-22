@@ -298,6 +298,34 @@ const InputProcessForm = ({
             type: 'error'
           })
 
+      // validation sub-rectype and sub-product type type
+
+      processOrderDetail[0].processIn.itemCategory === 'recycling' &&
+        processOrderDetail[0].processIn.processOrderDetailRecyc.forEach(
+          (item) => {
+            const selectedRecy = recycType?.find(
+              (r) => r.recycTypeId === item.recycTypeId
+            )
+
+            if (selectedRecy && selectedRecy.recycTypeId.length > 0) {
+              // Ensure recycSubTypeId cannot be empty unless its length is explicitly []
+              if (
+                !(item.recycSubTypeId && item.recycSubTypeId.length > 0) &&
+                selectedRecy.recycSubType.length > 0
+              ) {
+                tempV.push({
+                  field:
+                    t('processOrder.create.sub') +
+                    ' - ' +
+                    t('processOrder.table.processIn'),
+                  problem: formErr.empty,
+                  type: 'error'
+                })
+              }
+            }
+          }
+        )
+
       //warehouse validation
       processOrderDetail[0].processIn.processOrderDetailWarehouse.length ===
         0 &&

@@ -135,7 +135,7 @@ const ProcessOrder = () => {
     },
     {
       field: 'factoryId',
-      headerName: t('warehouse_page.place'),
+      headerName: t('processOrder.workshop'),
       type: 'string',
       width: 300,
       renderCell: (params) => {
