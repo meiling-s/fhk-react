@@ -32,7 +32,7 @@ export type ProcessOrderDetailRecyc = {
 export type ProcessOrderDetailProduct = {
   productTypeId: string
   productSubTypeId: string
-  productAddonTypeId: string
+  productAddonId: string
 }
 
 export type ProcessOrderDetail = {
@@ -72,7 +72,7 @@ export type ProcessOrderItem = {
 }
 
 type ProcessInItem = {
-  idPair : number
+  idPair: number
   processTypeId: string
   itemCategory?: string
   processAction: string
@@ -84,7 +84,7 @@ type ProcessInItem = {
 }
 
 type ProcessOutItem = {
-  idPair : number
+  idPair: number
   processTypeId: string
   itemCategory?: string
   processAction: string

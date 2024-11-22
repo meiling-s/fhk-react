@@ -53,6 +53,13 @@ import { useContainer } from 'unstated-next'
 import { DELETE_OUTLINED_ICON, EDIT_OUTLINED_ICON } from 'src/themes/icons'
 import { formValidate } from 'src/interfaces/common'
 import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
+import {
+  mappingRecy,
+  mappingSubRecy,
+  mappingProductType,
+  mappingSubProductType,
+  mappingAddOnsType
+} from './utils'
 
 type rowPorDtl = {
   id: string
@@ -85,11 +92,20 @@ const CreateProcessOrder = ({}: {}) => {
   const [processOrderDtlSource, setProcessOrderDtlSource] = useState<
     CreateProcessOrderDetailPairs[]
   >([])
-
+  const [action, setAction] = useState<'add' | 'edit' | 'delete' | 'none'>(
+    'add'
+  )
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
   const colorTheme: string = getThemeColorRole(role)
-  const { dateFormat, decimalVal, getProcessTypeList, processTypeListData } =
-    useContainer(CommonTypeContainer)
+  const {
+    dateFormat,
+    decimalVal,
+    getProcessTypeList,
+    processTypeListData,
+    recycType,
+    productType,
+    getProductType
+  } = useContainer(CommonTypeContainer)
   const [processTypeList, setProcessTypeList] = useState<il_item[]>([])
   const [processInDetailData, setProcessInDetailData] = useState<
     ProcessInDtlData[]
@@ -150,17 +166,28 @@ const CreateProcessOrder = ({}: {}) => {
       width: 180,
       renderCell: (params) => {
         return params.row.datetime
-          ? dayjs
-              .utc(params.row.datetime)
-              .tz('Asia/Hong_Kong')
-              .format(`${dateFormat} HH:mm`)
+          ? dayjs.utc(params.row.datetime).format(`${dateFormat} HH:mm`)
           : ''
       }
     },
     {
       field: 'warehouse',
       headerName: t('processOrder.create.warehouse'),
-      width: 150
+      width: 150,
+      renderCell: (params) => {
+        const warehouseIds = params.row.warehouse.split(',')
+        const warehouseListName = warehouseIds
+          ?.map((id: string) => {
+            const warehouse = warehouseList.find(
+              (it) => it.id === id.toString()
+            )
+            return warehouse ? warehouse.name : null
+          })
+          .filter(Boolean)
+          .join(', ')
+
+        return warehouseListName
+      }
     },
     { field: 'weight', headerName: t('inventory.weight'), width: 100 },
     {
@@ -180,17 +207,55 @@ const CreateProcessOrder = ({}: {}) => {
     {
       field: 'mainCategory',
       headerName: t('settings_page.recycling.main_category'),
-      width: 150
+      width: 150,
+      renderCell: (params) => {
+        let name = ''
+        if (params.row.itemCategory != 'product') {
+          name = mappingRecy(params.row.mainCategory, recycType)
+        } else {
+          name = mappingProductType(params.row.mainCategory, productType)
+        }
+        return name
+      }
     },
     {
       field: 'subCategory',
       headerName: t('settings_page.recycling.sub_category'),
-      width: 150
+      width: 150,
+      renderCell: (params) => {
+        let name = ''
+        if (params.row.itemCategory != 'product') {
+          name = mappingSubRecy(
+            params.row.mainCategory,
+            params.row.subCategory,
+            recycType
+          )
+        } else {
+          name = mappingSubProductType(
+            params.row.mainCategory,
+            params.row.subCategory,
+            productType
+          )
+        }
+        return name
+      }
     },
     {
       field: 'additionalInfo',
       headerName: t('settings_page.recycling.additional_category'),
-      width: 150
+      width: 150,
+      renderCell: (params) => {
+        let name = ''
+        if (params.row.itemCategory === 'product') {
+          name = mappingAddOnsType(
+            params.row.mainCategory,
+            params.row.subCategory,
+            params.row.additionalInfo,
+            productType
+          )
+        }
+        return name
+      }
     }
   ]
 
@@ -268,7 +333,6 @@ const CreateProcessOrder = ({}: {}) => {
         })
       })
 
-
       setFactoryList(factory)
       if (factory.length > 0) setSelectedFactory(factory[0])
     }
@@ -279,6 +343,7 @@ const CreateProcessOrder = ({}: {}) => {
     initWarehouse()
     initProcessType()
     initFactory()
+    getProductType()
   }, [])
 
   useEffect(() => {
@@ -329,7 +394,7 @@ const CreateProcessOrder = ({}: {}) => {
               itemCategory: value.itemCategory ?? '-',
               mainCategory: val1.productTypeId,
               subCategory: val1.productSubTypeId,
-              additionalInfo: val1.productAddonTypeId ?? '-'
+              additionalInfo: val1.productAddonId
             })
           } else {
             rowData.push({
@@ -342,7 +407,7 @@ const CreateProcessOrder = ({}: {}) => {
               itemCategory: value.itemCategory ?? '-',
               mainCategory: val1.productTypeId,
               subCategory: val1.productSubTypeId,
-              additionalInfo: val1.productAddonTypeId ?? '-'
+              additionalInfo: val1.productAddonId
             })
           }
         })
@@ -366,8 +431,8 @@ const CreateProcessOrder = ({}: {}) => {
                   ? item.processIn.estInWeight
                   : item.processOut.estOutWeight,
               itemCategory: value.itemCategory ?? '-',
-              mainCategory: val1.recycSubTypeId,
-              subCategory: val1.recycTypeId,
+              mainCategory: val1.recycTypeId,
+              subCategory: val1.recycSubTypeId ?? '-',
               additionalInfo: '-'
             })
           } else {
@@ -380,7 +445,7 @@ const CreateProcessOrder = ({}: {}) => {
               weight: '',
               itemCategory: value.itemCategory ?? '-',
               mainCategory: val1.recycTypeId,
-              subCategory: val1.recycSubTypeId,
+              subCategory: val1.recycSubTypeId ?? '-',
               additionalInfo: '-'
             })
           }
@@ -576,9 +641,6 @@ const CreateProcessOrder = ({}: {}) => {
                   {factoryList.map((item) => (
                     <MenuItem value={item.id}>{item.name}</MenuItem>
                   ))}
-                  {/* <MenuItem disabled value="">
-                    <em>{t('common.noOptions')}</em>
-                  </MenuItem> */}
                 </Select>
               </FormControl>
             </Grid>
@@ -598,7 +660,8 @@ const CreateProcessOrder = ({}: {}) => {
                   key={index}
                   sx={{
                     height: 'max-content',
-                    width: 'max-content',
+                    width: '100%',
+                    maxWidth: '1200px',
                     background: 'white',
                     padding: 2,
                     borderRadius: '16px',
@@ -621,6 +684,7 @@ const CreateProcessOrder = ({}: {}) => {
                         fontSize="small"
                         className="cursor-pointer text-grey-dark mr-2"
                         onClick={(event) => {
+                          setAction('edit')
                           handleEdit(item)
                         }}
                         style={{ cursor: 'pointer' }}
@@ -679,6 +743,7 @@ const CreateProcessOrder = ({}: {}) => {
               {/* form input process In */}
               <InputProcessForm
                 drawerOpen={inputProcessDrawer}
+                action={action}
                 handleDrawerClose={() => setInputProcessDrawer(false)}
                 plannedStartAtInput={formattedDate(processStartAt)}
                 dataSet={processOrderDtlSource}
@@ -694,11 +759,13 @@ const CreateProcessOrder = ({}: {}) => {
                 }
                 onClick={() => {
                   setSelectedPOR(null)
+                  setAction('add')
                   setInputProcessDrawer(true)
                 }}
                 sx={{
                   height: '40px',
                   width: '100%',
+                  maxWidth: '1230px',
                   mt: '20px',
                   borderColor: colorTheme,
                   color: 'black',

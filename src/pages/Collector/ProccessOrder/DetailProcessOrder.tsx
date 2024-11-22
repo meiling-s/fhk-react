@@ -11,6 +11,13 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import WarehouseIcon from '@mui/icons-material/Warehouse'
 import ScaleIcon from '@mui/icons-material/Scale'
 import RecyclingIcon from '@mui/icons-material/Recycling'
+import {
+  mappingRecy,
+  mappingSubRecy,
+  mappingProductType,
+  mappingSubProductType,
+  mappingAddOnsType
+} from './utils'
 
 import {
   ProcessOrderItem,
@@ -430,122 +437,33 @@ const DetailProcessOrder = ({
 
   //todo: move to utils
 
-  const mappingRecy = (typeId: string) => {
-    const matchingRecycType = recycType?.find(
-      (item) => item.recycTypeId === typeId
-    )
-    if (matchingRecycType) {
-      let name =
-        i18n.language === 'enus'
-          ? matchingRecycType.recyclableNameEng
-          : i18n.language === 'zhch'
-          ? matchingRecycType.recyclableNameSchi
-          : i18n.language === 'zhhk'
-          ? matchingRecycType.recyclableNameTchi
-          : matchingRecycType.recyclableNameTchi
-      return name
-    }
-    return '-'
+  const mappingRecyName = (typeId: string) => {
+    return mappingRecy(typeId, recycType)
   }
 
-  const mappingSubRecy = (recycTypeId: string, subTypeId: string) => {
-    const matchingRecycType = recycType?.find(
-      (item) => item.recycTypeId === recycTypeId
-    )
-    if (matchingRecycType) {
-      const matchrecycSubType = matchingRecycType.recycSubType?.find(
-        (subtype) => subtype.recycSubTypeId === subTypeId
-      )
-      if (matchrecycSubType) {
-        let name =
-          i18n.language === 'enus'
-            ? matchrecycSubType.recyclableNameEng
-            : i18n.language === 'zhch'
-            ? matchrecycSubType.recyclableNameSchi
-            : i18n.language === 'zhhk'
-            ? matchrecycSubType.recyclableNameTchi
-            : matchrecycSubType.recyclableNameTchi
-        return name
-      }
-    }
-    return '-'
+  const mappingSubRecyName = (typeId: string, subTypeId: string) => {
+    return mappingSubRecy(typeId, subTypeId, recycType)
   }
 
-  const mappingProductType = (id: string) => {
-    const matchingProductType = productType?.find(
-      (item) => item.productTypeId === id
-    )
-    if (matchingProductType) {
-      let name =
-        i18n.language === 'enus'
-          ? matchingProductType.productNameEng
-          : i18n.language === 'zhch'
-          ? matchingProductType.productNameTchi
-          : i18n.language === 'zhhk'
-          ? matchingProductType.productNameTchi
-          : matchingProductType.productNameEng
-      return name
-    }
-    return '-'
+  const mappingProductTypeName = (id: string) => {
+    return mappingProductType(id, productType)
   }
 
-  const mappingSubProductType = (productTypeId: string, subId: string) => {
-    const matchingProductType = productType?.find(
-      (item: any) => item.productTypeId === productTypeId
-    )
-    if (matchingProductType) {
-      const matchingProductSubType = matchingProductType.productSubType?.find(
-        (subtype: any) => subtype.productSubTypeId === subId
-      )
-
-      if (matchingProductSubType) {
-        let name =
-          i18n.language === 'enus'
-            ? matchingProductSubType.productNameEng
-            : i18n.language === 'zhch'
-            ? matchingProductSubType.productNameTchi
-            : i18n.language === 'zhhk'
-            ? matchingProductSubType.productNameTchi
-            : matchingProductSubType.productNameEng
-        return name
-      }
-    }
-    return '-'
+  const mappingSubProductTypeName = (productTypeId: string, subId: string) => {
+    return mappingSubProductType(productTypeId, subId, productType)
   }
 
-  const mappingAddOnsType = (
+  const mappingAddOnsTypeName = (
     productTypeId: string,
     productSubTypeId: string,
     addOnId: string
   ) => {
-    const matchingProductType = productType?.find(
-      (item: any) => item.productTypeId === productTypeId
+    return mappingAddOnsType(
+      productTypeId,
+      productSubTypeId,
+      addOnId,
+      productType
     )
-    if (matchingProductType) {
-      const matchingProductSubType = matchingProductType.productSubType?.find(
-        (subtype: any) => subtype.productSubTypeId === productSubTypeId
-      )
-
-      if (matchingProductSubType) {
-        const matchingProductAddon =
-          matchingProductSubType?.productAddonType?.find(
-            (item: any) => item.productAddonTypeId === addOnId
-          )
-
-        if (matchingProductAddon) {
-          let name =
-            i18n.language === 'enus'
-              ? matchingProductAddon.productNameEng
-              : i18n.language === 'zhch'
-              ? matchingProductAddon.productNameTchi
-              : i18n.language === 'zhhk'
-              ? matchingProductAddon.productNameTchi
-              : matchingProductAddon.productNameEng
-          return name
-        }
-      }
-    }
-    return '-'
   }
 
   return (
@@ -697,12 +615,12 @@ const DetailProcessOrder = ({
                           <Box>
                             {item.porItem.productTypeIds.map((p) => (
                               <Typography sx={{ ...localStyles.value }}>
-                                {mappingProductType(p)}
+                                {mappingProductTypeName(p)}
                               </Typography>
                             ))}
                             {item.porItem.recycTypeIds.map((r) => (
                               <Typography sx={{ ...localStyles.value }}>
-                                {mappingRecy(r)}
+                                {mappingRecyName(r)}
                               </Typography>
                             ))}
                           </Box>
@@ -719,7 +637,7 @@ const DetailProcessOrder = ({
                           <Box>
                             {item.porItem.recycSubTypeIds.map((r) => (
                               <Typography sx={{ ...localStyles.value }}>
-                                {mappingSubRecy(
+                                {mappingSubRecyName(
                                   r.recycTypeId,
                                   r.recycSubTypeId
                                 )}
@@ -729,7 +647,7 @@ const DetailProcessOrder = ({
                               <Typography
                                 sx={{ ...localStyles.value, marginBottom: 1 }}
                               >
-                                {mappingSubProductType(
+                                {mappingSubProductTypeName(
                                   p.productTypeId,
                                   p.productSubTypeId
                                 )}
@@ -751,10 +669,10 @@ const DetailProcessOrder = ({
                               <Typography
                                 sx={{ ...localStyles.value, marginBottom: 1 }}
                               >
-                                {mappingAddOnsType(
+                                {mappingAddOnsTypeName(
                                   p.productTypeId,
                                   p.productSubTypeId,
-                                  p.productAddonTypeId
+                                  p.productAddonId
                                 )}
                               </Typography>
                             ))}

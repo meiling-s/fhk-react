@@ -50,7 +50,7 @@ const InputProcessForm = ({
   drawerOpen,
   handleDrawerClose,
   plannedStartAtInput,
-  formType = 'create',
+  action = 'add',
   onSave,
   dataSet,
   editedValue
@@ -58,12 +58,13 @@ const InputProcessForm = ({
   drawerOpen: boolean
   handleDrawerClose: () => void
   plannedStartAtInput: string
+  action: 'add' | 'edit' | 'delete' | 'none'
   formType?: string
   onSave: (
     processOrderDtl: CreateProcessOrderDetailPairs[],
     isUpdate: boolean
   ) => void
-  //dataSet: PorDetail[]
+
   dataSet: CreateProcessOrderDetailPairs[]
   editedValue: CreateProcessOrderDetailPairs[] | null
 }) => {
@@ -129,7 +130,6 @@ const InputProcessForm = ({
     useState<CreateProcessOrderDetailPairs[]>(initDetail)
 
   const mappingData = () => {
-    // console.log('edit', editedValue)
     if (editedValue) {
       setProcessTypeId(editedValue[0].processIn.processTypeId)
       setProcessOrderDetail(editedValue)
@@ -189,6 +189,12 @@ const InputProcessForm = ({
     }
   }
 
+  const resetForm = () => {
+    setProcessTypeId('')
+    setProcessOrderDetail(initDetail)
+    setValidation([])
+  }
+
   useEffect(() => {
     getProcessTypeList()
     getProductType()
@@ -196,16 +202,13 @@ const InputProcessForm = ({
     initProcessType()
     setValidation([])
 
-    if (editedValue) {
+    if (action !== 'add') {
       mappingData()
+    } else {
+      setTrySubmited(false)
+      resetForm()
     }
   }, [drawerOpen])
-
-  const resetForm = () => {
-    setProcessTypeId('')
-    setProcessOrderDetail(initDetail)
-    setValidation([])
-  }
 
   useEffect(() => {
     const validate = async () => {
@@ -217,11 +220,61 @@ const InputProcessForm = ({
           type: 'error'
         })
 
+      // validation rectype and product type type
+
+      //processIn
+      processOrderDetail[0].processIn.itemCategory === 'recycling'
+        ? processOrderDetail[0].processIn.processOrderDetailRecyc.length ===
+            0 &&
+          tempV.push({
+            field:
+              t('jobOrder.main_category') +
+              ' - ' +
+              t('processOrder.table.processIn'),
+            problem: formErr.empty,
+            type: 'error'
+          })
+        : processOrderDetail[0].processIn.processOrderDetailProduct.length ===
+            0 &&
+          tempV.push({
+            field:
+              t('pick_up_order.product_type.product') +
+              ' - ' +
+              t('processOrder.table.processIn'),
+            problem: formErr.empty,
+            type: 'error'
+          })
+
+      //processOut
+      processOrderDetail[0].processOut.itemCategory === 'recycling'
+        ? processOrderDetail[0].processOut.processOrderDetailRecyc.length ===
+            0 &&
+          tempV.push({
+            field:
+              t('jobOrder.main_category') +
+              ' - ' +
+              t('processOrder.table.processOut'),
+            problem: formErr.empty,
+            type: 'error'
+          })
+        : processOrderDetail[0].processOut.processOrderDetailProduct.length ===
+            0 &&
+          tempV.push({
+            field:
+              t('pick_up_order.product_type.product') +
+              ' - ' +
+              t('processOrder.table.processOut'),
+            problem: formErr.empty,
+            type: 'error'
+          })
+
+      //warehouse validation
       processOrderDetail[0].processIn.processOrderDetailWarehouse.length ===
         0 &&
         tempV.push({
           field:
             t('processOrder.create.warehouse') +
+            ' - ' +
             t('processOrder.table.processIn'),
           problem: formErr.empty,
           type: 'error'
@@ -232,6 +285,7 @@ const InputProcessForm = ({
         tempV.push({
           field:
             t('processOrder.create.warehouse') +
+            ' - ' +
             t('processOrder.table.processOut'),
           problem: formErr.empty,
           type: 'error'
@@ -409,8 +463,6 @@ const InputProcessForm = ({
       value.idPair = tempRandomId
     })
 
-    console.log('lala', processOrderDetail)
-
     onSave(processOrderDetail, isUpdate)
     resetForm()
     handleDrawerClose()
@@ -424,7 +476,7 @@ const InputProcessForm = ({
           open={drawerOpen}
           onClose={handleDrawerClose}
           anchor={'right'}
-          action={'edit'}
+          action={action}
           headerProps={{
             title: t('top_menu.add_new'),
             subTitle: t('processOrder.porCategory'),
@@ -452,7 +504,7 @@ const InputProcessForm = ({
               className="sm:ml-0 mt-o w-full"
             >
               <Grid item>
-                <CustomField label={t('processOrder.porCategory')}>
+                <CustomField label={t('processOrder.porCategory')} mandatory>
                   <CustomItemList
                     items={processTypeList}
                     singleSelect={(selectedItem) => {
@@ -485,6 +537,7 @@ const InputProcessForm = ({
                       <Grid item sx={{ marginBottom: 2 }}>
                         <CustomField
                           label={t('processOrder.create.itemCategory')}
+                          mandatory
                         >
                           <CustomItemList
                             items={itemCategory()}
@@ -499,7 +552,7 @@ const InputProcessForm = ({
                       {/* item category product / recyle */}
                       {value.itemCategory === 'recycling' ? (
                         <Grid item>
-                          <CustomField label={t('col.recycType')}>
+                          <CustomField label={t('col.recycType')} mandatory>
                             <RecyclablesList
                               recycL={recycType || []}
                               setState={(value) => {
@@ -541,7 +594,10 @@ const InputProcessForm = ({
 
                       {/* warehouse */}
                       <Grid item sx={{ marginBottom: 2, marginTop: 2 }}>
-                        <CustomField label={t('processOrder.create.warehouse')}>
+                        <CustomField
+                          label={t('processOrder.create.warehouse')}
+                          mandatory
+                        >
                           <CustomItemList
                             items={warehouseOption ?? []}
                             multiSelect={(selectedItems: string[]) =>
@@ -575,6 +631,7 @@ const InputProcessForm = ({
                       <Grid item sx={{ marginBottom: 2 }}>
                         <CustomField
                           label={t('pick_up_order.recyclForm.weight')}
+                          mandatory
                         >
                           <CustomTextField
                             id="weight"

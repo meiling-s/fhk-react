@@ -64,9 +64,9 @@ const ProcessOrder = () => {
   const [processOrderList, setProcessOrderList] = useState<ProcessOrderItem[]>(
     []
   )
-  const [warehouseList, setWarehouseList] = useState<il_item[]>([])
   const [warehouseSource, setWarehouseSource] = useState<il_item[]>([])
   const [factoriesSource, setFactoriesSource] = useState<il_item[]>([])
+  const [factoryList, setFactoryList] = useState<il_item[]>([])
   const [searchQuery, setSearchQuery] = useState<PorQuery | null>({
     labelId: '',
     frmCreatedDate: '',
@@ -134,32 +134,17 @@ const ProcessOrder = () => {
       width: 250
     },
     {
-      field: 'warehouse',
+      field: 'factoryId',
       headerName: t('warehouse_page.place'),
       type: 'string',
       width: 300,
       renderCell: (params) => {
-        const warehouseIds = params.row.processOrderDetail
-          .flatMap((detail: any) => detail.processOrderDetailWarehouse)
-          .map((warehouse: any) => warehouse.warehouseId)
-
-        const warehouseListName = warehouseIds
-          .map((id: string) => {
-            const warehouse = warehouseList.find(
-              (it) => it.id === id.toString()
-            )
-            return warehouse ? warehouse.name : null
-          })
-          .filter(Boolean)
-          .join(', ')
-
-        return (
-          <div>
-            {params.row.processOrderDetail.length > 0 && (
-              <div>{warehouseIds ? `${warehouseListName}` : '-'}</div>
-            )}
-          </div>
+        const factory = factoryList.find(
+          (f) => parseInt(f.id) === params.row.factoryId
         )
+        let factoryName = factory ? factory?.name : '-'
+
+        return factoryName
       }
     },
     {
@@ -174,7 +159,7 @@ const ProcessOrder = () => {
 
   const searchfield = [
     {
-      label: t('job_order.filter.search'),
+      label: t('processOrder.orderNumber'),
       placeholder: t('processOrder.enterOrderNumber'),
       field: 'labelId'
     },
@@ -225,24 +210,6 @@ const ProcessOrder = () => {
         let warehouse: il_item[] = []
         setWarehouseSource(result.data.content)
         const data = result.data.content
-        data.forEach((item: any) => {
-          var warehouseName =
-            i18n.language === 'zhhk'
-              ? item.warehouseNameTchi
-              : i18n.language === 'zhch'
-              ? item.warehouseNameSchi
-              : item.warehouseNameTchi
-
-          warehouse.push({
-            id: item.warehouseId.toString(),
-            name: warehouseName
-          })
-        })
-        warehouse.push({
-          id: '',
-          name: t('check_in.any')
-        })
-        setWarehouseList(warehouse)
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -258,7 +225,21 @@ const ProcessOrder = () => {
       let factory: il_item[] = []
       const data = result.data.content
       setFactoriesSource(data)
-  
+      data.forEach((item: any) => {
+        var factoryName =
+          i18n.language === 'zhhk'
+            ? item.factoryNameTchi
+            : i18n.language === 'zhch'
+            ? item.factoryNameSchi
+            : item.factoryNameEng
+
+        factory.push({
+          id: item.factoryId.toString(),
+          name: factoryName
+        })
+      })
+
+      setFactoryList(factory)
     }
   }
 
@@ -277,13 +258,13 @@ const ProcessOrder = () => {
 
   useEffect(() => {
     initProcessOrderList()
-  }, [page, searchQuery, warehouseList, processTypeListData])
+  }, [page, searchQuery, processTypeListData])
 
   useEffect(() => {
     initWarehouse()
     initFactory()
     getProcessTypeList()
-  }, [])
+  }, [i18n.language])
 
   const updateQuery = (newQuery: Partial<PorQuery>) => {
     setSearchQuery({ ...searchQuery, ...newQuery } as PorQuery)
