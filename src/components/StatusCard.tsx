@@ -64,6 +64,16 @@ const StatusCard = ({ status }: { status: string | undefined }) => {
       fontColor = '#FF4242'
       name = t('status.deny')
       break
+    case 'ASSIGNED':
+      bgColor = '#E4F6DC'
+      fontColor = '#79CA25'
+      name = t('status.assigned')
+      break
+    case 'UNASSIGNED':
+      bgColor = '#FFF0F4'
+      fontColor = '#FF4242'
+      name = t('status.unassigned')
+      break
     // proccess records status
     case 'processing':
       bgColor = '#E1F4FF'
