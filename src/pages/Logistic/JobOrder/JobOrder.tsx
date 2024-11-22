@@ -220,7 +220,26 @@ const JobOrder = () => {
       width: 150,
       editable: true,
       renderCell: (params) => {
-        const driverId = params.row.driverId
+        const plateNo = params.row.plateNo
+        if (plateNo === "") {
+          return (
+            <div>
+              {t("status.unassigned")}
+            </div>
+          )
+        } else {
+          return <div>{plateNo}</div>
+        }
+      }
+    },
+    {
+      field: 'plateNo',
+      headerName: t('job_order.table.plate_no'),
+      type: 'string',
+      width: 150,
+      editable: true,
+      renderCell: (params) => {
+        const driverId = params.row.plateNo
         const driverName = driverLists.filter(
           (item) => item.driverId == driverId
         )
@@ -235,16 +254,9 @@ const JobOrder = () => {
             </div>
           )
         } else {
-          return <div>{null}</div>
+          return <div>{t('status.unassigned')}</div>
         }
       }
-    },
-    {
-      field: 'plateNo',
-      headerName: t('job_order.table.plate_no'),
-      type: 'string',
-      width: 150,
-      editable: true
     },
     {
       field: 'labelId',
