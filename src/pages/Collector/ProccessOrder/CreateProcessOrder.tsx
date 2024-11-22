@@ -175,16 +175,22 @@ const CreateProcessOrder = ({}: {}) => {
       headerName: t('processOrder.create.warehouse'),
       width: 150,
       renderCell: (params) => {
-        const warehouseIds = params.row.warehouse.split(',')
-        const warehouseListName = warehouseIds
-          ?.map((id: string) => {
-            const warehouse = warehouseList.find(
-              (it) => it.id === id.toString()
-            )
-            return warehouse ? warehouse.name : null
-          })
-          .filter(Boolean)
-          .join(', ')
+        let warehouseListName = ''
+        if (params.row.warehouse != '') {
+          const warehouseIds = params.row.warehouse.split(',')
+
+          if (warehouseIds.length > 0) {
+            warehouseListName = warehouseIds
+              ?.map((id: string) => {
+                const warehouse = warehouseList.find(
+                  (it) => it.id === id.toString()
+                )
+                return warehouse ? warehouse.name : null
+              })
+              .filter(Boolean)
+              .join(', ')
+          }
+        }
 
         return warehouseListName
       }
@@ -494,7 +500,6 @@ const CreateProcessOrder = ({}: {}) => {
           : data
     }
 
-    console.log('lllll', updatedSource)
     setProcessOrderDtlSource(updatedSource)
     mappingProcessOrderDtl(updatedSource)
   }
@@ -550,9 +555,11 @@ const CreateProcessOrder = ({}: {}) => {
   }
 
   const handleEdit = (item: ProcessInDtlData) => {
+    setAction('edit')
     const selectedProcessOrderDtlSource = processOrderDtlSource.filter(
       (it) => it.processIn.idPair === item.idPair
     )
+
     setSelectedPOR(selectedProcessOrderDtlSource)
     setInputProcessDrawer(true)
   }

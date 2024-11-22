@@ -29,10 +29,20 @@ export type ProcessOrderDetailRecyc = {
   recycSubTypeId: string
 }
 
+// export type ProcessOrderDetailProduct = {
+//   productTypeId: string
+//   productSubTypeId: string
+//   productAddonId: string
+// }
+
 export type ProcessOrderDetailProduct = {
   productTypeId: string
   productSubTypeId: string
   productAddonId: string
+  productSubTypeRemark: string
+  productAddonTypeRemark: string
+  isProductSubTypeOthers?: boolean
+  isProductAddonTypeOthers?: boolean
 }
 
 export type ProcessOrderDetail = {

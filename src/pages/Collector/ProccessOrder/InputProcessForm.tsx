@@ -131,8 +131,38 @@ const InputProcessForm = ({
 
   const mappingData = () => {
     if (editedValue) {
+      const mappedData = editedValue.map((item) => ({
+        processIn: {
+          idPair: item.processIn?.idPair ?? 0,
+          processTypeId: item.processIn?.processTypeId || '',
+          itemCategory: item.processIn?.itemCategory || 'recycling',
+          processAction: item.processIn?.processAction || 'PROCESS_IN',
+          estInWeight: item.processIn?.estInWeight || '0',
+          plannedStartAt: item.processIn?.plannedStartAt || plannedStartAtInput,
+          processOrderDetailProduct: item.processIn.processOrderDetailProduct,
+          processOrderDetailRecyc:
+            item.processIn?.processOrderDetailRecyc || [],
+          processOrderDetailWarehouse:
+            item.processIn?.processOrderDetailWarehouse || []
+        },
+        processOut: {
+          idPair: item.processOut?.idPair ?? 0,
+          processTypeId: item.processOut?.processTypeId || '',
+          itemCategory: item.processOut?.itemCategory || 'product',
+          processAction: item.processOut?.processAction || 'PROCESS_OUT',
+          estOutWeight: item.processOut?.estOutWeight || '0',
+          plannedEndAt: item.processOut?.plannedEndAt || '',
+          processOrderDetailProduct: item.processOut.processOrderDetailProduct,
+          processOrderDetailRecyc:
+            item.processOut?.processOrderDetailRecyc || [],
+          processOrderDetailWarehouse:
+            item.processOut?.processOrderDetailWarehouse || []
+        }
+      }))
       setProcessTypeId(editedValue[0].processIn.processTypeId)
-      setProcessOrderDetail(editedValue)
+      setProcessOrderDetail(mappedData)
+
+      console.log('mapping data', mappedData)
     }
   }
 
@@ -202,7 +232,7 @@ const InputProcessForm = ({
     initProcessType()
     setValidation([])
 
-    if (action !== 'add') {
+    if (action != 'add') {
       mappingData()
     } else {
       setTrySubmited(false)
@@ -306,7 +336,10 @@ const InputProcessForm = ({
         ...item,
         [key]: {
           ...item[key],
-          itemCategory: selectedItem
+          itemCategory: selectedItem,
+          ...(selectedItem === 'recycle'
+            ? { processOrderDetailRecyc: [] }
+            : { processOrderDetailProduct: [] })
         }
       }))
     )
@@ -464,8 +497,61 @@ const InputProcessForm = ({
     })
 
     onSave(processOrderDetail, isUpdate)
-    resetForm()
     handleDrawerClose()
+  }
+
+  const getDefaultWarehouse = (key: string) => {
+    if (action === 'edit') {
+      const warehouseIds =
+        key === 'processIn'
+          ? processOrderDetail[0]?.processIn?.processOrderDetailWarehouse
+              ?.map((item) => item.warehouseId?.toString() || '')
+              .filter(Boolean)
+          : processOrderDetail[0]?.processOut?.processOrderDetailWarehouse
+              ?.map((item) => item.warehouseId?.toString() || '')
+              .filter(Boolean)
+      return warehouseIds
+    }
+  }
+
+  const getProductData = (key: string) => {
+    if (action === 'edit') {
+      const selectedProduct =
+        key === 'processIn'
+          ? processOrderDetail[0].processIn.processOrderDetailProduct[0]
+          : processOrderDetail[0].processOut.processOrderDetailProduct[0]
+
+      if (selectedProduct) {
+        const product: singleProduct = {
+          productTypeId: selectedProduct?.productTypeId,
+          productSubTypeId: selectedProduct?.productSubTypeId,
+          productAddonId: selectedProduct?.productAddonId,
+          productSubTypeRemark: '',
+          productAddonTypeRemark: ''
+        }
+        return product
+      }
+    }
+
+    return undefined
+  }
+
+  const getDefaultRecy = (key: string) => {
+    if (action === 'edit') {
+      const dataRecy =
+        key === 'processIn'
+          ? processOrderDetail[0].processIn?.processOrderDetailRecyc
+          : processOrderDetail[0].processOut?.processOrderDetailRecyc
+
+      const defaultData: recyclable[] = dataRecy.map((item) => ({
+        recycTypeId: item.recycTypeId,
+        recycSubTypeId: Array.isArray(item.recycSubTypeId)
+          ? item.recycSubTypeId
+          : [item.recycSubTypeId]
+      }))
+
+      return defaultData
+    }
   }
 
   return (
@@ -562,6 +648,7 @@ const InputProcessForm = ({
                                     : 'processOut'
                                 handleRecycChange(keyType, value)
                               }}
+                              defaultRecycL={getDefaultRecy(key)}
                             />
                           </CustomField>
                         </Grid>
@@ -586,6 +673,7 @@ const InputProcessForm = ({
                                 ? customListTheme.border
                                 : '79CA25'
                             }}
+                            defaultProduct={getProductData(key)}
                           />
                         </CustomField>
                       ) : (
@@ -603,15 +691,7 @@ const InputProcessForm = ({
                             multiSelect={(selectedItems: string[]) =>
                               updateWarehouseIds(selectedItems)
                             }
-                            defaultSelected={
-                              key === 'processIn'
-                                ? processOrderDetail[0].processIn.processOrderDetailWarehouse
-                                    .map((item) => item.warehouseId)
-                                    .join(',')
-                                : processOrderDetail[0].processOut.processOrderDetailWarehouse
-                                    .map((item) => item.warehouseId)
-                                    .join(',')
-                            }
+                            defaultSelected={getDefaultWarehouse(key)}
                             needPrimaryColor={false}
                             error={
                               trySubmited &&
