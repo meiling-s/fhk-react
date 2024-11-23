@@ -19,6 +19,7 @@ import Overview from './pages/Collector/Manage/CheckoutRequest'
 import Settings from './pages/Collector/Warehouse/Settings'
 import Vehicles from './pages/Collector/Vehicles/Vechicles'
 import WarehouseDashboard from './pages/Collector/Warehouse/WarehouseDashboard'
+import InternalTransferRequest from './pages/Collector/InternalTransferRequest/internal_transfer_request'
 //Tenant Register
 // import CompanyDetails from "./pages/TenantRegister/CompanyDetails";
 // import CompanyContact from "./pages/TenantRegister/CompanyContact";
@@ -189,6 +190,10 @@ const Router = () => {
             <Route path="/warehouse" element={<WarehouseDashboard />} />
             <Route path="/warehouse/shipment" element={<RecycleShipment />} />
             <Route path="/warehouse/checkout" element={<CheckoutRequest />} />
+            <Route
+              path="/warehouse/InternalTransferRequest"
+              element={<InternalTransferRequest />}
+            />
             <Route path="/warehouse/process" element={<ProcessRecord />} />
             {/* <Route path="/warehouse/staff" element={<StaffManagement />} /> */}
             <Route path="/warehouse/settings" element={<Settings />} />
