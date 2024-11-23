@@ -44,6 +44,7 @@ import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
 import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined'
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
+import ScreenRotationAltIcon from "@mui/icons-material/ScreenRotationAlt";
 import BarChartIcon from '@mui/icons-material/BarChart'
 import { dynamicpath, returnApiToken, creatioPageList } from '../utils/utils'
 import { useContainer } from 'unstated-next'
@@ -181,6 +182,14 @@ function MainDrawer() {
         collapse: false,
         path: '/warehouse/checkout',
         functionName: 'Request checkout'
+      },
+      "Internal transfer request": {
+        name: t("internalTransfer.internal_transfer_request"),
+        icon: <ScreenRotationAltIcon />,
+        onClick: () => navigate("/warehouse/InternalTransferRequest"),
+        collapse: false,
+        path: "/warehouse/InternalTransferRequest",
+        functionName: "Internal transfer request"
       },
       'Check-in and check-out': {
         name: t('checkinandcheckout.checkinandcheckout'),

@@ -872,6 +872,13 @@
     "recyle_loc_info": "预计回收地点资料",
     "recyc_loc_info": "回收地点资料"
   },
+  "internalTransfer": {
+    "internal_transfer_request": "内部运送请求",
+    "sender_warehouse": "送出货仓",
+    "receiver_warehouse": "送入货仓",
+    "item_information": "物品资料",
+    "date_time": "日期及时间"
+  },
   "userGroup": {
     "title": "用戶群組",
     "change": "更改",
