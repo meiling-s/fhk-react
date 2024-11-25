@@ -34,7 +34,8 @@ import {
   getAllTenant,
   searchTenantById,
   updateTenantStatus,
-  sendEmailInvitation
+  sendEmailInvitation,
+  createNewTenant
 } from '../../APICalls/tenantManage'
 import { STATUS_CODE, defaultPath, format } from '../../constants/constant'
 import { styles } from '../../constants/styles'
@@ -79,6 +80,7 @@ dayjs.extend(timezone)
 function createCompany(
   id: number,
   cName: string,
+  sName: string,
   eName: string,
   status: string,
   type: string,
@@ -86,7 +88,7 @@ function createCompany(
   accountNum: number,
   version: number
 ): Company {
-  return { id, cName, eName, status, type, createDate, accountNum, version }
+  return { id, cName, sName, eName, status, type, createDate, accountNum, version }
 }
 
 type inviteModal = {
@@ -985,7 +987,8 @@ function CompanyManage() {
       }
 
       const result = await updateTenantStatus(statData, tenantId)
-      if (result?.status == 200) {
+      if (result?.status === 200) {
+        await createTenantASTD(tenantId)
         showSuccessToast(t('common.approveSuccess'))
         initCompaniesData()
       }
@@ -993,6 +996,25 @@ function CompanyManage() {
       setOpenDetails(false)
     } catch (error: any) {
       const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+    }
+  }
+
+  const createTenantASTD = async (tenantId: number) => {
+    try {
+      const companyData: Company = companies.find(value => value.id === tenantId)!
+      if (companyData === undefined) throw new Error('fail to get company data')
+      const payload = {
+          "namec": companyData?.cName,
+          "names": companyData?.sName,
+          "namee": companyData?.eName,
+          "tenantId": `${tenantId}`
+      }
+      await createNewTenant(payload)
+    } catch (error) {
+      const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
@@ -1156,6 +1178,7 @@ function CompanyManage() {
         createCompany(
           com?.tenantId,
           com?.companyNameTchi,
+          com?.companyNameSchi,
           com?.companyNameEng,
           com?.status,
           com?.tenantType,

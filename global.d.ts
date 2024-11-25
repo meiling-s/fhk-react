@@ -6,5 +6,6 @@ interface Window {
         logistic: string,
         manufacturer: string,
         customer: string,
+        socif: string,
     },
 }

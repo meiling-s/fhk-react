@@ -7,13 +7,15 @@ import {
   UPDATE_TENANT_REGISTER,
   UPDATE_TENANT_STATUS,
   SEND_EMAIL_INVITATION,
-  UPDATE_TENANT_INFO
+  UPDATE_TENANT_INFO,
+  CREATE_TENANT
 } from '../constants/requests'
 import { RegisterItem } from '../interfaces/account'
 import { CreateTenant, UpdateStatus } from '../interfaces/tenant'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
+import axios from 'axios'
 
 export const createInvitation = async (
   item: CreateTenant,
@@ -135,6 +137,22 @@ export const updateTenantStatus = async (item: any, tenantId: number) => {
     //   'Tenant register status update success:',
     //   JSON.stringify(response.data)
     // )
+    return response
+  } catch (e: any) {
+    console.error('Tenant register status update failed:', e)
+    throw e
+  }
+}
+
+export const createNewTenant = async (item: any) => {
+  // TODO: CHANGE TO GENERAL AXIOSINSTANCE WHEN THE API MIGRATED TO MAIN BASEURL
+  const cleanAxiosInstance = axios.create()
+  try {
+    const response = await cleanAxiosInstance({
+      baseURL: window.baseURL.socif,
+      ...CREATE_TENANT('astd'),
+      data: item,
+    })
     return response
   } catch (e: any) {
     console.error('Tenant register status update failed:', e)
