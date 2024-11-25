@@ -428,7 +428,7 @@ const PickupOrderCreateForm = ({
       valueGetter: ({ row }) => {
 
         const itemCategory = row?.productType ? t('product') : t('recyclables')
-
+        
         return itemCategory
         
       },

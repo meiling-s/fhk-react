@@ -38,6 +38,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   selectPicoDetail,
   picoId
 }) => {
+
   const { t } = useTranslation()
   const [picoList, setPicoList] = useState<PicoRefrenceList[]>([])
   const [filteredPico, setFilteredPico] = useState<PicoRefrenceList[]>([])
@@ -63,24 +64,19 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
       result = await getAllPickUpOrder(0, 1000, query)
     }
     const data = result?.data.content
-    //console.log("pickup order content: ", data);
+    
     if (data && data.length > 0) {
       setPickupOrder(data)
+      assignData(data)
     }
   }
 
-  useEffect(() => {
-    initPickupOrderRequest()
-  }, [])
-
-  useEffect(() => {
-    const picoDetailList =
-      pickupOrder
-        ?.flatMap((item) =>
+  const assignData = (newData?: PickupOrder[]) => {
+    const newList:any =(newData || pickupOrder)?.flatMap((item) =>
           item?.pickupOrderDetail.map((detailPico) => ({
             type: item.picoType,
             picoId: item.picoId,
-            status: detailPico.status,
+            status: item.status,
             effFrmDate: item.effFrmDate,
             effToDate: item.effToDate,
             routine: `${item.routineType}, ${item.routine.join(', ')}`,
@@ -89,9 +85,20 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
             pickupOrderDetail: detailPico
           }))
         )
-        ?.filter((picoDetail) => picoDetail.picoId !== picoId) ?? []
+
+        
+    const picoDetailList = newList?.filter((picoDetail:any) => picoId ? (picoDetail.picoId !== picoId) : true)
+    
     setPicoList(picoDetailList)
     setFilteredPico(picoDetailList)
+  }
+
+  useEffect(() => {
+    initPickupOrderRequest()
+  }, [])
+
+  useEffect(() => {
+    assignData()
   }, [drawerOpen, searchInput === ''])
 
   useEffect(() => {
