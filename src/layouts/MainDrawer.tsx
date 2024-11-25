@@ -40,6 +40,7 @@ import {
 import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
 import InventoryIcon from '@mui/icons-material/Inventory'
+import RecyclingIcon from '@mui/icons-material/Recycling';
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
 import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined'
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined'
@@ -65,6 +66,7 @@ type DrawerItem = {
   collapseGroup?: boolean
   path?: string
   functionName: string
+  datatestId?: string
 }
 
 type subMenuItem = {
@@ -130,6 +132,7 @@ function MainDrawer() {
         onClick: () => navigate(`/${realm}/account`),
         collapse: false,
         path: `/${realm}/account`,
+        datatestId: 'astd-user-group-menu-list-6766',
         functionName: 'User account'
       },
       'Collection point': {
@@ -147,6 +150,14 @@ function MainDrawer() {
         collapse: false,
         path: `/${realm}/pickupOrder`,
         functionName: 'Pickup order'
+      },
+      'process order': {
+        name: t('processOrder.title'),
+        icon: <RecyclingIcon />,
+        onClick: () => navigate(`/${realm}/processOrder`),
+        collapse: false,
+        path: `/${realm}/processOrder`,
+        functionName: 'Process order'
       },
       'Purchase order': {
         name: t('purchase_order.enquiry_po'),
@@ -194,7 +205,8 @@ function MainDrawer() {
         onClick: () => navigate('/astd/setting'),
         collapse: false,
         path: '/astd/setting',
-        functionName: 'Settings'
+        functionName: 'Settings',
+        datatestId: 'astd-menu-list-settings-1869'
       },
       Reports: {
         name: t('reports'),
@@ -202,7 +214,8 @@ function MainDrawer() {
         onClick: () => navigate(`/${realm}/report`),
         collapse: false,
         path: `/${realm}/report`,
-        functionName: 'Reports'
+        functionName: 'Reports',
+        datatestId: 'astd-reports-menu-list-6697'
       },
       'Process out recyclables': {
         name: t('processRecord.processingRecords'),
@@ -490,6 +503,7 @@ function MainDrawer() {
                       index === drawerMenus.length - 1 ? '48px' : '0px'
                   }}
                   key={drawerMenu.name}
+                  data-testid={drawerMenu.datatestId || ''}
                   onClick={() => handleNavigateMenu(drawerMenu, index)}
                   disablePadding
                 >
@@ -553,6 +567,7 @@ function MainDrawer() {
                     index === drawerMenus.length - 1 ? '48px' : '0px'
                 }}
                 key={index}
+                data-testid={drawerMenu.datatestId || ''}
                 onClick={() => handleNavigateMenu(drawerMenu, index)}
                 disablePadding
               >

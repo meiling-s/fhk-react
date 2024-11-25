@@ -92,6 +92,7 @@ const HeaderSection: React.FC<HeaderProps> = ({
                 ]}
                 disabled={action === 'delete'}
                 onClick={onSubmit}
+                data-testid=" astd-right-drawer-save-button-5997"
               >
                 {submitText}
               </Button>
@@ -105,6 +106,7 @@ const HeaderSection: React.FC<HeaderProps> = ({
                       height: '40px'
                     }
                   ]}
+                  data-testid="astd-right-drawer-cancel-delete-button-8523"
                   variant="outlined"
                   disabled={action === 'add'}
                   onClick={onDeleteModal}
@@ -115,7 +117,10 @@ const HeaderSection: React.FC<HeaderProps> = ({
             </div>
           )}
 
-          <div className="close-icon ml-2 cursor-pointer">
+          <div
+            className="close-icon ml-2 cursor-pointer"
+            data-testid="astd-right-drawer-close-button-8612"
+          >
             <img
               className="relative w-6 h-6 overflow-hidden shrink-0"
               alt=""

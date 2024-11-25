@@ -6,7 +6,6 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import MonitorWeightOutlinedIcon from '@mui/icons-material/MonitorWeightOutlined'
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined'
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
-import LocalizeRecyctype from '../../../components/TableComponents/LocalizeRecyctype'
 import {
   PurChaseOrder,
   PurchaseOrderDetail
@@ -22,6 +21,8 @@ import { Languages } from '../../../constants/constant'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import RecycleTypeCardItem from 'src/components/RecycleTypeCardItem'
+import LocalizeRecyctype, { LocalizeRecycleProductTypePO } from 'src/components/TableComponents/LocalizeRecyctype'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -34,18 +35,18 @@ const PurchaseOrderCard = ({
   purchaseOrderDetail: PurchaseOrderDetail[]
 }) => {
   const { t } = useTranslation()
-  const { decimalVal,  weightUnits, dateFormat } = useContainer(CommonTypeContainer)
+  const { decimalVal, weightUnits, dateFormat } = useContainer(CommonTypeContainer)
 
-  const getWeightUnits = ():{unitId: number, lang: string}[] => {
-    let units:{unitId: number, lang: string}[] = []
-    if(i18n.language === Languages.ENUS){
+  const getWeightUnits = (): { unitId: number, lang: string }[] => {
+    let units: { unitId: number, lang: string }[] = []
+    if (i18n.language === Languages.ENUS) {
       units = weightUnits.map(item => {
         return {
           unitId: item?.unitId,
           lang: item?.unitNameEng
         }
       })
-    } else if(i18n.language === Languages.ZHCH){
+    } else if (i18n.language === Languages.ZHCH) {
       units = weightUnits.map(item => {
         return {
           unitId: item?.unitId,
@@ -66,7 +67,7 @@ const PurchaseOrderCard = ({
 
   const getUnitName = (podetail: PurchaseOrderDetail) => {
     let unitName = ''
-    switch(i18n.language) {
+    switch (i18n.language) {
       case 'enus':
         unitName = podetail.unitNameEng
         break;
@@ -80,7 +81,7 @@ const PurchaseOrderCard = ({
         unitName = podetail.unitNameTchi
         break;
     }
-    
+
     return unitName
   }
   const getRecyName = (podetail: PurchaseOrderDetail) => {
@@ -122,7 +123,8 @@ const PurchaseOrderCard = ({
 
     return name
   }
-    
+
+
   return (
     <>
       {purchaseOrderDetail.map((podetail, index) => (
@@ -136,23 +138,12 @@ const PurchaseOrderCard = ({
         >
           <Box display="flex" justifyContent="space-between">
             <Box>
-              <Box key={index}>
-                <CustomField
-                  label={t('pick_up_order.card_detail.main_category')}
-                >
-                  <Typography sx={localstyles.typo_fieldContent}>
-                    {getRecyName(podetail)}
-                  </Typography>
-                </CustomField>
-                <CustomField
-                  label={t('pick_up_order.card_detail.subcategory')}
-                  style={{ marginTop: '12px' }}
-                >
-                  <Typography sx={localstyles.typo_fieldContent}>
-                    {getRecySubName(podetail)}
-                  </Typography>
-                </CustomField>
-              </Box>
+              <RecycleTypeCardItem
+                index={index}
+                localstyles={localstyles}
+                item={LocalizeRecycleProductTypePO({data: podetail})}
+                type={podetail?.productType ? 'product' : 'recyclable'}
+              />
             </Box>
           </Box>
           <Box display="flex" mt={'15px !important'}>

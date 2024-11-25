@@ -1115,25 +1115,13 @@ const PickupOrders = () => {
               marginLeft: '20px'
             }}
             variant="contained"
+            data-testId={'astd-pickup-order-new-button-5743'}
           >
             + {t('col.create')}
           </Button>
         </Box>
         <Box />
-        <Stack direction="row" mt={3}>
-          {searchfield.map((s) => (
-            <CustomSearchField
-              key={s.field}
-              label={s.label}
-              placeholder={s?.placeholder}
-              width={s.width}
-              inputType={s.inputType}
-              field={s.field}
-              options={s.options || []}
-              onChange={handleSearch}
-            />
-          ))}
-        </Stack>
+        
         <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
           {isLoading ? (
             <CircularLoading />
@@ -1254,6 +1242,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               onClick={() => {
                 if (selectedRow) onDelete()
               }}
+              data-testId='astd-pickup-order-sidebar-confirm-delete-button-5711'
             >
               {t('check_in.confirm')}
             </button>
@@ -1262,6 +1251,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               onClick={() => {
                 onClose()
               }}
+              data-testId='astd-pickup-order-sidebar-cancel-delete-button-9361'
             >
               {t('check_out.cancel')}
             </button>

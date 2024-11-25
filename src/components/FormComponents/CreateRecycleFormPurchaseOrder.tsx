@@ -8,7 +8,8 @@ import {
   InputAdornment,
   Stack,
   Typography,
-  TextField
+  TextField,
+  Drawer
 } from '@mui/material'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { styles } from '../../constants/styles'
@@ -25,10 +26,10 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import CustomTextField from './CustomTextField'
 import { useFormik } from 'formik'
 import RecyclablesListSingleSelect from '../SpecializeComponents/RecyclablesListSingleSelect'
-import { collectorList, manuList, recycType } from '../../interfaces/common'
+import { collectorList, manuList } from '../../interfaces/common'
 import dayjs, { Dayjs } from 'dayjs'
 import { Languages, format } from '../../constants/constant'
-import { localStorgeKeyName } from '../../constants/constant'
+import { localStorgeKeyName, configDateFormatFull } from '../../constants/constant'
 import {
   formatWeight,
   getPrimaryColor,
@@ -44,11 +45,20 @@ import i18n from '../../setups/i18n'
 import { WeightUnit } from '../../interfaces/weightUnit'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import Switcher from './CustomSwitch'
+import Selection from '../SpecializeComponents/ProductListSingleSelect'
+import ProductListSingleSelect from '../SpecializeComponents/ProductListSingleSelect'
+import { singleProduct } from './CreateRecycleForm'
+import { ValidateSchemaCreateRecycleFormPurchaseOrder } from 'src/pages/Manufacturer/PurchaseOrder/utils'
+import AlertList from 'src/components/AlertList'
+import useModalConfirmRemarksEmpty from '../ModalConfirmRemarksEmpty'
+import NotifContainer from 'src/contexts/NotifContainer'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
 type props = {
+  openModal: boolean
   onClose: () => void
   setState: (val: PurchaseOrderDetail[]) => void
   data: PurchaseOrderDetail[]
@@ -71,13 +81,7 @@ const initValue = {
   id: -1,
   poDtlId: 0,
   recycTypeId: '',
-  recyclableNameTchi: '',
-  recyclableNameSchi: '',
-  recyclableNameEng: '',
   recycSubTypeId: '',
-  recyclableSubNameTchi: '',
-  recyclableSubNameSchi: '',
-  recyclableSubNameEng: '',
   unitId: 0,
   unitNameTchi: '',
   unitNameSchi: '',
@@ -89,22 +93,14 @@ const initValue = {
   createdBy: loginId,
   updatedBy: loginId,
   status: 'CREATED',
+  itemCategory: 'Recyclables',
+  productType: '',
+  productSubType: '',
+  productAddOnType: '',
+  productSubTypeRemark: '',
+  productAddOnTypeRemark: '',
 }
 
-const ErrorMessages: React.FC<{ message: string }> = ({ message }) => {
-  return (
-    <div className="bg-[#F7BBC6] p-3 rounded-xl w-full">
-      <Typography
-        style={{
-          color: 'red',
-          fontWeight: '400'
-        }}
-      >
-        {message}
-      </Typography>
-    </div>
-  )
-}
 type fieldName =
   | 'receiverAddr'
   | 'weight'
@@ -154,8 +150,38 @@ const initialErrors = {
     required: true
   }
 }
+const initialState = {
+  openConfirmModal: {
+    isOpen: false,
+    tempData: {
+      isConfirmed: false,
+      isProductSubTypeOthers: false,
+      isProductAddonTypeOthers: false,
+    }
+  }
+}
+
+const setDefProd = ({
+  dataProduct,
+  setDefaultProduct,
+}: {
+  dataProduct: PurchaseOrderDetail,
+  setDefaultProduct: (params: singleProduct) => void
+}) => {
+  const defProd = {
+    productTypeId: dataProduct?.productType,
+    productSubTypeId: dataProduct?.productSubType,
+    productAddonId: dataProduct?.productAddOnType,
+    productSubTypeRemark: dataProduct?.productSubTypeRemark,
+    productAddOnTypeRemark: dataProduct?.productAddOnTypeRemark,
+  }
+
+  setDefaultProduct(defProd)
+}
+
 
 const CreateRecycleForm = ({
+  openModal,
   onClose,
   setState,
   data,
@@ -165,11 +191,32 @@ const CreateRecycleForm = ({
   receiverAddr,
   onChangeAddressReceiver
 }: props) => {
-  const { recycType, weightUnits, decimalVal } =
-    useContainer(CommonTypeContainer)
+
+  const {
+    recycType,
+    weightUnits,
+    decimalVal,
+    productType,
+    getProductType,
+  } = useContainer(CommonTypeContainer)
+
+  const {
+    resetModal,
+    openConfirmModal,
+    setOpenConfirmModal,
+    validateRemarks,
+    ModalConfirmRemarksEmpty,
+  } = useModalConfirmRemarksEmpty({
+    onConfirm: () => { formik.handleSubmit() }
+  })
+
+
   const [editRow, setEditRow] = useState<PurchaseOrderDetail>()
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
-  const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
+  const [isRecyc, setRecycType] = useState<boolean>(true)
+  const [defaultProduct, setDefaultProduct] = useState<singleProduct>()
+
+
 
   //---set custom style each role---
 
@@ -188,229 +235,133 @@ const CreateRecycleForm = ({
     setDefaultRecyc(defRecyc)
   }
 
+  const assignDataEditRow = ({ newDataEditRow }: { newDataEditRow: any }) => {
+    
+    try {
+
+      if (newDataEditRow) {
+        onHandleError('recycTypeId', 'succeed')
+        onHandleError('recycSubTypeId', 'succeed')
+
+        const refactorDataFormik = {
+          id: newDataEditRow.id,
+          poDtlId: newDataEditRow.poDtlId ?? 0,
+          recycTypeId: newDataEditRow.recycTypeId,
+          recycSubTypeId: newDataEditRow.recycSubTypeId,
+          unitId: newDataEditRow.unitId,
+          unitNameTchi: newDataEditRow.unitNameTchi,
+          unitNameSchi: newDataEditRow.unitNameSchi,
+          unitNameEng: newDataEditRow.unitNameEng,
+          weight: formatWeight(newDataEditRow.weight, decimalVal),
+          pickupAt: newDataEditRow?.pickupAt || '',
+          createdBy: newDataEditRow.createdBy,
+          updatedBy: newDataEditRow.updatedBy,
+          receiverAddr: newDataEditRow.receiverAddr || '',
+          receiverAddrGps: newDataEditRow.receiverAddrGps || [0],
+          status: newDataEditRow.status === null ? 'CREATED' : newDataEditRow.status ?? 'CREATED',
+          itemCategory: newDataEditRow.itemCategory || 'Recyclables',
+          productType: newDataEditRow?.productType, // => first value for edit from API , second value from create newDataEditRow row
+          productSubType: newDataEditRow?.productSubType,
+          productSubTypeRemark: newDataEditRow?.productSubTypeRemark,
+          productAddOnTypeRemark: newDataEditRow?.productAddOnTypeRemark,
+          productAddOnType: newDataEditRow?.productAddOnType,
+        }
+
+        formik.setValues(refactorDataFormik)
+
+        setRecycType((newDataEditRow.itemCategory === 'Recyclables' || (!refactorDataFormik?.productType)) ? true : false)
+      }
+
+    }
+    catch (err) {
+
+
+    }
+  }
+
   useEffect(() => {
     if (editRowId == null) {
+
       formik.setValues(initValue)
+      setRecycType(true)
       onHandleError('recycTypeId', 'succeed')
       onHandleError('recycSubTypeId', 'succeed')
+
     } else {
-      const editR = data.find(value => value.id === editRowId)
+
+      const editR = data.find(value => value?.id === editRowId)
+
       if (editR) {
+        setDefProd({
+          dataProduct: editR,
+          setDefaultProduct,
+        })
         setDefRecyc(editR)
+        assignDataEditRow({ newDataEditRow: editR })
         setEditRow(editR)
         formik.setFieldValue(
           'pickupAt',
           editR.pickupAt
-            ? dayjs.utc(editR.pickupAt).tz('Asia/Hong_Kong').format()
+            ? dayjs.utc(editR.pickupAt).tz('Asia/Hong_Kong').format(configDateFormatFull)
             : ''
         )
       }
     }
   }, [editRowId])
 
-  const handleOverlayClick = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
-    if (event.target === event.currentTarget) {
-      // If the overlay is clicked (not its children), close the modal
-      onClose && onClose()
-    }
-  }
 
-  useEffect(() => {
-    if (editRow) {
-      onHandleError('recycTypeId', 'succeed')
-      onHandleError('recycSubTypeId', 'succeed')
-      const index = data.indexOf(editRow)
 
-      formik.setValues({
-        id: index,
-        poDtlId: editRow.poDtlId ?? 0,
-        recycTypeId: editRow.recycTypeId,
-        recyclableNameTchi: editRow.recyclableNameTchi,
-        recyclableNameSchi: editRow.recyclableNameSchi,
-        recyclableNameEng: editRow.recyclableNameEng,
-        recycSubTypeId: editRow.recycSubTypeId,
-        recyclableSubNameTchi: editRow.recyclableSubNameTchi,
-        recyclableSubNameSchi: editRow.recyclableSubNameSchi,
-        recyclableSubNameEng: editRow.recyclableSubNameEng,
-        unitId: editRow.unitId,
-        unitNameTchi: editRow.unitNameTchi,
-        unitNameSchi: editRow.unitNameSchi,
-        unitNameEng: editRow.unitNameEng,
-        weight: formatWeight(editRow.weight, decimalVal),
-        pickupAt: editRow?.pickupAt || '',
-        createdBy: editRow.createdBy,
-        updatedBy: editRow.updatedBy,
-        receiverAddr: editRow.receiverAddr || '',
-        receiverAddrGps: editRow.receiverAddrGps || [0],
-        status: editRow.status === null ? 'CREATED' : editRow.status ?? 'CREATED'
-      })
-    }
-  }, [editRow])
-
-  const validateSchema = Yup.lazy((values) => {
-    let prevData: PurchaseOrderDetail[] = []
-    if (editRow) {
-      prevData = data.filter((item) => item.poDtlId != editRow.poDtlId)
-    } else {
-      prevData = data
-    }
-
-    return Yup.object().shape({
-      pickupAt: Yup.string().required(
-        t('purchase_order.create.this') +
-          ' ' +
-          t('purchase_order.create.receipt_date_and_time') +
-          ' ' +
-          t('purchase_order.create.is_required')
-      ),
-      recycTypeId: Yup.string().required(
-        t('purchase_order.create.this') +
-          ' ' +
-          t('col.recycType') +
-          ' ' +
-          t('purchase_order.create.is_required')
-      ),
-      recycSubTypeId: Yup.string().required(
-        t('purchase_order.create.this') +
-          ' ' +
-          t('col.recycType') +
-          ' ' +
-          t('purchase_order.create.is_required')
-      ),
-      weight: Yup.number().required(
-        t('purchase_order.create.this') +
-          ' ' +
-          t('purchase_order.create.weight') +
-          ' ' +
-          t('purchase_order.create.is_required')
-      ),
-      receiverAddr: Yup.string().required(
-        t('purchase_order.create.this') +
-          ' ' +
-          t('purchase_order.create.arrived') +
-          ' ' +
-          t('purchase_order.create.is_required')
-      )
-    })
-  })
-  const validateData = () => {
-    let isValid = true
-    // debugger
-    if (formik.values.pickupAt === '') {
-      setErrorsField((prev) => {
-        return {
-          ...prev,
-          pickupAt: {
-            ...prev.pickupAt,
-            status: true
-          }
-        }
-      })
-      isValid = false
-    }
-
-    if (!validDayjsISODate(dayjs(formik.values.pickupAt))) {
-      console.log('formik.values.pickupAt', formik.values.pickupAt)
-      setErrorsField((prev) => {
-        return {
-          ...prev,
-          pickupAt: {
-            ...prev.pickupAt,
-            status: true
-          }
-        }
-      })
-      isValid = false
-    }
-
-    if (formik.values.recycTypeId === '') {
-      setErrorsField((prev) => {
-        return {
-          ...prev,
-          recycTypeId: {
-            ...prev.recycTypeId,
-            status: true
-          }
-        }
-      })
-      isValid = false
-    }
-    // if (formik.values.recycSubTypeId === '') {
-    //   const filteredRecyc = recycType?.filter(
-    //     (value) => value.recycTypeId === formik.values.recycTypeId
-    //   ) as recycType[]
-    //   if (
-    //     filteredRecyc !== undefined &&
-    //     filteredRecyc.length > 0 &&
-    //     filteredRecyc[0].recycSubType.length > 0
-    //   ) {
-    //     setErrorsField((prev) => {
-    //       return {
-    //         ...prev,
-    //         recycSubTypeId: {
-    //           ...prev.recycSubTypeId,
-    //           status: true
-    //         }
-    //       }
-    //     })
-    //     isValid = false
-    //   }
-    // }
-    if (Number(formik.values.weight) <= 0) {
-      setErrorsField((prev) => {
-        return {
-          ...prev,
-          weight: {
-            ...prev.weight,
-            status: true
-          }
-        }
-      })
-      isValid = false
-    }
-
-    if (formik.values.receiverAddr === '') {
-      setErrorsField((prev) => {
-        return {
-          ...prev,
-          receiverAddr: {
-            ...prev.receiverAddr,
-            status: true
-          }
-        }
-      })
-      isValid = false
-    }
-
-    if (formik.values.unitId === 0) {
-      setErrorsField((prev) => {
-        return {
-          ...prev,
-          unitId: {
-            ...prev.unitId,
-            status: true
-          }
-        }
-      })
-      isValid = false
-    }
-    return isValid
-  }
 
   const formik = useFormik({
     initialValues: initValue,
-    // validationSchema: validateSchema,
+    validationSchema: ValidateSchemaCreateRecycleFormPurchaseOrder({
+      editRow,
+      isRecyc,
+      data,
+      productType,
+      recycType,
+      t,
+    })
+    ,
 
     onSubmit: (values, { resetForm }) => {
-      if (isEditing) {
-        const updatedData = data.map((row, id) => {
-          return id === values.id ? values : row
+
+      const isRemarksConfirmed = validateRemarks({
+        openConfirmModal,
+        values: {
+          productSubTypeRemark: formik?.values?.productSubTypeRemark,
+          productAddOnTypeRemark: formik?.values?.productAddOnTypeRemark,
+        }
+      })
+
+
+      if (!isRemarksConfirmed) {
+
+        setOpenConfirmModal({
+          ...openConfirmModal,
+          isOpen: true,
         })
-        setState(updatedData)
+        return
+      }
+      else {
+        resetModal()
+      }
+
+
+      let newData = []
+      if (isEditing) {
+
+        const updatedData: any = data.map((row, id) => {
+
+        
+          return row?.id === values.id ? values : row
+
+        })
+
+        newData = [...updatedData]
+
       } else {
-        let updatedValues: PurchaseOrderDetail = values;
+        let updatedValues: any = values;
 
         if (updatedValues.poDtlId === 0) {
           const { poDtlId, ...rest } = updatedValues;
@@ -418,9 +369,12 @@ const CreateRecycleForm = ({
         }
 
         updatedValues.id = data.length;
-        
-        setState([...data, updatedValues]);
+
+        newData = [...data, updatedValues]
       }
+
+      setState(newData)
+      
       resetForm()
       onClose && onClose()
     }
@@ -465,12 +419,6 @@ const CreateRecycleForm = ({
     }
   }
 
-  const onhandleSubmit = () => {
-    const isValid = validateData()
-    if (!isValid) return
-    formik.handleSubmit()
-  }
-
   const getWeightUnits = (): { unitId: number; lang: string }[] => {
     let units: { unitId: number; lang: string }[] = []
     if (i18n.language === Languages.ENUS) {
@@ -508,156 +456,244 @@ const CreateRecycleForm = ({
     return unitName
   }
 
+  const { marginTop } = useContainer(NotifContainer)
+
+  const resetAllField = () =>{
+    setEditRow(undefined)
+    setDefaultRecyc(undefined)
+    setDefaultProduct(undefined)
+    resetModal()
+    formik.resetForm()
+  }
+
+  const onHandleDrawer = () => {
+    resetAllField()
+    onClose && onClose()
+  }
+
   return (
-    <>
-      {/* <form onSubmit={onhandleSubmit}> */}
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Box sx={localstyles.modal} onClick={handleOverlayClick}>
-          <Box sx={localstyles.container}>
-            <Box
-              sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}
-            >
-              <Box>
-                <Typography sx={styles.header4}>
-                  {isEditing ? t('userGroup.change') : t('top_menu.add_new')}
-                </Typography>
-                <Typography sx={styles.header3}>
-                  {t('purchase_order.create.expected_recycling')}
-                </Typography>
-              </Box>
+    <Drawer
+      open={openModal}
+      onClose={onHandleDrawer}
+      anchor={'right'}
+      variant={'temporary'}
+      sx={{
+        '& .MuiDrawer-paper': {
+          marginTop: `${marginTop}`
+        }
+      }}
+    >
+      <Divider></Divider>
+      <div
+        className={`border-b-[1px] border-grey-line h-full ${openModal ? `md:w-[700px] w-[100vw] mt-[${marginTop}]` : 'hidden'
+          }`}
+      >
+        <form onSubmit={formik.handleSubmit}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Box >
+              <Box
+                sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}
+              >
+                <Box>
+                  <Typography sx={styles.header4}>
+                    {isEditing ? t('userGroup.change') : t('top_menu.add_new')}
+                  </Typography>
+                  <Typography sx={styles.header3}>
+                    {t('purchase_order.create.expected_recycling')}
+                  </Typography>
+                </Box>
 
-              <Box sx={{ marginLeft: 'auto' }}>
-                <Button
-                  variant="outlined"
-                  sx={{
-                    ...localstyles.button,
-                    color: 'white',
-                    bgcolor: colorTheme,
-                    borderColor: colorTheme
-                  }}
-                  onClick={onhandleSubmit}
-                  // type="submit"
-                >
-                  {t('col.save')}
-                </Button>
-                <Button
-                  variant="outlined"
-                  sx={{
-                    ...localstyles.button,
-                    color: colorTheme,
-                    bgcolor: 'white',
-                    borderColor: colorTheme
-                  }}
-                  onClick={() => onClose && onClose()}
-                >
-                  {t('col.cancel')}
-                </Button>
-                <IconButton
-                  sx={{ ml: '25px' }}
-                  onClick={() => onClose && onClose()}
-                >
-                  <KeyboardTabIcon sx={{ fontSize: '30px' }} />
-                </IconButton>
-              </Box>
-            </Box>
-            <Divider />
-            <Stack spacing={2} sx={localstyles.content}>
-              <Grid item>
-                <CustomField
-                  label={t('purchase_order.create.receipt_date_and_time')}
-                  mandatory
-                >
-                  <Box
+                <Box sx={{ marginLeft: 'auto' }}>
+                  <Button
+                    variant="outlined"
                     sx={{
-                      display: 'flex',
-                      gap: '8px',
-                      alignItems: 'center',
-                      width: '100%'
+                      ...localstyles.button,
+                      color: 'white',
+                      bgcolor: colorTheme,
+                      borderColor: colorTheme
                     }}
+                    type="submit"
                   >
-                    <Box sx={{ ...localstyles.DateItem }}>
-                      <DatePicker
-                        value={
-                          formik.values.pickupAt
-                            ? dayjs
+                    {t('col.save')}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      ...localstyles.button,
+                      color: colorTheme,
+                      bgcolor: 'white',
+                      borderColor: colorTheme
+                    }}
+                    onClick={onHandleDrawer}
+                  >
+                    {t('col.cancel')}
+                  </Button>
+                  <IconButton
+                    sx={{ ml: '25px' }}
+                    onClick={onHandleDrawer}
+                  >
+                    <KeyboardTabIcon sx={{ fontSize: '30px' }} />
+                  </IconButton>
+                </Box>
+              </Box>
+              <Divider />
+              <Stack spacing={2} sx={localstyles.content}>
+                <Grid item>
+                  <CustomField
+                    label={t('purchase_order.create.receipt_date_and_time')}
+                    mandatory
+                  >
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        gap: '8px',
+                        alignItems: 'center',
+                        width: '100%'
+                      }}
+                    >
+                      <Box sx={{ ...localstyles.DateItem }}>
+                        <DatePicker
+                          value={
+                            formik.values.pickupAt
+                              ? dayjs
                                 .utc(formik.values.pickupAt)
                                 .tz('Asia/Hong_Kong')
-                            : dayjs().tz('Asia/Hong_Kong')
-                        }
-                        format={dateFormat}
-                        timezone="Asia/Hong_Kong"
-                        onChange={(value) => {
-                          const utcValue = value
-                            ? formattedTimeToUTC(
+                              : dayjs().tz('Asia/Hong_Kong')
+                          }
+                          format={dateFormat}
+                          timezone="Asia/Hong_Kong"
+                          onChange={(value) => {
+                            const utcValue = value
+                              ? formattedTimeToUTC(
                                 dayjs(value).tz('Asia/Hong_Kong')
                               )
-                            : dayjs.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
-                          formik.setFieldValue('pickupAt', utcValue)
-                        }}
-                        sx={{ ...localstyles.datePicker }}
-                      />
-                    </Box>
-                    <Box sx={{ ...localstyles.timePeriodItem }}>
-                      <TimePicker
-                        value={
-                          formik.values.pickupAt
-                            ? dayjs
+                              : dayjs.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+                            formik.setFieldValue('pickupAt', utcValue)
+                          }}
+                          sx={{ ...localstyles.datePicker }}
+                        />
+                      </Box>
+                      <Box sx={{ ...localstyles.timePeriodItem }}>
+                        <TimePicker
+                          value={
+                            formik.values.pickupAt
+                              ? dayjs
                                 .utc(formik.values.pickupAt)
                                 .tz('Asia/Hong_Kong')
-                            : dayjs().tz('Asia/Hong_Kong')
-                        }
-                        timezone="Asia/Hong_Kong"
-                        onChange={(value) => {
-                          const utcValue = value
-                            ? formattedTimeToUTC(
+                              : dayjs().tz('Asia/Hong_Kong')
+                          }
+                          timezone="Asia/Hong_Kong"
+                          onChange={(value) => {
+                            const utcValue = value
+                              ? formattedTimeToUTC(
                                 dayjs(value).tz('Asia/Hong_Kong')
                               )
-                            : dayjs.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+                              : dayjs.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
 
-                          formik.setFieldValue('pickupAt', utcValue)
-                          console.log('utcValue', utcValue)
-                        }}
-                        sx={{ ...localstyles.timePicker }}
-                      />
+                            formik.setFieldValue('pickupAt', utcValue)
+                            console.log('utcValue', utcValue)
+                          }}
+                          sx={{ ...localstyles.timePicker }}
+                        />
+                      </Box>
                     </Box>
-                  </Box>
-                </CustomField>
-                {/* {errorsField['pickupAt' as keyof ErrorsField].status ? (
+                  </CustomField>
+                  {/* {errorsField['pickupAt' as keyof ErrorsField].status ? (
                   <ErrorMessages message={t('form.error.isInWrongFormat')} />
                 ) : (
                   ''
                 )} */}
-              </Grid>
-              <Grid item>
-                <CustomField label={t('col.recycType')} mandatory>
-                  <RecyclablesListSingleSelect
-                    showError={
-                      errorsField.recycTypeId.status ||
-                      errorsField.recycSubTypeId.status ||
-                      undefined
-                    }
-                    recycL={recycType ?? []}
-                    setState={(values) => {
-                      if (values.recycTypeId !== undefined) {
-                        onChangeContent('recycTypeId', values.recycTypeId)
-                      }
-                      if (values.recycSubTypeId !== undefined) {
-                        onChangeContent('recycSubTypeId', values.recycSubTypeId)
-                      }
+                </Grid>
+                <CustomField label={t('pick_up_order.recyclForm.item_category')}>
+                  <Switcher
+                    onText={t('recyclables')}
+                    offText={t('product')}
+                    defaultValue={isRecyc}
+                    setState={(newValue) => {
+                      const id = formik?.values?.id
+                      const poDtlId = formik?.values?.poDtlId
+                      resetAllField()
+                      formik.setFieldValue('id', id);
+                      formik.setFieldValue('poDtlId', poDtlId);
+                      formik.setFieldValue('itemCategory', newValue === true ? 'Recyclables' : 'Product');
+                      setRecycType(newValue)
                     }}
-                    itemColor={{
-                      bgColor: customListTheme
-                        ? customListTheme.bgColor
-                        : '#E4F6DC',
-                      borderColor: customListTheme
-                        ? customListTheme.border
-                        : '79CA25'
-                    }}
-                    defaultRecycL={defaultRecyc}
-                    key={formik.values.id}
                   />
                 </CustomField>
-                {/* {errorsField['recycSubTypeId' as keyof ErrorsField].required &&
+                <Grid item>
+                  {isRecyc ? (
+                    <CustomField label={t('col.recycType')} mandatory>
+                      <RecyclablesListSingleSelect
+                        showError={
+                          Boolean(
+                            (formik?.touched.recycTypeId && formik?.errors.recycTypeId) ||
+                            (formik?.touched.recycSubTypeId && formik?.errors.recycSubTypeId) ||
+                            undefined
+                          )
+                        }
+                        recycL={recycType ?? []}
+                        setState={(values) => {
+                          if (values.recycTypeId !== undefined) {
+                            formik.setFieldValue('recycTypeId', values?.recycTypeId, true)
+                            onChangeContent('recycTypeId', values.recycTypeId)
+                          }
+                          if (values.recycSubTypeId !== undefined) {
+                            formik.setFieldValue('recycSubTypeId', values?.recycSubTypeId, true)
+                            onChangeContent('recycSubTypeId', values.recycSubTypeId)
+                          }
+                        }}
+                        itemColor={{
+                          bgColor: customListTheme
+                            ? customListTheme.bgColor
+                            : '#E4F6DC',
+                          borderColor: customListTheme
+                            ? customListTheme.border
+                            : '79CA25'
+                        }}
+                        defaultRecycL={defaultRecyc}
+                        key={formik.values.id}
+                      />
+                    </CustomField>
+                  ) :
+                    <CustomField label={t('pick_up_order.product_type.product')} mandatory>
+                      <ProductListSingleSelect
+                        showError={(formik.errors?.productType && formik.touched?.productType) || undefined}
+                        label={t('pick_up_order.product_type.product')}
+                        options={productType ?? []}
+                        setState={(values) => {
+
+                          setOpenConfirmModal({
+                            ...openConfirmModal,
+                            tempData: {
+                              ...openConfirmModal.tempData,
+                              isProductSubTypeOthers: Boolean(values?.isProductSubTypeOthers),
+                              isProductAddonTypeOthers: Boolean(values?.isProductAddonTypeOthers),
+                            }
+                          })
+                          formik.setFieldValue('itemCategory', Boolean(isRecyc) === true ? 'Recyclables' : 'Product', true)
+                          formik.setFieldValue('productType', values?.productTypeId, true)
+                          formik.setFieldValue('productSubType', values?.productSubTypeId, true)
+                          formik.setFieldValue('productAddOnType', values?.productAddonId, true)
+                          formik.setFieldValue('productSubTypeRemark', values?.productSubTypeRemark, true)
+                          formik.setFieldValue('productAddOnTypeRemark', values?.productAddOnTypeRemark, true)
+                          formik.setFieldValue('recycType', '', true)
+                          formik.setFieldValue('recycSubType', '', true)
+                        }}
+                        itemColor={{
+                          bgColor: customListTheme
+                            ? customListTheme.bgColor
+                            : '#E4F6DC',
+                          borderColor: customListTheme
+                            ? customListTheme.border
+                            : '79CA25'
+                        }}
+                        defaultProduct={defaultProduct}
+                        key={formik?.values?.poDtlId}
+                      />
+                    </CustomField>
+
+                  }
+                  {/* {errorsField['recycSubTypeId' as keyof ErrorsField].required &&
                 errorsField['recycSubTypeId' as keyof ErrorsField].status ? (
                   <ErrorMessages
                     message={t('purchase_order.create.required_field')}
@@ -665,198 +701,108 @@ const CreateRecycleForm = ({
                 ) : (
                   ''
                 )} */}
-              </Grid>
-              <Grid item>
-                <CustomField
-                  label={t('purchase_order.create.weight')}
-                  mandatory
-                >
-                  <CustomTextField
-                    id="weight"
-                    placeholder={t('userAccount.pleaseEnterNumber')}
-                    // onChange={formik.handleChange}
-                    onChange={(event) => {
-                      // onChangeContent('weight', event.target.value)
-                      onChangeWeight(
-                        event.target.value,
-                        decimalVal,
-                        (value: string) => {
-                          formik.setFieldValue('weight', value)
-                          if (value) {
-                            onHandleError('weight', 'succeed')
+                </Grid>
+                <Grid item>
+                  <CustomField
+                    label={t('purchase_order.create.weight')}
+                    mandatory
+                  >
+                    <CustomTextField
+                      id="weight"
+                      placeholder={t('userAccount.pleaseEnterNumber')}
+                      // onChange={formik.handleChange}
+                      onChange={(event) => {
+                        // onChangeContent('weight', event.target.value)
+                        onChangeWeight(
+                          event.target.value,
+                          decimalVal,
+                          (value: string) => {
+                            formik.setFieldValue('weight', value)
+                            if (value) {
+                              onHandleError('weight', 'succeed')
+                            }
                           }
+                        )
+                      }}
+                      onBlur={(event) => {
+                        const value = formatWeight(event.target.value, decimalVal)
+                        formik.setFieldValue('weight', value)
+                        if (value) {
+                          onHandleError('weight', 'succeed')
                         }
-                      )
-                    }}
-                    onBlur={(event) => {
-                      const value = formatWeight(event.target.value, decimalVal)
-                      formik.setFieldValue('weight', value)
-                      if (value) {
-                        onHandleError('weight', 'succeed')
+                      }}
+                      value={formik.values.weight}
+                      error={Boolean(formik.touched?.weight && formik.errors?.weight)}
+                      sx={{ width: '100%' }}
+                      endAdornment={
+                        <Autocomplete
+                          disablePortal
+                          id="unitId"
+                          sx={{ width: 100, border: 0 }}
+                          value={getUnitName(formik.values.unitId)}
+                          options={getWeightUnits()}
+                          getOptionLabel={(option) => option.lang}
+                          onChange={(event, value) => {
+
+                            formik.setFieldValue('unitId', value?.unitId || 0)
+
+                            if (value?.unitId) {
+                              onChangeContent('unitId', value?.unitId)
+                            }
+
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              placeholder={t('purchase_order.create.unit')}
+                              sx={[
+                                localstyles.textField,
+                                { width: 400, border: 'none', borderColor: '' }
+                              ]}
+                              InputProps={{
+                                ...params.InputProps
+                              }}
+                            />
+                          )}
+                          noOptionsText={t('common.noOptions')}
+                        />
                       }
-                    }}
-                    value={formik.values.weight}
-                    error={
-                      errorsField.weight.status ||
-                      errorsField.unitId.status ||
-                      //formik.errors?.weight && formik.touched?.weight)
-                      undefined
-                    }
-                    sx={{ width: '100%' }}
-                    endAdornment={
-                      <Autocomplete
-                        disablePortal
-                        id="unitId"
-                        sx={{ width: 100, border: 0 }}
-                        value={getUnitName(formik.values.unitId)}
-                        options={getWeightUnits()}
-                        getOptionLabel={(option) => option.lang}
-                        onChange={(event, value) => {
-                          if (value?.unitId) {
-                            onChangeContent('unitId', value?.unitId)
-                          } else {
-                            formik.setFieldValue('unitId', 0)
-                          }
-                        }}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            placeholder={t('purchase_order.create.unit')}
-                            sx={[
-                              localstyles.textField,
-                              { width: 400, border: 'none', borderColor: '' }
-                            ]}
-                            InputProps={{
-                              ...params.InputProps
-                            }}
-                          />
-                        )}
-                        noOptionsText={t('common.noOptions')}
-                      />
-                    }
-                  ></CustomTextField>
-                </CustomField>
-                {/* { errors.weight.required && errors.weight.status &&  <ErrorMessages  message={t('purchase_order.create.required_field')}/>} */}
-                {/* {(errorsField['weight' as keyof ErrorsField].required &&
-                  errorsField['weight' as keyof ErrorsField].status) ||
-                (errorsField['unitId' as keyof ErrorsField].required &&
-                  errorsField['unitId' as keyof ErrorsField].status) ? (
-                  <ErrorMessages
-                    message={t('purchase_order.create.required_field')}
-                  />
-                ) : (
-                  ''
-                )} */}
-              </Grid>
-              <Grid item>
-                <CustomField
-                  label={t('purchase_order.create.arrived')}
-                  mandatory
-                >
-                  <CustomTextField
-                    id={'receiverAddr'}
-                    placeholder={t('purchase_order.create.arrived')}
-                    rows={4}
-                    multiline={true}
-                    onChange={(event) => {
-                      onChangeContent('receiverAddr', event.target.value)
-                      // formik.setFieldValue('receiverAddr', event.target.value)
-                      onChangeAddressReceiver &&
-                        onChangeAddressReceiver(event.target.value)
-                    }}
-                    value={formik.values.receiverAddr}
-                    sx={{ width: '100%', height: '100%' }}
-                    error={
-                      // formik.errors?.receiverAddr &&
-                      // formik.touched?.receiverAddr)
-                      errorsField.receiverAddr.status || undefined
-                    }
-                  />
-                </CustomField>
-                {/* {errorsField['receiverAddr' as keyof ErrorsField].required &&
-                errorsField['receiverAddr' as keyof ErrorsField].status ? (
-                  <ErrorMessages
-                    message={t('purchase_order.create.required_field')}
-                  />
-                ) : (
-                  ''
-                )} */}
-              </Grid>
-              <Stack spacing={2}>
-                {errorsField.pickupAt.status && (
-                  <ErrorMessages
-                    message={
-                      t('purchase_order.create.receipt_date_and_time') +
-                      t('form.error.isInWrongFormat')
-                    }
-                  />
-                )}
-                {errorsField.recycTypeId.status && (
-                    <ErrorMessages
-                      message={
-                        t('pick_up_order.card_detail.main_category') +
-                        t('form.error.shouldNotBeEmpty')
-                      }
+                    ></CustomTextField>
+                  </CustomField>
+                </Grid>
+                <Grid item>
+                  <CustomField
+                    label={t('purchase_order.create.arrived')}
+                    mandatory
+                  >
+                    <CustomTextField
+                      id={'receiverAddr'}
+                      placeholder={t('purchase_order.create.arrived')}
+                      rows={4}
+                      multiline={true}
+                      onChange={(event) => {
+                        onChangeContent('receiverAddr', event.target.value)
+                        formik.setFieldValue('receiverAddr', event.target.value)
+                        onChangeAddressReceiver &&
+                          onChangeAddressReceiver(event.target.value)
+                      }}
+                      value={formik.values.receiverAddr}
+                      sx={{ width: '100%', height: '100%' }}
+                      error={Boolean(formik.errors?.receiverAddr && formik.touched?.receiverAddr)}
                     />
-                  )}
-                {(errorsField.weight.status || errorsField.unitId.status) && (
-                  <ErrorMessages
-                    message={
-                      t('purchase_order.create.weight') +
-                      t('form.error.shouldNotBeEmpty')
-                    }
-                  />
-                )}
-                {errorsField.receiverAddr.status && (
-                  <ErrorMessages
-                    message={
-                      t('purchase_order.create.arrived') +
-                      t('form.error.shouldNotBeEmpty')
-                    }
-                  />
-                )}
+                  </CustomField>
+                </Grid>
+                <AlertList
+                  formik={formik}
+                />
+                <ModalConfirmRemarksEmpty
+                />
               </Stack>
-              {/* <Stack spacing={2}>
-                  {formik.errors.createdBy && formik.touched.createdBy && (
-                    <Alert severity="error">{formik.errors.createdBy} </Alert>
-                  )}
-                  {formik.errors?.recycTypeId && formik.touched?.recycTypeId && (
-                    <Alert severity="error">{formik.errors?.recycTypeId} </Alert>
-                  )}
-                  {formik.errors?.recycSubTypeId &&
-                    formik.touched?.recycSubTypeId && (
-                      <Alert severity="error">
-                        {formik.errors?.recycSubTypeId}{' '}
-                      </Alert>
-                    )}
-                  {formik.errors?.weight && formik.touched?.weight && (
-                    <Alert severity="error">{formik.errors?.weight} </Alert>
-                  )}
-                  {formik.errors.createdBy && formik.touched.createdBy && (
-                    <Alert severity="error">{formik.errors.createdBy} </Alert>
-                  )}
-                  {formik.errors.createdBy &&
-                    formik.touched.createdBy && (
-                      <Alert severity="error">
-                        {formik.errors.createdBy}{' '}
-                      </Alert>
-                    )}
-                  {formik.errors.createdBy && formik.touched.createdBy && (
-                    <Alert severity="error">{formik.errors.createdBy} </Alert>
-                  )}
-                  {formik.errors.createdBy &&
-                    formik.touched.createdBy && (
-                      <Alert severity="error">
-                        {formik.errors.createdBy}{' '}
-                      </Alert>
-                    )}
-                </Stack> */}
-            </Stack>
-          </Box>
-        </Box>
-      </LocalizationProvider>
-      {/* </form> */}
-    </>
+            </Box>
+          </LocalizationProvider>
+        </form>
+      </div>
+    </Drawer>
   )
 }
 

@@ -8,6 +8,7 @@ import {
   EDIT_VEHICLE,
   GET_LOGISTIC_VEHICLE,
   SEARCH_LOGISTIC_VEHICLE,
+  NEW_SEARCH_LOGISTIC_VEHICLE,
   GET_LOGISTIC_VEHICLE_BY_ID,
   GET_VEHICLE_PHOTO
 } from '../../constants/requests'
@@ -106,6 +107,28 @@ export const searchVehicle = async (vehicleId: string) => {
     const response = await axiosInstance({
       baseURL: window.baseURL.logistic,
       ...SEARCH_LOGISTIC_VEHICLE(token.decodeKeycloack, vehicleId),
+      headers: {
+        AuthToken: token.authToken
+      }
+    })
+    return response
+  } catch (e) {
+    console.error('Edit a vehicle failed:', e)
+    return null
+  }
+}
+
+export const searchVehicleNew = async (vehicleId?: string, deviceId?: string) => {
+  try {
+    const token = returnApiToken()
+    const params: any = {}
+    if (vehicleId) params.vehicleId = vehicleId
+    if (deviceId) params.deviceId = deviceId
+    
+    const response = await axiosInstance({
+      baseURL: window.baseURL.logistic,
+      ...NEW_SEARCH_LOGISTIC_VEHICLE(token.decodeKeycloack, vehicleId, deviceId),
+      params: params,
       headers: {
         AuthToken: token.authToken
       }

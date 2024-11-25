@@ -31,6 +31,7 @@ import {
   GET_IMG_SETTINGS,
   GET_DECIMAL_VAL,
   GET_DATE_FORMAT,
+  GET_PROCESS_TYPE_DATA
 } from '../constants/requests'
 import { randomBackgroundColor, returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
@@ -38,6 +39,8 @@ import { getWeightUnit } from '../APICalls/ASTD/recycling'
 import { getAllTenant, getTenantById } from '../APICalls/tenantManage'
 import { localStorgeKeyName } from '../constants/constant'
 import { getAllPackagingUnit } from '../APICalls/Collector/packagingUnit'
+import { getProductTypeList } from '../APICalls/ASTD/settings/productType'
+import { Products } from '../interfaces/productType'
 
 const CommonType = () => {
   const [colPointType, setColPointType] = useState<colPointType[]>()
@@ -50,21 +53,26 @@ const CommonType = () => {
   const [collectorList, setCollectorList] = useState<collectorList[]>()
   const [vehicleType, setVehicleType] = useState<vehicleType[]>()
   const [processType, setProcessType] = useState<ProcessType[]>()
+  const [processTypeListData, setProcessTypeList] = useState<ProcessType[]>()
   const [contractLogistic, setContractLogistic] = useState<contract[]>()
-  const [imgSettings, setImgSettings] = useState<{ImgQuantity:number, ImgSize: number}>({
+  const [imgSettings, setImgSettings] = useState<{
+    ImgQuantity: number
+    ImgSize: number
+  }>({
     ImgQuantity: 3,
     ImgSize: 3 * 1000 * 1000
   })
   const [weightUnits, setWeightUnits] = useState<weightUnit[]>([])
-  const [page, setPage] = useState(1)  
+  const [page, setPage] = useState(1)
   const pageSize = 10
   const [decimalVal, setDecimalVal] = useState<number>(0)
   const [dateFormat, setDateFormat] = useState<string>('')
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [currentTenant, setCurrentTenant] = useState<Company| null>(null);
+  const [companies, setCompanies] = useState<Company[]>([])
+  const [currentTenant, setCurrentTenant] = useState<Company | null>(null)
   const [packagingList, setPackagingList] = useState<PackagingList[]>([])
-  const tenantId = localStorage.getItem(localStorgeKeyName.tenantId);
-  
+  const [productType, setProductType] = useState<Products[]>([])
+  const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
+
   const getColPointType = async () => {
     var colPointType = []
     try {
@@ -125,8 +133,8 @@ const CommonType = () => {
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
       // console.log('Get site type success:', JSON.stringify(response.data))
-      RecycType = response.data.map((item:recycType) => {
-        return{
+      RecycType = response.data.map((item: recycType) => {
+        return {
           ...item,
           backgroundColor: randomBackgroundColor()
         }
@@ -241,6 +249,28 @@ const CommonType = () => {
     }
   }
 
+  const getProcessTypeList = async () => {
+    try {
+      const token = returnApiToken()
+      const response = await axiosInstance({
+        baseURL: window.baseURL.collector,
+        ...GET_PROCESS_TYPE_DATA(token.realmApiRoute),
+        params: {
+          page: 0,
+          size: 1000
+        },
+        headers: {
+          AuthToken: token.authToken
+        }
+      })
+
+      const processTypeListData = response.data.content
+      setProcessTypeList(processTypeListData)
+    } catch (error) {
+      throw error
+    }
+  }
+
   const getContractLogistic = async () => {
     const token = returnApiToken()
     try {
@@ -272,17 +302,17 @@ const CommonType = () => {
       return null
     }
   }
-  
+
   const initWeightUnit = async () => {
-   try {
-    const result = await getWeightUnit(page - 1, pageSize)
-    const data = result?.data
-    setWeightUnits(data)
-   } catch (error) {
-    return null
-   }
+    try {
+      const result = await getWeightUnit(page - 1, 1000)
+      const data = result?.data
+      setWeightUnits(data)
+    } catch (error) {
+      return null
+    }
   }
-  
+
   const getDecimalVal = async () => {
     try {
       const response = await axiosInstance({
@@ -299,7 +329,7 @@ const CommonType = () => {
     try {
       const response = await axiosInstance({
         ...GET_DATE_FORMAT,
-        baseURL: window.baseURL.administrator,
+        baseURL: window.baseURL.administrator
       })
       setDateFormat(response.data.dateFormat)
     } catch (error) {
@@ -310,9 +340,9 @@ const CommonType = () => {
   const initCompaniesData = async () => {
     try {
       const result = await getAllTenant(1 - 1, 1000)
-      if(result){
+      if (result) {
         const data = result?.data.content
-        const mappingData:Company[] = data.map((item:any) => {
+        const mappingData: Company[] = data.map((item: any) => {
           return {
             id: item?.tenantId,
             nameEng: item?.companyNameEng,
@@ -324,7 +354,6 @@ const CommonType = () => {
           setCompanies(mappingData)
         }
       }
-
     } catch (error: any) {
       return null
     }
@@ -332,13 +361,14 @@ const CommonType = () => {
 
   const getTenantLogin = async () => {
     try {
-      if(!tenantId) return
-      const response =  await getTenantById(Number(tenantId));
-      if(response.data){
-        const tenant:Company = {
-          nameEng: response.data.companyNameEng ?? response.data.companyNameEng ?? '',
+      if (!tenantId) return
+      const response = await getTenantById(Number(tenantId))
+      if (response.data) {
+        const tenant: Company = {
+          nameEng:
+            response.data.companyNameEng ?? response.data.companyNameEng ?? '',
           nameSchi: response.data.companyNameSchi ?? '',
-          nameTchi: response.data.companyNameTchi ?? '',
+          nameTchi: response.data.companyNameTchi ?? ''
         }
         setCurrentTenant(tenant)
       }
@@ -358,6 +388,14 @@ const CommonType = () => {
     }
   }
 
+  const getProductType = async () => {
+    const response = await getProductTypeList()
+    const data = response.data
+    if (data) {
+      setProductType(data)
+    }
+  }
+
   const updateCommonTypeContainer = () => {
     getColPointType()
     getPremiseType()
@@ -369,6 +407,7 @@ const CommonType = () => {
     getCollectorList()
     getManuList()
     getProcessList()
+    getProcessTypeList()
     getContractLogistic()
     getImgSettings()
     getDecimalVal()
@@ -390,6 +429,7 @@ const CommonType = () => {
       getCollectorList()
       getManuList()
       getProcessList()
+      getProcessTypeList()
       getContractLogistic()
       getImgSettings()
       getDecimalVal()
@@ -400,7 +440,6 @@ const CommonType = () => {
       getPackagingUnitList()
     }
   }, [])
-
 
   return {
     colPointType,
@@ -413,6 +452,7 @@ const CommonType = () => {
     collectorList,
     manuList,
     processType,
+    processTypeListData,
     contractLogistic,
     imgSettings,
     decimalVal,
@@ -421,6 +461,7 @@ const CommonType = () => {
     companies,
     currentTenant,
     packagingList,
+    productType,
     updateCommonTypeContainer,
     getColPointType,
     getPremiseType,
@@ -432,13 +473,15 @@ const CommonType = () => {
     getCollectorList,
     getManuList,
     getProcessList,
+    getProcessTypeList,
     getContractLogistic,
     getImgSettings,
     getDecimalVal,
     getDateFormat,
+    getProductType,
     initWeightUnit,
     initCompaniesData,
-    getPackagingUnitList,
+    getPackagingUnitList
   }
 }
 

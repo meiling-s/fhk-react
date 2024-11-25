@@ -1,6 +1,8 @@
 export type PurchaseOrderDetail = {
-  id?: any;
-  poDtlId?: number
+  id?: string | number, // => FE Data
+  itemCategory?: string, // => FE Data
+
+  poDtlId: number
   recycTypeId: string
   recyclableNameTchi: string
   recyclableNameSchi: string
@@ -13,13 +15,28 @@ export type PurchaseOrderDetail = {
   unitNameTchi: string
   unitNameSchi: string
   unitNameEng: string
-  weight: string
+  weight: string,
+  pickupAt: string
+  status: any
+  receiverAddr: string
+  receiverAddrGps: number[]
   createdBy: string
   updatedBy: string
-  pickupAt?: string
-  receiverAddr?: string
-  receiverAddrGps?: number[]
-  status?: string
+  version?: number
+  productType: string // => id
+  productNameTchi: string
+  productNameSchi: string
+  productNameEng: string
+  productSubType: string // => id
+  productSubNameTchi: string
+  productSubNameSchi: string
+  productSubNameEng: string
+  productAddOnType: string // => id
+  productAddOnNameTchi: string
+  productAddOnNameSchi: string
+  productAddOnNameEng: string
+  productSubTypeRemark: string
+  productAddOnTypeRemark: string
 }
 
 export type PurChaseOrder = {
@@ -44,7 +61,7 @@ export type PurChaseOrder = {
   createdAt: string
   updatedAt: string
   purchaseOrderDetail: PurchaseOrderDetail[]
-  version?: number
+  version?: number,
 }
 
 export type queryPurchaseOrder = {

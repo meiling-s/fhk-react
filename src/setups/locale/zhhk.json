@@ -8,6 +8,8 @@
     "saveFailed": "保存失敗",
     "editSuccessfully": "編輯成功",
     "editFailed": "編輯失敗",
+    "cancelSuccessfully": "取消成功",
+    "cancelFailed": "取消失敗",
     "deletedSuccessfully": "刪除成功",
     "deleteFailed": "刪除失敗",
     "enterName": "請輸入名稱",
@@ -45,7 +47,10 @@
     "warehouseName": "倉庫名稱已存在",
     "vehicle": "車輛",
     "theNameAlreadyExist": "員工職位名稱已存在",
-    "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失"
+    "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失",
+    "noData": "沒有數據",
+    "category": "類別",
+    "subCategory": "次類別"
   },
   "col": {
     "createCP": "建立回收點",
@@ -142,6 +147,7 @@
   "noticeTemplate": "通知範本",
   "statistics": "數據",
   "recyclables": "回收物",
+  "product": "產品",
   "convoy": "車隊",
   "recycleCompany": "回收公司",
   "recyclePlant": "回收廠",
@@ -161,7 +167,8 @@
   "top_menu": {
     "general_settings": "一般設定",
     "packaging_unit": "包裝單位",
-    "workshop": "工場",
+    "process_type": "處理方式",
+    "workshop": "倉庫",
     "vehicles": "車輛",
     "company": "公司",
     "waste_disposal": "廢棄點",
@@ -171,7 +178,32 @@
     "add_new_vehicle": "新增車輛"
   },
   "settings_page": {
-    "title": "設定"
+    "title": "設定",
+    "recycling": {
+      "semi_finish_product": "半成品 ・ 產品類別",
+      "remarks": "備註",
+      "remark_placeholder": "請輸入備註",
+      "add_new": "新增",
+      "product_category": "產品類別",
+      "traditional_chinese_name": "繁體中文名稱",
+      "traditional_chinese_name_placeholder": "請輸入繁體中文名稱",
+      "simplified_chinese_name": "簡體中文名稱",
+      "simplified_chinese_name_placeholder": "請輸入簡體中文名稱",
+      "english_name": "英文名稱",
+      "english_name_placeholder": "請輸入英文名稱",
+      "introduction": "簡介",
+      "introduction_placeholder": "請輸入簡介",
+      "category": "類別",
+      "main_category": "主類別",
+      "sub_category": "次類別",
+      "additional_category": "追加類別",
+      "plastic_no_1": "1號膠",
+      "plastic_no_2": "2號膠",
+      "enter_text": "請輸入文字",
+      "water_bottle": "水",
+      "film": "菲林",
+      "edit": "修改"
+    }
   },
   "warehouse_page": {
     "trad_name": "繁體中文名稱",
@@ -368,6 +400,9 @@
     },
     "card_detail": {
       "main_category": "回收物主類別",
+      "product_type_label": "產品類型",
+      "sub_product_type_label": "產品子類型",
+      "addon_product_type_label": "產品插件",
       "subcategory": "回收物次類別",
       "shipping_time": "預計運送時間",
       "weight": "預計重量",
@@ -465,7 +500,15 @@
       "receiver": "收件公司",
       "arrived": "到達地點",
       "placeholder": "請輸入地點",
-      "select_po": "選擇運單"
+      "placeholder_shipping_company": "請輸入寄件公司",
+      "placeholder_receiver_company": "請輸入收貨公司",
+      "select_po": "選擇運單",
+      "item_category": "物品類別"
+    },
+    "product_type": {
+      "product": "製成品類別",
+      "subtype": "次類別",
+      "add-on": "追加類別"
     },
     "select_po": "選擇運單",
     "search_company_name": "輸入寄件者公司",
@@ -474,6 +517,7 @@
     "confirm_reject": "確認拒絕",
     "confirm_approve_title": "確認接受嗎？",
     "confirm_reject_title": "確認拒絕嗎？",
+    "confirm_empty_remarks": "確認備註為空白嗎？",
     "approved_success": "接受成功",
     "rejected_success": "拒絕成功",
     "reject_reasons": "拒絕原因",
@@ -489,6 +533,9 @@
       "receiverAddr": "此接收者位址 不應留白",
       "recycType": "此可回收類型 不應留白",
       "recycSubType": "此可回收子類型 不應留白",
+      "productType": "該產品類型不能為空",
+      "productSubType": "此產品子類型不應為空",
+      "productAddon": "該產品插件不應為空",
       "weight": "該重量 不應留白",
       "weightGreaterThanZero": "這個權重應該大於零",
       "invalid_date": "失效日期",
@@ -791,6 +838,7 @@
     "suspend": "暫停",
     "deleted": "已刪除",
     "staffId": "員工編號",
+    "isAdmin": "是否管理員",
     "successCreatedUser": "成功創建用戶",
     "failedCreatedUser": "創建用戶失敗",
     "successEditUser": "成功編輯用戶",
@@ -1054,6 +1102,8 @@
     },
     "vehicleMenu": {
       "vehicle_number": "車輛編碼",
+      "imei": "IMEI 號碼",
+      "isCompactor": "是否壓縮車",
       "license_plate_number": "車牌號碼",
       "vehicle_type": "車輛類型",
       "vehicle_cargo_capacity": "車輛載貨量",
@@ -1113,6 +1163,21 @@
     "remark": "備注",
     "remark_placeholder": "請輸入備註"
   },
+  "process_type": {
+    "process_type": "處理方式",
+    "new": "新的",
+    "traditional_chinese_name": "繁體中文名稱",
+    "traditional_chinese_name_placeholder": "請輸入繁體中文名稱",
+    "simplified_chinese_name": "簡體中文名稱",
+    "simplified_chinese_name_placeholder": "請輸入簡體中文名稱",
+    "english_name": "英文名稱",
+    "english_name_placeholder": "請輸入英文名稱",
+    "introduction": "簡介",
+    "introduction_placeholder": "請輸入簡介",
+    "remark": "備注",
+    "remark_placeholder": "請輸入備註",
+    "time": "處理需時（時間/重量）"
+  },
   "staffEnquiry": {
     "title": "員工查詢",
     "addNewStaffEnquiry": "新增員工查詢",
@@ -1150,11 +1215,15 @@
     "report_of_user_management_list": "用户报表",
     "report_of_audit_trail": "审计追踪报表",
     "report_of_user_activity": "用戶活動報表",
-    "report_of_notification": "通知報表"
+    "report_of_notification": "通知報表",
+    "report_formula": "報表數據提取方式",
+    "formula_check_in": "以工廠入貨作準",
+    "formula_check_out": "以回收公司出貨作準"
   },
   "purchase_order": {
     "all_order": "所有訂單",
     "enquiry_po": "訂單",
+    "missing_arrived": "到達資訊不能為空",
     "table": {
       "created_datetime": "建立日期",
       "order_number": "訂單編號",
@@ -1458,5 +1527,42 @@
     "createdAt": "送出入日期及時間",
     "shippingCompany": "狀態",
     "inventoryLocation": "送出地點"
+  },
+  "processOrder": {
+    "title": "处理订单",
+    "processOrder": "處理訂單",
+    "enterOrderNumber": "輸入訂單編號",
+    "porDatetime": "處理日期及時間",
+    "porCategory": "處理類別",
+    "orderNumber": "訂單編號",
+    "workshop": "工場",
+    "createdate": "處理日期及地點",
+    "create": {
+      "classification": "分類",
+      "sol": "溶膠",
+      "package": "包裝",
+      "itemToProcess": "預計待處理物品",
+      "itemCategory": "物品類別 (按一下類別顯示子類別，按兩下取消選擇)",
+      "recycling": "回收物",
+      "product": "產品",
+      "warehouse": "貨倉"
+    },
+    "details": {
+      "oderDetail": "訂單詳情",
+      "cancelTitle": "確認取消處理訂單嗎？",
+      "cancelSubTitle": "取消原因（可多選）",
+      "startdateTime": "開始日期和時間",
+      "itemCategory": "項目類別"
+    },
+    "table": {
+      "startOrFinishDate": "開始/結束日期",
+      "processIn": "處理輸入",
+      "processOut": "處理出"
+    }
+  },
+  "factory": {
+    "factory": "工場",
+    "warehouse": "貨倉",
+    "introduction": "簡介"
   }
 }

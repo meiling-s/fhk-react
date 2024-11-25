@@ -246,7 +246,6 @@ const ProcessRecord: FunctionComponent = () => {
       label: t('processRecord.processingNumb'),
       placeholder: t('processRecord.enterProcessingNumber'),
       field: 'processOutId',
-      numberOnly: true
       // width: ''
     },
     {
@@ -355,7 +354,6 @@ const ProcessRecord: FunctionComponent = () => {
               field={s.field}
               placeholder={s?.placeholder}
               // width={s.width}
-               numberOnly={s.numberOnly || false}
               options={s.options || []}
               onChange={handleSearch}
             />

@@ -42,6 +42,8 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import Switcher from '../../../../components/FormComponents/CustomSwitch'
+import LabelField from '../../../../components/FormComponents/CustomField'
 
 interface CreateVehicleProps {
   drawerOpen: boolean
@@ -51,6 +53,7 @@ interface CreateVehicleProps {
   rowId?: number
   selectedItem?: LogisticVehicle | null
   plateListExist: string[]
+  deviceIdListExist: string[]
 }
 
 const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
@@ -60,19 +63,23 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   onSubmitData,
   rowId,
   selectedItem,
-  plateListExist
+  plateListExist,
+  deviceIdListExist
 }) => {
   const { t } = useTranslation()
+  // console.log('selected', selectedItem)
   const [vehicleTypeId, setVehicleTypeId] = useState<string>('')
   const [selectedVehicle, setSelectedVehicle] = useState<il_item>({
     id: '1',
     name: 'Van'
   })
   const [licensePlate, setLicensePlate] = useState('')
+  const [deviceId, setDeviceId] = useState<string>('')
   const [pictures, setPictures] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [vehicleWeight, setVehicleWeight] = useState<string>('')
+  const [isCompactor, setIsCompactor] = useState<boolean>(false)
   const { vehicleType, imgSettings } = useContainer(CommonTypeContainer)
   const [vehicleTypeList, setVehicleType] = useState<il_item[]>([])
   const [version, setVersion] = useState<number>(0)
@@ -80,9 +87,11 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   const mappingData = () => {
     if (selectedItem != null) {
       setLicensePlate(selectedItem.plateNo)
+      setDeviceId(selectedItem.deviceId)
       setVehicleTypeId(selectedItem.vehicleTypeId)
       setVehicleWeight(selectedItem.netWeight.toString())
       setVersion(selectedItem.version)
+      setIsCompactor(selectedItem.compactor === 1)
 
       const imageList: any = selectedItem.photo.map(
         (url: string, index: number) => {
@@ -115,6 +124,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       setTrySubmited(false)
       resetData()
     }
+    console.log("id list", deviceIdListExist)
   }, [drawerOpen])
 
   const getserviceList = () => {}
@@ -123,6 +133,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     setLicensePlate('')
     setVehicleTypeId('')
     setVehicleWeight('')
+    setDeviceId('')
+    setIsCompactor(false)
     setPictures([])
     setValidation([])
   }
@@ -209,21 +221,40 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
         tempV.push({
           field: t('driver.vehicleMenu.license_plate_number'),
           problem: formErr.empty,
-          type: 'error'
+          type: 'error',
+          dataTestId:"logistic-vehicles-form-plate-no-err-warning-5910"
         })
-      } else if (plateListExist && action === 'add' && plateListExist.includes(licensePlate)) {
+      } if (plateListExist && action === 'add' && plateListExist.includes(licensePlate)) {
         tempV.push({
           field: t('driver.vehicleMenu.license_plate_number'),
           problem: formErr.alreadyExist,
-          type: 'error'
+          type: 'error',
+          dataTestId: 'logistic-vehicles-form-plate-no-err-warning-5910'
         })
-      } else if (plateListExist && action === 'edit' && selectedItem) {
+      } if (deviceIdListExist && action === 'add' && deviceIdListExist.includes(deviceId)) {
+        tempV.push({
+          field: t('driver.vehicleMenu.imei'),
+          problem: formErr.alreadyExist,
+          type: 'error',
+          dataTestId: 'logistic-vehicles-form-imei-err-warning-7562'
+        })
+      } if (plateListExist && action === 'edit' && selectedItem) {
         // Check if the license plate has changed and if the new plate already exists
         if (licensePlate !== selectedItem.plateNo && plateListExist.includes(licensePlate)) {
           tempV.push({
             field: t('driver.vehicleMenu.license_plate_number'),
             problem: formErr.alreadyExist,
-            type: 'error'
+            type: 'error',
+            dataTestId: 'logistic-vehicles-form-plate-no-err-warning-5910'
+          })
+        }
+      } if ( deviceIdListExist && action === 'edit' && selectedItem) {
+        if (deviceId !== selectedItem.deviceId && deviceIdListExist.includes(deviceId)) {
+          tempV.push({
+            field: t('driver.vehicleMenu.imei'),
+            problem: formErr.alreadyExist,
+            type: 'error',
+            dataTestId: 'logistic-vehicles-form-imei-err-warning-7562'
           })
         }
       }
@@ -256,7 +287,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     }
 
     validate()
-  }, [licensePlate, pictures, vehicleWeight, vehicleTypeId, i18n.language])
+  }, [licensePlate, pictures, vehicleWeight, vehicleTypeId, deviceId, i18n.language])
 
   const handleSubmit = () => {
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
@@ -268,6 +299,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       createdBy: loginId,
       updatedBy: loginId,
       vehicleTypeId: vehicleTypeId,
+      deviceId: deviceId,
+      compactor: isCompactor ? 1 : 0,
       netWeight: Number(vehicleWeight),
       ...(action === 'edit' && {version: version}),
       ...(action === 'delete' && {version: version})
@@ -396,6 +429,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
             <CustomField label={t('driver.vehicleMenu.license_plate_number')} mandatory>
               <CustomTextField
                 id="licensePlate"
+                dataTestId='logistic-vehicles-form-plate-no-input-field-3843'
                 value={licensePlate}
                 disabled={action === 'delete'}
                 placeholder={t(
@@ -414,6 +448,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   labelId="vehicleType"
                   id="vehicleType"
                   value={vehicleTypeId}
+                  displayEmpty
                   sx={{
                     borderRadius: '12px'
                   }}
@@ -428,6 +463,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   }}
                   error={checkString(vehicleTypeId)}
                   defaultValue={selectedItem?.vehicleTypeId}
+                  data-testid="logistic-vehicles-form-vehicle-type-select-button-7024"
                 >
                   <MenuItem value="">
                     <em>{t('check_in.any')}</em>
@@ -444,12 +480,39 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 </Select>
               </FormControl>
             </Grid>
-
+            <Grid item>
+              <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
+                <LabelField label={t('driver.vehicleMenu.isCompactor')} />
+                <Switcher
+                  onText={t('common.yes')}
+                  offText={t('common.no')}
+                  disabled={action === 'delete'}
+                  defaultValue={isCompactor}
+                  setState={(newValue) => {
+                    setIsCompactor(newValue)
+                  }}
+                />
+              </div>
+            </Grid>
+            <Grid item>
+              <CustomField label={t('driver.vehicleMenu.imei')}>
+                <CustomTextField
+                  dataTestId='logistic-vehicles-form-imei-input-field-9942'
+                  id="deviceId"
+                  value={deviceId}
+                  placeholder={t(
+                    'driver.vehicleMenu.imei'
+                  )}
+                  onChange={(event) => setDeviceId(event.target.value)}
+                />
+              </CustomField>
+            </Grid>
             <Grid item>
               <CustomField
                 label={t('driver.vehicleMenu.vehicle_cargo_capacity')} mandatory
               ></CustomField>
               <TextField
+                data-
                 id="vehicleWeight"
                 value={vehicleWeight}
                 onChange={(event) => {
@@ -470,6 +533,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 InputProps={{
                   endAdornment: <Typography>kg</Typography>
                 }}
+                data-testid="logistic-vehicles-form-cargo-capacity-input-field-6355"
               />
             </Grid>
             <Grid item>
@@ -503,6 +567,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                         <ButtonBase
                           sx={localstyles.btnBase}
                           onClick={(event) => onImageUpload()}
+                          data-testid="logistic-vehicles-form-upload-images-5746"
                         >
                           <CAMERA_OUTLINE_ICON style={{ color: '#ACACAC' }} />
                           <Typography
@@ -566,6 +631,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                       field={t(val.field)}
                       errorMsg={returnErrorMsg(val.problem, t)}
                       type={val.type}
+                      dataTestId=''
                     />
                   ))}
               </Grid>

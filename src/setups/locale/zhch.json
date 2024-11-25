@@ -8,6 +8,8 @@
     "saveFailed": "保存失败",
     "editSuccessfully": "编辑成功",
     "editFailed": "编辑失败",
+    "cancelSuccessfully": "取消成功",
+    "cancelFailed": "取消失败",
     "deletedSuccessfully": "删除成功",
     "deleteFailed": "删除失败",
     "enterName": "请输入名称",
@@ -45,7 +47,10 @@
     "warehouseName": "仓库名称已存在",
     "vehicle": "车辆",
     "theNameAlreadyExist": "员工职位名称已存在",
-    "leaveConfirmMsg": "您确定要离开此页面吗？未保存的更改将会丢失"
+    "leaveConfirmMsg": "您确定要离开此页面吗？未保存的更改将会丢失",
+    "noData": "没有数据",
+    "category": "类别",
+    "subCategory": "次类别"
   },
   "col": {
     "createCP": "建立回收点",
@@ -142,6 +147,7 @@
   "noticeTemplate": "通知范本",
   "statistics": "数据",
   "recyclables": "回收物",
+  "product": "产品",
   "convoy": "车队",
   "recycleCompany": "回收公司",
   "recyclePlant": "回收厂",
@@ -161,7 +167,8 @@
   "top_menu": {
     "general_settings": "一般设定",
     "packaging_unit": "包装单位",
-    "workshop": "工场",
+    "process_type": "处理方式",
+    "workshop": "仓库",
     "vehicles": "车辆",
     "company": "公司",
     "waste_disposal": "废弃点",
@@ -171,7 +178,32 @@
     "add_new_vehicle": "添加新车辆"
   },
   "settings_page": {
-    "title": "设定"
+    "title": "设定",
+    "recycling": {
+      "semi_finish_product": "半成品 ・ 产品类别",
+      "remarks": "备注",
+      "remark_placeholder": "请输入备注",
+      "add_new": "新增",
+      "product_category": "产品类别",
+      "traditional_chinese_name": "繁体中文名称",
+      "traditional_chinese_name_placeholder": "请输入繁体中文名称",
+      "simplified_chinese_name": "简体中文名称",
+      "simplified_chinese_name_placeholder": "请输入简体中文名称",
+      "english_name": "英文名称",
+      "english_name_placeholder": "请输入英文名称",
+      "introduction": "简介",
+      "introduction_placeholder": "请输入简介",
+      "category": "类别",
+      "main_category": "主类别",
+      "sub_category": "次类别",
+      "additional_category": "追加类别",
+      "plastic_no_1": "1号塑料",
+      "plastic_no_2": "2号塑料",
+      "enter_text": "请输入文字",
+      "water_bottle": "水瓶",
+      "film": "胶片",
+      "edit": "修改"
+    }
   },
   "warehouse_page": {
     "trad_name": "繁体中文名称",
@@ -370,6 +402,9 @@
     "card_detail": {
       "main_category": "回收物主类别",
       "subcategory": "回收物次类别",
+      "product_type_label": "产品类型",
+      "sub_product_type_label": "产品子类型",
+      "addon_product_type_label": "产品插件",
       "shipping_time": "预计运送时间",
       "weight": "预计重量",
       "shipping_receiver": "寄件及收件公司",
@@ -466,7 +501,15 @@
       "recycling_location": "回收地点",
       "arrived": "到达地点",
       "placeholder": "请输入地点",
-      "select_po": "选择运单"
+      "placeholder_shipping_company": "请输入发件人公司",
+      "placeholder_receiver_company": "请输入收货公司",
+      "select_po": "选择运单",
+      "item_category": "物品类别"
+    },
+    "product_type": {
+      "product": "制成品类别",
+      "subtype": "次类别",
+      "add-on": "追加类别"
     },
     "select_po": "选择运单",
     "search_company_name": "输入发件人公司",
@@ -475,6 +518,7 @@
     "confirm_reject": "确认拒绝",
     "confirm_approve_title": "确认接受吗？",
     "confirm_reject_title": "确认拒绝吗？",
+    "confirm_empty_remarks": "确认备注为空白吗？",
     "approved_success": "接受成功",
     "rejected_success": "拒绝成功",
     "reject_reasons": "拒绝原因",
@@ -490,6 +534,9 @@
       "receiverAddr": "此接收者位址 不应留白",
       "recycType": "此可回收类型 不应留白",
       "recycSubType": "此可回收子类型 不应留白",
+      "productType": "该产品类型不能为空",
+      "productSubType": "该产品子类型不能为空",
+      "productAddon": "此产品附加组件不应为空",
       "weight": "该重量 不应留白",
       "weightGreaterThanZero": "该权重应大于零",
       "invalid_date": "失效日期",
@@ -793,6 +840,7 @@
     "suspend": "暂停",
     "deleted": "已删除",
     "staffId": "员工编号",
+    "isAdmin": "是否管理员",
     "successCreatedUser": "成功创建用户",
     "failedCreatedUser": "创建用户失败",
     "successEditUser": "成功编辑用户",
@@ -1055,6 +1103,8 @@
     },
     "vehicleMenu": {
       "vehicle_number": "车辆编码",
+      "imei":"IMEI 号码",
+      "isCompactor":"是否压缩车",
       "license_plate_number": "车牌号码",
       "vehicle_type": "车辆种类",
       "vehicle_cargo_capacity": "车辆载货量",
@@ -1112,7 +1162,28 @@
     "introduction": "简介",
     "introduction_placeholder": "请输入简介",
     "remark": "备注",
-    "remark_placeholder": "请输入备注"
+    "remark_placeholder": "请输入备注",
+    "category": "类别",
+    "main_category": "主类别",
+    "sub_category": "次類別",
+    "additional_category": "追加类别",
+    "plastic_no_1": "1号胶",
+    "plastic_no_2": "2号胶"
+  },
+  "process_type": {
+    "process_type": "处理方式",
+    "new": "新的",
+    "traditional_chinese_name": "繁体中文名称",
+    "traditional_chinese_name_placeholder": "请输入繁体中文名称",
+    "simplified_chinese_name": "简体中文名称",
+    "simplified_chinese_name_placeholder": "请输入简体中文名称",
+    "english_name": "英文名称",
+    "english_name_placeholder": "请输入英文名称",
+    "introduction": "简介",
+    "introduction_placeholder": "请输入简介",
+    "remark": "备注",
+    "remark_placeholder": "请输入备注",
+    "time": "处理需时（时间/重量）"
   },
   "staffEnquiry": {
     "title": "員工查詢",
@@ -1151,11 +1222,15 @@
     "report_of_user_management_list": "用戶報表",
     "report_of_audit_trail": "審計追蹤報表",
     "report_of_user_activity": "用户活动报表",
-    "report_of_notification": "通知报表"
+    "report_of_notification": "通知报表",
+    "report_formula": "報表數據提取方式",
+    "formula_check_in": "以工厂入货作准",
+    "formula_check_out": "以回收公司出货作准"
   },
   "purchase_order": {
     "all_order": "所有订单",
     "enquiry_po": "订单",
+    "missing_arrived": "到达信息不能为空",
     "table": {
       "created_datetime": "建立日期",
       "order_number": "訂單編號",
@@ -1458,5 +1533,42 @@
     "createdAt": "送出入日期及时间",
     "shippingCompany": "状态",
     "inventoryLocation": "送出地点"
+  },
+  "processOrder": {
+    "title": "处理订单",
+    "processOrder": "处理订单",
+    "enterOrderNumber": "输入订单编号",
+    "porDatetime": "处理日期及时间",
+    "porCategory": "处理类别",
+    "orderNumber": "订单编号",
+    "workshop": "工场",
+    "createdate": "处理日期及地点",
+    "create": {
+      "classification": "分类",
+      "sol": "溶胶",
+      "package": "包装",
+      "itemToProcess": "预计处理的物品",
+      "itemCategory": "物品类别（点选类别显示子类别，双击取消选择）",
+      "recycling": "回收",
+      "product": "产品",
+      "warehouse": "仓库"
+    },
+    "details": {
+      "oderDetail": "订单详情",
+      "cancelTitle": "确认取消处理订单吗？",
+      "cancelSubTitle": "取消原因（可多选）",
+      "startdateTime": "開始日期和時間",
+      "itemCategory": "項目類別"
+    },
+    "table": {
+      "startOrFinishDate": "開始/結束日期",
+      "processIn": "进程",
+      "processOut": "处理出"
+    }
+  },
+  "factory": {
+    "factory": "工场",
+    "warehouse": "貨倉",
+    "introduction": "簡介"
   }
 }

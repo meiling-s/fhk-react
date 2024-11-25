@@ -1,7 +1,8 @@
 export type formValidate = {
     field: string,
     problem: string,
-    type: string
+    type: string,
+    dataTestId?: string,
 }
 
 export type colPointType = {

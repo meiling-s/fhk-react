@@ -8,6 +8,8 @@
     "saveFailed": "Saved failed",
     "editSuccessfully": "Edited successfully",
     "editFailed": "Edited failed",
+    "cancelSuccessfully": "Cancel Successfully",
+    "cancelFailed": "Cancel Failed",
     "deletedSuccessfully": "Deleted successfully",
     "deleteFailed": "Deleted failed",
     "enterName": "Please enter name",
@@ -45,7 +47,10 @@
     "warehouseName": "Warehouse Name already Exist",
     "vehicle": "Vehicle",
     "theNameAlreadyExist": "Staff position name already exist",
-    "leaveConfirmMsg": "Are you sure you want to leave this page? Unsaved changes will be lost"
+    "leaveConfirmMsg": "Are you sure you want to leave this page? Unsaved changes will be lost",
+    "noData": "No Data",
+    "category": "Category",
+    "subCategory": "Sub Category"
   },
   "col": {
     "createCP": "Create Collection Point",
@@ -142,6 +147,7 @@
   "noticeTemplate": "Notice template",
   "statistics": "Statistics",
   "recyclables": "Recyclables",
+  "product": "Product",
   "convoy": "Convoy",
   "recycleCompany": "Recycle company",
   "recyclePlant": "Recycle plant",
@@ -161,6 +167,7 @@
   "top_menu": {
     "general_settings": "General settings",
     "packaging_unit": "Packaging unit",
+    "process_type": "Process Type",
     "workshop": "Warehouse",
     "vehicles": "Vehicles",
     "company": "Company",
@@ -171,7 +178,32 @@
     "add_new_vehicle": "Add New Vehicle"
   },
   "settings_page": {
-    "title": "Settings"
+    "title": "Settings",
+    "recycling": {
+      "semi_finish_product": "Semi-finished Products ・ Product Categories",
+      "remarks": "Remarks",
+      "remark_placeholder": "Please enter remark",
+      "add_new": "Add New",
+      "product_category": "Product Category",
+      "traditional_chinese_name": "Traditional Chinese Name",
+      "traditional_chinese_name_placeholder": "Please enter Traditional Chinese Name",
+      "simplified_chinese_name": "Simplified Chinese Name",
+      "simplified_chinese_name_placeholder": "Please enter Simplified Chinese Name",
+      "english_name": "English Name",
+      "english_name_placeholder": "Please enter English Name",
+      "introduction": "Introduction",
+      "introduction_placeholder": "Please enter introduction",
+      "category": "Category",
+      "main_category": "Main Category",
+      "sub_category": "Sub Category",
+      "additional_category": "Add-on Category",
+      "plastic_no_1": "Plastic 1",
+      "plastic_no_2": "Plastic 2",
+      "enter_text": "Please enter text",
+      "water_bottle": "Water Bottle",
+      "film": "Film",
+      "edit": "Edit"
+    }
   },
   "warehouse_page": {
     "trad_name": "Traditional Name",
@@ -370,6 +402,9 @@
     "card_detail": {
       "main_category": "Recyclable Type",
       "subcategory": "Recyclable Subtype",
+      "product_type_label": "Product Type",
+      "sub_product_type_label": "Product SubType",
+      "addon_product_type_label": "Product Addon",
       "shipping_time": "Estimated Shipping Time",
       "weight": "Established Weight",
       "shipping_receiver": "Shipping and Receiving Companies",
@@ -465,7 +500,16 @@
       "receiver": "Receiver Company",
       "recycling_location": "Sender Location",
       "arrived": "Receiver Location",
-      "placeholder": "Please Enter Location"
+      "placeholder": "Please Enter Location",
+      "placeholder_shipping_company": "Please enter sender company",
+      "placeholder_receiver_company": "Please enter receiver company",
+      "select_po": "Select PO",
+      "item_category": "Item Category"
+    },
+    "product_type": {
+      "product": "Product type(s)",
+      "subtype": "Subtype",
+      "add-on": "Add-on type"
     },
     "select_po": "Choose pickup order",
     "search_company_name": "Enter sender company",
@@ -474,6 +518,7 @@
     "confirm_reject": "Confirm reject",
     "confirm_approve_title": "Confirm approve?",
     "confirm_reject_title": "Confirm reject?",
+    "confirm_empty_remarks": "The remark is empty, are you sure to save?",
     "approved_success": "Approved successfully",
     "rejected_success": "Rejected successfully",
     "reject_reasons": "Reasons for rejection",
@@ -487,8 +532,11 @@
       "senderAddr": "This sender address should not be empty",
       "receiverName": "This receiver Name should not be empty",
       "receiverAddr": "This receiver address should not be empty",
-      "recycType": "This recycType should not be empty",
-      "recycSubType": "This recycSubType should not be empty",
+      "recycType": "This recyclable type should not be empty",
+      "recycSubType": "This recyclable sub type should not be empty",
+      "productType": "This product type should not be empty",
+      "productSubType": "This product sub type should not be empty",
+      "productAddon": "This product addon should not be empty",
       "weight": "This weight should not be empty",
       "weightGreaterThanZero": "This weight should greater than zero",
       "invalid_date": "invalid-date",
@@ -792,6 +840,7 @@
     "suspend": "Suspended",
     "deleted": "Deleted",
     "staffId": "Staff ID",
+    "isAdmin": "Is Administrator",
     "successCreatedUser": "Success created user",
     "failedCreatedUser": "Failed created user",
     "successEditUser": "Success edit user",
@@ -894,7 +943,7 @@
     "main_category": "Recyclable Type",
     "subcategory": "Recyclable Subtype",
     "estimated_shipping_time": "Estimated Shipping time",
-    "weight": "weight",
+    "weight": "Weight",
     "shipping_and_receiving_companies": "Shipping and receiving",
     "delivery_and_arrival_locations": "Delivery and arrival",
     "setup_time": "Setup time",
@@ -1056,6 +1105,8 @@
     },
     "vehicleMenu": {
       "vehicle_number": "Vehicle ID",
+      "imei":"IMEI Number",
+      "isCompactor":"Is Compactor",
       "license_plate_number": "License Plate No.",
       "vehicle_type": "Vehicle Type",
       "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
@@ -1115,6 +1166,21 @@
     "remark": "Remark",
     "remark_placeholder": "Please enter remark"
   },
+  "process_type": {
+    "process_type": "Process Type",
+    "new": "New",
+    "traditional_chinese_name": "Traditional Chinese Name",
+    "traditional_chinese_name_placeholder": "Please enter Traditional Chinese Name",
+    "simplified_chinese_name": "Simplified Chinese Name",
+    "simplified_chinese_name_placeholder": "Please enter Simplified Chinese Name",
+    "english_name": "English Name",
+    "english_name_placeholder": "Please enter English Name",
+    "introduction": "Introduction",
+    "introduction_placeholder": "Please enter introduction",
+    "remark": "Remark",
+    "remark_placeholder": "Please enter remark",
+    "time": "Processing time (time/weight)"
+  },
   "staffEnquiry": {
     "title": "Staff Enquiry",
     "addNewStaffEnquiry": "Add New Staff Enquiry",
@@ -1152,11 +1218,15 @@
     "report_of_user_management_list": "The Report of User Management List",
     "report_of_audit_trail": "The Report of Audit Trail",
     "report_of_user_activity": "The Report of User Activity",
-    "report_of_notification": "The Report of Notification"
+    "report_of_notification": "The Report of Notification",
+    "report_formula": "Report Formula",
+    "formula_check_in": "Check In",
+    "formula_check_out": "Check Out"
   },
   "purchase_order": {
     "all_order": "All Orders",
     "enquiry_po": "Order",
+    "missing_arrived": "Arrived info should not be empty",
     "table": {
       "created_datetime": "Created Datetime",
       "order_number": "Order Number",
@@ -1463,5 +1533,42 @@
     "createdAt": "Checkout/in Datetime",
     "shippingCompany": "Sender Company",
     "inventoryLocation": "Sender Location"
+  },
+  "processOrder": {
+    "title": "Process Order",
+    "processOrder": "Process an order",
+    "enterOrderNumber": "Enter Order Number",
+    "porDatetime": "Processing date and time",
+    "porCategory": "Processing category",
+    "orderNumber": "Order number",
+    "workshop": "Factory",
+    "createdate": "Date and place of processing",
+    "create": {
+      "classification": "Classification",
+      "sol": "Sol",
+      "package": "Package",
+      "itemToProcess": "Items expected to be processed",
+      "itemCategory": "Item category (click a category to display subcategories, double-click",
+      "recycling": "Recycling",
+      "product": "Product",
+      "warehouse": "Warehouse"
+    },
+    "details": {
+      "oderDetail": "Order Details",
+      "cancelTitle": "Are you sure you want to cancel the order?",
+      "cancelSubTitle": "Reason for cancellation (multiple choices available)",
+      "startdateTime": "Start date and time",
+      "itemCategory": "Item Category"
+    },
+    "table": {
+      "startOrFinishDate": "Start / Finish date",
+      "processIn": "Pending",
+      "processOut": "After Processing"
+    }
+  },
+  "factory": {
+    "factory": "Factory",
+    "warehouse": "Warehouse",
+    "introduction": "Introduction"
   }
 }

@@ -1,4 +1,4 @@
-import { Button } from '@mui/joy'
+import { Button } from '@mui/material'
 import { SetStateAction, useEffect, useState } from 'react'
 import { Functions } from '../../../interfaces/userGroup'
 import { styles } from '../../../constants/styles'
@@ -10,18 +10,21 @@ export default function FunctionList({
   item,
   functions,
   disabled,
-  setFunctions
+  setFunctions,
+  readOnly = false
 }: {
   keyId: number
   item: Functions
   functions: number[]
   disabled: boolean
+  readOnly?: boolean
   setFunctions: (value: SetStateAction<number[]>) => void
 }) {
   const [selected, setSelected] = useState(functions.includes(item.functionId))
 
   const handleClick = () => {
     const index = functions.indexOf(item.functionId)
+    if (readOnly) return
     let newValue
     if (index !== -1) {
       // Remove the functionId from the array
@@ -34,15 +37,6 @@ export default function FunctionList({
     setSelected(!selected)
   }
 
-  //   useEffect(() => {
-  //     const index = functions.indexOf(item.functionId)
-  //     if (index !== -1) {
-  //       setSelected(true)
-  //     } else {
-  //       setSelected(false)
-  //     }
-  //   }, [functions, item.functionId])
-
   useEffect(() => {
     setSelected(functions.includes(item.functionId))
   }, [functions, item.functionId])
@@ -50,9 +44,10 @@ export default function FunctionList({
   return (
     <Button
       key={keyId}
+      datatest-id="astd-user-group-form-available-feature-select-button-9031"
       value={item.functionId}
       color="success"
-      variant={selected ? 'soft' : 'outlined'}
+      //variant={selected ? 'soft' : 'outlined'}
       sx={[
         selected ? styles.tagOutlineActive : styles.tagOutlineDefault,
         {
