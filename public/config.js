@@ -11,11 +11,13 @@ window.baseURL = {
   // collector: 'https://uat.greenhoopapp.com/',
   // logistic: 'https://uat.greenhoopapp.com/',
   // manufacturer: 'https://uat.greenhoopapp.com/',
-  // customer: 'https://uat.greenhoopapp.com/'
+  // customer: 'https://uat.greenhoopapp.com/',
+  // socif: 'https://360-dev.socif.co/',
   // account: 'https://www.greenhoopapp.com/',
   // administrator: 'https://www.greenhoopapp.com/',
   // collector: 'https://www.greenhoopapp.com/',
   // logistic: 'https://www.greenhoopapp.com/',
   // manufacturer: 'https://www.greenhoopapp.com/',
-  // customer: 'https://www.greenhoopapp.com/'
+  // customer: 'https://www.greenhoopapp.com/',
+  // socif: 'https://360-dev.socif.co/',
 }
