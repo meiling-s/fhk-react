@@ -10,10 +10,10 @@ export default function VehicleRouteTracker({ }: Props) {
     return (
         <Stack sx={{padding: '1rem'}}>
             <iframe
-            id='vehicleIframe'
-            style={localstyles.iFrame} 
-            title='VehicleRoute' 
-            src={iFrameURL} ></iframe>
+                id='vehicleIframe'
+                style={localstyles.iFrame} 
+                title='VehicleRoute' 
+                src={iFrameURL} />
         </Stack >
     )
 }

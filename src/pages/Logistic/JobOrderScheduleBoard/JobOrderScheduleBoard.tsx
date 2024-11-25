@@ -1,14 +1,26 @@
-import { Typography, Stack } from '@mui/material'
+import { Stack } from '@mui/material'
 import React from 'react'
-import { useTranslation } from 'react-i18next'
 
 type Props = {}
 
-export default function VehicleRouteTracker({ }: Props) {
-    const { t } = useTranslation()
+export default function JobOrderScheduleBoard({ }: Props) {
+    const baseURL: string = window.baseURL.socif
+    const iFrameURL: string = `${baseURL}#/manage/assign-order?embedded=true`
+
     return (
         <Stack sx={{padding: '1rem'}}>
-            <Typography variant='body1' color='grey'>{t('common.pageUnderConstruction')}</Typography>
+            <iframe 
+                style={localstyles.iFrame}
+                title='JobBoard'
+                src={iFrameURL} />
         </Stack >
     )
+}
+
+const localstyles = {
+    iFrame: {
+        height: '100vh',
+        width: '80vw',
+        border: 'unset'
+    }
 }
