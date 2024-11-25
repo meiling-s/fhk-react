@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Checkbox,
   IconButton,
   InputAdornment,
   Modal,
@@ -21,12 +20,10 @@ import {
   GridColDef,
   GridRowParams,
   GridRowSpacingParams,
-  GridCellParams
 } from '@mui/x-data-grid'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { ADD_PERSON_ICON, SEARCH_ICON } from '../../themes/icons'
-import { SyntheticEvent, useEffect, useState } from 'react'
-import { visuallyHidden } from '@mui/utils'
+import { useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import React from 'react'
 import {
@@ -37,7 +34,7 @@ import {
   sendEmailInvitation,
   createNewTenant
 } from '../../APICalls/tenantManage'
-import { STATUS_CODE, defaultPath, format } from '../../constants/constant'
+import { STATUS_CODE, defaultPath } from '../../constants/constant'
 import { styles } from '../../constants/styles'
 import CircularLoading from '../../components/CircularLoading'
 import dayjs from 'dayjs'
@@ -53,12 +50,11 @@ import TenantDetails from './TenantDetails'
 import { Company, UpdateStatus } from '../../interfaces/tenant'
 
 import { useTranslation } from 'react-i18next'
-import { ErrorMessage, useFormik, validateYupSchema } from 'formik'
+import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom'
 import {
   extractError,
-  returnApiToken,
   showErrorToast,
   showSuccessToast,
   validateEmail,
@@ -121,7 +117,7 @@ type rejectModal = {
 
 function RejectModal({ tenantId, version, open, onClose, onSubmit }: rejectModal) {
   const { t } = useTranslation()
-  const [rejectReasonId, setRejectReasonId] = useState<string[]>([])
+  const [, setRejectReasonId] = useState<string[]>([])
   const navigate = useNavigate()
 
   const getReason = () => {
@@ -141,7 +137,7 @@ function RejectModal({ tenantId, version, open, onClose, onSubmit }: rejectModal
     ]
     const reasons: il_item[] = []
     reasonList.forEach((item) => {
-      var name = ''
+      let name = ''
       switch (i18n.language) {
         case 'enus':
           name = item.reasonEn
@@ -908,8 +904,6 @@ function InviteForm({
 function CompanyManage() {
   const { t } = useTranslation()
 
-  const [searchText, setSearchText] = useState<string>('')
-  const [selected, setSelected] = useState<string[]>([])
   const [invFormModal, setInvFormModal] = useState<boolean>(false)
   const [invSendModal, setInvSendModal] = useState<boolean>(false)
   const [modalNotification, setModalNotification] = useState<boolean>(false)
@@ -918,8 +912,6 @@ function CompanyManage() {
   const [InviteId, setInviteId] = useState<string>('')
   const [companies, setCompanies] = useState<Company[]>([])
   const [filterCompanies, setFilterCompanies] = useState<Company[]>([])
-  const [selectAll, setSelectAll] = useState(false)
-  const [checkedCompanies, setCheckedCompanies] = useState<number[]>([])
   const [openDetail, setOpenDetails] = useState<boolean>(false)
   const [selectedTenanId, setSelectedTenantId] = useState(0)
   const [isLoadingInvite, setIsLoadingInvite] = useState<boolean>(false)
@@ -954,29 +946,6 @@ function CompanyManage() {
   const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
 
-  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const checked = event.target.checked
-    setSelectAll(checked)
-    const selectedRows = checked ? filterCompanies.map((row) => row.id) : []
-    setCheckedCompanies(selectedRows)
-  }
-
-  const handleRowCheckboxChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    tenantId: number
-  ) => {
-    setOpenDetails(false)
-    const checked = event.target.checked
-    const updatedChecked = checked
-      ? [...checkedCompanies, tenantId]
-      : checkedCompanies.filter((rowId) => rowId != tenantId)
-    setCheckedCompanies(updatedChecked)
-
-    const allRowsChecked = filterCompanies.every((row) =>
-      updatedChecked.includes(row.id)
-    )
-  }
-
   const handleApproveTenant = async (tenantId: number, version: number) => {
     try {
       setOpenDetails(false)
@@ -994,8 +963,8 @@ function CompanyManage() {
       }
       //  window.location.reload()
       setOpenDetails(false)
-    } catch (error: any) {
-      const { state, realm } = extractError(error)
+    } catch (error) {
+      const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
@@ -1025,31 +994,6 @@ function CompanyManage() {
     setRejectId(tenantId)
     setRejectVersion(version)
     setRejectModal(true)
-  }
-
-  const HeaderCheckbox = (
-    <Checkbox
-      checked={selectAll}
-      onChange={handleSelectAll}
-      color="primary"
-      inputProps={{ 'aria-label': 'Select all rows' }}
-    />
-  )
-
-  const checkboxColumn: GridColDef = {
-    field: 'customCheckbox',
-    headerName: t('localizedTexts.select'),
-    width: 80,
-    sortable: false,
-    filterable: false,
-    renderHeader: () => HeaderCheckbox,
-    renderCell: (params) => (
-      <Checkbox
-        checked={selected.includes(params.row.id) || selectAll}
-        onChange={(event) => handleRowCheckboxChange(event, params.row.id)}
-        color="primary"
-      />
-    )
   }
 
   const headCells: GridColDef[] = [
@@ -1171,8 +1115,10 @@ function CompanyManage() {
     initCompaniesData()
   }, [page])
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mappingTenantData = (data: any) => {
-    var tenantList: Company[] = []
+    const tenantList: Company[] = []
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data.map((com: any) => {
       tenantList.push(
         createCompany(
@@ -1203,8 +1149,8 @@ function CompanyManage() {
         setFilterCompanies(tenantList)
       }
       setTotalData(result?.data.totalPages)
-    } catch (error: any) {
-      const { state, realm } = extractError(error)
+    } catch (error) {
+      const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
@@ -1227,8 +1173,8 @@ function CompanyManage() {
       } else {
         initCompaniesData()
       }
-    } catch (error: any) {
-      const { state, realm } = extractError(error)
+    } catch (error) {
+      const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
@@ -1346,8 +1292,8 @@ function CompanyManage() {
           showErrorToast(t('common.saveFailed'))
           setIsLoadingInvite(false)
         }
-      } catch (error: any) {
-        const { state, realm } = extractError(error)
+      } catch (error) {
+        const { state } = extractError(error)
         console.log('state.code', state.code)
         if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
@@ -1431,7 +1377,7 @@ function CompanyManage() {
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={() => {}}>
+                <IconButton>
                   <SEARCH_ICON style={{ color: '#79CA25' }} />
                 </IconButton>
               </InputAdornment>
@@ -1539,7 +1485,7 @@ function CompanyManage() {
   )
 }
 
-let localstyles = {
+const localstyles = {
   btn_WhiteGreenTheme: {
     borderRadius: '20px',
     borderWidth: 1,
