@@ -267,7 +267,8 @@ const CommonType = () => {
       const processTypeListData = response.data.content;
       setProcessTypeList(processTypeListData);
     } catch (error) {
-      throw error;
+      console.log("err ===> getProcessTypeList err", error);
+      setProcessTypeList([]);
     }
   };
 
