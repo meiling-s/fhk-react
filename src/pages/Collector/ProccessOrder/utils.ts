@@ -96,7 +96,7 @@ export const mappingSubProductType = (
   return '-'
 }
 
-export const mappingAddOnsType = (
+export const mappingAddonsType = (
   productTypeId: string,
   productSubTypeId: string,
   addOnId: string,

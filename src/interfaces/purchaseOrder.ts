@@ -31,12 +31,12 @@ export type PurchaseOrderDetail = {
   productSubNameTchi: string
   productSubNameSchi: string
   productSubNameEng: string
-  productAddOnType: string // => id
-  productAddOnNameTchi: string
-  productAddOnNameSchi: string
-  productAddOnNameEng: string
+  productAddonType: string // => id
+  productAddonNameTchi: string
+  productAddonNameSchi: string
+  productAddonNameEng: string
   productSubTypeRemark: string
-  productAddOnTypeRemark: string
+  productAddonTypeRemark: string
 }
 
 export type PurChaseOrder = {
