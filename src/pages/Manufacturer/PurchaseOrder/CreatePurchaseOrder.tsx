@@ -10,6 +10,7 @@ import { STATUS_CODE, Status, localStorgeKeyName } from '../../../constants/cons
 import { postPurchaseOrder } from '../../../APICalls/Manufacturer/purchaseOrder'
 import { refactorPurchaseOrderDetail } from './utils'
 
+
 const CreatePurchaseOrder = () => {
   const navigate = useNavigate()
   const [addRow, setAddRow] = useState<PurchaseOrderDetail[]>([])

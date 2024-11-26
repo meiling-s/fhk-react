@@ -8,6 +8,8 @@
     "saveFailed": "Saved failed",
     "editSuccessfully": "Edited successfully",
     "editFailed": "Edited failed",
+    "cancelSuccessfully": "Cancel Successfully",
+    "cancelFailed": "Cancel Failed",
     "deletedSuccessfully": "Deleted successfully",
     "deleteFailed": "Deleted failed",
     "enterName": "Please enter name",
@@ -939,7 +941,7 @@
     "main_category": "Recyclable Type",
     "subcategory": "Recyclable Subtype",
     "estimated_shipping_time": "Estimated Shipping time",
-    "weight": "weight",
+    "weight": "Weight",
     "shipping_and_receiving_companies": "Shipping and receiving",
     "delivery_and_arrival_locations": "Delivery and arrival",
     "setup_time": "Setup time",
@@ -1529,6 +1531,38 @@
     "createdAt": "Checkout/in Datetime",
     "shippingCompany": "Sender Company",
     "inventoryLocation": "Sender Location"
+  },
+  "processOrder": {
+    "title": "Process Order",
+    "processOrder": "Process an order",
+    "enterOrderNumber": "Enter Order Number",
+    "porDatetime": "Processing date and time",
+    "porCategory": "Processing category",
+    "orderNumber": "Order number",
+    "workshop": "Factory",
+    "createdate": "Date and place of processing",
+    "create": {
+      "classification": "Classification",
+      "sol": "Sol",
+      "package": "Package",
+      "itemToProcess": "Items expected to be processed",
+      "itemCategory": "Item category (click a category to display subcategories, double-click",
+      "recycling": "Recycling",
+      "product": "Product",
+      "warehouse": "Warehouse"
+    },
+    "details": {
+      "oderDetail": "Order Details",
+      "cancelTitle": "Are you sure you want to cancel the order?",
+      "cancelSubTitle": "Reason for cancellation (multiple choices available)",
+      "startdateTime": "Start date and time",
+      "itemCategory": "Item Category"
+    },
+    "table": {
+      "startOrFinishDate": "Start / Finish date",
+      "processIn": "Pending",
+      "processOut": "After Processing"
+    }
   },
   "factory": {
     "factory": "Factory",
