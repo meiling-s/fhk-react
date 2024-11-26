@@ -957,7 +957,7 @@ function CompanyManage() {
 
       const result = await updateTenantStatus(statData, tenantId)
       if (result?.status === 200) {
-        await createTenantASTD(tenantId)
+        await createTenantSocif(tenantId)
         showSuccessToast(t('common.approveSuccess'))
         initCompaniesData()
       }
@@ -971,7 +971,7 @@ function CompanyManage() {
     }
   }
 
-  const createTenantASTD = async (tenantId: number) => {
+  const createTenantSocif = async (tenantId: number) => {
     try {
       const companyData: Company = companies.find(value => value.id === tenantId)!
       if (companyData === undefined) throw new Error('fail to get company data')
@@ -983,7 +983,7 @@ function CompanyManage() {
       }
       await createNewTenant(payload)
     } catch (error) {
-      if (window.baseURL.socif !== '') {
+      if (window.baseURL.socif !== '') { // prevent redirecting to error page on DEV ENV
         const { state } = extractError(error)
         if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')

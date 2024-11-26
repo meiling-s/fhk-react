@@ -8,14 +8,13 @@ import {
   UPDATE_TENANT_STATUS,
   SEND_EMAIL_INVITATION,
   UPDATE_TENANT_INFO,
-  CREATE_TENANT
 } from '../constants/requests'
+import { CREATE_TENANT } from 'src/constants/requestsSocif'
 import { RegisterItem } from '../interfaces/account'
 import { CreateTenant, UpdateStatus } from '../interfaces/tenant'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import { returnApiToken } from '../utils/utils'
-import axiosInstance from '../constants/axiosInstance'
-import axios from 'axios'
+import axiosInstance, { cleanAxiosInstance } from '../constants/axiosInstance'
 
 export const createInvitation = async (
   item: CreateTenant,
@@ -145,8 +144,6 @@ export const updateTenantStatus = async (item: any, tenantId: number) => {
 }
 
 export const createNewTenant = async (item: any) => {
-  // TODO: CHANGE TO GENERAL AXIOSINSTANCE WHEN THE API MIGRATED TO MAIN BASEURL
-  const cleanAxiosInstance = axios.create()
   try {
     const response = await cleanAxiosInstance({
       baseURL: window.baseURL.socif,

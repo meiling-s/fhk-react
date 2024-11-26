@@ -239,17 +239,6 @@ export const CREATE_COLLECTORLIST = (
   url: `api/v1/${realmApiRoute}/collectorlist/${table}`
 })
 
-export const CREATE_TENANT = (
-  realmApiRoute: string,
-): AxiosRequestConfig => ({
-  method: 'post',
-  url: `api/${realmApiRoute}/tenant`,
-  headers: {
-    'accept': 'application/json',
-    'Content-Type': 'application/json',
-  },
-})
-
 export const EDIT_COLLECTORLIST = (
   realmApiRoute: string,
   table: string,
