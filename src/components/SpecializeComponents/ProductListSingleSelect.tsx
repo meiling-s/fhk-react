@@ -1,48 +1,48 @@
-import React, { useEffect, useState } from 'react'
-import { Box, Typography, Button, Collapse } from '@mui/material'
-import { getThemeCustomList } from '../../utils/utils'
-import { localStorgeKeyName } from '../../constants/constant'
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Button, Collapse } from "@mui/material";
+import { getThemeCustomList } from "../../utils/utils";
+import { localStorgeKeyName } from "../../constants/constant";
 import {
   ProductAddon,
   ProductSubType,
-  Products
-} from '../../interfaces/productType'
-import CustomItemList, { il_item } from '../FormComponents/CustomItemList'
-import { useTranslation } from 'react-i18next'
-import CustomField from '../FormComponents/CustomField'
-import CustomTextField from '../FormComponents/CustomTextField'
-import ConfirmModal from './ConfirmationModal'
+  Products,
+} from "../../interfaces/productType";
+import CustomItemList, { il_item } from "../FormComponents/CustomItemList";
+import { useTranslation } from "react-i18next";
+import CustomField from "../FormComponents/CustomField";
+import CustomTextField from "../FormComponents/CustomTextField";
+import ConfirmModal from "./ConfirmationModal";
 
 export type itemList = {
-  bgColor: string
-  borderColor: string
-}
+  bgColor: string;
+  borderColor: string;
+};
 
 export type singleProduct = {
-  productTypeId: string
-  productSubTypeId: string
-  productAddonId: string
-  productSubTypeRemark: string
-  productAddOnTypeRemark: string
-  isProductSubTypeOthers?: boolean
-  isProductAddonTypeOthers?: boolean
-}
+  productTypeId: string;
+  productSubTypeId: string;
+  productAddonId: string;
+  productSubTypeRemark: string;
+  productAddonTypeRemark: string;
+  isProductSubTypeOthers?: boolean;
+  isProductAddonTypeOthers?: boolean;
+};
 
 interface ProductListSingleSelectProps {
-  label: string
-  options: Products[]
-  setState: (s: singleProduct) => void
-  dataTestId?: string
-  itemColor?: itemList
-  showError?: boolean
-  defaultProduct?: singleProduct
+  label: string;
+  options: Products[];
+  setState: (s: singleProduct) => void;
+  dataTestId?: string;
+  itemColor?: itemList;
+  showError?: boolean;
+  defaultProduct?: singleProduct;
 }
 
 type productItem = {
-  productType: il_item
-  productSubType: il_item[]
-  productAddon: il_item[]
-}
+  productType: il_item;
+  productSubType: il_item[];
+  productAddon: il_item[];
+};
 
 const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
   options,
@@ -50,38 +50,43 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
   dataTestId,
   itemColor,
   showError,
-  defaultProduct
+  defaultProduct,
 }) => {
-  const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
-  const [curProduct, setCurProduct] = useState<string>(' ')
-  const [curSubProduct, setCurSubProduct] = useState<string>(' ')
-  const [curAddonProduct, setCurAddonProduct] = useState<string>(' ')
-  const [productType, setProductType] = useState<string>('')
-  const [productSubType, setProductSubType] = useState<string>('')
-  const [productAddon, setProductAddon] = useState<string>('')
-  const [choosenProductType, setChoosenProductType] = useState<Products | null>(null)
+  const role =
+    localStorage.getItem(localStorgeKeyName.role) || "collectoradmin";
+  const [curProduct, setCurProduct] = useState<string>(" ");
+  const [curSubProduct, setCurSubProduct] = useState<string>(" ");
+  const [curAddonProduct, setCurAddonProduct] = useState<string>(" ");
+  const [productType, setProductType] = useState<string>("");
+  const [productSubType, setProductSubType] = useState<string>("");
+  const [productAddon, setProductAddon] = useState<string>("");
+  const [choosenProductType, setChoosenProductType] = useState<Products | null>(
+    null
+  );
 
-  const [choosenProductSubType, setChoosenSubProductType] = useState<ProductSubType | null>(null)
-  const [choosenProductAddon, setChoosenProductAddon] = useState<ProductAddon | null>(null)
+  const [choosenProductSubType, setChoosenSubProductType] =
+    useState<ProductSubType | null>(null);
+  const [choosenProductAddon, setChoosenProductAddon] =
+    useState<ProductAddon | null>(null);
 
-  const [productSubTypeRemark, setProductSubTypeRemark] = useState<string>('')
-  const [productAddOnTypeRemark, setProductAddonRemark] = useState<string>('')
-  const { t, i18n } = useTranslation()
+  const [productSubTypeRemark, setProductSubTypeRemark] = useState<string>("");
+  const [productAddonTypeRemark, setProductAddonRemark] = useState<string>("");
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     if (curProduct !== null) {
       const filteredProduct = options.filter(
         (value) => value.productTypeId === curProduct
-      ) as Products[]
+      ) as Products[];
       if (filteredProduct.length > 0) {
-        setChoosenProductType(filteredProduct[0])
+        setChoosenProductType(filteredProduct[0]);
       }
       if (curSubProduct !== null && filteredProduct.length > 0) {
         const filteredSubProduct = filteredProduct[0]?.productSubType?.filter(
           (value) => value.productSubTypeId === curSubProduct
-        )
+        );
         if (filteredSubProduct !== undefined && filteredSubProduct.length > 0) {
-          setChoosenSubProductType(filteredSubProduct[0])
+          setChoosenSubProductType(filteredSubProduct[0]);
         }
         if (
           curAddonProduct !== null &&
@@ -90,83 +95,91 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
         ) {
           const filteredAddon = filteredSubProduct[0]?.productAddonType?.filter(
             (value) => value.productAddonTypeId === curAddonProduct
-          )
+          );
           if (filteredAddon !== undefined && filteredAddon.length > 0) {
-            setChoosenProductAddon(filteredAddon[0])
+            setChoosenProductAddon(filteredAddon[0]);
           }
         }
       }
     }
-  }, [curProduct, curSubProduct, curAddonProduct])
+  }, [curProduct, curSubProduct, curAddonProduct]);
 
   useEffect(() => {
     if (defaultProduct) {
-      setCurProduct(defaultProduct.productTypeId)
-      setProductType(defaultProduct.productTypeId)
-      setCurSubProduct(defaultProduct.productSubTypeId)
-      setProductSubType(defaultProduct.productSubTypeId)
-      setProductSubTypeRemark(defaultProduct.productSubTypeRemark)
-      setCurAddonProduct(defaultProduct.productAddonId)
-      setProductAddon(defaultProduct.productAddonId)
-      setProductAddonRemark(defaultProduct.productAddOnTypeRemark)
+      setCurProduct(defaultProduct.productTypeId);
+      setProductType(defaultProduct.productTypeId);
+      setCurSubProduct(defaultProduct.productSubTypeId);
+      setProductSubType(defaultProduct.productSubTypeId);
+      setProductSubTypeRemark(defaultProduct.productSubTypeRemark);
+      setCurAddonProduct(defaultProduct.productAddonId);
+      setProductAddon(defaultProduct.productAddonId);
+      setProductAddonRemark(defaultProduct.productAddonTypeRemark);
     }
-  }, [defaultProduct])
+  }, [defaultProduct]);
 
   useEffect(() => {
-    setState(toSingleProduct())
-  }, [productType, productSubType, productAddon, productSubTypeRemark, productAddOnTypeRemark, choosenProductAddon, choosenProductSubType])
+    setState(toSingleProduct());
+  }, [
+    productType,
+    productSubType,
+    productAddon,
+    productSubTypeRemark,
+    productAddonTypeRemark,
+    choosenProductAddon,
+    choosenProductSubType,
+  ]);
 
   const returnProductTypes = () => {
-    const products: productItem[] = []
+    const products: productItem[] = [];
 
     options.map((data) => {
       let dataItem: productItem = {
-        productType: { name: '', id: '' },
+        productType: { name: "", id: "" },
         productSubType: [],
-        productAddon: []
-      }
-      let subItem: il_item[] = []
-      let name = ''
+        productAddon: [],
+      };
+      let subItem: il_item[] = [];
+      let name = "";
       switch (i18n.language) {
-        case 'enus':
-          name = data.productNameEng
-          break
-        case 'zhch':
-          name = data.productNameSchi
-          break
-        case 'zhhk':
-          name = data.productNameTchi
-          break
+        case "enus":
+          name = data.productNameEng;
+          break;
+        case "zhch":
+          name = data.productNameSchi;
+          break;
+        case "zhhk":
+          name = data.productNameTchi;
+          break;
         default:
-          name = data.productNameTchi
-          break
+          name = data.productNameTchi;
+          break;
       }
-      dataItem.productType = { name: name, id: data.productTypeId }
+      dataItem.productType = { name: name, id: data.productTypeId };
 
       data.productSubType?.map((sub) => {
-        let subName = ''
+        let subName = "";
         switch (i18n.language) {
-          case 'enus':
-            subName = sub.productNameEng
-            break
-          case 'zhch':
-            subName = sub.productNameSchi
-            break
-          case 'zhhk':
-            subName = sub.productNameTchi
-            break
+          case "enus":
+            subName = sub.productNameEng;
+            break;
+          case "zhch":
+            subName = sub.productNameSchi;
+            break;
+          case "zhhk":
+            subName = sub.productNameTchi;
+            break;
           default:
-            subName = sub.productNameTchi
-            break
+            subName = sub.productNameTchi;
+            break;
         }
-        subItem.push({ name: subName, id: sub.productSubTypeId })
-      })
-      dataItem.productSubType = subItem
+        subItem.push({ name: subName, id: sub.productSubTypeId });
+      });
+      dataItem.productSubType = subItem;
 
-      products.push(dataItem)
-    })
-    return products
-  }
+      products.push(dataItem);
+    });
+    return products;
+  };
 
   const toSingleProduct = () => {
     const singleProduct: singleProduct = {
@@ -174,105 +187,107 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
       productSubTypeId: productSubType,
       productAddonId: productAddon,
       productSubTypeRemark: productSubTypeRemark,
-      productAddOnTypeRemark: productAddOnTypeRemark,
-      isProductSubTypeOthers: choosenProductSubType?.productNameEng === 'Others',
-      isProductAddonTypeOthers: choosenProductAddon?.productNameEng === 'Others',
-    }
+      productAddonTypeRemark: productAddonTypeRemark,
+      isProductSubTypeOthers:
+        choosenProductSubType?.productNameEng === "Others",
+      isProductAddonTypeOthers:
+        choosenProductAddon?.productNameEng === "Others",
+    };
 
-    return singleProduct
-  }
+    return singleProduct;
+  };
   const getNameFromProductId = (id: string) => {
     const product = options.find((data) => {
-      return data.productTypeId === id
-    })
+      return data.productTypeId === id;
+    });
     if (product) {
       switch (i18n.language) {
-        case 'enus':
-          return product.productNameEng
-        case 'zhch':
-          return product.productNameSchi
-        case 'zhhk':
-          return product.productNameTchi
+        case "enus":
+          return product.productNameEng;
+        case "zhch":
+          return product.productNameSchi;
+        case "zhhk":
+          return product.productNameTchi;
         default:
-          return product.productNameTchi
+          return product.productNameTchi;
       }
     }
-    return ''
-  }
+    return "";
+  };
 
   const getNameFromProductSubId = (id: string) => {
     if (choosenProductSubType !== null) {
       switch (i18n.language) {
-        case 'enus':
-          return choosenProductSubType.productNameEng
-        case 'zhch':
-          return choosenProductSubType.productNameSchi
-        case 'zhhk':
-          return choosenProductSubType.productNameTchi
+        case "enus":
+          return choosenProductSubType.productNameEng;
+        case "zhch":
+          return choosenProductSubType.productNameSchi;
+        case "zhhk":
+          return choosenProductSubType.productNameTchi;
         default:
-          return choosenProductSubType.productNameTchi
+          return choosenProductSubType.productNameTchi;
       }
     }
-    return ''
-  }
+    return "";
+  };
 
   const getNameFromProductAddon = (id: string) => {
     if (choosenProductAddon !== null) {
       switch (i18n.language) {
-        case 'enus':
-          return choosenProductAddon.productNameEng
-        case 'zhch':
-          return choosenProductAddon.productNameSchi
-        case 'zhhk':
-          return choosenProductAddon.productNameTchi
+        case "enus":
+          return choosenProductAddon.productNameEng;
+        case "zhch":
+          return choosenProductAddon.productNameSchi;
+        case "zhhk":
+          return choosenProductAddon.productNameTchi;
         default:
-          return choosenProductAddon.productNameTchi
+          return choosenProductAddon.productNameTchi;
       }
     }
-  }
+  };
 
   const returnProducts = (productData: productItem[]) => {
-    return productData.map((data) => data.productType)
-  }
+    return productData.map((data) => data.productType);
+  };
 
   const returnSubProducts = (productId: string) => {
     const item = returnProductTypes().find(
       (productType) => productType.productType.id === productId
-    )
-    return item ? item.productSubType : []
-  }
+    );
+    return item ? item.productSubType : [];
+  };
 
   const returnAddon = (productId: string) => {
-    const subItem: il_item[] = []
+    const subItem: il_item[] = [];
     choosenProductSubType?.productAddonType?.map((data) => {
-      let subName = ''
+      let subName = "";
       switch (i18n.language) {
-        case 'enus':
-          subName = data.productNameEng
-          break
-        case 'zhch':
-          subName = data.productNameSchi
-          break
-        case 'zhhk':
-          subName = data.productNameTchi
-          break
+        case "enus":
+          subName = data.productNameEng;
+          break;
+        case "zhch":
+          subName = data.productNameSchi;
+          break;
+        case "zhhk":
+          subName = data.productNameTchi;
+          break;
         default:
-          subName = data.productNameTchi
-          break
+          subName = data.productNameTchi;
+          break;
       }
-      subItem.push({ name: subName, id: data.productAddonTypeId })
-    })
-    return subItem
-  }
+      subItem.push({ name: subName, id: data.productAddonTypeId });
+    });
+    return subItem;
+  };
 
   return (
     <Box>
       <CustomItemList
         items={returnProducts(returnProductTypes())}
         singleSelect={(s) => {
-          setProductType(s)
-          setProductSubType('')
-          setProductAddon('')
+          setProductType(s);
+          setProductSubType("");
+          setProductAddon("");
         }}
         itemColor={itemColor || null}
         setLastSelect={setCurProduct}
@@ -282,7 +297,7 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
       <Collapse
         sx={{ mt: 1 }}
         in={
-          curProduct !== ' ' &&
+          curProduct !== " " &&
           productType.length > 0 &&
           choosenProductType?.productSubType !== undefined &&
           choosenProductType?.productSubType?.length > 0
@@ -291,11 +306,11 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
       >
         <CustomField
           label={
-            curProduct === ' '
-              ? ''
+            curProduct === " "
+              ? ""
               : getNameFromProductId(curProduct) +
-                ' ' +
-                t('pick_up_order.product_type.subtype')
+                " " +
+                t("pick_up_order.product_type.subtype")
           }
           key={productType}
           mandatory={true}
@@ -303,8 +318,8 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
           <CustomItemList
             items={returnSubProducts(curProduct)}
             singleSelect={(s) => {
-              setProductSubType(s)
-              setProductAddon('')
+              setProductSubType(s);
+              setProductAddon("");
             }}
             defaultSelected={productSubType}
             itemColor={itemColor || null}
@@ -312,26 +327,26 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
             dataTestId="astd-create-edit-pickup-order-form-product-subtype-select-button-5078"
           />
         </CustomField>
-        {choosenProductSubType?.productNameEng === 'Others' && (
+        {choosenProductSubType?.productNameEng === "Others" && (
           <CustomField
             label={
               getNameFromProductSubId(curSubProduct) +
-              ' ' +
-              t('pick_up_order.product_type.subtype') +
-              ' ' +
-              t('general_settings.remark')
+              " " +
+              t("pick_up_order.product_type.subtype") +
+              " " +
+              t("general_settings.remark")
             }
             mandatory={false}
-            style={{ my: '1rem' }}
+            style={{ my: "1rem" }}
           >
             <CustomTextField
               id="subtype-remark"
               placeholder={
                 getNameFromProductSubId(curSubProduct) +
-                ' ' +
-                t('pick_up_order.product_type.subtype') +
-                ' ' +
-                t('general_settings.remark')
+                " " +
+                t("pick_up_order.product_type.subtype") +
+                " " +
+                t("general_settings.remark")
               }
               onChange={(event) => setProductSubTypeRemark(event.target.value)}
               value={productSubTypeRemark}
@@ -343,7 +358,7 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
       <Collapse
         sx={{ mt: 1 }}
         in={
-          curSubProduct !== ' ' &&
+          curSubProduct !== " " &&
           productSubType.length > 0 &&
           choosenProductSubType?.productAddonType !== undefined &&
           choosenProductSubType?.productAddonType?.length > 0
@@ -353,10 +368,10 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
         <CustomField
           label={
             choosenProductSubType === null
-              ? ''
+              ? ""
               : getNameFromProductSubId(curSubProduct) +
-                ' ' +
-                t('pick_up_order.product_type.add-on')
+                " " +
+                t("pick_up_order.product_type.add-on")
           }
           key={productSubType}
           mandatory={true}
@@ -370,36 +385,36 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
             dataTestId="astd-create-edit-pickup-order-form-product-add-on-select-button-5872"
           />
         </CustomField>
-        {choosenProductAddon?.productNameEng === 'Others' && (
+        {choosenProductAddon?.productNameEng === "Others" && (
           <CustomField
             label={
               getNameFromProductSubId(curAddonProduct) +
-              ' ' +
-              t('pick_up_order.product_type.add-on') +
-              ' ' +
-              t('general_settings.remark')
+              " " +
+              t("pick_up_order.product_type.add-on") +
+              " " +
+              t("general_settings.remark")
             }
             mandatory={false}
-            style={{ mt: '1rem', mb: '0.5rem' }}
+            style={{ mt: "1rem", mb: "0.5rem" }}
           >
             <CustomTextField
               id="addon-remark"
               placeholder={
                 getNameFromProductAddon(curAddonProduct) +
-                ' ' +
-                t('pick_up_order.product_type.add-on') +
-                ' ' +
-                t('general_settings.remark')
+                " " +
+                t("pick_up_order.product_type.add-on") +
+                " " +
+                t("general_settings.remark")
               }
               onChange={(event) => setProductAddonRemark(event.target.value)}
-              value={productAddOnTypeRemark}
-              dataTestId='astd-create-edit-pickup-order-product-addon-remark'
+              value={productAddonTypeRemark}
+              dataTestId="astd-create-edit-pickup-order-product-addon-remark"
             />
           </CustomField>
         )}
       </Collapse>
     </Box>
-  )
-}
+  );
+};
 
-export default ProductListSingleSelect
+export default ProductListSingleSelect;

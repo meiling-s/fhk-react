@@ -1,55 +1,45 @@
-import React from 'react'
-import ConfirmModal from './SpecializeComponents/ConfirmationModal'
-import { useTranslation } from 'react-i18next'
+import React from "react";
+import ConfirmModal from "./SpecializeComponents/ConfirmationModal";
+import { useTranslation } from "react-i18next";
 
 type TypeModalConfirmRemarksEmpty = {
-  openConfirmModal: TypeModalState
-  setOpenConfirmModal?: (params: TypeModalState) => void
+  openConfirmModal: TypeModalState;
+  setOpenConfirmModal?: (params: TypeModalState) => void;
   values?: {
-    productSubTypeRemark?: string,
-    productAddOnTypeRemark?: string,
-  }
-}
+    productSubTypeRemark?: string;
+    productAddonTypeRemark?: string;
+  };
+};
 
-
-const validateRemarks = ({ openConfirmModal, values }: TypeModalConfirmRemarksEmpty): boolean => {
-
+const validateRemarks = ({
+  openConfirmModal,
+  values,
+}: TypeModalConfirmRemarksEmpty): boolean => {
   try {
+    let isValid = true;
 
-    let isValid = true
+    const { isProductSubTypeOthers, isProductAddonTypeOthers, isConfirmed } =
+      openConfirmModal?.tempData;
 
-    const {
-      isProductSubTypeOthers,
-      isProductAddonTypeOthers,
-      isConfirmed,
-    } = openConfirmModal?.tempData
+    const isTypeOthers = isProductSubTypeOthers || isProductAddonTypeOthers;
 
-    const isTypeOthers = (isProductSubTypeOthers || isProductAddonTypeOthers)
-
-    let isRemarksMissing = false
+    let isRemarksMissing = false;
 
     if (isProductSubTypeOthers) {
-      isRemarksMissing = !Boolean(values?.productSubTypeRemark)
+      isRemarksMissing = !Boolean(values?.productSubTypeRemark);
     }
     if (isProductAddonTypeOthers) {
-      isRemarksMissing = !Boolean(values?.productAddOnTypeRemark)
+      isRemarksMissing = !Boolean(values?.productAddonTypeRemark);
     }
 
     if (isTypeOthers && !isConfirmed && isRemarksMissing) {
-
-      isValid = false
-
+      isValid = false;
     }
-    return isValid
-
+    return isValid;
+  } catch (err) {
+    return true;
   }
-  catch (err) {
-
-    return true
-
-  }
-
-}
+};
 
 const initialState = {
   openConfirmModal: {
@@ -58,68 +48,67 @@ const initialState = {
       isConfirmed: false,
       isProductSubTypeOthers: false,
       isProductAddonTypeOthers: false,
-    }
-  }
-}
+    },
+  },
+};
 
 type TypeModalState = {
-  isOpen: boolean,
+  isOpen: boolean;
   tempData: {
-    isConfirmed: boolean,
-    isProductSubTypeOthers: boolean
-    isProductAddonTypeOthers: boolean
-  }
-}
+    isConfirmed: boolean;
+    isProductSubTypeOthers: boolean;
+    isProductAddonTypeOthers: boolean;
+  };
+};
 
-type TypeComponentModal =
-  TypeModalConfirmRemarksEmpty &
-  {
-    onConfirm: (params?: any) => void | Promise<void>
-  }
+type TypeComponentModal = TypeModalConfirmRemarksEmpty & {
+  onConfirm: (params?: any) => void | Promise<void>;
+};
 
 const Component = ({
   openConfirmModal,
   setOpenConfirmModal,
   onConfirm,
 }: TypeComponentModal) => {
-
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <ConfirmModal
       isOpen={openConfirmModal?.isOpen}
-      message={t('pick_up_order.confirm_empty_remarks')}
+      message={t("pick_up_order.confirm_empty_remarks")}
       onConfirm={async () => {
-        if(setOpenConfirmModal)
-        setOpenConfirmModal({
-          isOpen: false,
-          tempData: {
-            ...openConfirmModal.tempData,
-            isConfirmed: true,
-          }
-        })
-        onConfirm()
-
+        if (setOpenConfirmModal)
+          setOpenConfirmModal({
+            isOpen: false,
+            tempData: {
+              ...openConfirmModal.tempData,
+              isConfirmed: true,
+            },
+          });
+        onConfirm();
       }}
-      onCancel={() => setOpenConfirmModal && setOpenConfirmModal({
-        ...openConfirmModal,
-        isOpen: false,
-      })}
+      onCancel={() =>
+        setOpenConfirmModal &&
+        setOpenConfirmModal({
+          ...openConfirmModal,
+          isOpen: false,
+        })
+      }
     />
-  )
+  );
+};
 
-}
-
-export default function useModalConfirmRemarksEmpty({ onConfirm }: {
-  onConfirm: (params?: any) => void
+export default function useModalConfirmRemarksEmpty({
+  onConfirm,
+}: {
+  onConfirm: (params?: any) => void;
 }) {
+  const [openConfirmModal, setOpenConfirmModal] =
+    React.useState<TypeModalState>(initialState.openConfirmModal);
 
-  const [openConfirmModal, setOpenConfirmModal] = React.useState<TypeModalState>(initialState.openConfirmModal)
-
-
-  const resetModal = () =>{
-    setOpenConfirmModal(initialState.openConfirmModal)
-  }
+  const resetModal = () => {
+    setOpenConfirmModal(initialState.openConfirmModal);
+  };
 
   return {
     openConfirmModal,
@@ -132,6 +121,6 @@ export default function useModalConfirmRemarksEmpty({ onConfirm }: {
         setOpenConfirmModal={setOpenConfirmModal}
         onConfirm={onConfirm}
       />
-    )
-  }
+    ),
+  };
 }
