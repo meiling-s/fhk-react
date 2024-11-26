@@ -59,8 +59,8 @@
     "yup": "^1.3.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "ESLINT_NO_DEV_ERRORS=true react-scripts start",
+    "build": "ESLINT_NO_DEV_ERRORS=true react-scripts build",
     "test": "jest",
     "coverage": "jest --coverage",
     "eject": "react-scripts eject"
