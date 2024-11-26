@@ -5,7 +5,7 @@ window.baseURL = {
   logistic: 'http://10.166.22.250/',
   manufacturer: 'http://10.166.22.250/',
   customer: 'http://10.166.22.250/',
-  socif: 'https://360-dev.socif.co/',
+  socif: '',
   // account: 'https://uat.greenhoopapp.com/',
   // administrator: 'https://uat.greenhoopapp.com/',
   // collector: 'https://uat.greenhoopapp.com/',
@@ -19,5 +19,5 @@ window.baseURL = {
   // logistic: 'https://www.greenhoopapp.com/',
   // manufacturer: 'https://www.greenhoopapp.com/',
   // customer: 'https://www.greenhoopapp.com/',
-  // socif: 'https://360-dev.socif.co/',
+  // socif: 'https://360.socif.co/',
 }
