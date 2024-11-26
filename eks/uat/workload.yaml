@@ -42,7 +42,7 @@ spec:
             successThreshold: 1
             timeoutSeconds: 10
           readinessProbe:
-            failureThreshold: 10
+            failureThreshold: 1000
             httpGet:
               path: /
               port: http
