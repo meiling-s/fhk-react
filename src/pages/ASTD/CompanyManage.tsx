@@ -983,9 +983,11 @@ function CompanyManage() {
       }
       await createNewTenant(payload)
     } catch (error) {
-      const { state } = extractError(error)
-      if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+      if (window.baseURL.socif !== '') {
+        const { state } = extractError(error)
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        }
       }
     }
   }
