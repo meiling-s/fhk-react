@@ -40,6 +40,7 @@ import {
 import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
 import InventoryIcon from '@mui/icons-material/Inventory'
+import RecyclingIcon from '@mui/icons-material/Recycling';
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
 import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined'
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined'
@@ -149,6 +150,14 @@ function MainDrawer() {
         collapse: false,
         path: `/${realm}/pickupOrder`,
         functionName: 'Pickup order'
+      },
+      'process order': {
+        name: t('processOrder.title'),
+        icon: <RecyclingIcon />,
+        onClick: () => navigate(`/${realm}/processOrder`),
+        collapse: false,
+        path: `/${realm}/processOrder`,
+        functionName: 'Process order'
       },
       'Purchase order': {
         name: t('purchase_order.enquiry_po'),
@@ -510,7 +519,7 @@ function MainDrawer() {
                       index === drawerMenus.length - 1 ? '48px' : '0px'
                   }}
                   key={drawerMenu.name}
-                  data-testid={drawerMenu.datatestId || ""}
+                  data-testid={drawerMenu.datatestId || ''}
                   onClick={() => handleNavigateMenu(drawerMenu, index)}
                   disablePadding
                 >
@@ -574,7 +583,7 @@ function MainDrawer() {
                     index === drawerMenus.length - 1 ? '48px' : '0px'
                 }}
                 key={index}
-                data-testid={drawerMenu.datatestId || ""}
+                data-testid={drawerMenu.datatestId || ''}
                 onClick={() => handleNavigateMenu(drawerMenu, index)}
                 disablePadding
               >

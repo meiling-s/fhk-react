@@ -33,6 +33,8 @@ import Staff from './pages/Collector/Staff'
 //import Report from "./pages/Collector/Report";
 import Report from './pages/GeneralModule/Report/Report'
 import RecycleShipment from './pages/Collector/RecycleShipment'
+import ProcessOrder from './pages/Collector/ProccessOrder/ProcessOrder'
+import CreateProcessOrder from './pages/Collector/ProccessOrder/CreateProcessOrder'
 
 //import ProcessRecord from "./pages/Collector/Manage/ProcessRecord";
 import ProcessRecord from './pages/Collector/ProcessRecord/ProcessRecord'
@@ -152,6 +154,11 @@ const Router = () => {
             <Route
               path="/collector/warehouse"
               element={<WarehouseDashboard />}
+            />
+            <Route path="/collector/processOrder" element={<ProcessOrder />} />
+            <Route
+              path="/collector/createProcessOrder"
+              element={<CreateProcessOrder />}
             />
           </Route>
 
@@ -278,6 +285,14 @@ const Router = () => {
               element={<CheckInAndCheckOut />}
             />
             <Route path="/manufacturer/report" element={<Report />} />
+            <Route
+              path="/manufacturer/processOrder"
+              element={<ProcessOrder />}
+            />
+            <Route
+              path="/manufacturer/createProcessOrder"
+              element={<CreateProcessOrder />}
+            />
           </Route>
 
           <Route element={<MainLayout />}>

@@ -80,6 +80,7 @@ export const getProductTypeFromDataRow = ({ row, dataProductType }: {
 
   return matchingProductType
 }
+
 export const getProductSubTypeFromDataRow = ({ row, dataProductType }: {
   row: any,
   dataProductType: any[],
@@ -90,13 +91,14 @@ export const getProductSubTypeFromDataRow = ({ row, dataProductType }: {
 
   return matchingProductSubType
 }
+
 export const getProductAddonFromDataRow = ({ row, dataProductType }: {
   row: any,
   dataProductType: any[],
 }) => {
 
   const matchingProductSubType = getProductSubTypeFromDataRow({ row, dataProductType })
-  const id = (row?.productAddonType?.productAddonTypeId || row?.productAddonTypeId || row?.productAddonType || row?.productAddon)
+  const id = (row?.productAddonType?.productAddonTypeId || row?.productAddonTypeId || row?.productAddonType || row?.productAddon || row?.productAddonType)
 
   const matchingProductAddon = matchingProductSubType?.productAddonType?.find((item: any) => item.productAddonTypeId === id)
 

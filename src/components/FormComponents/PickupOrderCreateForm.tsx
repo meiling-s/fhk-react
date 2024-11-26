@@ -84,7 +84,10 @@ const ErrorMessage: React.FC<{ message: string }> = ({ message }) => {
   )
 }
 
-const WarningMessage: React.FC<{ message: string, setContinue: () => void }> = ({ message, setContinue }) => {
+const WarningMessage: React.FC<{
+  message: string
+  setContinue: () => void
+}> = ({ message, setContinue }) => {
   return (
     <div className="bg-[#F6F4B7] p-3 rounded-xl w-1/4">
       <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
@@ -427,6 +430,7 @@ const PickupOrderCreateForm = ({
         const itemCategory = row?.productType ? t('product') : t('recyclables')
 
         return itemCategory
+        
       },
       width: 150,
     },
@@ -441,23 +445,23 @@ const PickupOrderCreateForm = ({
         const matchingProductType = getProductTypeFromDataRow({ row, dataProductType: productType })
 
         if (matchingRecycType) {
-          let name = '';
+          let name = ''
           switch (i18n.language) {
             case 'enus':
-              name = matchingRecycType.recyclableNameEng;
-              break;
+              name = matchingRecycType.recyclableNameEng
+              break
             case 'zhch':
-              name = matchingRecycType.recyclableNameSchi;
-              break;
+              name = matchingRecycType.recyclableNameSchi
+              break
             case 'zhhk':
-              name = matchingRecycType.recyclableNameTchi;
-              break;
+              name = matchingRecycType.recyclableNameTchi
+              break
             default:
-              name = matchingRecycType.recyclableNameTchi;
+              name = matchingRecycType.recyclableNameTchi
           }
-          return name;
+          return name
         } else if (matchingProductType) {
-          let name = '';
+          let name = ''
           switch (i18n.language) {
             case 'enus':
               name = matchingProductType?.productNameEng
@@ -471,7 +475,7 @@ const PickupOrderCreateForm = ({
             default:
               name = matchingProductType?.productNameTchi
           }
-          return name;
+          return name
         }
 
         return typeField;
@@ -605,13 +609,14 @@ const PickupOrderCreateForm = ({
       width: 100,
       filterable: false,
       renderCell: (params) => (
-        <IconButton>
+        <IconButton
+          onClick={() => {
+            setIndex(params.row.id)
+            handleEditRow(params.row.picoDtlId)
+          }}
+          data-testId={'astd-create-edit-pickup-order-edit-recycling-3943' + params.row.id}
+        >
           <EDIT_OUTLINED_ICON
-            onClick={() => {
-              setIndex(params.row.id)
-              handleEditRow(params.row.picoDtlId)
-            }}
-            data-testId={'astd-create-edit-pickup-order-edit-recycling-3943' + params.row.id}
           />
         </IconButton>
       )
@@ -622,15 +627,15 @@ const PickupOrderCreateForm = ({
       filterable: false,
       width: 100,
       renderCell: (params) => (
-        // <IconButton onClick={() => handleDeleteRow(params.row.id)}>
-        //   <DELETE_OUTLINED_ICON />
-        // </IconButton>
         <IconButton
           onClick={() => {
             setOpenDelete(true)
             setRecycbleLocId(params.row)
           }}
-          data-testId={'astd-create-edit-pickup-order-delete-recycling-4671' + params.row.id}
+          data-testId={
+            'astd-create-edit-pickup-order-delete-recycling-4671' +
+            params.row.id
+          }
         >
           <DELETE_OUTLINED_ICON />
         </IconButton>
@@ -663,9 +668,15 @@ const PickupOrderCreateForm = ({
     console.log(prevLang, 'prevlang')
     let logisticName: string = ''
     if (!logisticCompany) return logisticName
-    const logisticSimplified = logisticCompany.find((item) => item.logisticNameSchi === value)
-    const logisticEnglish = logisticCompany.find((item) => item.logisticNameEng === value)
-    const logisticTraditional = logisticCompany.find((item) => item.logisticNameTchi === value)
+    const logisticSimplified = logisticCompany.find(
+      (item) => item.logisticNameSchi === value
+    )
+    const logisticEnglish = logisticCompany.find(
+      (item) => item.logisticNameEng === value
+    )
+    const logisticTraditional = logisticCompany.find(
+      (item) => item.logisticNameTchi === value
+    )
     if (logisticSimplified !== undefined) {
       if (i18n.language === 'enus') {
         logisticName = logisticSimplified?.logisticNameEng ?? ''
@@ -763,7 +774,7 @@ const PickupOrderCreateForm = ({
                     )
                   }
                   value={formik.values.picoType}
-                  dataTestId='astd-create-edit-pickup-order-type-select-button-2449'
+                  dataTestId="astd-create-edit-pickup-order-type-select-button-2449"
                 />
               </CustomField>
             </Grid>
@@ -809,7 +820,7 @@ const PickupOrderCreateForm = ({
                       routineContent: selectedPo?.routine ?? []
                     }}
                     itemColor={{
-                      bgColor: customListTheme.bgColor,
+                      bgColor: customListTheme?.bgColor,
                       borderColor: customListTheme
                         ? customListTheme.border
                         : '#79CA25'
@@ -855,7 +866,9 @@ const PickupOrderCreateForm = ({
                     errorsField.logisticName.status
                     //formik.errors.logisticName && formik.touched.logisticName
                   }
-                  dataTestId={'astd-create-edit-pickup-order-choose-logistic-select-button-6878'}
+                  dataTestId={
+                    'astd-create-edit-pickup-order-choose-logistic-select-button-6878'
+                  }
                 />
               </CustomField>
               {/* {errorsField.logisticName.status ? (
@@ -886,7 +899,7 @@ const PickupOrderCreateForm = ({
                       ? customListTheme.border
                       : '#79CA25'
                   }}
-                  dataTestId='astd-create-edit-pickup-order-vehicle-type-select-button-9679'
+                  dataTestId="astd-create-edit-pickup-order-vehicle-type-select-button-9679"
                 />
               </CustomField>
               {/* {errorsField.vehicleTypeId.status ? (
@@ -895,7 +908,7 @@ const PickupOrderCreateForm = ({
                 ''
               )} */}
             </Grid>
-            <Grid item>
+            {/* <Grid item>
               <CustomField
                 label={t('pick_up_order.plat_number')}
                 mandatory={false}
@@ -910,15 +923,15 @@ const PickupOrderCreateForm = ({
                   value={formik.values.platNo}
                   sx={{ width: '400px' }}
                   error={formik.errors.platNo && formik.touched.platNo}
-                  dataTestId='astd-create-edit-pickup-order-vehicle-plate-input-field-9795'
+                  dataTestId="astd-create-edit-pickup-order-vehicle-plate-input-field-9795"
                 />
               </CustomField>
               {/* {errorsField.platNo.status ? (
                 <ErrorMessage message={errorsField.platNo.message} />
               ) : (
                 ''
-              )} */}
-            </Grid>
+              )} 
+            </Grid> */}
             <Grid item>
               <CustomField
                 label={t('pick_up_order.contact_number')}
@@ -935,7 +948,7 @@ const PickupOrderCreateForm = ({
                   value={formik.values.contactNo}
                   sx={{ width: '400px' }}
                   error={formik.errors.contactNo && formik.touched.contactNo}
-                  dataTestId='astd-create-edit-pickup-order-contact-no-input-field-6429'
+                  dataTestId="astd-create-edit-pickup-order-contact-no-input-field-6429"
                 />
                 {/* {errorsField.contactNo.status ? (
                   <ErrorMessage message={errorsField.contactNo.message} />
@@ -971,7 +984,7 @@ const PickupOrderCreateForm = ({
                             ...params.InputProps,
                             sx: styles.inputProps
                           }}
-                          data-testId='astd-create-edit-pickup-order-contract-no-select-button-3176'
+                          data-testId="astd-create-edit-pickup-order-contract-no-select-button-3176"
                         />
                       )}
                       noOptionsText={t('common.noOptions')}
@@ -1003,7 +1016,7 @@ const PickupOrderCreateForm = ({
                         ? customListTheme.border
                         : '#79CA25'
                     }}
-                    dataTestId='astd-create-edit-pickup-order-ad-hoc-reason-select-button-5199'
+                    dataTestId="astd-create-edit-pickup-order-ad-hoc-reason-select-button-5199"
                   />
                 </CustomField>
                 {/* {errorsField.AD_HOC.status ? (
@@ -1026,7 +1039,7 @@ const PickupOrderCreateForm = ({
                     <div
                       className={`text-mini cursor-pointer text-[${colorTheme}]`}
                       onClick={resetPicoId}
-                      data-testId='astd-create-edit-pickup-order-related-po-change-menu-button-5755'
+                      data-testId="astd-create-edit-pickup-order-related-po-change-menu-button-5755"
                     >
                       {t('pick_up_order.change')}
                     </div>
@@ -1036,7 +1049,7 @@ const PickupOrderCreateForm = ({
                     <Button
                       sx={[picoIdButton]}
                       onClick={() => setOpenPico(true)}
-                      data-testId='astd-create-edit-pickup-order-related-po-select-menu-button-7503'
+                      data-testId="astd-create-edit-pickup-order-related-po-select-menu-button-7503"
                     >
                       <AddCircleIcon sx={{ ...endAdornmentIcon, pr: 1 }} />
                       {t('pick_up_order.choose')}
@@ -1122,7 +1135,7 @@ const PickupOrderCreateForm = ({
                     setOpenModal(true)
                     changeTouchField('createPicoDetail')
                   }}
-                  data-testId='astd-create-edit-pickup-order-new-recycling-9199'
+                  data-testId="astd-create-edit-pickup-order-new-recycling-9199"
                   sx={{
                     height: '40px',
                     width: '100%',

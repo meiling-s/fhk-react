@@ -47,6 +47,8 @@ import {
 import { manuList } from '../../interfaces/common'
 import { getManuList } from '../../APICalls/Manufacturer/purchaseOrder'
 import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
+import { LocalizeRecycleProductTypePO } from '../TableComponents/LocalizeRecyctype'
+import { getProductAddonFromDataRow, getProductSubTypeFromDataRow, getProductTypeFromDataRow } from 'src/pages/Collector/PickupOrder/utils'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -184,10 +186,13 @@ const PurchaseOrderCreateForm = ({
   const {
     logisticList,
     weightUnits,
+    productType,
     recycType,
     decimalVal,
     initWeightUnit,
-    dateFormat
+    dateFormat,
+    getRecycType,
+    getProductType,
   } = useContainer(CommonTypeContainer)
   const [prevLang, setPrevLang] = useState('zhhk')
   const [manuList, setManuList] = useState<manuList[]>()
@@ -316,15 +321,16 @@ const PurchaseOrderCreateForm = ({
   }
 
   const handleDeleteRow = (id: any) => {
+    
     if (editMode) {
       //let updateDeleteRow = state.filter((row, index) => row.id == id)
       // let updateDeleteRow: CreatePicoDetail[] = []
       // debugger
       const updateDeleteRow = state
-        .filter((picoDtl) => picoDtl.id) // Only include items with picoDtlId
+        .filter((picoDtl) => picoDtl.poDtlId) // Only include items with picoDtlId
         .map((picoDtl) => ({
           ...picoDtl,
-          status: picoDtl.id === id ? 'DELETED' : picoDtl.status
+          status: picoDtl.poDtlId === id ? 'DELETED' : picoDtl.status
         }))
       setState(updateDeleteRow)
     } else {
@@ -335,9 +341,9 @@ const PurchaseOrderCreateForm = ({
 
   const createdDate = selectedPo
     ? dayjs
-        .utc(selectedPo.createdAt)
-        .tz('Asia/Hong_Kong')
-        .format(`${dateFormat} HH:mm`)
+      .utc(selectedPo.createdAt)
+      .tz('Asia/Hong_Kong')
+      .format(`${dateFormat} HH:mm`)
     : dayjs.utc(new Date()).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
 
   const handleHeaderOnClick = () => {
@@ -370,32 +376,39 @@ const PurchaseOrderCreateForm = ({
       }
     },
     {
+      field: 'itemCategory',
+      headerName: t('pick_up_order.recyclForm.item_category'),
+      valueGetter: ({ row }) => {
+
+        const itemCategory = row?.productType ? t('product') : t('recyclables')
+
+        return itemCategory
+
+      },
+      width: 150,
+    },
+    {
       field: 'recycTypeId',
       headerName: t('pick_up_order.detail.main_category'),
       width: 150,
       editable: true,
       valueGetter: ({ row }) => {
-        const matchingRecycType = recycType?.find(
-          (item) => item.recycTypeId === row.recycTypeId
-        )
-        if (matchingRecycType) {
-          var name = ''
-          switch (i18n.language) {
-            case Languages.ENUS:
-              name = matchingRecycType.recyclableNameEng
-              break
-            case Languages.ZHCH:
-              name = matchingRecycType.recyclableNameSchi
-              break
-            case Languages.ZHHK:
-              name = matchingRecycType.recyclableNameTchi
-              break
-            default:
-              name = matchingRecycType.recyclableNameTchi //default fallback language is zhhk
-              break
-          }
-          return name
+
+        const dataRowName =LocalizeRecycleProductTypePO({ data: row })
+        let name = dataRowName?.typeName
+
+        if (!name) {
+
+          const matchingRecycType = recycType?.find(item => item.recycTypeId === row.recycTypeId)
+          const matchingProductType = getProductTypeFromDataRow({ row, dataProductType: productType })
+          const resultData = row?.productType ? matchingProductType : matchingRecycType
+          const dataName = LocalizeRecycleProductTypePO({ data: resultData })
+          name = dataName?.subTypeName || dataName?.typeName
+
         }
+
+        return name
+
       }
     },
     {
@@ -405,34 +418,37 @@ const PurchaseOrderCreateForm = ({
       width: 150,
       editable: true,
       valueGetter: ({ row }) => {
-        const matchingRecycType = recycType?.find(
-          (item) => item.recycTypeId === row.recycTypeId
-        )
-        if (matchingRecycType) {
-          const matchrecycSubType = matchingRecycType.recycSubType?.find(
-            (subtype) => subtype.recycSubTypeId === row.recycSubTypeId
-          )
-          if (matchrecycSubType) {
-            var subName = ''
-            switch (i18n.language) {
-              case Languages.ENUS:
-                subName = matchrecycSubType?.recyclableNameEng ?? ''
-                break
-              case Languages.ZHCH:
-                subName = matchrecycSubType?.recyclableNameSchi ?? ''
-                break
-              case Languages.ZHHK:
-                subName = matchrecycSubType?.recyclableNameTchi ?? ''
-                break
-              default:
-                subName = matchrecycSubType?.recyclableNameTchi ?? '' //default fallback language is zhhk
-                break
-            }
 
-            return subName
-          }
+        const dataRowName =LocalizeRecycleProductTypePO({ data: row })
+        let name = dataRowName?.subTypeName || dataRowName?.typeName
+
+        if (!name) {
+
+          const matchingRecycType = recycType?.find(item => item.recycTypeId === row.recycTypeId)?.recycSubType?.find(item => item.recycSubTypeId == row?.recycSubTypeId)
+          const matchingProductType = getProductSubTypeFromDataRow({ row, dataProductType: productType })
+          const resultData = row?.productType ? matchingProductType : matchingRecycType
+          const dataName = LocalizeRecycleProductTypePO({ data: resultData })
+          name = dataName?.subTypeName || dataName?.typeName
+
         }
+
+        return name
+
       }
+    },
+    {
+      field: 'addon',
+      headerName: t('pick_up_order.product_type.add-on'),
+      type: 'string',
+      width: 150,
+      editable: true,
+      valueGetter: ({ row }) => {
+
+        const matchingProductType = getProductAddonFromDataRow({ row, dataProductType: productType })
+        const dataName: any = row?.productType ? LocalizeRecycleProductTypePO({ data: matchingProductType })?.typeName : ''
+        return dataName
+
+      },
     },
     {
       field: 'weight',
@@ -458,8 +474,8 @@ const PurchaseOrderCreateForm = ({
       width: 100,
       filterable: false,
       renderCell: (params) => (
-        <IconButton>
-          <EDIT_OUTLINED_ICON onClick={() => handleEditRow(params.row.id)} />
+        <IconButton onClick={() => handleEditRow(params.row.id)}>
+          <EDIT_OUTLINED_ICON />
         </IconButton>
       )
     },
@@ -646,6 +662,11 @@ const PurchaseOrderCreateForm = ({
     setPrevLang(i18n.language)
   }, [i18n.language])
 
+  useEffect(() => {
+    getRecycType()
+    getProductType()
+  }, [])
+
   const onChangeContent = (field: fieldName, value: any) => {
     if (value === '' || value === 0) {
       formik.setFieldValue([field], '')
@@ -748,7 +769,7 @@ const PurchaseOrderCreateForm = ({
 
     if (filteredRecycData.length < 1) {
       setErrorsField(prev => {
-        return{
+        return {
           ...prev,
           'details': {
             ...prev.details,
@@ -1098,19 +1119,18 @@ const PurchaseOrderCreateForm = ({
                     }
                   }}
                 />
-                <Modal open={openModal} onClose={handleCloses}>
-                  <CreateRecycleFormPurchaseOrder
-                    data={state}
-                    setId={setId}
-                    setState={setState}
-                    onClose={handleCloses}
-                    editRowId={editRowId}
-                    picoHisId={picoRefId}
-                    isEditing={isEditing}
-                    onChangeAddressReceiver={onChangeAddressReceiver}
-                    receiverAddr={formik.values.receiverAddr}
-                  />
-                </Modal>
+                <CreateRecycleFormPurchaseOrder
+                  openModal={openModal}
+                  data={state}
+                  setId={setId}
+                  setState={setState}
+                  onClose={handleCloses}
+                  editRowId={editRowId}
+                  picoHisId={picoRefId}
+                  isEditing={isEditing}
+                  onChangeAddressReceiver={onChangeAddressReceiver}
+                  receiverAddr={formik.values.receiverAddr}
+                />
 
                 <Button
                   variant="outlined"
@@ -1118,6 +1138,7 @@ const PurchaseOrderCreateForm = ({
                     <AddCircleIcon sx={{ ...endAdornmentIcon, pr: 1 }} />
                   }
                   onClick={() => {
+                    setEditRowId(null)
                     setIsEditing(false)
                     setOpenModal(true)
                   }}
