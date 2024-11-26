@@ -12,7 +12,7 @@ export default function VehicleRouteTracker({ }: Props) {
             lang = 'en'
             break
         case 'zhch':
-            lang = 'ch'
+            lang = 'zh'
             break
         case 'zhhk':
             lang = 'zh'
@@ -24,7 +24,6 @@ export default function VehicleRouteTracker({ }: Props) {
     return (
         <Stack sx={{padding: '1rem'}}>
             <iframe
-                id='vehicleIframe'
                 style={localstyles.iFrame} 
                 title='VehicleRoute' 
                 src={iFrameURL} />

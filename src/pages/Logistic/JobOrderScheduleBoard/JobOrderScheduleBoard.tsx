@@ -12,7 +12,7 @@ export default function JobOrderScheduleBoard({ }: Props) {
             lang = 'en'
             break
         case 'zhch':
-            lang = 'ch'
+            lang = 'zh'
             break
         case 'zhhk':
             lang = 'zh'
