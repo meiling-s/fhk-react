@@ -75,6 +75,8 @@ import MaintenancePage from './pages/Common/MaintenancePage'
 import AuthCheck from './components/AuthCheck'
 
 import LoadingPage from './pages/GeneralModule/LoadingPage'
+import VehicleRouteTracker from './pages/Logistic/VehicleRouteTracker/VehicleRouteTracker'
+import JobOrderScheduleBoard from './pages/Logistic/JobOrderScheduleBoard/JobOrderScheduleBoard'
 
 const Router = () => {
   return (
@@ -206,6 +208,8 @@ const Router = () => {
           <Route element={<MainLayout />}>
             <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
             <Route path="/logistic/jobOrder" element={<JobOrder />} />
+            <Route path="/logistic/vehicleRouteTracker" element={<VehicleRouteTracker />} />
+            <Route path="/logistic/jobOrderScheduleBoard" element={<JobOrderScheduleBoard />} />
             <Route
               path="/logistic/createJobOrder/:picoId"
               element={<CreateOrUpdateJobOrder />}

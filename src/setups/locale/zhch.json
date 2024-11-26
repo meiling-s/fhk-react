@@ -50,7 +50,10 @@
     "leaveConfirmMsg": "您确定要离开此页面吗？未保存的更改将会丢失",
     "noData": "没有数据",
     "category": "类别",
-    "subCategory": "次类别"
+    "subCategory": "次类别",
+    "pageUnderConstruction": "页面正在建设中",
+    "vehicleRouteTracker":"车辆追踪",
+    "jobOrderScheduleBoard":"司机日程"
   },
   "col": {
     "createCP": "建立回收点",
