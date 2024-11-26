@@ -1,7 +1,12 @@
-import { CREATE_PROCESS_TYPE_DATA, DELETE_PROCESS_TYPE_DATA, GET_PROCESS_TYPE_DATA, UPDATE_PROCESS_TYPE_DATA } from "../../constants/requests";
-import { returnApiToken } from "../../utils/utils";
+import {
+  CREATE_PROCESS_TYPE_DATA,
+  DELETE_PROCESS_TYPE_DATA,
+  GET_PROCESS_TYPE_DATA,
+  UPDATE_PROCESS_TYPE_DATA
+} from '../../constants/requests'
+import { returnApiToken } from '../../utils/utils'
 import axiosInstance from '../../constants/axiosInstance'
-import { CreateProcessTypeProps } from "../../interfaces/processType";
+import { CreateProcessTypeProps } from '../../interfaces/processType'
 
 export const createProcessTypeData = async (data: CreateProcessTypeProps) => {
   try {
@@ -16,7 +21,7 @@ export const createProcessTypeData = async (data: CreateProcessTypeProps) => {
     })
     return response
   } catch (e) {
-    throw (e)
+    throw e
   }
 }
 
@@ -34,13 +39,17 @@ export const getProcessTypeData = async (page: number, pageSize: number) => {
         AuthToken: token.authToken
       }
     })
+    
     return response
   } catch (error) {
-    throw (error)
+    throw error
   }
 }
 
-export const updateProcessTypeData = async (data: CreateProcessTypeProps, processTypeId: string) => {
+export const updateProcessTypeData = async (
+  data: CreateProcessTypeProps,
+  processTypeId: string
+) => {
   try {
     const token = returnApiToken()
     const response = await axiosInstance({
@@ -53,7 +62,7 @@ export const updateProcessTypeData = async (data: CreateProcessTypeProps, proces
     })
     return response
   } catch (e) {
-    throw (e)
+    throw e
   }
 }
 
@@ -69,6 +78,6 @@ export const deleteProcessTypeData = async (processTypeId: string) => {
     })
     return response
   } catch (error) {
-    throw (error)
+    throw error
   }
 }
