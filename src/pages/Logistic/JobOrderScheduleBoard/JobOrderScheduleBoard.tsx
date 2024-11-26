@@ -1,11 +1,26 @@
 import { Stack } from '@mui/material'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 
 type Props = {}
 
 export default function JobOrderScheduleBoard({ }: Props) {
+    const { i18n } = useTranslation()
+    let lang = 'en'
+    switch(i18n.language) {
+        case 'enus':
+            lang = 'en'
+            break
+        case 'zhch':
+            lang = 'ch'
+            break
+        case 'zhhk':
+            lang = 'zh'
+            break
+    }
+
     const baseURL: string = window.baseURL.socif
-    const iFrameURL: string = `${baseURL}#/manage/assign-order?embedded=true`
+    const iFrameURL: string = `${baseURL}#/manage/assign-order?embedded=true&lang=${lang}`
 
     return (
         <Stack sx={{padding: '1rem'}}>
