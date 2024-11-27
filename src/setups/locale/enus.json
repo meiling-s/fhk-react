@@ -51,6 +51,8 @@
     "noData": "No Data",
     "category": "Category",
     "subCategory": "Sub Category",
+    "idleDays": "Idle Days",
+    "filledIdleDays": "Enter the number of idle days",
     "pageUnderConstruction": "Page Under Construction",
     "vehicleRouteTracker":"Vehicle Route Tracker",
     "jobOrderScheduleBoard":"Job Order Schedule Board"
