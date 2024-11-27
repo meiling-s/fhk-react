@@ -7,6 +7,9 @@ import {
   IconButton,
   InputAdornment,
   SelectChangeEvent,
+  FormControl,
+  InputLabel,
+  FormHelperText,
 } from "@mui/material";
 import { AddCircleOutline, RemoveCircleOutline } from "@mui/icons-material";
 import {
@@ -65,6 +68,7 @@ interface Props {
   recycTypes: recyleTypeData[];
   productTypes: Products[];
   setHasErrors: (hasErrors: boolean) => void;
+  validation: { field: string; error: string }[];
 }
 
 const ItemCategoryRow: React.FC<Props> = ({
@@ -75,6 +79,7 @@ const ItemCategoryRow: React.FC<Props> = ({
   recycTypes,
   productTypes,
   setHasErrors,
+  validation,
 }) => {
   const { i18n } = useTranslation();
   const [errors, setErrors] = useState<{
@@ -83,6 +88,22 @@ const ItemCategoryRow: React.FC<Props> = ({
     recycTypeCapacity?: boolean;
     productTypeCapacity?: boolean;
   }>({});
+
+  const recycTypeError = validation.find(
+    (v) => v.field === `itemCategory[${index}].recycTypeId`
+  );
+  const recycSubTypeError = validation.find(
+    (v) => v.field === `itemCategory[${index}].recycSubTypeId`
+  );
+  const productTypeError = validation.find(
+    (v) => v.field === `itemCategory[${index}].productTypeId`
+  );
+  const productSubTypeError = validation.find(
+    (v) => v.field === `itemCategory[${index}].productSubTypeId`
+  );
+  const productAddonTypeError = validation.find(
+    (v) => v.field === `itemCategory[${index}].productAddonTypeId`
+  );
 
   const validateDuplicates = () => {
     const duplicateProductAddon = itemCategories.some(
@@ -237,169 +258,225 @@ const ItemCategoryRow: React.FC<Props> = ({
 
   return (
     <Grid container spacing={2} alignItems="center">
+      {/* Type Selection */}
       <Grid item xs={2}>
-        <Select
-          value={item.type || ""}
-          onChange={(e) =>
-            handleTypeChange(
-              e.target.value === "recyclable" ? "recyclable" : "product"
-            )
-          }
-          fullWidth
-        >
-          <MenuItem value="recyclable">Recyclable</MenuItem>
-          <MenuItem value="product">Product</MenuItem>
-        </Select>
+        <FormControl fullWidth>
+          <Select
+            value={item.type || ""}
+            onChange={(e) =>
+              handleTypeChange(
+                e.target.value === "recyclable" ? "recyclable" : "product"
+              )
+            }
+          >
+            <MenuItem value="recyclable">Recyclable</MenuItem>
+            <MenuItem value="product">Product</MenuItem>
+          </Select>
+        </FormControl>
       </Grid>
 
-      {item.type === "recyclable" ? (
+      {/* Recyclable Fields */}
+      {item.type === "recyclable" && (
         <>
           <Grid item xs={2}>
-            <Select
-              value={item.recycTypeId || ""}
-              onChange={(e) => handleFieldChange("recycTypeId", e.target.value)}
-              fullWidth
-            >
-              {recycTypes.map((type) => (
-                <MenuItem value={type.recycTypeId} key={type.recycTypeId}>
-                  {getRecyclableNameValue(type)}
-                </MenuItem>
-              ))}
-            </Select>
-          </Grid>
-
-          <Grid item xs={2}>
-            <Select
-              value={item.recycSubTypeId || ""}
-              onChange={(e) =>
-                handleFieldChange("recycSubTypeId", e.target.value)
-              }
-              fullWidth
-              error={!!errors.recycSubTypeId}
-            >
-              {recycTypes
-                .find((type) => type.recycTypeId === item.recycTypeId)
-                ?.recycSubType.map((subtype) => (
-                  <MenuItem
-                    value={subtype.recycSubTypeId}
-                    key={subtype.recycSubTypeId}
-                  >
-                    {getRecyclableNameValue(subtype)}
+            <FormControl fullWidth>
+              <Select
+                value={item.recycTypeId || ""}
+                onChange={(e) =>
+                  handleFieldChange("recycTypeId", e.target.value)
+                }
+                sx={{
+                  border: recycTypeError ? "2px solid red" : "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
+              >
+                {recycTypes.map((type) => (
+                  <MenuItem value={type.recycTypeId} key={type.recycTypeId}>
+                    {getRecyclableNameValue(type)}
                   </MenuItem>
                 ))}
-            </Select>
+              </Select>
+            </FormControl>
           </Grid>
 
           <Grid item xs={2}>
-            <TextField
-              type="number"
-              value={item.recycTypeCapacity || ""}
-              onChange={(e) =>
-                handleFieldChange("recycTypeCapacity", +e.target.value)
-              }
-              fullWidth
-              error={!!errors.recycTypeCapacity}
-              required={true}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">kg</InputAdornment>
-                ),
-              }}
-              onBlur={() => {
-                item.recycTypeCapacity == 0 && handleBlur("recyc");
-              }}
-            />
+            <FormControl fullWidth error={!!errors.recycSubTypeId}>
+              <Select
+                value={item.recycSubTypeId || ""}
+                onChange={(e) =>
+                  handleFieldChange("recycSubTypeId", e.target.value)
+                }
+                sx={{
+                  border: recycSubTypeError
+                    ? "2px solid red"
+                    : "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
+              >
+                {recycTypes
+                  .find((type) => type.recycTypeId === item.recycTypeId)
+                  ?.recycSubType.map((subtype) => (
+                    <MenuItem
+                      value={subtype.recycSubTypeId}
+                      key={subtype.recycSubTypeId}
+                    >
+                      {getRecyclableNameValue(subtype)}
+                    </MenuItem>
+                  ))}
+              </Select>
+              {!!errors.recycSubTypeId && (
+                <FormHelperText>Duplicate Recyclable Sub-Type</FormHelperText>
+              )}
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={2}>
+            <FormControl fullWidth error={!!errors.recycTypeCapacity}>
+              <TextField
+                type="number"
+                value={item.recycTypeCapacity || ""}
+                onChange={(e) =>
+                  handleFieldChange("recycTypeCapacity", +e.target.value)
+                }
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">kg</InputAdornment>
+                  ),
+                }}
+                sx={{
+                  border: errors.recycTypeCapacity
+                    ? "2px solid red"
+                    : "1px solid #ccc",
+                }}
+                onBlur={() => {
+                  if (!item.recycTypeCapacity) {
+                    setErrors((prev) => ({
+                      ...prev,
+                      recycTypeCapacity: true,
+                    }));
+                  }
+                }}
+              />
+            </FormControl>
           </Grid>
         </>
-      ) : (
+      )}
+
+      {item.type === "product" && (
         <>
           <Grid item xs={2}>
-            <Select
-              value={item.productTypeId || ""}
-              onChange={handleProductTypeChange}
-              fullWidth
-            >
-              {productTypes.map((type) => (
-                <MenuItem value={type.productTypeId} key={type.productTypeId}>
-                  {getProductNameValue(type)}
-                </MenuItem>
-              ))}
-            </Select>
+            <FormControl fullWidth>
+              <Select
+                value={item.productTypeId || ""}
+                onChange={handleProductTypeChange}
+                sx={{
+                  border: productTypeError ? "2px solid red" : "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
+              >
+                {productTypes.map((type) => (
+                  <MenuItem value={type.productTypeId} key={type.productTypeId}>
+                    {getProductNameValue(type)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
 
           <Grid item xs={2}>
-            <Select
-              value={item.productSubTypeId || ""}
-              onChange={handleProductSubTypeChange}
-              fullWidth
-              disabled={!item.productTypeId}
-            >
-              {(
-                productTypes?.find(
-                  (type) => type.productTypeId === item.productTypeId
-                )?.productSubType || []
-              ).map((subtype) => (
-                <MenuItem
-                  value={subtype.productSubTypeId}
-                  key={subtype.productSubTypeId}
-                >
-                  {getProductNameValue(subtype)}
-                </MenuItem>
-              ))}
-            </Select>
+            <FormControl fullWidth>
+              <Select
+                value={item.productSubTypeId || ""}
+                onChange={handleProductSubTypeChange}
+                sx={{
+                  border: productSubTypeError
+                    ? "2px solid red"
+                    : "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
+                disabled={!item.productTypeId}
+              >
+                {productTypes !== undefined &&
+                  productTypes
+                    ?.find((type) => type.productTypeId === item.productTypeId)
+                    ?.productSubType?.map((subtype) => (
+                      <MenuItem
+                        value={subtype.productSubTypeId}
+                        key={subtype.productSubTypeId}
+                      >
+                        {getProductNameValue(subtype)}
+                      </MenuItem>
+                    ))}
+              </Select>
+            </FormControl>
           </Grid>
 
           <Grid item xs={2}>
-            <Select
-              value={item.productAddonTypeId || ""}
-              onChange={handleProductAddonChange}
-              fullWidth
-              disabled={!item.productSubTypeId}
-              error={!!errors.productAddonTypeId}
-            >
-              {(
-                (item.productSubTypeId &&
-                  (
-                    productTypes.find(
-                      (type) => type.productTypeId === item.productTypeId
-                    )?.productSubType || []
-                  ).find(
-                    (subtype) =>
-                      subtype.productSubTypeId === item.productSubTypeId
-                  )?.productAddonType) ||
-                []
-              ).map((addon) => (
-                <MenuItem
-                  value={addon.productAddonTypeId}
-                  key={addon.productAddonTypeId}
-                >
-                  {getProductNameValue(addon)}
-                </MenuItem>
-              ))}
-            </Select>
+            <FormControl fullWidth>
+              <Select
+                value={item.productAddonTypeId || ""}
+                onChange={handleProductAddonChange}
+                fullWidth
+                disabled={!item.productSubTypeId}
+                error={!!errors.productAddonTypeId}
+                sx={{
+                  border: productAddonTypeError
+                    ? "2px solid red"
+                    : "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
+              >
+                {(
+                  (item.productSubTypeId &&
+                    (
+                      productTypes.find(
+                        (type) => type.productTypeId === item.productTypeId
+                      )?.productSubType || []
+                    ).find(
+                      (subtype) =>
+                        subtype.productSubTypeId === item.productSubTypeId
+                    )?.productAddonType) ||
+                  []
+                ).map((addon) => (
+                  <MenuItem
+                    value={addon.productAddonTypeId}
+                    key={addon.productAddonTypeId}
+                  >
+                    {getProductNameValue(addon)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
 
           <Grid item xs={2}>
-            <TextField
-              type="number"
-              value={item.productTypeCapacity || ""}
-              onChange={(e) =>
-                handleFieldChange(
-                  "productTypeCapacity",
-                  parseFloat(e.target.value) || 0
-                )
-              }
-              fullWidth
-              error={!!errors.productTypeCapacity}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">kg</InputAdornment>
-                ),
-              }}
-              onBlur={() => {
-                item.productTypeCapacity == 0 && handleBlur("product");
-              }}
-            />
+            <FormControl fullWidth>
+              <TextField
+                type="number"
+                value={item.productTypeCapacity || ""}
+                onChange={(e) =>
+                  handleFieldChange("productTypeCapacity", +e.target.value)
+                }
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">kg</InputAdornment>
+                  ),
+                }}
+                sx={{
+                  border: errors.productTypeCapacity
+                    ? "2px solid red"
+                    : "1px solid #ccc",
+                }}
+                onBlur={() => {
+                  if (!item.productTypeCapacity) {
+                    setErrors((prev) => ({
+                      ...prev,
+                      productTypeCapacity: true,
+                    }));
+                  }
+                }}
+              />
+            </FormControl>
           </Grid>
         </>
       )}

@@ -1392,7 +1392,8 @@
     "rechargeable_battery": "Rechargeable battery",
     "compact_fluorescent": "Compact fluorescent lamps and light tubes",
     "paper_drink_box": "Paper drink box",
-    "collector": "Reyclables Dashboard"
+    "collector": "Reyclables Dashboard",
+    "capacity": "Capacity"
   },
   "dashboard_manufacturer": {
     "data": "Data",

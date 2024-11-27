@@ -367,7 +367,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       if (response) {
         //mapping data
         const warehouse = response.data;
-        console.log(warehouse, "data");
         setNamesField({
           warehouseNameTchi: warehouse.warehouseNameTchi,
           warehouseNameSchi: warehouse.warehouseNameSchi,
@@ -581,19 +580,104 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         )}`,
       });
 
-    if (
-      itemCategories[0].recycTypeId === "" &&
-      itemCategories[0].productTypeId === ""
-    ) {
-      tempV.push({
-        field: "item",
-        error: `${t(`add_warehouse_page.recyclable_subcategories`)} ${t(
-          "add_warehouse_page.shouldNotEmpty"
-        )}`,
-      });
-    }
+    itemCategories.forEach((category, index) => {
+      if (category.type === "recyclable") {
+        const recycType = recycleTypeDataArray?.find(
+          (type) => type.recycTypeId === category.recycTypeId
+        );
+
+        if (!category.recycTypeId) {
+          tempV.push({
+            field: `itemCategory[${index}].recycTypeId`,
+            error: `${t("pick_up_order.card_detail.main_category")} ${t(
+              "add_warehouse_page.shouldNotEmpty"
+            )}`,
+          });
+        }
+
+        if (
+          recycType &&
+          recycType.recycSubType.length > 0 &&
+          !category.recycSubTypeId
+        ) {
+          tempV.push({
+            field: `itemCategory[${index}].recycSubTypeId`,
+            error: `${t("pick_up_order.card_detail.subcategory")} ${t(
+              "add_warehouse_page.shouldNotEmpty"
+            )}`,
+          });
+        }
+        if (category.recycTypeCapacity === 0) {
+          tempV.push({
+            field: `itemCategory[${index}].recycTypeCapacity`,
+            error: `${t("dashboard_recyclables.capacity")} ${t(
+              "add_warehouse_page.shouldNotEmpty"
+            )}`,
+          });
+        }
+      } else if (category.type === "product") {
+        const productType = productTypeDataArray.find(
+          (type) => type.productTypeId === category.productTypeId
+        );
+
+        if (!category.productTypeId) {
+          tempV.push({
+            field: `itemCategory[${index}].productTypeId`,
+            error: `${t("pick_up_order.product_type.product")} ${t(
+              "add_warehouse_page.shouldNotEmpty"
+            )}`,
+          });
+        }
+
+        if (
+          productType &&
+          productType.productSubType !== undefined &&
+          productType?.productSubType?.length > 0 &&
+          !category.productSubTypeId
+        ) {
+          tempV.push({
+            field: `itemCategory[${index}].productSubTypeId`,
+            error: `${t("pick_up_order.product_type.subtype")} ${t(
+              "add_warehouse_page.shouldNotEmpty"
+            )}`,
+          });
+        }
+
+        if (
+          productType?.productSubType?.find(
+            (subType) => subType.productSubTypeId === category?.productSubTypeId
+          )?.productAddonType?.length &&
+          !category?.productAddonTypeId
+        ) {
+          tempV.push({
+            field: `itemCategory[${index}].productAddonTypeId`,
+            error: `${t("pick_up_order.product_type.add-on")} ${t(
+              "add_warehouse_page.shouldNotEmpty"
+            )}`,
+          });
+        }
+        if (category.productTypeCapacity === 0) {
+          tempV.push({
+            field: `itemCategory[${index}].productTypeCapacity`,
+            error: `${t("dashboard_recyclables.capacity")} ${t(
+              "add_warehouse_page.shouldNotEmpty"
+            )}`,
+          });
+        }
+      }
+    });
+
     setValidation(tempV);
-  }, [nameValue, place, contractNum, itemCategories]);
+  }, [
+    nameValue,
+    place,
+    contractNum,
+    itemCategories,
+    existingWarehouse,
+    t,
+    recycleTypeDataArray,
+    productTypeDataArray,
+  ]);
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -763,14 +847,12 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     const addWarehouseForm = constructFormData();
     getFormErrorMsg();
     if (validation.length === 0 && !hasErrors) {
-      console.log(addWarehouseForm, "payload");
       action === "add"
         ? //MOVE API CAL TO PARENT DATA, ONLY PARSING DATA HERE
           createWareHouseData(addWarehouseForm)
         : handleEditWH(addWarehouseForm);
       setValidation([]);
     } else {
-      console.log("hitt");
       setTrySubmited(true);
     }
   };
@@ -827,7 +909,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const handleEditWH = async (editWarehouseForm: any) => {
     const isRecybleExist = await checkWarehouseRecycble();
 
-    console.log(editWarehouseForm.status, isRecybleExist);
     if (editWarehouseForm.status === "INACTIVE" && isRecybleExist) {
       setOpenWHCloseModal(true);
     } else {
@@ -1078,6 +1159,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                   recycTypes={recycleTypeDataArray}
                   productTypes={productTypeDataArray}
                   setHasErrors={setHasErrors}
+                  validation={validation}
                 />
               ))}
             </div>

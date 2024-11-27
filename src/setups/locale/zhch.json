@@ -1394,7 +1394,8 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒",
-    "collector": "回收物仪表盘"
+    "collector": "回收物仪表盘",
+    "capacity": "容量"
   },
   "dashboard_manufacturer": {
     "data": "数据",
