@@ -889,11 +889,11 @@
     "userAccountUsed": "用戶群組無法刪除，因為其中仍有帳戶"
   },
   "notify": {
-    "successCreated": "成功已创造",
+    "successCreated": "成功已創造",
     "errorCreated": "创建错误",
     "SuccessEdited": "成功编辑",
     "errorEdited": "错误已编辑",
-    "successDeleted": "删除成功",
+    "successDeleted": "刪除成功",
     "errorDeleted": "错误删除"
   },
   "job_order": {
@@ -1330,7 +1330,7 @@
     "1kg_equivalent": "1kg 相等於",
     "enter_weight": "請輸入重量",
     "confirm_delete": "確認刪除",
-    "confirm_text": "如你要删除主類別, 相關的次類別也會删除, 需要繼續嗎?",
+    "confirm_text": "如你要刪除主類別，相關的次類別也會刪除，需要繼續嗎？",
     "weight_error": "權重不能低於0"
   },
   "recycling_point": {
