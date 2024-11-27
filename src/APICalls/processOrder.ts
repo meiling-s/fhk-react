@@ -95,7 +95,7 @@ export const deleteProcessOrder = async (
   }
 }
 
-export const getEstimateWeight = async (
+export const getEstimateEndTime = async (
   queryEstEndDatetime: QueryEstEndDatetime
 ) => {
   const token = returnApiToken()
