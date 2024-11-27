@@ -203,15 +203,20 @@ const CommonType = () => {
   const getContractList = async () => {
     const token = returnApiToken();
     try {
-      var response = await axiosInstance({
-        ...GET_CONTRACT(token.realmApiRoute, token.tenantId),
-        baseURL: window.baseURL.collector,
-        // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
-      });
-      // console.log('Get contract list success:', JSON.stringify(response.data))
+      if (
+        token.realmApiRoute !== "customer" &&
+        token.realmApiRoute !== "account"
+      ) {
+        var response = await axiosInstance({
+          ...GET_CONTRACT(token.realmApiRoute, token.tenantId),
+          baseURL: window.baseURL.collector,
+          // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
+        });
+        // console.log('Get contract list success:', JSON.stringify(response.data))
 
-      const contract = response.data.content;
-      setContractType(contract);
+        const contract = response.data.content;
+        setContractType(contract);
+      }
     } catch (e) {
       // console.error('Get contract list failed:', e)
       return null;
@@ -252,22 +257,27 @@ const CommonType = () => {
   const getProcessTypeList = async () => {
     try {
       const token = returnApiToken();
-      const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
-        ...GET_PROCESS_TYPE_DATA(token.realmApiRoute),
-        params: {
-          page: 0,
-          size: 1000,
-        },
-        headers: {
-          AuthToken: token.authToken,
-        },
-      });
+      if (
+        token.realmApiRoute !== "logistic" &&
+        token.realmApiRoute !== "customer" &&
+        token.realmApiRoute !== "account"
+      ) {
+        const response = await axiosInstance({
+          baseURL: window.baseURL.collector,
+          ...GET_PROCESS_TYPE_DATA(token.realmApiRoute),
+          params: {
+            page: 0,
+            size: 1000,
+          },
+          headers: {
+            AuthToken: token.authToken,
+          },
+        });
 
-      const processTypeListData = response.data.content;
-      setProcessTypeList(processTypeListData);
+        const processTypeListData = response.data.content;
+        setProcessTypeList(processTypeListData);
+      }
     } catch (error) {
-      console.log("err ===> getProcessTypeList err", error);
       setProcessTypeList([]);
     }
   };
