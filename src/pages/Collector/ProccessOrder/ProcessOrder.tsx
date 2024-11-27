@@ -84,10 +84,12 @@ const ProcessOrder = () => {
       headerName: t('processOrder.porDatetime'),
       width: 200,
       renderCell: (params) => {
-        return dayjs
-          .utc(params.row.processStartAt)
-          // .tz('Asia/Hong_Kong')
-          .format(`${dateFormat} HH:mm`)
+        return (
+          dayjs
+            .utc(params.row.processStartAt)
+            // .tz('Asia/Hong_Kong')
+            .format(`${dateFormat} HH:mm`)
+        )
       }
     },
     {
@@ -271,6 +273,7 @@ const ProcessOrder = () => {
   }
 
   const handleSearch = debounce((keyName: string, value: string) => {
+    if (value === 'Invalid Date') return
     setPage(1)
     updateQuery({ [keyName]: value })
   }, 1000)
