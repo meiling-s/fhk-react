@@ -112,6 +112,11 @@ export  type CheckinDetail = {
     chkInDtlId: number;
     recycTypeId: string;
     recycSubTypeId: string;
+    productAddonTypeId: string;
+    productAddonTypeRemark: string;
+    productSubTypeId: string;
+    productSubTypeRemark: string;
+    productTypeId: string;
     packageTypeId: string;
     weight: number;
     unitId: string;
