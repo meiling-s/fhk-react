@@ -15,12 +15,14 @@ export default function JobOrderScheduleBoard({ }: Props) {
             lang = 'en'
             break
         case 'zhch':
-            lang = 'zh'
+            lang = 'sc'
             break
         case 'zhhk':
-            lang = 'zh'
+            lang = 'tc'
             break
     }
+
+    console.log('i18n.language', i18n.language)
 
     const baseURL: string = window.baseURL.socif
     const iFrameURL: string = `${baseURL}#/login?astd-tenantId=${tenantId}&password=astd-${tenantId}pw&redirect=/manage/assign-order&embedded=true&lang=${lang}`

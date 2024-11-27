@@ -15,10 +15,10 @@ export default function VehicleRouteTracker({ }: Props) {
             lang = 'en'
             break
         case 'zhch':
-            lang = 'zh'
+            lang = 'sc'
             break
         case 'zhhk':
-            lang = 'zh'
+            lang = 'tc'
             break
     }
 
