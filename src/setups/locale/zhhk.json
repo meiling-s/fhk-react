@@ -1526,7 +1526,7 @@
     "inventoryLocation": "送出地點"
   },
   "processOrder": {
-    "title": "处理订单",
+    "title": "處理訂單",
     "processOrder": "處理訂單",
     "enterOrderNumber": "輸入訂單編號",
     "porDatetime": "處理日期及時間",

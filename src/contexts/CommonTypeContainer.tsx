@@ -392,7 +392,7 @@ const CommonType = () => {
   const getProductType = async () => {
     const response = await getProductTypeList();
     const data = response.data;
-    console.log(data, "dataa");
+  
     if (data) {
       setProductType(data);
     }

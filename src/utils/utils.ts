@@ -577,10 +577,16 @@ export const porStatusList: StatusPickUpOrder[] = [
     labelTchi: '已完成'
   },
   {
-    value: 'DELETED',
-    labelEng: 'DELETED',
-    labelSchi: '已刪除',
-    labelTchi: '已刪除'
+    value: 'CANCELLED',
+    labelEng: 'CANCELLED',
+    labelSchi: '取消',
+    labelTchi: '取消'
+  },
+  {
+    value: '',
+    labelEng: 'ANY',
+    labelSchi: '任何',
+    labelTchi: '任何'
   }
 ]
 
@@ -588,21 +594,14 @@ export const cloneData = (data: any) => {
   return JSON.parse(JSON.stringify(data))
 }
 
-
 export const objectFilter = (data: object, arr: string[]) => {
-
-  try{
-
+  try {
     const result = Object.keys(data)
-      .filter(key => !arr.includes(key))
+      .filter((key) => !arr.includes(key))
       .reduce((obj: any, key) => {
-        obj[key] = data[key as keyof object];
-        return obj;
+        obj[key] = data[key as keyof object]
+        return obj
       }, {})
-      return result 
-
-  }
-  catch(err){
-
-  }
+    return result
+  } catch (err) {}
 }
