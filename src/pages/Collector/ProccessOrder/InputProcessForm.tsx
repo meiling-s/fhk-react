@@ -739,6 +739,7 @@ const InputProcessForm = ({
                             id="weight"
                             placeholder={t('userAccount.pleaseEnterNumber')}
                             onChange={(event) => {
+                              console.log(event.target.value)
                               onChangeWeight(
                                 event.target.value,
                                 decimalVal,
@@ -770,7 +771,7 @@ const InputProcessForm = ({
                                 : processOrderDetail[0].processOut.estOutWeight
                             }
                             error={
-                              !trySubmited &&
+                              trySubmited &&
                               (key === 'processIn'
                                 ? processOrderDetail[0].processIn
                                     .estInWeight === '0'
