@@ -263,6 +263,10 @@ export const GET_MANULIST = (
   url: `api/v1/${realmApiRoute}/manulist/${table}?size=1000`
 })
 
+export const GET_CUSTOMERLIST = (realmApiRoute: string, table: string) => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/customerlist/${table}?size=1000`
+})
 export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'put',
   url: 'api/v1/administrator/pico/V3'
