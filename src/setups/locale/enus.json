@@ -710,6 +710,7 @@
     "inventoryLocation": "Inventory Location",
     "weight": "Weight",
     "at": "at",
+    "select_location": "select location",
     "handover": "hand over"
   },
   "processRecord": {

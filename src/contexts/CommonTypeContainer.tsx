@@ -277,13 +277,13 @@ const CommonType = () => {
   }
   
   const initWeightUnit = async () => {
-   try {
-    const result = await getWeightUnit(page - 1, 1000)
-    const data = result?.data
-    setWeightUnits(data)
-   } catch (error) {
-    return null
-   }
+    try {
+      const result = await getWeightUnit(page - 1, 1000)
+      const data = result?.data
+      setWeightUnits(data)
+    } catch (error) {
+      return null
+    }
   }
   
   const getDecimalVal = async () => {
@@ -387,6 +387,7 @@ const CommonType = () => {
     initCompaniesData()
     getTenantLogin()
     getPackagingUnitList()
+    getProductType()
   }
 
   useEffect(() => {
@@ -409,6 +410,7 @@ const CommonType = () => {
       initCompaniesData()
       getTenantLogin()
       getPackagingUnitList()
+      getProductType()
     }
   }, [])
 

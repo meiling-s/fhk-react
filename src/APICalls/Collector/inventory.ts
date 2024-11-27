@@ -1,11 +1,13 @@
 import {
   ASTD_GET_INVENTORY,
+  CREATE_PROCESS_IN,
+  CREATE_PROCESS_OUT,
   GET_INVENTORY,
   GET_ITEM_TRACK_INVENTORY
 } from '../../constants/requests'
 import { returnApiToken } from '../../utils/utils'
 import axiosInstance from '../../constants/axiosInstance'
-import { InventoryQuery } from '../../interfaces/inventory'
+import { InventoryQuery, ProcessInType, ProcessOutType } from '../../interfaces/inventory'
 
 //get all inventory
 export const getAllInventory = async (
@@ -89,5 +91,41 @@ export const astdGetAllInventory = async (
   } catch (e) {
     console.error('Get all vehicle failed:', e)
     return null
+  }
+}
+
+export const createProcessIn = async (data: ProcessInType, processOrderId: string, factoryId: string) => {
+  try {
+      const params: any = {}
+      if (processOrderId) params.processOrderId = processOrderId
+      if (factoryId) params.factoryId = factoryId
+
+      const token = returnApiToken()
+      return await axiosInstance({
+          baseURL: window.baseURL.collector,
+          ...CREATE_PROCESS_IN(token.realmApiRoute ,token.decodeKeycloack),
+          params: params,
+          data,
+      })
+  } catch (error) {
+      console.error(error)
+  }
+}
+
+export const createProcessOut = async (data: ProcessOutType, processOrderId: string, factoryId: string) => {
+  try {
+      const params: any = {}
+        if (processOrderId) params.processOrderId = processOrderId
+        if (factoryId) params.factoryId = factoryId
+
+      const token = returnApiToken()
+      return await axiosInstance({
+          baseURL: window.baseURL.collector,
+          ...CREATE_PROCESS_OUT(token.realmApiRoute ,token.decodeKeycloack),
+          params: params,
+          data,
+      })
+  } catch (error) {
+      console.error(error)
   }
 }

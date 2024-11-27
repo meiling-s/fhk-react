@@ -7,7 +7,8 @@ import {
   TextField,
   InputAdornment,
   IconButton,
-  CircularProgress
+  CircularProgress,
+  Button
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -20,6 +21,7 @@ import {
 import { styles } from '../../../constants/styles'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import InventoryDetail from './DetailInventory'
+import CreateInventoryItem from './CreateInventory'
 import { useContainer } from 'unstated-next'
 import {
   InventoryItem,
@@ -49,20 +51,28 @@ import { PickupOrder } from '../../../interfaces/pickupOrder'
 import { astdSearchWarehouse } from '../../../APICalls/warehouseManage'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
-import { SEARCH_ICON } from '../../../themes/icons'
+import { ADD_ICON, SEARCH_ICON } from '../../../themes/icons'
 import useDebounce from '../../../hooks/useDebounce'
 import CircularLoading from '../../../components/CircularLoading'
 import {
   returnApiToken,
   extractError,
   getPrimaryColor,
-  debounce
+  debounce,
+  showErrorToast,
+  showSuccessToast
 } from '../../../utils/utils'
 import { getAllWarehouse } from '../../../APICalls/warehouseManage'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import { InventoryQuery } from '../../../interfaces/inventory'
 import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
 import { PackagingUnit } from '../../../interfaces/packagingUnit'
+import { getAllFactories, getAllFactoriesWarehouse,  } from '../../../APICalls/Collector/factory'
+import { getCollectionPoint } from '../../../APICalls/Collector/collectionPointManage'
+import { collectionPoint } from 'src/interfaces/collectionPoint'
+import { FactoryData, FactoryWarehouseData } from 'src/interfaces/factory'
+
+
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -125,6 +135,7 @@ const Inventory: FunctionComponent = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [createDrawerOpen, setCreateDrawerOpen] = useState(false)
   const [inventoryData, setInventoryData] = useState<any[]>([])
   const [inventoryList, setInventory] = useState<any[]>([])
   const [filteredInventory, setFilteredInventory] = useState<any[]>([])
@@ -152,6 +163,55 @@ const Inventory: FunctionComponent = () => {
   const [packagingMapping, setPackagingMapping] = useState<PackagingUnit[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
+  const [colList, setColList] = useState<collectionPoint[]>([])
+  const [allFactoryDataList, setAllFactoryDataList] = useState<FactoryData[]>([])
+  const [warehouseDataList, setWarehouseDataList] = useState<FactoryWarehouseData[]>([])
+
+
+  async function initCollectionPoint() {
+    setIsLoading(true)
+    try {
+      const result = await getCollectionPoint(0, 1000)
+      if (result?.status === STATUS_CODE[200]) {
+        setColList([])
+        const data = result?.data.content
+        if (data && data.length > 0) {
+          setColList(data)
+        }
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+    }
+    setIsLoading(false)
+  }
+
+  const initAllFactoryList = (async () => {
+    setIsLoading(true)
+    setAllFactoryDataList([])
+    const result = await getAllFactories(0, 1000)
+    const data = result?.data
+  
+    if (data) {
+      setAllFactoryDataList(data.content)
+      setIsLoading(false)
+    }   
+  })
+
+  const initWarehouseList = (async () => {
+    setIsLoading(true)
+    setWarehouseDataList([])
+    const result = await getAllFactoriesWarehouse()
+    const data = result?.data 
+  
+    if (data) {
+      setWarehouseDataList(data)
+      setIsLoading(false)
+    }   
+  })
+
 
   const initpackagingUnit = async () => {
     try {
@@ -160,6 +220,7 @@ const Inventory: FunctionComponent = () => {
 
       if (data) {
         setPackagingMapping(data.content)
+        console.log('data packunit', data.content)
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -169,9 +230,13 @@ const Inventory: FunctionComponent = () => {
     }
   }
 
+
   useEffect(() => {
     mappingRecyleItem()
     initpackagingUnit()
+    initAllFactoryList()
+    initWarehouseList()
+    initCollectionPoint()
     getAllPickupOrder()
   }, [recycType, i18n.language])
 
@@ -180,6 +245,9 @@ const Inventory: FunctionComponent = () => {
       if (recycItem.length > 0) {
         initInventory()
         initWarehouse()
+        initAllFactoryList()
+        initWarehouseList()
+        initCollectionPoint()
       }
     }
   }, [recycItem, page, realmApi, query, i18n.language])
@@ -365,6 +433,14 @@ const Inventory: FunctionComponent = () => {
     }
     setIsLoading(false)
   }
+
+  const handleSubmit = async (type: string, msg: string) => {
+    if (type === 'success') {
+      showSuccessToast(msg)
+    } else {
+      showErrorToast(msg)
+    }
+  };
 
   const columns: GridColDef[] = [
     {
@@ -663,6 +739,23 @@ const Inventory: FunctionComponent = () => {
           <Typography fontSize={16} color="black" fontWeight="bold">
             {t('inventory.recyclingInformation')}
           </Typography>
+          <Button
+            onClick={() => {
+              setCreateDrawerOpen(true)
+            }}
+            sx={{
+              borderRadius: '20px',
+              backgroundColor: getPrimaryColor(),
+              '&.MuiButton-root:hover': { bgcolor: getPrimaryColor() },
+              width: 'fit-content',
+              height: '40px',
+              marginLeft: '20px'
+            }}
+            variant="contained"
+            data-testId={'astd-pickup-order-new-button-5743'}
+          >
+            + {t('col.create')}
+          </Button>
         </Box>
         <Stack direction="row" mt={3}>
           {searchfield.map((s, index) => (
@@ -739,6 +832,15 @@ const Inventory: FunctionComponent = () => {
             }}
             selectedRow={selectedRow}
             selectedPico={selectedPico}
+          />
+          <CreateInventoryItem          
+            drawerOpen={createDrawerOpen}
+            colList={colList}
+            factoryDataList={allFactoryDataList}
+            warehouseDataList={warehouseDataList}
+            packagingUnit={packagingMapping}
+            handleDrawerClose={() => setCreateDrawerOpen(false)}
+            onSuccess={handleSubmit}
           />
         </div>
       </Box>
