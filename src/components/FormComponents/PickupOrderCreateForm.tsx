@@ -962,7 +962,7 @@ const PickupOrderCreateForm = ({
               )} */}
             </Grid>
 
-            {formik.values.picoType === 'AD_HOC' && (
+            {/* {formik.values.picoType === 'AD_HOC' && (
               <Grid item>
                 <CustomField
                   label={t('pick_up_order.plat_number')}
@@ -987,7 +987,7 @@ const PickupOrderCreateForm = ({
                     ''
                   )} 
               </Grid>
-            )}
+            )} */}
             <Grid item>
               <CustomField
                 label={t('pick_up_order.contact_number')}
