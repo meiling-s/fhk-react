@@ -368,6 +368,12 @@ const CreateProcessOrder = ({}: {}) => {
   }, [])
 
   useEffect(() => {
+    initWarehouse()
+    initProcessType()
+    initFactory()
+  }, [i18n.language])
+
+  useEffect(() => {
     const validate = async () => {
       const tempV: formValidate[] = []
       processOrderDtlSource.length === 0 &&
@@ -553,7 +559,6 @@ const CreateProcessOrder = ({}: {}) => {
       createdBy: role,
       processOrderDetailPairs: processedDetailsPair
     }
-
 
     const result = await createProcessOrder(formData)
     if (result) {
