@@ -37,7 +37,12 @@ export type processOutImage = {
     itemId: number
     recycTypeId: string
     recycSubTypeId: string
-    packageTypeId: string
+    productTypeId: string,
+    productSubTypeId: string,
+    productSubTypeRemark: string,
+    productAddonTypeId: string,
+    productAddonTypeRemark: string,
+    packageTypeId: string,
     weight: number
     status: string
     unitId: string
