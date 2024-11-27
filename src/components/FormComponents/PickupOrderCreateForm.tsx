@@ -476,6 +476,22 @@ const PickupOrderCreateForm = ({
               name = matchingProductType?.productNameTchi
           }
           return name
+        } else if (row.productType) {
+          let name = ''
+          switch (i18n.language) {
+            case 'enus':
+              name = row.productType?.productNameEng
+              break;
+            case 'zhch':
+              name = row.productType?.productNameSchi
+              break;
+            case 'zhhk':
+              name = row.productType?.productNameTchi
+              break;
+            default:
+              name = row.productType?.productNameTchi
+          }
+          return name
         }
 
         return typeField;
@@ -650,9 +666,45 @@ const PickupOrderCreateForm = ({
   }
 
   const selectPicoRefrence = (
-    picodetail: PickupOrderDetail,
+    picodetail: PickupOrderDetail[],
     picoId: string
   ) => {
+    const newRow: CreatePicoDetail[] = 
+      picodetail.filter(value => value.status === 'OUTSTANDING')
+      // picodetail.filter(value => value)
+        .map((value, index) => {
+          return {
+            createdBy: value?.createdBy,
+            updatedBy: value?.updatedBy,
+            pickupAt: value?.pickupAt,
+            picoHisId: value?.picoHisId,
+            receiverAddr: value?.receiverAddr,
+            receiverAddrGps: value?.receiverAddrGps,
+            receiverId: value?.receiverId,
+            receiverName: value?.receiverName,
+            senderAddr: value?.senderAddr,
+            senderAddrGps: value?.senderAddrGps,
+            senderId: value?.senderId,
+            senderName: value?.senderName,
+            status: value?.status,
+            weight: `${value?.weight}`,
+            id: state.length + index + 1000,
+            picoDtlId: value?.picoDtlId,
+            recycType: value?.recycType,
+            recycSubType: value?.recycSubType,
+            productType: value?.productType,
+            version: value?.version,
+            productAddonType: value?.productAddonType,
+            productAddOnTypeRemark: value?.productAddOnTypeRemark,
+            productSubType: value?.productSubType,
+            productSubTypeRemark: value?.productSubTypeRemark,
+            isAutomation: true,
+          }
+        })
+    
+    const newState = state?.filter(value => value?.isAutomation === undefined).concat(newRow)
+    setState(newState)
+
     setPicoRefId(picoId)
     formik.setFieldValue('refPicoId', picoId)
     setOpenPico(false)
@@ -713,7 +765,8 @@ const PickupOrderCreateForm = ({
   }, [i18n.language])
 
   const onhandleSubmit = () => {
-    const isValid = validateData()
+    const param = formik?.values?.picoType === 'AD_HOC' ? 'contractNo' : undefined
+    const isValid = validateData(param)
     if (isValid == true) {
       formik.handleSubmit()
     }
@@ -908,30 +961,33 @@ const PickupOrderCreateForm = ({
                 ''
               )} */}
             </Grid>
-            {/* <Grid item>
-              <CustomField
-                label={t('pick_up_order.plat_number')}
-                mandatory={false}
-              >
-                <CustomTextField
-                  id="platNo"
-                  placeholder={t('pick_up_order.enter_plat_number')}
-                  onChange={(event) => {
-                    formik.setFieldValue('platNo', event.target.value)
-                    changeTouchField('platNo')
-                  }}
-                  value={formik.values.platNo}
-                  sx={{ width: '400px' }}
-                  error={formik.errors.platNo && formik.touched.platNo}
-                  dataTestId="astd-create-edit-pickup-order-vehicle-plate-input-field-9795"
-                />
-              </CustomField>
-              {/* {errorsField.platNo.status ? (
-                <ErrorMessage message={errorsField.platNo.message} />
-              ) : (
-                ''
-              )} 
-            </Grid> */}
+
+            {formik.values.picoType === 'AD_HOC' && (
+              <Grid item>
+                <CustomField
+                  label={t('pick_up_order.plat_number')}
+                  mandatory={false}
+                >
+                  <CustomTextField
+                    id="platNo"
+                    placeholder={t('pick_up_order.enter_plat_number')}
+                    onChange={(event) => {
+                      formik.setFieldValue('platNo', event.target.value)
+                      changeTouchField('platNo')
+                    }}
+                    value={formik.values.platNo}
+                    sx={{ width: '400px' }}
+                    error={formik.errors.platNo && formik.touched.platNo}
+                    dataTestId="astd-create-edit-pickup-order-vehicle-plate-input-field-9795"
+                  />
+                </CustomField>
+                {errorsField.platNo.status ? (
+                  <ErrorMessage message={errorsField.platNo.message} />
+                  ) : (
+                    ''
+                  )} 
+              </Grid>
+            )}
             <Grid item>
               <CustomField
                 label={t('pick_up_order.contact_number')}

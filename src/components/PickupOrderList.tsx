@@ -26,7 +26,7 @@ interface AddWarehouseProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   selectPicoDetail?: (
-    pickupOrderDetail: PickupOrderDetail,
+    pickupOrderDetail: PickupOrderDetail[],
     picoId: string
   ) => void
   picoId?: string
@@ -58,7 +58,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
 
   const initPickupOrderRequest = async () => {
     let result = null
-    if (role != 'collectoradmin') {
+    if (role !== 'collectoradmin') {
       result = await getAllLogisticsPickUpOrder(0, 1000, query)
     } else {
       result = await getAllPickUpOrder(0, 1000, query)
@@ -85,12 +85,15 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
             pickupOrderDetail: detailPico
           }))
         )
-
         
     const picoDetailList = newList?.filter((picoDetail:any) => picoId ? (picoDetail.picoId !== picoId) : true)
+
+    const picoDetailListDistinguished = 
+      picoDetailList?.filter((value: any, index: any, self: any[]) => 
+        self.map((x: any) => x.picoId).indexOf(value.picoId) === index)
     
-    setPicoList(picoDetailList)
-    setFilteredPico(picoDetailList)
+    setPicoList(picoDetailListDistinguished)
+    setFilteredPico(picoDetailListDistinguished)
   }
 
   useEffect(() => {
@@ -106,11 +109,11 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   }, [searchInput])
 
   const handleSelectedPicoId = (
-    pickupOrderDetail: PickupOrderDetail,
     picoId: string
   ) => {
+    const pickupOrderDetails = pickupOrder?.find((value: PickupOrder) => value?.picoId === picoId)?.pickupOrderDetail
     if (selectPicoDetail) {
-      selectPicoDetail(pickupOrderDetail, picoId)
+      selectPicoDetail(pickupOrderDetails || [], picoId)
     }
   }
 
@@ -232,7 +235,6 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                         key={index}
                         onClick={() => {
                           handleSelectedPicoId(
-                            item.pickupOrderDetail,
                             item.picoId
                           )
                         }}
@@ -260,19 +262,6 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                           </div>
                           <div className="text-smi text-[#717171]">
                             {item.routine}
-                          </div>
-                        </div>
-                        <div className="mb- flex items-center gap-2">
-                          <img src="../Delivery.svg" alt="" />
-                          <div className="text-xs text-[#717171]">
-                            {item.senderName}
-                          </div>
-                          <ARRPW_FORWARD_ICON
-                            fontSize="small"
-                            className="text-[#717171]"
-                          />
-                          <div className="text-xs text-[#717171]">
-                            {item.receiver}
                           </div>
                         </div>
                       </div>

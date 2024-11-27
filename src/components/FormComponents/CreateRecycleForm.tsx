@@ -482,7 +482,13 @@ const CreateRecycleForm = ({
           productSubTypeRemark: formik?.values?.productSubTypeRemark,
           productAddOnTypeRemark: formik?.values?.productAddOnTypeRemark,
         },
-      })) return
+      })) {
+        setOpenConfirmModal({
+          ...openConfirmModal,
+          isOpen: true
+        })
+        return
+      }
 
       if (isDetailDouble) return
 
