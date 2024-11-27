@@ -189,7 +189,6 @@ const CreateCollectionPoint = () => {
         colPtRecyc: values.recyclables,
         roster: [],
       };
-
       const response = await createCollectionPoint(cp);
 
       if (response.data) {
@@ -454,7 +453,6 @@ const CreateCollectionPoint = () => {
                         }))}
                         onChange={(event, value) => {
                           if (value) {
-                            console.log("CONTRACT", value);
                             setFieldValue("contractNo", value.label);
                           } else {
                             setFieldValue("contractNo", "");
@@ -476,9 +474,15 @@ const CreateCollectionPoint = () => {
                     <CustomField label={t("col.serviceType")} mandatory={true}>
                       <CustomItemList
                         items={serviceTypeList}
-                        singleSelect={(value) =>
-                          setServiceFlg(value === "" ? "basic" : value)
-                        }
+                        singleSelect={(value) => {
+                          setServiceFlg((prevValue) => {
+                            if (value === "") {
+                              return "basic";
+                            }
+                            return value;
+                          });
+                        }}
+                        value={serviceFlg}
                         defaultSelected={serviceFlg}
                       />
                       <ErrorMessage
