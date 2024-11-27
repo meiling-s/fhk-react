@@ -1556,7 +1556,7 @@
       "itemToProcessIn": "Expected process in items",
       "itemToProcessOut": "Expected process out items",
       "itemCategory": "Item category (click a category to display subcategories, double-click",
-      "recycling": "Recycling",
+      "recycling": "Recyclable",
       "product": "Product",
       "warehouse": "Warehouse"
     },
