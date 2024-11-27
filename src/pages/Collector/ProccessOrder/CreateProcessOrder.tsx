@@ -355,7 +355,8 @@ const CreateProcessOrder = ({}: {}) => {
       })
 
       setFactoryList(factory)
-      if (factory.length > 0) setSelectedFactory(factory[0])
+      if (factory.length > 0)
+        setSelectedFactory(selectedFactory?.id ? selectedFactory : factory[0])
     }
   }
 
