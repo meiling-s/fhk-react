@@ -236,22 +236,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                 createdBy: loginId,
                 updatedBy: loginId,
                 processinDatetime: new Date().toISOString(), 
-                processinDetail: [{
-                    recycTypeId: isRecyc? selectedRecycType : '',
-                    recycSubTypeId: isRecyc ? selectedRecycSubType : '',
-                    productTypeId: !isRecyc ? productSubTypeId: '',
-                    productSubTypeId: !isRecyc ? productSubTypeId : '',
-                    productSubTypeRemark: !isRecyc ? productSubtypeRemark : '',
-                    productAddonTypeId: !isRecyc ? productAddon : '',
-                    productAddonTypeRemark: !isRecyc ? productAddonRemark : '',
-                    packageTypeId: packagingUnitValue ? String(packagingUnitValue.packagingTypeId) : '',
-                    weight: Number(weight),
-                    unitId: String(selectedWeightUnit?.unitId),
-                    processinDetailPhoto: photos,
-                    itemId: 0,
-                    createdBy: loginId,
-                    updatedBy: loginId,
-                }]
+                processinDetail: []
             }
             const result = await createProcessIn(dataProcessIn, "-1", "-1")
             if (result) {
@@ -676,7 +661,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                                     sx={{
                                     ...localstyles.cardImg,
                                     ...(trySubmited &&
-                                        (imageList.length === 0 || imageList.length < 2) &&
+                                        (imageList.length === 0) &&
                                         localstyles.imgError)
                                     }}
                                 >
