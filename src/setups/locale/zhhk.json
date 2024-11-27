@@ -225,6 +225,7 @@
     "delete": "刪除",
     "type_name": "請輸入名稱",
     "place_placeholders": "請輸入地點",
+    "recyclable_subcategories": "物品類別",
     "subtype": "亞型",
     "recycle_type": "可回收物類別",
     "weight": "請輸入重量",
@@ -244,7 +245,9 @@
     "workshopFlag": "是否工場",
     "warningCloseWarehouse": "倉庫裡還有庫存, 確定要關閉倉庫嗎?",
     "warningDeleteExistingRecy": "倉庫裡還有庫存, 確定要刪除倉庫嗎?",
-    "warningDeleteWarehouse": "你確定要刪除嗎？"
+    "warningDeleteWarehouse": "你確定要刪除嗎？",
+    "product": "產品",
+    "recyling": "回收物"
   },
   "check_in": {
     "transport_information": "運輸資料",
@@ -1384,7 +1387,8 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒",
-    "collector": "回收物儀表盤"
+    "collector": "回收物儀表盤",
+    "capacity": "容量"
   },
   "dashboard_manufacturer": {
     "data": "數據",
