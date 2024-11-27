@@ -604,7 +604,7 @@ const InputProcessForm = ({
                 return (
                   <Grid item key={key}>
                     <div className="p-4 bg-[#D1D1D1] rounded-t-lg max-w-max text-white font-bold">
-                      {t("processOrder.create.itemToProcess")}
+                    {key === "processIn" ? t("processOrder.create.itemToProcessIn") : t("processOrder.create.itemToProcessOut")}
                     </div>
                     <Box
                       sx={{
