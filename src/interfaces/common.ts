@@ -153,6 +153,21 @@ export type collectorList = {
     updatedAt:         string;
 }
 
+export type customerList = {
+    customerId:       string;
+    customerNameTchi: string;
+    customerNameSchi: string;
+    customerNameEng:  string;
+    brNo:              string;
+    description:       string;
+    remark:            string;
+    status:            string;
+    createdBy:         string;
+    updatedBy:         string;
+    createdAt:         string;
+    updatedAt:         string;
+}
+
 
 export type picoRoutine = {
     routineType: string,
