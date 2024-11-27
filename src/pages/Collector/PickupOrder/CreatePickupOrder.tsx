@@ -87,7 +87,8 @@ const CreatePickupOrder = () => {
       createdBy: 'Admin',
       updatedBy: 'Admin',
       createPicoDetail: [],
-      specificDates: []
+      specificDates: [],
+      refPicoId: ''
     },
 
     // validationSchema: validateSchema,
@@ -129,7 +130,6 @@ const CreatePickupOrder = () => {
 
       const result = await submitPickUpOrder(values);
       
-
       const data = result?.data;
       if (data) {
           const routeName = role;
