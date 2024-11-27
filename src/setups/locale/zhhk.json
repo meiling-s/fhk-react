@@ -1535,7 +1535,7 @@
     "inventoryLocation": "送出地點"
   },
   "processOrder": {
-    "title": "处理订单",
+    "title": "處理訂單",
     "processOrder": "處理訂單",
     "enterOrderNumber": "輸入訂單編號",
     "porDatetime": "處理日期及時間",
@@ -1547,7 +1547,8 @@
       "classification": "分類",
       "sol": "溶膠",
       "package": "包裝",
-      "itemToProcess": "預計待處理物品",
+      "itemToProcessIn": "預計待處理物品",
+      "itemToProcessOut": "預計處理後物品",
       "itemCategory": "物品類別 (按一下類別顯示子類別，按兩下取消選擇)",
       "recycling": "回收物",
       "product": "產品",

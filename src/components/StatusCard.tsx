@@ -44,6 +44,11 @@ const StatusCard = ({ status }: { status: string | undefined }) => {
       fontColor = '#FFFFFF'
       name = t('status.closed')
       break
+    case 'CLOSED':
+      bgColor = '#ACACAC'
+      fontColor = '#FFFFFF'
+      name = t('status.closed')
+      break
     case 'OUTSTANDING':
       bgColor = '#F4F4F4'
       fontColor = '#ACACAC'
@@ -91,6 +96,11 @@ const StatusCard = ({ status }: { status: string | undefined }) => {
       name = t('processRecord.completed')
       break
     case 'cancelled':
+      bgColor = '#BFBFBF'
+      fontColor = '#FFFFFF'
+      name = t('processRecord.cancelled')
+      break
+    case 'CANCELLED':
       bgColor = '#BFBFBF'
       fontColor = '#FFFFFF'
       name = t('processRecord.cancelled')
