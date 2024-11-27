@@ -582,7 +582,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       });
 
     if (
-      itemCategories[0].recycTypeId === "" ||
+      itemCategories[0].recycTypeId === "" &&
       itemCategories[0].productTypeId === ""
     ) {
       tempV.push({

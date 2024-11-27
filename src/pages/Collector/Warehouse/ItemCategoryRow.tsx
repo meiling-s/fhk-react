@@ -302,24 +302,7 @@ const ItemCategoryRow: React.FC<Props> = ({
               required={true}
               InputProps={{
                 endAdornment: (
-                  <InputAdornment position="end">
-                    <Select
-                      value={item.unitId || ""}
-                      onChange={(e) =>
-                        handleFieldChange("unitId", e.target.value)
-                      }
-                      displayEmpty
-                      sx={{
-                        minWidth: 80, // Ensure it has enough space to display unit options
-                      }}
-                    >
-                      {/* Unit type options */}
-                      <MenuItem value="kg">Kg</MenuItem>
-                      <MenuItem value="g">Gram</MenuItem>
-                      <MenuItem value="lb">Pounds</MenuItem>
-                      <MenuItem value="oz">Ounces</MenuItem>
-                    </Select>
-                  </InputAdornment>
+                  <InputAdornment position="end">kg</InputAdornment>
                 ),
               }}
               onBlur={() => {
