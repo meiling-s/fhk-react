@@ -26,7 +26,7 @@ import logo_company from '../logo_company.png'
 import { useNavigate } from 'react-router-dom'
 import React, { useState } from 'react'
 import { Collapse, createTheme } from '@mui/material'
-import { ExpandLess, ExpandMore, Login, StarBorder } from '@mui/icons-material'
+import { CalendarTodayOutlined, ExpandLess, ExpandMore, FmdGoodOutlined, Login, StarBorder } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -40,6 +40,7 @@ import {
 import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
 import InventoryIcon from '@mui/icons-material/Inventory'
+import RecyclingIcon from '@mui/icons-material/Recycling';
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
 import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined'
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined'
@@ -150,6 +151,14 @@ function MainDrawer() {
         path: `/${realm}/pickupOrder`,
         functionName: 'Pickup order'
       },
+      'process order': {
+        name: t('processOrder.title'),
+        icon: <RecyclingIcon />,
+        onClick: () => navigate(`/${realm}/processOrder`),
+        collapse: false,
+        path: `/${realm}/processOrder`,
+        functionName: 'Process order'
+      },
       'Purchase order': {
         name: t('purchase_order.enquiry_po'),
         icon: <ShoppingCartOutlinedIcon />,
@@ -165,6 +174,22 @@ function MainDrawer() {
         collapse: false,
         path: `/${realm}/jobOrder`,
         functionName: 'Job order'
+      },
+      'Vehicle mapping': {
+        name: t('common.vehicleRouteTracker'),
+        icon: <FmdGoodOutlined />,
+        onClick: () => navigate(`/${realm}/vehicleRouteTracker`),
+        collapse: false,
+        path: `/${realm}/vehicleRouteTracker`,
+        functionName: 'Vehicle mapping'
+      },
+      'Schedule board': {
+        name: t('common.jobOrderScheduleBoard'),
+        icon: <CalendarTodayOutlined />,
+        onClick: () => navigate(`/${realm}/jobOrderScheduleBoard`),
+        collapse: false,
+        path: `/${realm}/jobOrderScheduleBoard`,
+        functionName: 'Schedule board'
       },
       'Request check-in': {
         name: t('check_in.request_check_in'),
@@ -494,7 +519,7 @@ function MainDrawer() {
                       index === drawerMenus.length - 1 ? '48px' : '0px'
                   }}
                   key={drawerMenu.name}
-                  data-testid={drawerMenu.datatestId || ""}
+                  data-testid={drawerMenu.datatestId || ''}
                   onClick={() => handleNavigateMenu(drawerMenu, index)}
                   disablePadding
                 >
@@ -558,7 +583,7 @@ function MainDrawer() {
                     index === drawerMenus.length - 1 ? '48px' : '0px'
                 }}
                 key={index}
-                data-testid={drawerMenu.datatestId || ""}
+                data-testid={drawerMenu.datatestId || ''}
                 onClick={() => handleNavigateMenu(drawerMenu, index)}
                 disablePadding
               >

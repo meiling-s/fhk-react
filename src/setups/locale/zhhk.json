@@ -8,6 +8,8 @@
     "saveFailed": "保存失敗",
     "editSuccessfully": "編輯成功",
     "editFailed": "編輯失敗",
+    "cancelSuccessfully": "取消成功",
+    "cancelFailed": "取消失敗",
     "deletedSuccessfully": "刪除成功",
     "deleteFailed": "刪除失敗",
     "enterName": "請輸入名稱",
@@ -50,7 +52,10 @@
     "category": "類別",
     "subCategory": "次類別",
     "idleDays": "空閒的日子",
-    "filledIdleDays": "輸入空閒天數"
+    "filledIdleDays": "輸入空閒天數",
+    "pageUnderConstruction": "頁面正在建設中",
+    "vehicleRouteTracker":"車輛追蹤",
+    "jobOrderScheduleBoard":"司機日程"
   },
   "col": {
     "createCP": "建立回收點",
@@ -1524,6 +1529,38 @@
     "createdAt": "送出入日期及時間",
     "shippingCompany": "狀態",
     "inventoryLocation": "送出地點"
+  },
+  "processOrder": {
+    "title": "处理订单",
+    "processOrder": "處理訂單",
+    "enterOrderNumber": "輸入訂單編號",
+    "porDatetime": "處理日期及時間",
+    "porCategory": "處理類別",
+    "orderNumber": "訂單編號",
+    "workshop": "工場",
+    "createdate": "處理日期及地點",
+    "create": {
+      "classification": "分類",
+      "sol": "溶膠",
+      "package": "包裝",
+      "itemToProcess": "預計待處理物品",
+      "itemCategory": "物品類別 (按一下類別顯示子類別，按兩下取消選擇)",
+      "recycling": "回收物",
+      "product": "產品",
+      "warehouse": "貨倉"
+    },
+    "details": {
+      "oderDetail": "訂單詳情",
+      "cancelTitle": "確認取消處理訂單嗎？",
+      "cancelSubTitle": "取消原因（可多選）",
+      "startdateTime": "開始日期和時間",
+      "itemCategory": "項目類別"
+    },
+    "table": {
+      "startOrFinishDate": "開始/結束日期",
+      "processIn": "處理輸入",
+      "processOut": "處理出"
+    }
   },
   "factory": {
     "factory": "工場",

@@ -8,6 +8,8 @@
     "saveFailed": "保存失败",
     "editSuccessfully": "编辑成功",
     "editFailed": "编辑失败",
+    "cancelSuccessfully": "取消成功",
+    "cancelFailed": "取消失败",
     "deletedSuccessfully": "删除成功",
     "deleteFailed": "删除失败",
     "enterName": "请输入名称",
@@ -50,7 +52,10 @@
     "category": "类别",
     "subCategory": "次类别",
     "idleDays": "空闲的日子",
-    "filledIdleDays": "输入闲置天数"
+    "filledIdleDays": "输入闲置天数",
+    "pageUnderConstruction": "页面正在建设中",
+    "vehicleRouteTracker":"车辆追踪",
+    "jobOrderScheduleBoard":"司机日程"
   },
   "col": {
     "createCP": "建立回收点",
@@ -1530,6 +1535,38 @@
     "createdAt": "送出入日期及时间",
     "shippingCompany": "状态",
     "inventoryLocation": "送出地点"
+  },
+  "processOrder": {
+    "title": "处理订单",
+    "processOrder": "处理订单",
+    "enterOrderNumber": "输入订单编号",
+    "porDatetime": "处理日期及时间",
+    "porCategory": "处理类别",
+    "orderNumber": "订单编号",
+    "workshop": "工场",
+    "createdate": "处理日期及地点",
+    "create": {
+      "classification": "分类",
+      "sol": "溶胶",
+      "package": "包装",
+      "itemToProcess": "预计处理的物品",
+      "itemCategory": "物品类别（点选类别显示子类别，双击取消选择）",
+      "recycling": "回收",
+      "product": "产品",
+      "warehouse": "仓库"
+    },
+    "details": {
+      "oderDetail": "订单详情",
+      "cancelTitle": "确认取消处理订单吗？",
+      "cancelSubTitle": "取消原因（可多选）",
+      "startdateTime": "開始日期和時間",
+      "itemCategory": "項目類別"
+    },
+    "table": {
+      "startOrFinishDate": "開始/結束日期",
+      "processIn": "进程",
+      "processOut": "处理出"
+    }
   },
   "factory": {
     "factory": "工场",
