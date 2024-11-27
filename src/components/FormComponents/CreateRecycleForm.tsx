@@ -105,7 +105,6 @@ export interface InitValue {
   productSubType?: string;
   productAddon?: string;
   productSubTypeRemark?: string;
-  productAddonType?: string;
   productAddonTypeRemark?: string;
 }
 
@@ -492,22 +491,23 @@ const CreateRecycleForm = ({
     validationSchema: validateSchema,
 
     onSubmit: (values, { resetForm }) => {
-      if (!validateRemarks({
+      const isRemarksConfirmed = validateRemarks({
         openConfirmModal,
-        setOpenConfirmModal,
         values: {
           productSubTypeRemark: formik?.values?.productSubTypeRemark,
           productAddonTypeRemark: formik?.values?.productAddonTypeRemark,
         },
-      })) {
+      });
+
+      if (!isRemarksConfirmed) {
         setOpenConfirmModal({
           ...openConfirmModal,
-          isOpen: true
-        })
-        return
+          isOpen: true,
+        });
+        return;
+      } else {
+        resetModal();
       }
-
-      if (isDetailDouble) return
 
       if (isEditing) {
         // ===== On Edit Row Detail =====
@@ -862,7 +862,7 @@ const CreateRecycleForm = ({
                           values?.productSubTypeRemark
                         );
                         formik.setFieldValue(
-                          "productAddonType",
+                          "productAddonTypeRemark",
                           values?.productAddonTypeRemark
                         );
                         formik.setFieldValue("recycType", "");
