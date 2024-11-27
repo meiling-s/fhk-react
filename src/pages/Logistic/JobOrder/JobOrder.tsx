@@ -182,6 +182,18 @@ const JobOrder = () => {
       labelTchi: '不接受'
     },
     {
+      value: 'UNASSIGNED',
+      labelEng: 'UNASSIGNED',
+      labelSchi: '未指派',
+      labelTchi: '未指派'
+    },
+    {
+      value: 'ASSIGNED',
+      labelEng: 'ASSIGNED',
+      labelSchi: '已指派',
+      labelTchi: '已指派'
+    },
+    {
       value: '',
       labelEng: 'any',
       labelSchi: '任何',
@@ -223,7 +235,7 @@ const JobOrder = () => {
             </div>
           )
         } else {
-          return <div>{driverId}</div>
+          return <div>{t('status.unassigned')}</div>
         }
       }
     },
@@ -232,7 +244,19 @@ const JobOrder = () => {
       headerName: t('job_order.table.plate_no'),
       type: 'string',
       width: 150,
-      editable: true
+      editable: true,
+      renderCell: (params) => {
+        const plateNo = params.row.plateNo
+        if (plateNo === "") {
+          return (
+            <div>
+              {t("status.unassigned")}
+            </div>
+          )
+        } else {
+          return <div>{plateNo}</div>
+        }
+      }
     },
     {
       field: 'labelId',
