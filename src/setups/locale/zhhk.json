@@ -50,7 +50,12 @@
     "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失",
     "noData": "沒有數據",
     "category": "類別",
-    "subCategory": "次類別"
+    "subCategory": "次類別",
+    "idleDays": "空閒的日子",
+    "filledIdleDays": "輸入空閒天數",
+    "pageUnderConstruction": "頁面正在建設中",
+    "vehicleRouteTracker":"車輛追蹤",
+    "jobOrderScheduleBoard":"司機日程"
   },
   "col": {
     "createCP": "建立回收點",
@@ -220,6 +225,7 @@
     "delete": "刪除",
     "type_name": "請輸入名稱",
     "place_placeholders": "請輸入地點",
+    "recyclable_subcategories": "物品類別",
     "subtype": "亞型",
     "recycle_type": "可回收物類別",
     "weight": "請輸入重量",
@@ -239,7 +245,9 @@
     "workshopFlag": "是否工場",
     "warningCloseWarehouse": "倉庫裡還有庫存, 確定要關閉倉庫嗎?",
     "warningDeleteExistingRecy": "倉庫裡還有庫存, 確定要刪除倉庫嗎?",
-    "warningDeleteWarehouse": "你確定要刪除嗎？"
+    "warningDeleteWarehouse": "你確定要刪除嗎？",
+    "product": "產品",
+    "recyling": "回收物"
   },
   "check_in": {
     "transport_information": "運輸資料",
@@ -884,11 +892,11 @@
     "userAccountUsed": "用戶群組無法刪除，因為其中仍有帳戶"
   },
   "notify": {
-    "successCreated": "成功已创造",
+    "successCreated": "成功已創造",
     "errorCreated": "创建错误",
     "SuccessEdited": "成功编辑",
     "errorEdited": "错误已编辑",
-    "successDeleted": "删除成功",
+    "successDeleted": "刪除成功",
     "errorDeleted": "错误删除"
   },
   "job_order": {
@@ -1325,7 +1333,7 @@
     "1kg_equivalent": "1kg 相等於",
     "enter_weight": "請輸入重量",
     "confirm_delete": "確認刪除",
-    "confirm_text": "如你要删除主類別, 相關的次類別也會删除, 需要繼續嗎?",
+    "confirm_text": "如你要刪除主類別，相關的次類別也會刪除，需要繼續嗎？",
     "weight_error": "權重不能低於0"
   },
   "recycling_point": {
@@ -1379,7 +1387,8 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒",
-    "collector": "回收物儀表盤"
+    "collector": "回收物儀表盤",
+    "capacity": "容量"
   },
   "dashboard_manufacturer": {
     "data": "數據",

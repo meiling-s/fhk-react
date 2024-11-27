@@ -105,7 +105,7 @@ export interface InitValue {
   productSubType?: string;
   productAddon?: string;
   productSubTypeRemark?: string;
-  productAddonType?: string;
+  productAddonTypeRemark?: string;
 }
 
 const initValue: InitValue = {
@@ -134,7 +134,7 @@ const initValue: InitValue = {
   productSubType: "",
   productAddon: "",
   productSubTypeRemark: undefined,
-  productAddonType: undefined,
+  productAddonTypeRemark: undefined,
 };
 
 const CreateRecycleForm = ({
@@ -282,7 +282,7 @@ const CreateRecycleForm = ({
         productSubType:
           editRow?.productSubType?.productSubTypeId || editRow.productSubType,
         productSubTypeRemark: editRow?.productSubTypeRemark,
-        productAddonType: editRow?.productAddonType,
+        productAddonTypeRemark: editRow?.productAddonTypeRemark,
         productAddon:
           editRow?.productAddonType?.productAddonTypeId || editRow.productAddon,
       };
@@ -491,19 +491,23 @@ const CreateRecycleForm = ({
     validationSchema: validateSchema,
 
     onSubmit: (values, { resetForm }) => {
-      if (
-        !validateRemarks({
-          openConfirmModal,
-          setOpenConfirmModal,
-          values: {
-            productSubTypeRemark: formik?.values?.productSubTypeRemark,
-            productAddonTypeRemark: formik?.values?.productAddonType,
-          },
-        })
-      )
-        return;
+      const isRemarksConfirmed = validateRemarks({
+        openConfirmModal,
+        values: {
+          productSubTypeRemark: formik?.values?.productSubTypeRemark,
+          productAddonTypeRemark: formik?.values?.productAddonTypeRemark,
+        },
+      });
 
-      if (isDetailDouble) return;
+      if (!isRemarksConfirmed) {
+        setOpenConfirmModal({
+          ...openConfirmModal,
+          isOpen: true,
+        });
+        return;
+      } else {
+        resetModal();
+      }
 
       if (isEditing) {
         // ===== On Edit Row Detail =====
@@ -858,7 +862,7 @@ const CreateRecycleForm = ({
                           values?.productSubTypeRemark
                         );
                         formik.setFieldValue(
-                          "productAddonType",
+                          "productAddonTypeRemark",
                           values?.productAddonTypeRemark
                         );
                         formik.setFieldValue("recycType", "");
