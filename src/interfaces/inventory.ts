@@ -23,7 +23,7 @@ export type InventoryItem = {
   createdAt: string
   updatedAt: string
   location: string
-  packageName?: string
+  packageName?: string,
 }
 
 export type InventoryQuery = {
@@ -31,4 +31,5 @@ export type InventoryQuery = {
   warehouseId: number | null
   recycTypeId: string
   recycSubTypeId: string
+  idleDays: number | null,
 }

@@ -24,6 +24,7 @@ export const getAllInventory = async (
     if (query?.warehouseId) params.warehouseId = query.warehouseId
     if (query?.recycTypeId) params.recycTypeId = query.recycTypeId
     if (query?.recycSubTypeId) params.recycSubTypeId = query.recycSubTypeId
+    if (query?.idleDays) params.idleDays = query.idleDays
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,

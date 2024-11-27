@@ -62,7 +62,12 @@ type Approve = {
   navigate: (url: string) => void
 }
 
-const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow, navigate }) => {
+const ApproveModal: React.FC<Approve> = ({
+  open,
+  onClose,
+  selectedRow,
+  navigate
+}) => {
   const { t } = useTranslation()
 
   const onApprove = async () => {
@@ -91,11 +96,11 @@ const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow, navigate 
         onClose()
       }
     } catch (error: any) {
-      const {state} = extractError(error);
+      const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else if (state.code === STATUS_CODE[409]){
-        showErrorToast(error.response.data.message);
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error.response.data.message)
       }
     }
   }
@@ -1063,11 +1068,11 @@ const PickupOrders = () => {
 
         // navigate('/collector/PickupOrder')
       } catch (error: any) {
-        const {state} = extractError(error);
+        const { state } = extractError(error)
         if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
-        } else if (state.code === STATUS_CODE[409]){
-          showErrorToast(error.response.data.message);
+        } else if (state.code === STATUS_CODE[409]) {
+          showErrorToast(error.response.data.message)
         }
       }
     } else {
@@ -1121,7 +1126,20 @@ const PickupOrders = () => {
           </Button>
         </Box>
         <Box />
-        
+        <Stack direction="row" mt={3}>
+          {searchfield.map((s) => (
+            <CustomSearchField
+              key={s.field}
+              label={s.label}
+              placeholder={s?.placeholder}
+              width={s.width}
+              inputType={s.inputType}
+              field={s.field}
+              options={s.options || []}
+              onChange={handleSearch}
+            />
+          ))}
+        </Stack>
         <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
           {isLoading ? (
             <CircularLoading />
@@ -1242,7 +1260,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               onClick={() => {
                 if (selectedRow) onDelete()
               }}
-              data-testId='astd-pickup-order-sidebar-confirm-delete-button-5711'
+              data-testId="astd-pickup-order-sidebar-confirm-delete-button-5711"
             >
               {t('check_in.confirm')}
             </button>
@@ -1251,7 +1269,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               onClick={() => {
                 onClose()
               }}
-              data-testId='astd-pickup-order-sidebar-cancel-delete-button-9361'
+              data-testId="astd-pickup-order-sidebar-cancel-delete-button-9361"
             >
               {t('check_out.cancel')}
             </button>

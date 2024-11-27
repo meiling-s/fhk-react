@@ -50,7 +50,12 @@
     "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失",
     "noData": "沒有數據",
     "category": "類別",
-    "subCategory": "次類別"
+    "subCategory": "次類別",
+    "idleDays": "空閒的日子",
+    "filledIdleDays": "輸入空閒天數",
+    "pageUnderConstruction": "頁面正在建設中",
+    "vehicleRouteTracker":"車輛追蹤",
+    "jobOrderScheduleBoard":"司機日程"
   },
   "col": {
     "createCP": "建立回收點",

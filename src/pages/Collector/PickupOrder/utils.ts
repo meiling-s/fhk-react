@@ -13,7 +13,7 @@ const arrStrictId = [
   'productSubTypeId',
   'productAddonTypeId',
   'productSubTypeRemark',
-  'productAddOnTypeRemark',
+  'productAddonTypeRemark',
 ]
 
 
@@ -98,7 +98,7 @@ export const getProductAddonFromDataRow = ({ row, dataProductType }: {
 }) => {
 
   const matchingProductSubType = getProductSubTypeFromDataRow({ row, dataProductType })
-  const id = (row?.productAddonType?.productAddonTypeId || row?.productAddonTypeId || row?.productAddonType || row?.productAddon || row?.productAddOnType)
+  const id = (row?.productAddonType?.productAddonTypeId || row?.productAddonTypeId || row?.productAddonType || row?.productAddon || row?.productAddonType)
 
   const matchingProductAddon = matchingProductSubType?.productAddonType?.find((item: any) => item.productAddonTypeId === id)
 

@@ -5,7 +5,8 @@ import {
   GET_PURCHASE_ORDER_BY_ID,
   GET_ALL_REASON_MANUFACTURER,
   CREATE_PICK_UP_ORDER,
-  GET_MANULIST
+  GET_MANULIST,
+  GET_CUSTOMERLIST
 } from '../../constants/requests'
 
 import { getBaseUrl, returnApiToken } from '../../utils/utils'
@@ -143,5 +144,17 @@ export const getManuList = async () => {
   } catch (e) {
       return null;
   }
+}
 
+export const getCustomerList = async () => {
+  const auth = returnApiToken()
+  try {
+    const response = await axiosInstance({
+      baseURL: getBaseUrl(),
+      ...GET_CUSTOMERLIST(auth.realmApiRoute, auth.decodeKeycloack)
+    })
+    return response
+  } catch (error) {
+    return null
+  }
 }

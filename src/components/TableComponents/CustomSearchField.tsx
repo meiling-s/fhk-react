@@ -33,6 +33,7 @@ const CustomSearchField = ({
   inputType,
   numberOnly = false,
   dataTestId,
+  disableIcon,
 }: {
   label: string
   width?: string
@@ -44,6 +45,7 @@ const CustomSearchField = ({
   inputType?: string
   numberOnly?: boolean
   dataTestId?: string
+  disableIcon?: boolean
 }) => {
   const hasOptions = options && options.length > 0
   //const [selectedValue, setSelectedValue] = useState<string>("")
@@ -134,7 +136,7 @@ const CustomSearchField = ({
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  {!hasOptions && (
+                  {(!hasOptions) && (!disableIcon) && (
                     <IconButton
                       onClick={
                         handleSearch ? () => handleSearchClick() : undefined
