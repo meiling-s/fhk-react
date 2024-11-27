@@ -135,8 +135,7 @@ const initValue: InitValue = {
   productSubType: "",
   productAddon: "",
   productSubTypeRemark: undefined,
-  productAddonType: undefined,
-  productAddonTypeRemark: undefined
+  productAddonTypeRemark: undefined,
 };
 
 const CreateRecycleForm = ({
@@ -284,7 +283,7 @@ const CreateRecycleForm = ({
         productSubType:
           editRow?.productSubType?.productSubTypeId || editRow.productSubType,
         productSubTypeRemark: editRow?.productSubTypeRemark,
-        productAddonType: editRow?.productAddonType,
+        productAddonTypeRemark: editRow?.productAddonTypeRemark,
         productAddon:
           editRow?.productAddonType?.productAddonTypeId || editRow.productAddon,
       };
@@ -493,24 +492,12 @@ const CreateRecycleForm = ({
     validationSchema: validateSchema,
 
     onSubmit: (values, { resetForm }) => {
-      if (
-        !validateRemarks({
-          openConfirmModal,
-          setOpenConfirmModal,
-          values: {
-            productSubTypeRemark: formik?.values?.productSubTypeRemark,
-            productAddonTypeRemark: formik?.values?.productAddonType,
-          },
-        })
-      )
-        return;
-
       if (!validateRemarks({
         openConfirmModal,
         setOpenConfirmModal,
         values: {
           productSubTypeRemark: formik?.values?.productSubTypeRemark,
-          productAddOnTypeRemark: formik?.values?.productAddOnTypeRemark,
+          productAddonTypeRemark: formik?.values?.productAddonTypeRemark,
         },
       })) {
         setOpenConfirmModal({
