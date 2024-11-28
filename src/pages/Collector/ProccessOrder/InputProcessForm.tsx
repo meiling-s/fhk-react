@@ -99,7 +99,6 @@ const InputProcessForm = ({
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
 
-  console.log('plannedStartAtInput', plannedStartAtInput)
   const initDetail: CreateProcessOrderDetailPairs[] = [
     {
       processIn: {
@@ -246,7 +245,6 @@ const InputProcessForm = ({
         })
 
       // validation rectype and product type type
-
       //processIn
       processOrderDetail[0].processIn.itemCategory === 'recycling'
         ? processOrderDetail[0].processIn.processOrderDetailRecyc.length ===
@@ -362,10 +360,10 @@ const InputProcessForm = ({
         ...item,
         [key]: {
           ...item[key],
-          itemCategory: selectedItem,
-          ...(selectedItem === 'recycle'
-            ? { processOrderDetailRecyc: [] }
-            : { processOrderDetailProduct: [] })
+          itemCategory: selectedItem
+          // ...(selectedItem === 'recycle'
+          //   ? { processOrderDetailRecyc: [] }
+          //   : { processOrderDetailProduct: [] })
         }
       }))
     )
@@ -374,8 +372,7 @@ const InputProcessForm = ({
   //to do : change to multiple product select
   const handleProductChange = (type: string, value: singleProduct) => {
     let tempProduct: any[] = []
-    if (value.productTypeId && value.productSubTypeId != '')
-      tempProduct.push(value)
+    if (value.productTypeId) tempProduct.push(value)
 
     setProcessOrderDetail((prevDetails) =>
       prevDetails.map((detail) => ({
@@ -386,6 +383,8 @@ const InputProcessForm = ({
         }
       }))
     )
+
+    console.log('handleProductChange', processOrderDetail)
   }
 
   const handleRecycChange = (type: string, value: recyclable[]) => {
@@ -414,6 +413,8 @@ const InputProcessForm = ({
         }
       }))
     )
+
+    console.log('handleRecycChange', processOrderDetail)
   }
 
   const updateWarehouseIds = (
@@ -473,7 +474,7 @@ const InputProcessForm = ({
     const params: QueryEstEndDatetime = {
       processTypeId: processTypeId,
       estInWeight: Number(processOrderDetail[0].processIn.estInWeight),
-      plannedStartAt: dayjs(plannedStartAt).format('YYYY-MM-DDTHH:mm:ss')
+      plannedStartAt: dayjs.utc(plannedStartAt).format('YYYY-MM-DDTHH:mm:ss')
     }
     let plannedEndAt = ''
     const result = await getEstimateEndTime(params)
@@ -521,6 +522,7 @@ const InputProcessForm = ({
     })
 
     onSave(processOrderDetail, isUpdate)
+    console.log('submit data', processOrderDetail)
     handleDrawerClose()
   }
 
