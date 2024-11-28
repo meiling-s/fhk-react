@@ -199,17 +199,17 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
           (recyc) => recycTypeId === recyc.recycTypeId
         );
   
+        if (!recycTypeId) {
+          tempV.push({
+            field: t("pick_up_order.error.recycType"),
+            problem: formErr.empty,
+            type: "error",
+          });
+        }
         if (matchingRecycType) {
           // Check if Recycle Type requires a Subtype
           const hasSubType = matchingRecycType.recycSubType && matchingRecycType.recycSubType.length > 0;
           
-          if (!recycTypeId) {
-            tempV.push({
-              field: t("pick_up_order.error.recycType"),
-              problem: formErr.empty,
-              type: "error",
-            });
-          }
   
           if (hasSubType && !recycSubTypeId) {
             tempV.push({
@@ -226,17 +226,17 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
           (product) => product.productTypeId === productTypeId
         );
   
+        if (!productTypeId) {
+          tempV.push({
+            field: t("pick_up_order.error.productType"),
+            problem: formErr.empty,
+            type: "error",
+          });
+        }
         if (matchingProductType) {
           // Check Product Subtype
           const hasSubType = matchingProductType.productSubType && matchingProductType.productSubType.length > 0;
           
-          if (!productTypeId) {
-            tempV.push({
-              field: t("pick_up_order.error.productType"),
-              problem: formErr.empty,
-              type: "error",
-            });
-          }
   
           if (hasSubType && !productSubTypeId) {
             tempV.push({
@@ -429,8 +429,14 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
   }
 
   const handleRecycChange = (values: any) => {
-    console.log('Recycle Change Values:', values);
-
+    setOpenConfirmModal({
+      ...openConfirmModal,
+      tempData: {
+        ...openConfirmModal.tempData,
+        isProductSubTypeOthers: false,
+        isProductAddonTypeOthers: false
+      }
+    })
     if(values && values.recycTypeId){
         const newDefaultRecyc: singleRecyclable = {
           recycTypeId: values.recycTypeId,
