@@ -980,7 +980,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           onDelete: onDeleteHeaderWH,
           useDeleteConfirmation: false,
         }}
-        width="700px"
+        width="900px"
       >
         {/* form warehouse */}
         <div
