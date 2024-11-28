@@ -439,13 +439,17 @@ const CreateProcessOrder = ({}: {}) => {
   ) => {
     let rawProcessOrderInDtl: ProcessInDtlData[] = []
     let rowData: rowPorDtl[] = []
+    console.log('updated source', updatedSource)
 
+    let processNameFirst: string = ''
     updatedSource.map((item: CreateProcessOrderDetailPairs) => {
       rowData = []
       Object.entries(item).map(([key, value]) => {
         // constract product
         value.processOrderDetailProduct.map((val1, idx1) => {
-          if (idx1 == 0) {
+         
+          if (processNameFirst !== value.processAction) {
+            processNameFirst = value.processAction
             rowData.push({
               id: 'product-' + value.processAction + value.processTypeId,
               processTypeId: value.processTypeId,
@@ -484,7 +488,9 @@ const CreateProcessOrder = ({}: {}) => {
 
         // constract recylcling
         value.processOrderDetailRecyc.map((val1, idx1) => {
-          if (idx1 == 0 && !rowData.length) {
+         
+          if (processNameFirst !== value.processAction) {
+            processNameFirst = value.processAction
             rowData.push({
               id: 'recyling-' + value.processAction + value.processTypeId,
               processTypeId: value.processTypeId,
