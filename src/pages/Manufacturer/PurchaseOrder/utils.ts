@@ -105,7 +105,7 @@ export const ValidateSchemaCreateRecycleFormPurchaseOrder = ({
                 .required(t('pick_up_order.error.productSubType')),
           })
         ,
-        productAddOnType: Yup.string()
+        productAddonType: Yup.string()
           .when(['productType', 'productSubType'], {
             is: (value: string, value2: string) => {
               const itemProductType: any = productType && productType?.length > 0 && productType?.find((item: any) => item.productTypeId == value)
@@ -183,9 +183,9 @@ export const refactorPurchaseOrderDetail = (data: PurchaseOrderDetail[]) => {
     const result = data?.map((item: PurchaseOrderDetail) => {
 
       return objectFilter(item, [
-        'productAddOnNameEng',
-        'productAddOnNameSchi',
-        'productAddOnNameTchi',
+        'productAddonNameEng',
+        'productAddonNameSchi',
+        'productAddonNameTchi',
         'productNameEng',
         'productNameSchi',
         'productNameTchi',

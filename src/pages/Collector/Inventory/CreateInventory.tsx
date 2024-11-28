@@ -208,19 +208,8 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
     }, [packagingUnitValue, isRecyc, selectedRecycType, selectedRecycSubType, productTypeId, productSubTypeId, selectedLocation, weight, pictures, t])
     
     const handleSubmit = async () => {
-        const submissionData = {
-            itemCategory,
-            packagingUnit: packagingUnitValue,
-            recycType: isRecyc ? selectedRecycType : '',
-            recycSubType: isRecyc ? selectedRecycSubType : '',
-            productType: !isRecyc ? productTypeId : '',
-            productSubType: !isRecyc ? productSubTypeId : '',
-            productAddon: !isRecyc ? productAddon : '',
-            weight,
-            location,
-            packageType
-        };
-
+        const [locationType, locationId] = selectedLocation.split(':');
+        const factoryLocationId = selectedLocationType === "factory" ? locationId : "-1"
         if (validation.length === 0) {
             const photos: ProcessDetailPhotoType[] = [];
             ImageToBase64(pictures)?.map((photo, idx) => {
@@ -229,16 +218,16 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
             const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
             const dataProcessIn: ProcessInType = {
                 processTypeId: '0',
-                colId: selectedLocationType === "collectionPoint" ? Number(selectedLocation) : 0,
-                warehouseId: selectedLocationType === "warehouse" ? Number(selectedLocation) : 0,
-                address: selectedLocation,
+                colId: selectedLocationType === "collectionPoint" ? Number(locationId) : 0,
+                warehouseId: selectedLocationType === "warehouse" ? Number(locationId) : 0,
+                address: locationType,
                 status: 'CREATED',
                 createdBy: loginId,
                 updatedBy: loginId,
                 processinDatetime: new Date().toISOString(), 
                 processinDetail: []
             }
-            const result = await createProcessIn(dataProcessIn, "-1", "-1")
+            const result = await createProcessIn(dataProcessIn, "-1", factoryLocationId)
             if (result) {
                 const dataProcessOut: ProcessOutType = {
                     status: 'CREATED',
@@ -264,7 +253,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                         updatedBy: loginId,
                     }]
                 }
-                const resp = await createProcessOut(dataProcessOut, "-1", "-1")
+                const resp = await createProcessOut(dataProcessOut, "-1", factoryLocationId)
                 if (resp){
                     onSuccess('success', t('common.saveSuccessfully'))
                     resetData()
@@ -318,7 +307,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                 productTypeId: values.productTypeId || '',
                 productSubTypeId: values.productSubTypeId || '',
                 productAddonId: values.productAddonId || '',
-                productAddOnTypeRemark: values.productAddOnTypeRemark || '',
+                productAddonTypeRemark: values.productAddOnTypeRemark || '',
                 productSubTypeRemark:  values.productSubTypeRemark || '',
                 isProductAddonTypeOthers: false,
             };
@@ -544,7 +533,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                             {colList.map((point) => (
                                 <MenuItem 
                                     key={`collection-${point.colId}`} 
-                                    value={`collectionPoint:${point.colId}`}
+                                    value={`${point.colName}:${point.colId}`}
                                     sx={{ pl: 4 }}
                                 >
                                     {point.colName}
@@ -556,7 +545,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                             {warehouseDataList.map((warehouse) => (
                                 <MenuItem 
                                     key={`warehouse-${warehouse.warehouseId}`} 
-                                    value={`warehouse:${warehouse.warehouseId}`}
+                                    value={`${warehouse.warehouseNameEng}:${warehouse.warehouseId}`}
                                     sx={{ pl: 4 }}
                                 >
                                     {i18n.language === 'enus' ? warehouse.warehouseNameEng :
@@ -570,7 +559,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                             {factoryDataList.map((factory) => (
                                 <MenuItem 
                                     key={`factory-${factory.factoryId}`} 
-                                    value={`factory:${factory.factoryNameEng}`}
+                                    value={`${factory.factoryNameEng}:${factory.factoryId}`}
                                     sx={{ pl: 4 }}
                                 >
                                     {i18n.language === 'enus' ? factory.factoryNameEng :

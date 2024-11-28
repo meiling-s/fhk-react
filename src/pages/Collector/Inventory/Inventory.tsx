@@ -94,6 +94,11 @@ function createInventory(
   recyclingNumber: string,
   recycTypeId: string,
   recycSubTypeId: string,
+  productTypeId: string,
+  productSubTypeId: string,
+  productSubTypeRemark: string,
+  productAddonTypeId: string,
+  productAddonTypeRemark: string,
   recyName: string,
   subName: string,
   packageTypeId: string,
@@ -115,6 +120,11 @@ function createInventory(
     recyclingNumber,
     recycTypeId,
     recycSubTypeId,
+    productTypeId,
+    productSubTypeId,
+    productSubTypeRemark,
+    productAddonTypeId,
+    productAddonTypeRemark,
     recyName,
     subName,
     packageTypeId,
@@ -144,7 +154,7 @@ const Inventory: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
-  const { recycType, dateFormat } = useContainer(CommonTypeContainer)
+  const { recycType, dateFormat, productType } = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<recycItem[]>([])
   const [picoList, setPicoList] = useState<PickupOrder[]>([])
   const [selectedPico, setSelectedPico] = useState<PickupOrder[]>([])
@@ -156,7 +166,8 @@ const Inventory: FunctionComponent = () => {
     labelId: null,
     warehouseId: null,
     recycTypeId: '',
-    recycSubTypeId: ''
+    recycSubTypeId: '',
+    idleDays: null,
   })
   const [warehouseList, setWarehouseList] = useState<Option[]>([])
   const [recycList, setRecycList] = useState<Option[]>([])
@@ -359,6 +370,9 @@ const Inventory: FunctionComponent = () => {
         const recyclables = recycType?.find(
           (re) => re.recycTypeId === item.recycTypeId
         )
+        const product = productType?.find(
+          (re) => re.productTypeId === item.productTypeId
+        )
         if (recyclables) {
           if (i18n.language === Languages.ENUS)
             recyName = recyclables.recyclableNameEng
@@ -379,6 +393,26 @@ const Inventory: FunctionComponent = () => {
           }
         }
 
+        if (product) {
+          if (i18n.language === Languages.ENUS)
+            recyName = product.productNameEng
+          if (i18n.language === Languages.ZHCH)
+            recyName = product.productNameSchi
+          if (i18n.language === Languages.ZHHK)
+            recyName = product.productNameTchi
+          // const subs = product.productSubTypeId.find(
+          //   (sub) => sub.recycSubTypeId === item.recycSubTypeId
+          // )
+          // if (subs) {
+          //   if (i18n.language === Languages.ENUS)
+          //     subName = subs.recyclableNameEng
+          //   if (i18n.language === Languages.ZHCH)
+          //     subName = subs.recyclableNameSchi
+          //   if (i18n.language === Languages.ZHHK)
+          //     subName = subs.recyclableNameTchi
+          // }
+        }
+        
         const packages = packagingMapping.find(
           (packageItem) => packageItem.packagingTypeId === item.packageTypeId
         )
@@ -411,6 +445,11 @@ const Inventory: FunctionComponent = () => {
             item?.recycTypeId,
             item?.recycTypeId,
             item?.recycSubTypeId,
+            item?.productTypeId,
+            item?.productSubTypeId,
+            item?.productSubTypeRemark,
+            item?.productAddonTypeId,
+            item?.productAddonTypeRemark,
             recyName,
             subName,
             item?.packageTypeId,
@@ -564,7 +603,13 @@ const Inventory: FunctionComponent = () => {
       field: 'warehouseId',
       options: warehouseList,
       placeholder: t('placeHolder.any')
-    }
+    },
+    {
+      label: t('common.idleDays'),
+      disableIcon: true,
+      field: 'idleDays',
+      placeholder: t('common.filledIdleDays')
+    },
   ]
 
   function getUniqueOptions(propertyName: keyof InventoryItem) {
@@ -632,6 +677,10 @@ const Inventory: FunctionComponent = () => {
     setSelectedPico(selectedPicoList)
     setDrawerOpen(true)
   }
+
+  useEffect(() => {
+    console.log('row', selectedRow)
+  }, [selectedRow])
 
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
@@ -765,6 +814,7 @@ const Inventory: FunctionComponent = () => {
               width={s?.width}
               placeholder={s.placeholder}
               field={s.field}
+              disableIcon={s.disableIcon}
               options={s.options || []}
               onChange={handleSearch}
             />
