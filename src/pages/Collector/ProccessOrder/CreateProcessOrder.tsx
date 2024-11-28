@@ -215,7 +215,6 @@ const CreateProcessOrder = ({}: {}) => {
       headerName: t('processOrder.details.itemCategory'),
       width: 150,
       renderCell: (params) => {
-        console.log(params)
         const categoryLabel =
           params.row.itemCategory != ''
             ? params.row.itemCategory === 'product'
@@ -542,9 +541,8 @@ const CreateProcessOrder = ({}: {}) => {
         rows: rowData
       })
     })
-    console.log('raw', rawProcessOrderInDtl)
+
     setProcessInDetailData(rawProcessOrderInDtl)
-    console.log('le', processInDetailData)
   }
 
   const onSaveProcessDtl = (

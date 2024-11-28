@@ -269,7 +269,6 @@ const InputProcessForm = ({
           })
 
       //processOut
-      console.log(processOrderDetail[0].processOut.processOrderDetailProduct)
       processOrderDetail[0].processOut.itemCategory === 'recycling'
         ? processOrderDetail[0].processOut.processOrderDetailRecyc.length ===
             0 &&
@@ -413,8 +412,6 @@ const InputProcessForm = ({
         }
       }))
     )
-
-    console.log('handleRecycChange', processOrderDetail)
   }
 
   const updateWarehouseIds = (
@@ -541,43 +538,41 @@ const InputProcessForm = ({
   }
 
   const getProductData = (key: string) => {
-    if (action === 'edit') {
-      const selectedProduct =
-        key === 'processIn'
-          ? processOrderDetail[0].processIn.processOrderDetailProduct[0]
-          : processOrderDetail[0].processOut.processOrderDetailProduct[0]
+    // if (action === 'edit') {
+    const selectedProduct =
+      key === 'processIn'
+        ? processOrderDetail[0].processIn.processOrderDetailProduct[0]
+        : processOrderDetail[0].processOut.processOrderDetailProduct[0]
 
-      if (selectedProduct) {
-        const product: singleProduct = {
-          productTypeId: selectedProduct?.productTypeId,
-          productSubTypeId: selectedProduct?.productSubTypeId,
-          productAddonId: selectedProduct?.productAddonId,
-          productSubTypeRemark: '',
-          productAddonTypeRemark: ''
-        }
-        return product
+    if (selectedProduct) {
+      const product: singleProduct = {
+        productTypeId: selectedProduct?.productTypeId,
+        productSubTypeId: selectedProduct?.productSubTypeId,
+        productAddonId: selectedProduct?.productAddonId,
+        productSubTypeRemark: '',
+        productAddonTypeRemark: ''
       }
+      return product
     }
+    // }
 
     return undefined
   }
 
   const getDefaultRecy = (key: string) => {
-    if (action === 'edit') {
-      const dataRecy =
-        key === 'processIn'
-          ? processOrderDetail[0].processIn?.processOrderDetailRecyc
-          : processOrderDetail[0].processOut?.processOrderDetailRecyc
+    const dataRecy =
+      key === 'processIn'
+        ? processOrderDetail[0].processIn?.processOrderDetailRecyc
+        : processOrderDetail[0].processOut?.processOrderDetailRecyc
 
-      const defaultData: recyclable[] = dataRecy.map((item) => ({
-        recycTypeId: item.recycTypeId,
-        recycSubTypeId: Array.isArray(item.recycSubTypeId)
-          ? item.recycSubTypeId
-          : [item.recycSubTypeId]
-      }))
+    const defaultData: recyclable[] = dataRecy.map((item) => ({
+      recycTypeId: item.recycTypeId,
+      recycSubTypeId: Array.isArray(item.recycSubTypeId)
+        ? item.recycSubTypeId
+        : [item.recycSubTypeId]
+    }))
 
-      return defaultData
-    }
+    return defaultData
   }
 
   return (
