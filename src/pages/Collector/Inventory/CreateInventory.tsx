@@ -639,13 +639,23 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                                 id="weight"
                                 placeholder={t('inventory.enterWeight')}
                                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                    const rawValue = event.target.value;
+                                    const input = event.target;
+                                    const rawValue = input.value;
+                                
+                                    const cursorPosition = input.selectionStart || 0;
+                                
                                     if (!rawValue || isNaN(Number(rawValue))) {
-                                        setWeight(''); 
+                                        setWeight('');
                                         return;
                                     }
+                                
                                     onChangeWeight(rawValue, decimalVal, (formattedValue: string) => {
-                                        setWeight(formatWeight(formattedValue, decimalVal));
+                                        const formattedWeight = formatWeight(formattedValue, decimalVal);
+                                        setWeight(formattedWeight);
+                                
+                                        setTimeout(() => {
+                                            input.setSelectionRange(cursorPosition, cursorPosition);
+                                        }, 0);
                                     });
                                 }}
                                 sx={{
