@@ -270,8 +270,8 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
             const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
             const dataProcessIn: ProcessInType = {
                 processTypeId: '0',
-                colId: Number(selectedLocationId) || 0,
-                warehouseId: Number(selectedLocationId) || 0,
+                colId: selectedLocationType === 'collectionPoint' ? Number(selectedLocationId) : 0,
+                warehouseId: selectedLocationType === 'warehouse' ? Number(selectedLocationId) : 0,
                 address: selectedLocationName,
                 status: 'CREATED',
                 createdBy: loginId,
