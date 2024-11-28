@@ -457,19 +457,6 @@ const DetailProcessOrder = ({
     return mappingSubProductType(productTypeId, subId, productType)
   }
 
-  const mappingAddonsTypeName = (
-    productTypeId: string,
-    productSubTypeId: string,
-    addOnId: string
-  ) => {
-    return mappingAddonsType(
-      productTypeId,
-      productSubTypeId,
-      addOnId,
-      productType
-    )
-  }
-
   return (
     <>
       <Box>
@@ -617,6 +604,23 @@ const DetailProcessOrder = ({
                             </Typography>
                           </div>
                           <Box>
+                            <Typography sx={{ ...localStyles.value }}>
+                              {item.porItem.recycTypeIds.length > 0
+                                ? t('processOrder.create.recycling')
+                                : t('processOrder.create.product')}
+                            </Typography>
+                          </Box>
+                        </Box>
+
+                        <Box sx={localStyles.label}>
+                          <div className="flex items-normal w-44">
+                            <Typography
+                              sx={{ ...localStyles.label, marginLeft: '18px' }}
+                            >
+                              {t('settings_page.recycling.main_category')}
+                            </Typography>
+                          </div>
+                          <Box>
                             {item.porItem.productTypeIds.map((p) => (
                               <Typography sx={{ ...localStyles.value }}>
                                 {mappingProductTypeName(p)}
@@ -635,7 +639,7 @@ const DetailProcessOrder = ({
                             <Typography
                               sx={{ ...localStyles.label, marginLeft: '18px' }}
                             >
-                              {t('settings_page.recycling.main_category')}
+                              {t('settings_page.recycling.sub_category')}
                             </Typography>
                           </div>
                           <Box>
@@ -654,29 +658,6 @@ const DetailProcessOrder = ({
                                 {mappingSubProductTypeName(
                                   p.productTypeId,
                                   p.productSubTypeId
-                                )}
-                              </Typography>
-                            ))}
-                          </Box>
-                        </Box>
-
-                        <Box sx={localStyles.label}>
-                          <div className="flex items-normal w-44">
-                            <Typography
-                              sx={{ ...localStyles.label, marginLeft: '18px' }}
-                            >
-                              {t('settings_page.recycling.sub_category')}
-                            </Typography>
-                          </div>
-                          <Box>
-                            {item.porItem.productAddonTypeIds.map((p) => (
-                              <Typography
-                                sx={{ ...localStyles.value, marginBottom: 1 }}
-                              >
-                                {mappingAddonsTypeName(
-                                  p.productTypeId,
-                                  p.productSubTypeId,
-                                  p.productAddonId
                                 )}
                               </Typography>
                             ))}

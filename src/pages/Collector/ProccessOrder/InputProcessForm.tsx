@@ -41,11 +41,12 @@ import ProductListSingleSelect, {
   singleProduct
 } from '../../../components/SpecializeComponents/ProductListSingleSelect'
 import RecyclablesList from 'src/components/SpecializeComponents/RecyclablesList'
-import { getEstimateWeight } from 'src/APICalls/processOrder'
+import { getEstimateEndTime } from 'src/APICalls/processOrder'
 import dayjs from 'dayjs'
 import { formValidate } from 'src/interfaces/common'
 import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
-import { error } from 'console'
+import { error, log } from 'console'
+import { createKeywordTypeNode } from 'typescript'
 
 const InputProcessForm = ({
   drawerOpen,
@@ -69,6 +70,7 @@ const InputProcessForm = ({
   dataSet: CreateProcessOrderDetailPairs[]
   editedValue: CreateProcessOrderDetailPairs[] | null
 }) => {
+  console.log(plannedStartAtInput)
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const {
@@ -318,8 +320,10 @@ const InputProcessForm = ({
           type: 'error'
         })
 
-      // weight validation
-      processOrderDetail[0].processIn.estInWeight === '0' &&
+      //weight validation
+      if (
+        parseFloat(processOrderDetail[0].processIn.estInWeight as string) <= 0
+      )
         tempV.push({
           field:
             t('pick_up_order.recyclForm.weight') +
@@ -329,7 +333,9 @@ const InputProcessForm = ({
           type: 'error'
         })
 
-      processOrderDetail[0].processOut.estOutWeight === '0' &&
+      if (
+        parseFloat(processOrderDetail[0].processOut.estOutWeight as string) <= 0
+      )
         tempV.push({
           field:
             t('pick_up_order.recyclForm.weight') +
@@ -343,7 +349,12 @@ const InputProcessForm = ({
     }
 
     validate()
-  }, [processTypeId, processOrderDetail[0]])
+  }, [
+    processTypeId,
+    processOrderDetail[0],
+    processOrderDetail[0].processIn.estInWeight,
+    processOrderDetail[0].processOut.estOutWeight
+  ])
 
   const onChangeItemCategory = (
     key: 'processIn' | 'processOut',
@@ -368,6 +379,8 @@ const InputProcessForm = ({
     let tempProduct: any[] = []
     if (value.productTypeId && value.productSubTypeId != '')
       tempProduct.push(value)
+
+    console.log('value', value)
 
     setProcessOrderDetail((prevDetails) =>
       prevDetails.map((detail) => ({
@@ -468,7 +481,7 @@ const InputProcessForm = ({
       plannedStartAt: dayjs(plannedStartAt).format('YYYY-MM-DDTHH:mm:ss')
     }
     let plannedEndAt = ''
-    const result = await getEstimateWeight(params)
+    const result = await getEstimateEndTime(params)
     if (result) {
       plannedEndAt = result.data
     }
@@ -739,6 +752,7 @@ const InputProcessForm = ({
                             id="weight"
                             placeholder={t('userAccount.pleaseEnterNumber')}
                             onChange={(event) => {
+                              console.log(event.target.value)
                               onChangeWeight(
                                 event.target.value,
                                 decimalVal,
@@ -770,7 +784,7 @@ const InputProcessForm = ({
                                 : processOrderDetail[0].processOut.estOutWeight
                             }
                             error={
-                              !trySubmited &&
+                              trySubmited &&
                               (key === 'processIn'
                                 ? processOrderDetail[0].processIn
                                     .estInWeight === '0'
