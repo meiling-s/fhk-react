@@ -8,6 +8,7 @@ export type InventoryItem = {
   itemId: number
   labelId: string
   warehouseId: number
+  colId: number
   recyclingNumber?: string
   recycTypeId: string
   recycSubTypeId: string
