@@ -321,7 +321,9 @@ const InputProcessForm = ({
         })
 
       //weight validation
-      processOrderDetail[0].processIn.estInWeight === '0' &&
+      if (
+        parseFloat(processOrderDetail[0].processIn.estInWeight as string) <= 0
+      )
         tempV.push({
           field:
             t('pick_up_order.recyclForm.weight') +
@@ -331,7 +333,9 @@ const InputProcessForm = ({
           type: 'error'
         })
 
-      processOrderDetail[0].processOut.estOutWeight === '0' &&
+      if (
+        parseFloat(processOrderDetail[0].processOut.estOutWeight as string) <= 0
+      )
         tempV.push({
           field:
             t('pick_up_order.recyclForm.weight') +
@@ -345,7 +349,12 @@ const InputProcessForm = ({
     }
 
     validate()
-  }, [processTypeId, processOrderDetail[0]])
+  }, [
+    processTypeId,
+    processOrderDetail[0],
+    processOrderDetail[0].processIn.estInWeight,
+    processOrderDetail[0].processOut.estOutWeight
+  ])
 
   const onChangeItemCategory = (
     key: 'processIn' | 'processOut',

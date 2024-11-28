@@ -171,17 +171,14 @@ const CreateProcessOrder = ({}: {}) => {
         if (params.row.processAction !== '') {
           if (params.row.processAction === 'PROCESS_IN') {
             dateTime = params.row.datetime
-              ? dayjs
-                  .utc(params.row.datetime)
+              ? dayjs(params.row.datetime)
                   .tz('Asia/Hong_Kong')
                   .format(`${dateFormat} HH:mm`)
-              : dayjs
-                  .utc(params.row?.datetime)
+              : dayjs(params.row?.datetime)
                   .tz('Asia/Hong_Kong')
                   .format(`${dateFormat} HH:mm`)
           } else {
-            dateTime = dayjs
-              .utc(params.row?.datetime)
+            dateTime = dayjs(params.row?.datetime)
               .tz('Asia/Hong_Kong')
               .format(`${dateFormat} HH:mm`)
           }
@@ -675,7 +672,6 @@ const CreateProcessOrder = ({}: {}) => {
                   <DatePicker
                     defaultValue={dayjs(processStartAt)}
                     format={dateFormat}
-                    minDate={dayjs()}
                     onChange={(value) => setProcessStartAt(value!!)}
                     sx={{ ...localstyles.datePicker }}
                   />
