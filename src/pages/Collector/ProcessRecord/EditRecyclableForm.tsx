@@ -27,18 +27,25 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { formErr } from '../../../constants/constant'
-import { ImageToBase64, formatWeight, onChangeWeight, returnErrorMsg } from '../../../utils/utils'
+import { ImageToBase64, formatWeight, getThemeColorRole, getThemeCustomList, onChangeWeight, returnErrorMsg } from '../../../utils/utils'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate, weightUnit } from '../../../interfaces/common'
 import { generateNumericId } from '../../../utils/uuidgenerator'
 import { singleRecyclable } from '../../../interfaces/collectionPoint'
 import { processOutImage, ProcessOut } from '../../../interfaces/processRecords'
 import { localStorgeKeyName } from '../../../constants/constant'
+import ProductListSingleSelect, { singleProduct } from 'src/components/SpecializeComponents/ProductListSingleSelect'
+import Switcher from 'src/components/FormComponents/CustomSwitch'
 
 type createRecyclable = {
   itemId: number
   recycTypeId: string
   recycSubTypeId: string
+  productTypeId: string,
+  productSubTypeId: string,
+  productSubTypeRemark: string,
+  productAddonTypeId: string,
+  productAddonTypeRemark: string,
   packageTypeId: string
   weight: number
   unitId: string
@@ -87,12 +94,24 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
   const [recycTypeId, setRecycTypeId] = useState('')
   const [recycSubTypeId, setRecycSubTypeId] = useState('')
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
-  const { recycType, imgSettings, decimalVal } = useContainer(CommonTypeContainer)
+  const [defaultProduct, setDefaultProduct] = useState<singleProduct>()
+  const {recycType, productType, imgSettings, decimalVal } = useContainer(CommonTypeContainer)
   const [pictures, setPictures] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [selectedWeightId, setSelectedWeightId] = useState<string>('')
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+  const [isRecyc, setIsRecyc] = useState<boolean>(true);
+  const [productTypeId, setProductTypeId] = useState('');
+  const [productSubTypeId, setProductSubTypeId] = useState('');
+  const [productAddon, setProductAddon] = useState('');
+  const [productSubtypeRemark, setProductSubtypeRemark] = useState('');
+  const [productAddonRemark, setProductAddonRemark] = useState('');
+
+  const role =
+  localStorage.getItem(localStorgeKeyName.role) || "collectoradmin";
+  const colorTheme: string = getThemeColorRole(role) || "#79CA25";
+  const customListTheme = getThemeCustomList(role) || "#E4F6DC";
 
   useEffect(() => {
     setTrySubmited(false)
@@ -176,6 +195,11 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
       itemId: editedData ? editedData.processOutDtlId : generateNumericId(),
       recycTypeId: recycTypeId,
       recycSubTypeId: recycSubTypeId,
+      productTypeId: productTypeId,
+      productSubTypeId: productSubTypeId,
+      productSubTypeRemark: productSubtypeRemark,
+      productAddonTypeId: productAddon,
+      productAddonTypeRemark: productAddonRemark,
       packageTypeId: '',
       weight: parseFloat(weight),
       unitId: selectedWeightId,
@@ -220,6 +244,50 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
     }
     return s == ''
   }
+
+  const handleRecycChange = (values: any) => {
+    console.log('Recycle Change Values:', values);
+
+    if(values && values.recycTypeId){
+        const newDefaultRecyc: singleRecyclable = {
+            recycTypeId: values.recycTypeId,
+            recycSubTypeId: values.recycSubTypeId,
+        };
+        
+          setRecycTypeId(values.recycTypeId);
+        
+            if (values.recycSubTypeId) {
+                setRecycSubTypeId(values.recycSubTypeId);
+            }
+        
+            setDefaultRecyc(newDefaultRecyc);
+          }
+      };
+
+  const handleProductChange = (values: any) => {
+    if (values && values.productTypeId) {
+        const newDefaultProduct: singleProduct = {
+            productTypeId: values.productTypeId || '',
+            productSubTypeId: values.productSubTypeId || '',
+            productAddonId: values.productAddonId || '',
+            productAddonTypeRemark: values.productAddOnTypeRemark || '',
+            productSubTypeRemark:  values.productSubTypeRemark || '',
+            isProductAddonTypeOthers: false,
+        };
+        setDefaultProduct(newDefaultProduct);
+        setProductTypeId(values.productTypeId);
+        setProductAddonRemark(values.productAddOnTypeRemark);
+        setProductSubtypeRemark(values.productSubTypeRemark)
+        
+        if (values.productSubTypeId) {
+            setProductSubTypeId(values.productSubTypeId);
+        }
+        if (values.productAddonId) {
+            setProductAddon(values.productAddonId);
+        }
+    }
+  };
+
 
   return (
     <>
@@ -281,18 +349,56 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
                   </Typography>
                 </CustomField>
               </Grid>
-              <CustomField label={t('col.recycType')}>
-                <RecyclablesListSingleSelect
-                  recycL={recycType ?? []}
-                  key="proccess-typeid"
-                  setState={(values) => {
-                    setRecycTypeId(values?.recycTypeId)
-                    setRecycSubTypeId(values?.recycSubTypeId)
-                  }}
-                  defaultRecycL={defaultRecyc}
-                  showError={checkString(recycTypeId)}
-                />
-              </CustomField>
+              <Grid item>
+                <CustomField label={t('pick_up_order.recyclForm.item_category')}>
+                    <Switcher
+                        onText={t('recyclables')}
+                        offText={t('product')}
+                        defaultValue={isRecyc}
+                        setState={(newValue: boolean) => {
+                            setIsRecyc(newValue);
+                            if(newValue){
+                                setDefaultRecyc(undefined)
+                            } else {
+                                setDefaultProduct(undefined)
+                            }
+                        }}
+                    />
+                </CustomField>
+            </Grid>
+
+              <Grid item>
+                {isRecyc ? (
+                  <CustomField label={t('col.recycType')} mandatory>
+                      <RecyclablesListSingleSelect
+                          showError={undefined} 
+                          recycL={recycType ?? []}
+                          setState={(values) => handleRecycChange(values)}
+                          itemColor={{
+                          bgColor: customListTheme ? customListTheme.bgColor : '#E4F6DC',
+                          borderColor: customListTheme ? customListTheme.border : '79CA25'
+                          }}
+                          defaultRecycL={defaultRecyc}
+                          key={recycSubTypeId}
+                      />
+                      </CustomField>
+                  ) : (
+                      <CustomField label={t('pick_up_order.product_type.product')} mandatory>
+                      <ProductListSingleSelect
+                          showError={undefined} 
+                          label={t('pick_up_order.product_type.product')}
+                          options={productType ?? []}
+                          setState={(values) => handleProductChange(values)}
+                          itemColor={{
+                          bgColor: customListTheme ? customListTheme.bgColor : '#E4F6DC',
+                          borderColor: customListTheme ? customListTheme.border : '79CA25'
+                          }}
+                          defaultProduct={defaultProduct}
+                          key={productTypeId}
+                      />
+                      </CustomField>
+                  )}
+              </Grid>
               <CustomField label={t('pick_up_order.recyclForm.weight')}>
                 <CustomTextField
                   id="weight"

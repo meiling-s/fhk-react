@@ -42,6 +42,8 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import Switcher from '../../../../components/FormComponents/CustomSwitch'
+import LabelField from '../../../../components/FormComponents/CustomField'
 
 interface CreateVehicleProps {
   drawerOpen: boolean
@@ -77,6 +79,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [vehicleWeight, setVehicleWeight] = useState<string>('')
+  const [isCompactor, setIsCompactor] = useState<boolean>(false)
   const { vehicleType, imgSettings } = useContainer(CommonTypeContainer)
   const [vehicleTypeList, setVehicleType] = useState<il_item[]>([])
   const [version, setVersion] = useState<number>(0)
@@ -88,6 +91,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       setVehicleTypeId(selectedItem.vehicleTypeId)
       setVehicleWeight(selectedItem.netWeight.toString())
       setVersion(selectedItem.version)
+      setIsCompactor(selectedItem.compactor === 1)
 
       const imageList: any = selectedItem.photo.map(
         (url: string, index: number) => {
@@ -130,6 +134,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     setVehicleTypeId('')
     setVehicleWeight('')
     setDeviceId('')
+    setIsCompactor(false)
     setPictures([])
     setValidation([])
   }
@@ -295,6 +300,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       updatedBy: loginId,
       vehicleTypeId: vehicleTypeId,
       deviceId: deviceId,
+      compactor: isCompactor ? 1 : 0,
       netWeight: Number(vehicleWeight),
       ...(action === 'edit' && {version: version}),
       ...(action === 'delete' && {version: version})
@@ -442,6 +448,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   labelId="vehicleType"
                   id="vehicleType"
                   value={vehicleTypeId}
+                  displayEmpty
                   sx={{
                     borderRadius: '12px'
                   }}
@@ -474,15 +481,31 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
               </FormControl>
             </Grid>
             <Grid item>
-            <CustomField label={t('driver.vehicleMenu.imei')}>
-              <CustomTextField
+              <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
+                <LabelField label={t('driver.vehicleMenu.isCompactor')} />
+                <Switcher
+                  onText={t('common.yes')}
+                  offText={t('common.no')}
+                  disabled={action === 'delete'}
+                  defaultValue={isCompactor}
+                  setState={(newValue) => {
+                    setIsCompactor(newValue)
+                  }}
+                />
+              </div>
+            </Grid>
+            <Grid item>
+              <CustomField label={t('driver.vehicleMenu.imei')}>
+                <CustomTextField
                   dataTestId='logistic-vehicles-form-imei-input-field-9942'
                   id="deviceId"
                   value={deviceId}
                   placeholder={t(
                     'driver.vehicleMenu.imei'
                   )}
-                  onChange={(event) => setDeviceId(event.target.value)}
+                  onChange={(event) => {
+                    const valueWithoutSpaces = event.target.value.replace(/\s/g, '');
+                    setDeviceId(valueWithoutSpaces);}}
                 />
               </CustomField>
             </Grid>

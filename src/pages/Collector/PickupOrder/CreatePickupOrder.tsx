@@ -87,7 +87,8 @@ const CreatePickupOrder = () => {
       createdBy: 'Admin',
       updatedBy: 'Admin',
       createPicoDetail: [],
-      specificDates: []
+      specificDates: [],
+      refPicoId: ''
     },
 
     // validationSchema: validateSchema,
@@ -107,7 +108,7 @@ const CreatePickupOrder = () => {
           values.specificDates = values.routine
             .map(value => {
               // Format to 'YYYY-MM-DD' first, then parse it in the user's timezone
-              const formattedDate = dayjs(value).format('YYYY-MM-DD');
+              const formattedDate = dayjs(value, 'DD-MM-YY').format('YYYY-MM-DD');
               const parsedDate = dayjs.tz(formattedDate, dayjs.tz.guess());
 
               if (!parsedDate.isValid()) {
@@ -129,7 +130,6 @@ const CreatePickupOrder = () => {
 
       const result = await submitPickUpOrder(values);
       
-
       const data = result?.data;
       if (data) {
           const routeName = role;

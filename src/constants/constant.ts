@@ -38,6 +38,8 @@ export const format = {
   timeFormat: 'HH:mm:ss'
 }
 
+export const configDateFormatFull = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
+
 export const formErr = {
   empty: 'empty',
   wrongFormat: 'wrongFormat',

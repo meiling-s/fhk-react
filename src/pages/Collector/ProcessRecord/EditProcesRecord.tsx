@@ -253,6 +253,11 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
       itemId: data.itemId,
       recycTypeId: data.recycTypeId,
       recycSubTypeId: data.recycSubTypeId,
+      productTypeId: data.productTypeId,
+      productSubTypeId: data.productSubTypeId,
+      productSubTypeRemark: data.productSubTypeRemark,
+      productAddonTypeId: data.productAddonTypeId,
+      productAddonTypeRemark: data.productAddonTypeRemark,
       packageTypeId: selectedRow?.packageTypeId || "",
       weight: data.weight,
       unitId: data.unitId,
@@ -457,7 +462,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                   })}
                 </Box>
               </Grid>
-              <Grid item>
+              {/* <Grid item>
                 <Button
                   variant="outlined"
                   onClick={() => {
@@ -479,7 +484,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                     {t('pick_up_order.new')}
                   </div>
                 </Button>
-              </Grid>
+              </Grid> */}
             </Grid>
           </Box>
           <EditRecyclableForm
