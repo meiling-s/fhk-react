@@ -4,14 +4,10 @@ import {
   Checkbox,
   FormControl,
   Grid,
-  IconButton,
-  InputAdornment,
   InputLabel,
   MenuItem,
   Modal,
   Stack,
-  TableRow,
-  TextField,
   Typography,
   Pagination,
   Divider
@@ -23,7 +19,7 @@ import {
   GridRowSpacingParams
 } from "@mui/x-data-grid";
 import CloseIcon from "@mui/icons-material/Close";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import React from "react";
 import { styles } from "../../../constants/styles";
 import Badge, { BadgeProps } from "@mui/material/Badge";
@@ -37,7 +33,7 @@ import {
   updateCheckinStatus,
   getCheckinReasons,
   updateCheckin,
-  getDetailCheckInRequests
+  getInternalRequest,
 } from "../../../APICalls/Collector/warehouseManage";
 import CircularLoading from "../../../components/CircularLoading";
 import { CheckInWarehouse, updateStatus } from "../../../interfaces/warehouse";
@@ -52,7 +48,6 @@ import {
   extractError,
   getPrimaryColor,
   showSuccessToast,
-  debounce,
   showErrorToast
 } from "../../../utils/utils";
 import { useTranslation } from "react-i18next";
@@ -68,6 +63,8 @@ import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 import { getPicoById } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
 import { getWarehouseById } from "../../../APICalls/warehouseManage";
+import { recycSubType, recycType } from "src/interfaces/common";
+import { queryInternalTransfer } from "src/interfaces/internalTransferRequests";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -420,16 +417,15 @@ function IntermalTransferRequest() {
   const [confirmModal, setConfirmModal] = useState(false);
   const pageSize = 10;
   const [totalData, setTotalData] = useState<number>(0);
-  const [query, setQuery] = useState<queryCheckIn>({
-    picoId: "",
-    senderName: "",
-    senderAddr: ""
+  const [query, setQuery] = useState<queryInternalTransfer>({
+    recycSubTypeId: "",
+    recycTypeId: "",
   });
   const [primaryColor, setPrimaryColor] = useState<string>("#79CA25");
   const [reasonList, setReasonList] = useState<any>([]);
   const { dateFormat } = useContainer(CommonTypeContainer);
   const { localeTextDataGrid } = useLocaleTextDataGrid();
-  const { logisticList, manuList, collectorList, companies, currentTenant } =
+  const { logisticList, manuList, collectorList, companies, currentTenant, recycType } =
     useContainer(CommonTypeContainer);
   const role = localStorage.getItem(localStorgeKeyName.role);
   const [category, setCateGory] = useState("");
@@ -508,6 +504,17 @@ function IntermalTransferRequest() {
     return companyName;
   };
 
+  const getRecycTypeName = useCallback((val: recycType | recycSubType): string => {
+    let { ENUS, ZHCH, ZHHK } = Languages;
+    let recycType: string = "";
+
+    if (i18n.language === ENUS) recycType = val.recyclableNameEng ?? "";
+    if (i18n.language === ZHCH) recycType = val.recyclableNameSchi ?? "";
+    if (i18n.language === ZHHK) recycType = val.recyclableNameTchi ?? "";
+
+    return recycType;
+  }, []);
+
   const getRecepientCompany = (): string => {
     let recipientCompany: string = "";
     if (i18n.language === Languages.ENUS)
@@ -547,7 +554,7 @@ function IntermalTransferRequest() {
   const initCheckInRequest = async () => {
     setIsLoading(true);
     try {
-      const result = await getAllCheckInRequests(page - 1, pageSize, query);
+      const result = await getInternalRequest(page - 1, pageSize, query);
       if (result) {
         const data = result?.data?.content;
         if (data && data.length > 0) {
@@ -740,7 +747,7 @@ function IntermalTransferRequest() {
     }
   ];
 
-  const updateQuery = (newQuery: Partial<queryCheckIn>) => {
+  const updateQuery = (newQuery: Partial<queryInternalTransfer>) => {
     setQuery({ ...query, ...newQuery });
   };
   const onRejectCheckin = () => {
@@ -793,14 +800,14 @@ function IntermalTransferRequest() {
   const handleCateGory = (event: SelectChangeEvent) => {
     setPage(1);
     setCateGory(event.target.value);
-    var searchWord = event.target.value;
-    updateQuery({ senderAddr: searchWord });
+    var recycTypeId = event.target.value;
+    updateQuery({ recycTypeId: recycTypeId });
   };
   const handleSubCateGory = (event: SelectChangeEvent) => {
     setPage(1);
     setSubCateGory(event.target.value);
-    var searchWord = event.target.value;
-    updateQuery({ senderAddr: searchWord });
+    var recycSubTypeId = event.target.value;
+    updateQuery({ recycSubTypeId: recycSubTypeId });
   };
   const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
     "& .MuiBadge-badge": {
@@ -895,9 +902,12 @@ function IntermalTransferRequest() {
               label={t("placeHolder.classification")}
               onChange={handleCateGory}
             >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
+              {recycType?.map((val: recycType) =>  {
+                return (
+                  <MenuItem value={val?.recycTypeId}>{getRecycTypeName(val)}</MenuItem>    
+                )
+              })}
+              <MenuItem value={''}>NoType</MenuItem>
             </Select>
           </FormControl>
           <FormControl sx={styles.inputStyle}>
@@ -911,9 +921,13 @@ function IntermalTransferRequest() {
               label={t("placeHolder.subclassification")}
               onChange={handleSubCateGory}
             >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
+              {recycType?.find((val: recycType) => val?.recycTypeId === category)
+                ?.recycSubType.map((value: recycSubType) => {
+                return (
+                  <MenuItem value={value?.recycSubTypeId}>{getRecycTypeName(value)}</MenuItem>
+                )
+              })}
+              <MenuItem value={''}>NoType</MenuItem>
             </Select>
           </FormControl>
         </Box>

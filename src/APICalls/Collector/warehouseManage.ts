@@ -2,6 +2,7 @@ import axiosInstance from '../../constants/axiosInstance'
 import {
   GET_ALL_CHECKIN_REQUESTS,
   GET_CHECKIN_REASON,
+  GET_INTERNAL_REQUEST,
   NEW_GET_ALL_HEADER_CHECKIN_REQUESTS,
   NEW_GET_DETAIL_CHECKIN_REQUESTS,
   UPDATE_CHECK_IN,
@@ -12,6 +13,7 @@ import { localStorgeKeyName } from '../../constants/constant'
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs'
 import { returnApiToken } from '../../utils/utils'
 import { queryCheckIn } from '../../interfaces/checkin'
+import { queryInternalTransfer } from 'src/interfaces/internalTransferRequests'
 
 const warehouseAPI = {
   baseURL: window.baseURL.collector
@@ -145,5 +147,32 @@ export const getCheckinReasons = async () => {
   } catch (e) {
     console.error('get checkin reasons failed:', e)
     throw e
+  }
+}
+
+export const getInternalRequest = async (
+  page: number,
+  size: number,
+  query?: queryInternalTransfer
+) => {
+  try {
+    const token = returnApiToken()
+    let response
+    response = await axiosInstance({
+      ...GET_INTERNAL_REQUEST(
+        token.tenantId
+      ),
+      baseURL: warehouseAPI.baseURL,
+      params: {
+        page: page,
+        size: size,
+        recycTypeId: query?.recycTypeId,
+        recycSubTypeId: query?.recycSubTypeId
+      }
+    })
+    return response
+  } catch (e: any) {
+    // console.error('Get all check-in request failed:', e)
+    return null
   }
 }
