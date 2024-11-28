@@ -29,16 +29,12 @@ import CheckIcon from "@mui/icons-material/Check";
 import { useNavigate } from "react-router-dom";
 import CustomItemList from "../../../components/FormComponents/CustomItemList";
 import {
-  updateCheckinStatus,
   getCheckinReasons,
-  updateCheckin,
   getInternalRequest,
   updateInternalRequestStatus,
 } from "../../../APICalls/Collector/warehouseManage";
 import CircularLoading from "../../../components/CircularLoading";
-import { CheckInWarehouse, updateStatus } from "../../../interfaces/warehouse";
 import InternalTransferForm from "../../../components/FormComponents/InternalTransferForm";
-import { CheckIn } from "../../../interfaces/checkin";
 import {
   Languages,
   STATUS_CODE,
@@ -60,7 +56,6 @@ import timezone from "dayjs/plugin/timezone";
 import { useContainer } from "unstated-next";
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
-import { getPicoById } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
 import { recycSubType, recycType } from "src/interfaces/common";
 import { InternalTransfer, InternalTransferName, queryInternalTransfer } from "src/interfaces/internalTransferRequests";
 import { mappingAddonsType, mappingProductType, mappingRecy, mappingSubProductType, mappingSubRecy } from "../ProccessOrder/utils";
@@ -72,24 +67,6 @@ import CustomTextField from "src/components/FormComponents/CustomTextField";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-type CompanyNameLanguages = {
-  labelEnglish: string;
-  labelSimpflifed: string;
-  labelTraditional: string;
-};
-
-const Required = () => {
-  return (
-    <Typography
-      sx={{
-        color: "red",
-        ml: "5px"
-      }}
-    >
-      *
-    </Typography>
-  );
-};
 type Confirm = {
   open: boolean;
   onClose: () => void;
@@ -137,20 +114,18 @@ const ConfirmModal: React.FC<Confirm> = ({ open, onClose, title }) => {
 type rejectForm = {
   open: boolean;
   onClose: () => void;
-  checkedShipments: number[];
+  checkedInternalTransferRequest: number[];
   onRejected?: () => void;
   reasonList: any;
-  checkInData: CheckIn[];
   navigate: (url: string) => void;
 };
 
 function RejectForm({
   open,
   onClose,
-  checkedShipments,
+  checkedInternalTransferRequest,
   onRejected,
   reasonList,
-  checkInData,
   navigate
 }: rejectForm) {
   const { t } = useTranslation();
@@ -159,50 +134,68 @@ function RejectForm({
   const [othersReason, setOthersReason] = useState<string>('')
 
   const handleConfirmRejectOnClick = async (rejectReasonId: string[]) => {
-    const rejectReason = rejectReasonId.map((id) => {
+    var rejectReason = rejectReasonId.map((id) => {
       const reasonItem = reasonList.find(
         (reason: { id: string }) => reason.id === id
       );
       return reasonItem ? reasonItem.name : "";
     });
+
+    if (rejectReasonId.includes('99') && othersReason !== '') {
+      rejectReason = rejectReason.map(val => {
+        if (val === t('internalTransfer.others')) {
+          return othersReason
+        }
+        return val
+      })
+    }
+
     const loginId = localStorage.getItem(localStorgeKeyName.username) || "";
 
-    const results = await Promise.allSettled(
-      checkedShipments.map(async (checkInId) => {
-        const selected = checkInData.find(
-          (value) => value.chkInId === checkInId
-        );
-        try {
-          const statReason: updateStatus = {
-            status: "REJECTED",
-            reason: rejectReason,
-            updatedBy: loginId,
-            version: selected?.version ?? 0
-          };
-          const result = await updateCheckinStatus(checkInId, statReason);
-          const data = result?.data;
-          if (data) {
-            // console.log("updated check-in status: ", data);
-            if (onRejected) {
-              onRejected();
-            }
+    try {
+      const payLoad = {
+        items: checkedInternalTransferRequest.map((val) => {
+          return {
+            id: val,
+            status: 'REJECTED',
+            updatedBy: loginId
           }
-        } catch (error: any) {
-          const { state } = extractError(error);
-          if (state.code === STATUS_CODE[503]) {
-            navigate("/maintenance");
-          } else if (state.code === STATUS_CODE[409]) {
-            showErrorToast(error?.response?.data?.message);
-          }
-        }
-      })
-    );
+        }),
+        reason: rejectReason
+      };
+
+      await updateInternalRequestStatus(payLoad);
+      if (onRejected) {
+        onRejected();
+      } 
+      resetState();
+    } catch(error: any) {
+      const { state } = extractError(error);
+      resetState();
+      if (state.code === STATUS_CODE[503]) {
+        navigate("/maintenance");
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error?.response?.data?.message);
+      }
+    }
+  };
+
+  const resetState = () => {
+    setRejectReasonId([]);
+    setOthersReason('');
+  };
+
+  const onCloseLocal = () => {
+    resetState();
+    if (onClose) {
+      onClose()
+    }
   };
 
   return (
     <Modal
       open={open}
-      onClose={onClose}
+      onClose={onCloseLocal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -230,7 +223,11 @@ function RejectForm({
             {rejectReasonId.includes('99') && (
               <CustomField
               label={`${t("internalTransfer.others")} ${t("check_in.reject_reasons")}`}
-              mandatory={rejectReasonId.includes('99') && othersReason === ''}
+              // mandatory={rejectReasonId.includes('99') && othersReason === ''}
+              mandatory={false}
+              style={{
+                marginTop: 2,
+              }}
               >
                 <CustomTextField
                   id="rejectReason"
@@ -240,7 +237,8 @@ function RejectForm({
                   }}
                   value={othersReason}
                   sx={{ width: "100%" }}
-                  error={rejectReasonId.includes('99') && othersReason === ''}
+                  // error={rejectReasonId.includes('99') && othersReason === ''}
+                  error={false}
                   dataTestId="astd-create-edit-pickup-order-contact-no-input-field-6429"
                 />
               </CustomField>
@@ -254,7 +252,7 @@ function RejectForm({
               style={{ width: "175px", marginRight: "10px" }}
               onClick={() => {
                 handleConfirmRejectOnClick(rejectReasonId);
-                onClose();
+                onCloseLocal();
               }}
             />
             <CustomButton
@@ -263,7 +261,7 @@ function RejectForm({
               outlined
               style={{ width: "175px" }}
               onClick={() => {
-                onClose();
+                onCloseLocal();
               }}
             />
           </Box>
@@ -278,26 +276,8 @@ type ApproveForm = {
   onClose: () => void;
   checkedInternalTransferRequest: number[];
   onApprove?: () => void;
-  checkInData: CheckIn[];
   navigate: (url: string) => void;
 };
-
-interface CheckInDetail {
-  chkInDtlId: number;
-  recycTypeId: string;
-  recycSubTypeId: string;
-  packageTypeId: string;
-  weight: number;
-  unitId: string;
-  itemId: number;
-  picoDtlId: number;
-  checkinDetailPhoto: {
-    sid: number;
-    photo: string;
-  }[];
-  createdBy: string;
-  updatedBy: string;
-}
 
 const ApproveModal: React.FC<ApproveForm> = ({
   open,
@@ -376,11 +356,6 @@ const ApproveModal: React.FC<ApproveForm> = ({
   );
 };
 
-type TableRow = {
-  id: number;
-  [key: string]: any;
-};
-
 function IntermalTransferRequest() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -390,16 +365,12 @@ function IntermalTransferRequest() {
   const [rejFormModal, setRejectModal] = useState<boolean>(false);
   const [approveModal, setApproveModal] = useState<boolean>(false);
   const [warehouseDataList, setWarehouseDataList] = useState<FactoryWarehouseData[]>([])
-  const [company, setCompany] = useState("");
-  const [location, setLocation] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [selectAll, setSelectAll] = useState(false);
   const [selectedRow, setSelectedRow] = useState<InternalTransferName>();
   const [internalTransferRequest, setInternalTransferRequest] = useState<InternalTransferName[]>();
-  const [inventoryList, setInventory] = useState<any[]>([]);
   const [shipmentsLength, setShipmentsLength] = useState<number>(0);
-  const [othersReason, setOthersReason] = useState<string>('');
   const [page, setPage] = useState(1);
   const [confirmModal, setConfirmModal] = useState(false);
   const pageSize = 10;
@@ -941,15 +912,13 @@ function IntermalTransferRequest() {
           </Box>
         </div>
         <RejectForm
-          checkedShipments={selectedInternalTransfer}
+          checkedInternalTransferRequest={selectedInternalTransfer}
           open={rejFormModal}
           reasonList={reasonList}
           onClose={() => {
             setRejectModal(false);
           }}
           onRejected={onRejectCheckin}
-          // checkInData={checkInRequest ?? []}
-          checkInData={[]}
           navigate={navigate}
         />
 
@@ -965,8 +934,6 @@ function IntermalTransferRequest() {
             // setConfirmModal(true)
           }}
           checkedInternalTransferRequest={selectedInternalTransfer}
-          // checkInData={checkInRequest ?? []}
-          checkInData={[]}
           navigate={navigate}
         />
         <ConfirmModal open={confirmModal} onClose={resetPage} />
