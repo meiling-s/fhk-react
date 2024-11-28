@@ -108,7 +108,7 @@ const CreatePickupOrder = () => {
           values.specificDates = values.routine
             .map(value => {
               // Format to 'YYYY-MM-DD' first, then parse it in the user's timezone
-              const formattedDate = dayjs(value).format('YYYY-MM-DD');
+              const formattedDate = dayjs(value, 'DD-MM-YY').format('YYYY-MM-DD');
               const parsedDate = dayjs.tz(formattedDate, dayjs.tz.guess());
 
               if (!parsedDate.isValid()) {

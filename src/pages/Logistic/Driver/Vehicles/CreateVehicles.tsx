@@ -503,7 +503,9 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   placeholder={t(
                     'driver.vehicleMenu.imei'
                   )}
-                  onChange={(event) => setDeviceId(event.target.value)}
+                  onChange={(event) => {
+                    const valueWithoutSpaces = event.target.value.replace(/\s/g, '');
+                    setDeviceId(valueWithoutSpaces);}}
                 />
               </CustomField>
             </Grid>

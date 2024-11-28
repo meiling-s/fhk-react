@@ -366,7 +366,9 @@
     "enable": "Enable",
     "not_enabled": "Not enabled",
     "terminated": "Terminated",
-    "deactivate": "Deactivate"
+    "deactivate": "Deactivate",
+    "assigned": "Assigned",
+    "unassigned": "Unassigned"
   },
   "appBar": {
     "simplified_cn": "简体中文",
@@ -719,6 +721,7 @@
     "inventoryLocation": "Inventory Location",
     "weight": "Weight",
     "at": "at",
+    "select_location": "select location",
     "handover": "hand over"
   },
   "processRecord": {

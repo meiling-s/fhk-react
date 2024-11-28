@@ -1766,3 +1766,18 @@ export const DELETE_FACTORY_DATA = (factoryId: string): AxiosRequestConfig => ({
   url: `api/v1/factory/delFactory?factoryId=${factoryId}`
 })
 
+export const CREATE_PROCESS_IN = (  
+  realmApiRoute: string,
+  table: string,
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/processin/${table}` 
+})
+
+export const CREATE_PROCESS_OUT = (  
+  realmApiRoute: string,
+  table: string,
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/processout/${table}/header`
+})
