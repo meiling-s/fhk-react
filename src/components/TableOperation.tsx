@@ -65,13 +65,6 @@ const TableOperation = ({
             <></>
           )}
         </Box>
-      ) : row.status === "STARTED" || row.status === "OUTSTANDING" ? (
-        <CustomButton
-          text={t("pick_up_order.table.create_job_order")}
-          onClick={() => {
-            navigateToJobOrder(row);
-          }}
-        ></CustomButton>
       ) : null}
     </>
   );
