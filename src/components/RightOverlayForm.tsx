@@ -181,13 +181,14 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
       sx={{
         "& .MuiDrawer-paper": {
           marginTop: `${marginTop}`,
+          width: width,
         },
       }}
     >
       <div
         className={`border-b-[1px] border-grey-line h-full ${
           isOpen
-            ? `md:w-[${width ? width : "550"}px] w-[100vw] mt-[${marginTop}]`
+            ? `${width ? `md:w-full` : `w-[700px]`} w-[100vw] mt-[${marginTop}]`
             : "hidden"
         }`}
       >
