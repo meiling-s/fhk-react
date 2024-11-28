@@ -39,7 +39,7 @@ type RecycItem = {
   productType: il_item
   productSubtype : il_item
   productSubtypeRemark: string
-  productAddonId :string
+  productAddonId :il_item
   productAddonRemark: string
   weight: number
   images: string[]
@@ -164,58 +164,82 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   }
 
   const mappingProductName = (
-    productTypeId: string, 
-    productSubTypeId: string, 
+    productTypeId: string,
+    productSubTypeId: string,
+    productAddonTypeId: string
   ) => {
     const matchingProductType = productType?.find(
       (product) => product.productTypeId === productTypeId
-    )
-
+    );
+  
     if (matchingProductType) {
       const matchProductSubType = matchingProductType.productSubType?.find(
         (subtype) => subtype.productSubTypeId === productSubTypeId
-      )
-
-      // Product Type Name
-      let productTypeName = ''
-      switch (i18n.language) {
-        case 'enus':
-          productTypeName = matchingProductType.productNameEng
-          break
-        case 'zhch':
-          productTypeName = matchingProductType.productNameSchi
-          break
-        case 'zhhk':
-          productTypeName = matchingProductType.productNameTchi
-          break
-        default:
-          productTypeName = matchingProductType.productNameTchi
-          break
-      }
-
-      // Product Subtype Name
-      let productSubTypeName = ''
-      switch (i18n.language) {
-        case 'enus':
-          productSubTypeName = matchProductSubType?.productNameEng ?? ''
-          break
-        case 'zhch':
-          productSubTypeName = matchProductSubType?.productNameSchi ?? ''
-          break
-        case 'zhhk':
-          productSubTypeName = matchProductSubType?.productNameTchi ?? ''
-          break
-        default:
-          productSubTypeName = matchProductSubType?.productNameTchi ?? ''
-          break
-      }
-
-      return { 
-        productTypeName, 
-        productSubTypeName, 
+      );
+  
+      if (matchProductSubType) {
+        const matchProductAddonType = matchProductSubType.productAddonType?.find(
+          (addon) => addon.productAddonTypeId === productAddonTypeId
+        );
+  
+        let productTypeName = '';
+        switch (i18n.language) {
+          case 'enus':
+            productTypeName = matchingProductType.productNameEng;
+            break;
+          case 'zhch':
+            productTypeName = matchingProductType.productNameSchi;
+            break;
+          case 'zhhk':
+            productTypeName = matchingProductType.productNameTchi;
+            break;
+          default:
+            productTypeName = matchingProductType.productNameTchi;
+            break;
+        }
+  
+        let productSubTypeName = '';
+        switch (i18n.language) {
+          case 'enus':
+            productSubTypeName = matchProductSubType?.productNameEng ?? '';
+            break;
+          case 'zhch':
+            productSubTypeName = matchProductSubType?.productNameSchi ?? '';
+            break;
+          case 'zhhk':
+            productSubTypeName = matchProductSubType?.productNameTchi ?? '';
+            break;
+          default:
+            productSubTypeName = matchProductSubType?.productNameTchi ?? '';
+            break;
+        }
+  
+        let productAddonTypeName = '';
+        if (matchProductAddonType) {
+          switch (i18n.language) {
+            case 'enus':
+              productAddonTypeName = matchProductAddonType?.productNameEng ?? '';
+              break;
+            case 'zhch':
+              productAddonTypeName = matchProductAddonType?.productNameSchi ?? '';
+              break;
+            case 'zhhk':
+              productAddonTypeName = matchProductAddonType?.productNameTchi ?? '';
+              break;
+            default:
+              productAddonTypeName = matchProductAddonType?.productNameTchi ?? '';
+              break;
+          }
+        }  
+        return {
+          productTypeName,
+          productSubTypeName,
+          productAddonTypeName,
+        };
       }
     }
-  }
+    return null;
+  };
 
   const showErrorToast = (toastMsg: string) => {
     toast.error(toastMsg, {
@@ -270,7 +294,8 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
             )
             const productResult = mappingProductName(
               detail.productTypeId,
-              detail.productSubTypeId
+              detail.productSubTypeId,
+              detail.productAddonTypeId
             )
             
             recycItems.push({
@@ -293,7 +318,10 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                 id: detail.productSubTypeId
               } : emptyList,
               productSubtypeRemark: detail.productSubTypeRemark,
-              productAddonId :detail.productAddonTypeId,
+              productAddonId :detail.productAddonTypeId ? {
+                name: productResult?.productAddonTypeName || '',
+                id: detail.productAddonTypeId
+              } : emptyList,
               productAddonRemark: detail.productAddonTypeId,
               weight: detail.weight,
               images: detail.processoutDetailPhoto.map((item) => {
@@ -387,6 +415,10 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     }
 
   }
+
+  useEffect(() => {
+    console.log('recyc',productType)
+  }, [drawerOpen])
 
   const handleDeleteRecyc = async (version: number, processOutDtlId: number) => {
     try {
@@ -491,29 +523,34 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                               : item.productType?.name?.charAt(0) || '?'}
                             </div>
                             {item.recycType?.name && (
-                              <>
-                                <div className="sub-type text-xs text-black font-bold tracking-widest">
+                              <div>
+                                <div className="sub-type text-s text-black font-bold tracking-widest">
                                   {item.recycType.name}
                                 </div>
                                 {item.recycSubtype?.name && (
-                                  <div className="type text-mini text-[#ACACAC] font-normal tracking-widest mb-2">
+                                  <div className="type text-xs text-[#ACACAC] font-normal tracking-widest mb-2">
                                     {item.recycSubtype.name}
                                   </div>
                                 )}
-                              </>
+                              </div>
                             )}
 
                             {!item.recycType?.name && (
-                              <>
-                                <div className="sub-type text-xs text-black font-bold tracking-widest">
+                              <div>
+                                <div className="sub-type text-s text-black font-bold tracking-widest">
                                   {item.productType.name}
                                 </div>
                                 {item.productSubtype?.name && (
-                                  <div className="type text-mini text-[#9CA3AF] font-normal tracking-widest">
+                                  <div className="type text-xs text-[#9CA3AF] font-normal tracking-widest">
                                     {item.productSubtype.name}
                                   </div>
                                 )}
-                              </>
+                                {item.productAddonId?.name && (
+                                  <div className="type text-xs text-[#9CA3AF] font-normal tracking-widest">
+                                    {item.productAddonId.name}
+                                  </div>
+                                )}
+                              </div>
                             )}
                           </div>
                           <div className="right action flex items-center gap-2">
