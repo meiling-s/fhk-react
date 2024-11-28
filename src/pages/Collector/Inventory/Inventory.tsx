@@ -7,7 +7,8 @@ import {
   TextField,
   InputAdornment,
   IconButton,
-  CircularProgress
+  CircularProgress,
+  Button
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -20,6 +21,7 @@ import {
 import { styles } from '../../../constants/styles'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import InventoryDetail from './DetailInventory'
+import CreateInventoryItem from './CreateInventory'
 import { useContainer } from 'unstated-next'
 import {
   InventoryItem,
@@ -49,20 +51,28 @@ import { PickupOrder } from '../../../interfaces/pickupOrder'
 import { astdSearchWarehouse } from '../../../APICalls/warehouseManage'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
-import { SEARCH_ICON } from '../../../themes/icons'
+import { ADD_ICON, SEARCH_ICON } from '../../../themes/icons'
 import useDebounce from '../../../hooks/useDebounce'
 import CircularLoading from '../../../components/CircularLoading'
 import {
   returnApiToken,
   extractError,
   getPrimaryColor,
-  debounce
+  debounce,
+  showErrorToast,
+  showSuccessToast
 } from '../../../utils/utils'
 import { getAllWarehouse } from '../../../APICalls/warehouseManage'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import { InventoryQuery } from '../../../interfaces/inventory'
 import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
 import { PackagingUnit } from '../../../interfaces/packagingUnit'
+import { getAllFactories, getAllFactoriesWarehouse,  } from '../../../APICalls/Collector/factory'
+import { getCollectionPoint } from '../../../APICalls/Collector/collectionPointManage'
+import { collectionPoint } from 'src/interfaces/collectionPoint'
+import { FactoryData, FactoryWarehouseData } from 'src/interfaces/factory'
+
+
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -84,8 +94,16 @@ function createInventory(
   recyclingNumber: string,
   recycTypeId: string,
   recycSubTypeId: string,
+  productTypeId: string,
+  productSubTypeId: string,
+  productSubTypeRemark: string,
+  productAddonTypeId: string,
+  productAddonTypeRemark: string,
   recyName: string,
   subName: string,
+  productName: string,
+  productSubName: string,
+  productAddOnName: string,
   packageTypeId: string,
   weight: number,
   unitId: string,
@@ -105,8 +123,16 @@ function createInventory(
     recyclingNumber,
     recycTypeId,
     recycSubTypeId,
+    productTypeId,
+    productSubTypeId,
+    productSubTypeRemark,
+    productAddonTypeId,
+    productAddonTypeRemark,
     recyName,
     subName,
+    productName,
+    productSubName,
+    productAddOnName,
     packageTypeId,
     weight,
     unitId,
@@ -125,6 +151,7 @@ const Inventory: FunctionComponent = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [createDrawerOpen, setCreateDrawerOpen] = useState(false)
   const [inventoryData, setInventoryData] = useState<any[]>([])
   const [inventoryList, setInventory] = useState<any[]>([])
   const [filteredInventory, setFilteredInventory] = useState<any[]>([])
@@ -133,7 +160,7 @@ const Inventory: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
-  const { recycType, dateFormat } = useContainer(CommonTypeContainer)
+  const { recycType, dateFormat, productType } = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<recycItem[]>([])
   const [picoList, setPicoList] = useState<PickupOrder[]>([])
   const [selectedPico, setSelectedPico] = useState<PickupOrder[]>([])
@@ -153,6 +180,55 @@ const Inventory: FunctionComponent = () => {
   const [packagingMapping, setPackagingMapping] = useState<PackagingUnit[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
+  const [colList, setColList] = useState<collectionPoint[]>([])
+  const [allFactoryDataList, setAllFactoryDataList] = useState<FactoryData[]>([])
+  const [warehouseDataList, setWarehouseDataList] = useState<FactoryWarehouseData[]>([])
+
+
+  async function initCollectionPoint() {
+    setIsLoading(true)
+    try {
+      const result = await getCollectionPoint(0, 1000)
+      if (result?.status === STATUS_CODE[200]) {
+        setColList([])
+        const data = result?.data.content
+        if (data && data.length > 0) {
+          setColList(data)
+        }
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+    }
+    setIsLoading(false)
+  }
+
+  const initAllFactoryList = (async () => {
+    setIsLoading(true)
+    setAllFactoryDataList([])
+    const result = await getAllFactories(0, 1000)
+    const data = result?.data
+  
+    if (data) {
+      setAllFactoryDataList(data.content)
+      setIsLoading(false)
+    }   
+  })
+
+  const initWarehouseList = (async () => {
+    setIsLoading(true)
+    setWarehouseDataList([])
+    const result = await getAllFactoriesWarehouse()
+    const data = result?.data 
+  
+    if (data) {
+      setWarehouseDataList(data)
+      setIsLoading(false)
+    }   
+  })
+
 
   const initpackagingUnit = async () => {
     try {
@@ -161,6 +237,7 @@ const Inventory: FunctionComponent = () => {
 
       if (data) {
         setPackagingMapping(data.content)
+        console.log('data packunit', data.content)
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -170,9 +247,13 @@ const Inventory: FunctionComponent = () => {
     }
   }
 
+
   useEffect(() => {
     mappingRecyleItem()
     initpackagingUnit()
+    initAllFactoryList()
+    initWarehouseList()
+    initCollectionPoint()
     getAllPickupOrder()
   }, [recycType, i18n.language])
 
@@ -181,6 +262,9 @@ const Inventory: FunctionComponent = () => {
       if (recycItem.length > 0) {
         initInventory()
         initWarehouse()
+        initAllFactoryList()
+        initWarehouseList()
+        initCollectionPoint()
       }
     }
   }, [recycItem, page, realmApi, query, i18n.language])
@@ -288,10 +372,14 @@ const Inventory: FunctionComponent = () => {
       data.content.map((item: InventoryItem) => {
         let recyName: string = '-'
         let subName: string = '-'
+        let productName = '-';
+        let productSubName = '-';
+        let productAddOnName = '-';
         item.packageName = item.packageTypeId
         const recyclables = recycType?.find(
           (re) => re.recycTypeId === item.recycTypeId
         )
+        
         if (recyclables) {
           if (i18n.language === Languages.ENUS)
             recyName = recyclables.recyclableNameEng
@@ -312,6 +400,79 @@ const Inventory: FunctionComponent = () => {
           }
         }
 
+        const product = productType?.find(
+          (re) => re.productTypeId === item.productTypeId
+        )
+
+        if (product) {
+          const matchingProductType = productType?.find(
+            (product) => product.productTypeId === item.productTypeId
+          );
+          
+          if (matchingProductType) {
+            // Product Type Name
+            switch (i18n.language) {
+              case Languages.ENUS:
+                productName = matchingProductType.productNameEng || '';
+                break;
+              case Languages.ZHCH:
+                productName = matchingProductType.productNameSchi || '';
+                break;
+              case Languages.ZHHK:
+                productName = matchingProductType.productNameTchi || '';
+                break;
+              default:
+                productName = matchingProductType.productNameTchi || '';
+                break;
+            }
+          
+            // Product Subtype
+            const matchProductSubType = matchingProductType.productSubType?.find(
+              (subtype) => subtype.productSubTypeId === item.productSubTypeId
+            );
+          
+            if (matchProductSubType) {
+              switch (i18n.language) {
+                case Languages.ENUS:
+                  productSubName = matchProductSubType.productNameEng || '';
+                  break;
+                case Languages.ZHCH:
+                  productSubName = matchProductSubType.productNameSchi || '';
+                  break;
+                case Languages.ZHHK:
+                  productSubName = matchProductSubType.productNameTchi || '';
+                  break;
+                default:
+                  productSubName = matchProductSubType.productNameTchi || '';
+                  break;
+              }
+            }
+          
+            // Product Addon Type
+            const matchProductAddonType = matchProductSubType?.productAddonType?.find(
+              (addon) => addon.productAddonTypeId === item.productAddonTypeId
+            );
+          
+            if (matchProductAddonType) {
+              switch (i18n.language) {
+                case Languages.ENUS:
+                  productAddOnName = matchProductAddonType.productNameEng || '';
+                  break;
+                case Languages.ZHCH:
+                  productAddOnName = matchProductAddonType.productNameSchi || '';
+                  break;
+                case Languages.ZHHK:
+                  productAddOnName = matchProductAddonType.productNameTchi || '';
+                  break;
+                default:
+                  productAddOnName = matchProductAddonType.productNameTchi || '';
+                  break;
+              }
+            }
+          }
+        }
+      
+        
         const packages = packagingMapping.find(
           (packageItem) => packageItem.packagingTypeId === item.packageTypeId
         )
@@ -344,8 +505,16 @@ const Inventory: FunctionComponent = () => {
             item?.recycTypeId,
             item?.recycTypeId,
             item?.recycSubTypeId,
+            item?.productTypeId,
+            item?.productSubTypeId,
+            item?.productSubTypeRemark,
+            item?.productAddonTypeId,
+            item?.productAddonTypeRemark,
             recyName,
             subName,
+            productName,
+            productSubName,
+            productAddOnName,
             item?.packageTypeId,
             item?.weight,
             item?.unitId,
@@ -367,6 +536,14 @@ const Inventory: FunctionComponent = () => {
     setIsLoading(false)
   }
 
+  const handleSubmit = async (type: string, msg: string) => {
+    if (type === 'success') {
+      showSuccessToast(msg)
+    } else {
+      showErrorToast(msg)
+    }
+  };
+
   const columns: GridColDef[] = [
     {
       field: 'createdAt',
@@ -375,16 +552,41 @@ const Inventory: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'recyName',
-      headerName: t('inventory.recyleType'),
+      field: 'category',
+      headerName: t('processOrder.details.itemCategory'),
       width: 200,
-      type: 'string'
+      type: 'string',
+      valueGetter: (params) => (params.row.recycTypeId ? t('recyclables') : t('product')),
     },
     {
-      field: 'subName',
-      headerName: t('inventory.recyleSubType'),
+      field: 'type',
+      headerName: t('settings_page.recycling.main_category'),
       width: 200,
-      type: 'string'
+      type: 'string',
+      valueGetter: (params) =>
+        params.row.recycTypeId
+          ? params.row.recyName || '-'
+          : params.row.productName || '-',
+    },
+    {
+      field: 'subType',
+      headerName: t('settings_page.recycling.sub_category'),
+      width: 200,
+      type: 'string',
+      valueGetter: (params) =>
+        params.row.recycTypeId
+          ? params.row.subName || '-'
+          : params.row.productSubName || '-',
+    },
+    {
+      field: 'Addon',
+      headerName: t('settings_page.recycling.additional_category'),
+      width: 200,
+      type: 'string',
+      valueGetter: (params) =>
+        params.row.recycTypeId
+          ? '-' 
+          : params.row.productAddonName || '-',
     },
     {
       field: 'packageName',
@@ -564,6 +766,10 @@ const Inventory: FunctionComponent = () => {
     setDrawerOpen(true)
   }
 
+  useEffect(() => {
+    console.log('row', selectedRow)
+  }, [selectedRow])
+
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10
@@ -670,6 +876,23 @@ const Inventory: FunctionComponent = () => {
           <Typography fontSize={16} color="black" fontWeight="bold">
             {t('inventory.recyclingInformation')}
           </Typography>
+          <Button
+            onClick={() => {
+              setCreateDrawerOpen(true)
+            }}
+            sx={{
+              borderRadius: '20px',
+              backgroundColor: getPrimaryColor(),
+              '&.MuiButton-root:hover': { bgcolor: getPrimaryColor() },
+              width: 'fit-content',
+              height: '40px',
+              marginLeft: '20px'
+            }}
+            variant="contained"
+            data-testId={'astd-pickup-order-new-button-5743'}
+          >
+            + {t('col.create')}
+          </Button>
         </Box>
         <Stack direction="row" mt={3}>
           {searchfield.map((s, index) => (
@@ -747,6 +970,15 @@ const Inventory: FunctionComponent = () => {
             }}
             selectedRow={selectedRow}
             selectedPico={selectedPico}
+          />
+          <CreateInventoryItem          
+            drawerOpen={createDrawerOpen}
+            colList={colList}
+            factoryDataList={allFactoryDataList}
+            warehouseDataList={warehouseDataList}
+            packagingUnit={packagingMapping}
+            handleDrawerClose={() => setCreateDrawerOpen(false)}
+            onSuccess={handleSubmit}
           />
         </div>
       </Box>

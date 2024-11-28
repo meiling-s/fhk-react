@@ -719,6 +719,7 @@
     "inventoryLocation": "庫存地點",
     "weight": "重量",
     "at": "於",
+    "select_location": "選擇位置",
     "handover": "交給"
   },
   "processRecord": {
