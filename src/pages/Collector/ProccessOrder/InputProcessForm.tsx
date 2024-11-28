@@ -45,8 +45,6 @@ import { getEstimateEndTime } from 'src/APICalls/processOrder'
 import dayjs from 'dayjs'
 import { formValidate } from 'src/interfaces/common'
 import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
-import { error, log } from 'console'
-import { createKeywordTypeNode } from 'typescript'
 
 const InputProcessForm = ({
   drawerOpen,
@@ -70,7 +68,6 @@ const InputProcessForm = ({
   dataSet: CreateProcessOrderDetailPairs[]
   editedValue: CreateProcessOrderDetailPairs[] | null
 }) => {
-  console.log(plannedStartAtInput)
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const {
@@ -102,6 +99,7 @@ const InputProcessForm = ({
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
 
+  console.log('plannedStartAtInput', plannedStartAtInput)
   const initDetail: CreateProcessOrderDetailPairs[] = [
     {
       processIn: {
@@ -164,8 +162,6 @@ const InputProcessForm = ({
       }))
       setProcessTypeId(editedValue[0].processIn.processTypeId)
       setProcessOrderDetail(mappedData)
-
-      console.log('mapping data', mappedData)
     }
   }
 
@@ -275,6 +271,7 @@ const InputProcessForm = ({
           })
 
       //processOut
+      console.log(processOrderDetail[0].processOut.processOrderDetailProduct)
       processOrderDetail[0].processOut.itemCategory === 'recycling'
         ? processOrderDetail[0].processOut.processOrderDetailRecyc.length ===
             0 &&
@@ -379,8 +376,6 @@ const InputProcessForm = ({
     let tempProduct: any[] = []
     if (value.productTypeId && value.productSubTypeId != '')
       tempProduct.push(value)
-
-    console.log('value', value)
 
     setProcessOrderDetail((prevDetails) =>
       prevDetails.map((detail) => ({
@@ -524,7 +519,6 @@ const InputProcessForm = ({
       processOrderDetail[0].processOut.plannedEndAt = plannedEndAtData
       value.idPair = tempRandomId
     })
-    console.log(processOrderDetail)
 
     onSave(processOrderDetail, isUpdate)
     handleDrawerClose()
@@ -752,7 +746,6 @@ const InputProcessForm = ({
                             id="weight"
                             placeholder={t('userAccount.pleaseEnterNumber')}
                             onChange={(event) => {
-                              console.log(event.target.value)
                               onChangeWeight(
                                 event.target.value,
                                 decimalVal,

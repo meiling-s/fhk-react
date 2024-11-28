@@ -171,15 +171,12 @@ const CreateProcessOrder = ({}: {}) => {
         if (params.row.processAction !== '') {
           if (params.row.processAction === 'PROCESS_IN') {
             dateTime = params.row.datetime
-              ? dayjs(params.row.datetime)
-                  .tz('Asia/Hong_Kong')
-                  .format(`${dateFormat} HH:mm`)
-              : dayjs(params.row?.datetime)
-                  .tz('Asia/Hong_Kong')
-                  .format(`${dateFormat} HH:mm`)
+              ? dayjs.utc(params.row.datetime).format(`${dateFormat} HH:mm`)
+              : dayjs.utc(params.row?.datetime).format(`${dateFormat} HH:mm`)
           } else {
-            dateTime = dayjs(params.row?.datetime)
-              .tz('Asia/Hong_Kong')
+            dateTime = dayjs
+              .utc(params.row?.datetime)
+
               .format(`${dateFormat} HH:mm`)
           }
         }
@@ -618,7 +615,7 @@ const CreateProcessOrder = ({}: {}) => {
   }
 
   const formattedDate = (dateData: dayjs.Dayjs) => {
-    return dayjs.utc(dateData).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+    return dayjs(dateData).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
   }
 
   const handleEdit = (item: ProcessInDtlData) => {
