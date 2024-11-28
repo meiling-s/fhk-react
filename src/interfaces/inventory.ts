@@ -18,6 +18,9 @@ export type InventoryItem = {
   productAddonTypeRemark: string
   recyName: string
   subName: string
+  productName: string
+  productSubName: string
+  productAddOnName: string
   packageTypeId: string
   weight: number
   unitId: string

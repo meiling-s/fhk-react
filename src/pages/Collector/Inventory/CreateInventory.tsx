@@ -82,6 +82,8 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
     const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
     const [defaultProduct, setDefaultProduct] = useState<singleProduct>()
     const [selectedLocationType, setSelectedLocationType] = useState<'collectionPoint' | 'factory' | 'warehouse'>('collectionPoint');
+    const [selectedLocationName, setSelectedLocationName] = useState('');
+    const [selectedLocationId, setSelectedLocationId] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
     const [pictures, setPictures] = useState<ImageListType>([])
     const [trySubmited, setTrySubmited] = useState<boolean>(false)
@@ -142,6 +144,8 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
         setPictures([]);
         setTrySubmited(false);
         setValidation([]);
+        setSelectedLocationName('')
+        setSelectedLocationId('')
     };
 
     const handleLocationTypeChange = (type: 'collectionPoint' | 'factory' | 'warehouse') => {
@@ -161,20 +165,68 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
             }
     
             if (isRecyc) {
-                if (!selectedRecycType || !selectedRecycSubType) {
-                    tempV.push({
-                        field: t('col.recycType'),
-                        problem: formErr.empty,
-                        type: 'error'
-                    })
+                const matchingRecycType = recycType?.find(
+                    (recyc) => selectedRecycType === recyc.recycTypeId
+                );
+    
+                if (matchingRecycType) {
+                    const hasSubType = matchingRecycType.recycSubType && matchingRecycType.recycSubType.length > 0;
+    
+                    if (!selectedRecycType) {
+                        tempV.push({
+                            field: t('pick_up_order.error.recycType'),
+                            problem: formErr.empty,
+                            type: 'error'
+                        });
+                    }
+    
+                    if (hasSubType && !selectedRecycSubType) {
+                        tempV.push({
+                            field: t('pick_up_order.error.recycSubType'),
+                            problem: formErr.empty,
+                            type: 'error'
+                        });
+                    }
                 }
             } else {
-                if (!productTypeId || !productSubTypeId) {
-                    tempV.push({
-                        field: t('pick_up_order.product_type.product'),
-                        problem: formErr.empty,
-                        type: 'error'
-                    })
+                const matchingProductType = productType?.find(
+                    (product) => product.productTypeId === productTypeId
+                );
+    
+                if (matchingProductType) {
+                    const hasSubType = matchingProductType.productSubType && matchingProductType.productSubType.length > 0;
+                    
+                    if (!productTypeId) {
+                        tempV.push({
+                            field: t('pick_up_order.error.productType'),
+                            problem: formErr.empty,
+                            type: 'error'
+                        });
+                    }
+    
+                    if (hasSubType && !productSubTypeId) {
+                        tempV.push({
+                            field: t('pick_up_order.error.productSubType'),
+                            problem: formErr.empty,
+                            type: 'error'
+                        });
+                    }
+    
+                    if (productSubTypeId) {
+                        const matchProductSubType = matchingProductType.productSubType?.find(
+                            (subtype) => subtype.productSubTypeId === productSubTypeId
+                        );
+    
+                        const hasAddonType = matchProductSubType?.productAddonType && matchProductSubType.productAddonType.length > 0;
+    
+                        if (hasAddonType && productAddonRemark && !productAddon) {
+                            tempV.push({
+                                field: t('pick_up_order.error.productAddon'),
+                                problem: formErr.empty,
+                                type: 'error'
+                            });
+                        }
+                    }
                 }
             }
     
@@ -205,11 +257,11 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
             setValidation(tempV)
         }
         validate()
-    }, [packagingUnitValue, isRecyc, selectedRecycType, selectedRecycSubType, productTypeId, productSubTypeId, selectedLocation, weight, pictures, t])
+    }, [packagingUnitValue, isRecyc, selectedRecycType, selectedRecycSubType, productTypeId, productSubTypeId, productAddon, selectedLocation, weight, pictures, t])
     
     const handleSubmit = async () => {
         const [locationType, locationId] = selectedLocation.split(':');
-        const factoryLocationId = selectedLocationType === "factory" ? locationId : "-1"
+        const factoryLocationId = selectedLocationType === "factory" ? selectedLocationId : "-1"
         if (validation.length === 0) {
             const photos: ProcessDetailPhotoType[] = [];
             ImageToBase64(pictures)?.map((photo, idx) => {
@@ -218,9 +270,9 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
             const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
             const dataProcessIn: ProcessInType = {
                 processTypeId: '0',
-                colId: selectedLocationType === "collectionPoint" ? Number(locationId) : 0,
-                warehouseId: selectedLocationType === "warehouse" ? Number(locationId) : 0,
-                address: locationType,
+                colId: Number(selectedLocationId) || 0,
+                warehouseId: Number(selectedLocationId) || 0,
+                address: selectedLocationName,
                 status: 'CREATED',
                 createdBy: loginId,
                 updatedBy: loginId,
@@ -486,9 +538,11 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                             onChange={(e) => {
                                 const value = e.target.value as string;
                                 if (value) {
-                                    setSelectedLocation(value);
-                                    const [locationType, locationId] = value.split(':');
-                                    setSelectedLocationType(locationType as 'collectionPoint' | 'factory' | 'warehouse');
+                                    const [type, name, id] = value.split(':');
+                                    setSelectedLocationType(type as 'collectionPoint' | 'factory' | 'warehouse');
+                                    setSelectedLocationName(name);
+                                    setSelectedLocationId(id);
+                                    setSelectedLocation(value); 
                                 }
                             }}
                             sx={[
@@ -503,28 +557,37 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                                 if (!selected) {
                                     return <em>{t('inventory.select_location')}</em>;
                                 }
-                                const [type, id] = selected.split(':');
-                                // Find and display the corresponding location name based on type and id
+                                
+                                const [type, name, id] = selected.split(':');
+                                
+                                // Return only the name based on the location type
                                 switch(type) {
                                     case 'collectionPoint':
                                         const colPoint = colList.find(point => point.colId.toString() === id);
-                                        return colPoint ? colPoint.colName : selected;
+                                        return colPoint ? colPoint.colName : '';
+                                        
                                     case 'warehouse':
                                         const warehouse = warehouseDataList.find(w => w.warehouseId.toString() === id);
-                                        return warehouse ? (
-                                            i18n.language === 'enus' ? warehouse.warehouseNameEng :
-                                            i18n.language === 'zhch' ? warehouse.warehouseNameSchi :
-                                            i18n.language === 'zhhk' ? warehouse.warehouseNameTchi : warehouse.warehouseNameEng
-                                        ) : selected;
+                                        if (warehouse) {
+                                            return i18n.language === 'enus' ? warehouse.warehouseNameEng :
+                                                   i18n.language === 'zhch' ? warehouse.warehouseNameSchi :
+                                                   i18n.language === 'zhhk' ? warehouse.warehouseNameTchi : 
+                                                   warehouse.warehouseNameEng;
+                                        }
+                                        return '';
+                                        
                                     case 'factory':
-                                        const factory = factoryDataList.find(f => f.factoryNameEng === id);
-                                        return factory ? (
-                                            i18n.language === 'enus' ? factory.factoryNameEng :
-                                            i18n.language === 'zhch' ? factory.factoryNameSchi :
-                                            i18n.language === 'zhhk' ? factory.factoryNameTchi : factory.factoryNameEng
-                                        ) : selected;
+                                        const factory = factoryDataList.find(f => f.factoryId.toString() === id);
+                                        if (factory) {
+                                            return i18n.language === 'enus' ? factory.factoryNameEng :
+                                                   i18n.language === 'zhch' ? factory.factoryNameSchi :
+                                                   i18n.language === 'zhhk' ? factory.factoryNameTchi : 
+                                                   factory.factoryNameEng;
+                                        }
+                                        return '';
+                                        
                                     default:
-                                        return selected;
+                                        return '';
                                 }
                             }}
                         >
@@ -533,7 +596,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                             {colList.map((point) => (
                                 <MenuItem 
                                     key={`collection-${point.colId}`} 
-                                    value={`${point.colName}:${point.colId}`}
+                                    value={`collectionPoint:${point.colName}:${point.colId}`}
                                     sx={{ pl: 4 }}
                                 >
                                     {point.colName}
@@ -545,7 +608,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                             {warehouseDataList.map((warehouse) => (
                                 <MenuItem 
                                     key={`warehouse-${warehouse.warehouseId}`} 
-                                    value={`${warehouse.warehouseNameEng}:${warehouse.warehouseId}`}
+                                    value={`warehouse:${warehouse.warehouseNameEng}:${warehouse.warehouseId}`}
                                     sx={{ pl: 4 }}
                                 >
                                     {i18n.language === 'enus' ? warehouse.warehouseNameEng :
@@ -559,7 +622,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                             {factoryDataList.map((factory) => (
                                 <MenuItem 
                                     key={`factory-${factory.factoryId}`} 
-                                    value={`${factory.factoryNameEng}:${factory.factoryId}`}
+                                    value={`factory:${factory.factoryNameEng}:${factory.factoryId}`}
                                     sx={{ pl: 4 }}
                                 >
                                     {i18n.language === 'enus' ? factory.factoryNameEng :

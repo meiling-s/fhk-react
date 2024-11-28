@@ -101,6 +101,9 @@ function createInventory(
   productAddonTypeRemark: string,
   recyName: string,
   subName: string,
+  productName: string,
+  productSubName: string,
+  productAddOnName: string,
   packageTypeId: string,
   weight: number,
   unitId: string,
@@ -127,6 +130,9 @@ function createInventory(
     productAddonTypeRemark,
     recyName,
     subName,
+    productName,
+    productSubName,
+    productAddOnName,
     packageTypeId,
     weight,
     unitId,
@@ -366,13 +372,14 @@ const Inventory: FunctionComponent = () => {
       data.content.map((item: InventoryItem) => {
         let recyName: string = '-'
         let subName: string = '-'
+        let productName = '-';
+        let productSubName = '-';
+        let productAddOnName = '-';
         item.packageName = item.packageTypeId
         const recyclables = recycType?.find(
           (re) => re.recycTypeId === item.recycTypeId
         )
-        const product = productType?.find(
-          (re) => re.productTypeId === item.productTypeId
-        )
+        
         if (recyclables) {
           if (i18n.language === Languages.ENUS)
             recyName = recyclables.recyclableNameEng
@@ -393,25 +400,78 @@ const Inventory: FunctionComponent = () => {
           }
         }
 
+        const product = productType?.find(
+          (re) => re.productTypeId === item.productTypeId
+        )
+
         if (product) {
-          if (i18n.language === Languages.ENUS)
-            recyName = product.productNameEng
-          if (i18n.language === Languages.ZHCH)
-            recyName = product.productNameSchi
-          if (i18n.language === Languages.ZHHK)
-            recyName = product.productNameTchi
-          // const subs = product.productSubTypeId.find(
-          //   (sub) => sub.recycSubTypeId === item.recycSubTypeId
-          // )
-          // if (subs) {
-          //   if (i18n.language === Languages.ENUS)
-          //     subName = subs.recyclableNameEng
-          //   if (i18n.language === Languages.ZHCH)
-          //     subName = subs.recyclableNameSchi
-          //   if (i18n.language === Languages.ZHHK)
-          //     subName = subs.recyclableNameTchi
-          // }
+          const matchingProductType = productType?.find(
+            (product) => product.productTypeId === item.productTypeId
+          );
+          
+          if (matchingProductType) {
+            // Product Type Name
+            switch (i18n.language) {
+              case Languages.ENUS:
+                productName = matchingProductType.productNameEng || '';
+                break;
+              case Languages.ZHCH:
+                productName = matchingProductType.productNameSchi || '';
+                break;
+              case Languages.ZHHK:
+                productName = matchingProductType.productNameTchi || '';
+                break;
+              default:
+                productName = matchingProductType.productNameTchi || '';
+                break;
+            }
+          
+            // Product Subtype
+            const matchProductSubType = matchingProductType.productSubType?.find(
+              (subtype) => subtype.productSubTypeId === item.productSubTypeId
+            );
+          
+            if (matchProductSubType) {
+              switch (i18n.language) {
+                case Languages.ENUS:
+                  productSubName = matchProductSubType.productNameEng || '';
+                  break;
+                case Languages.ZHCH:
+                  productSubName = matchProductSubType.productNameSchi || '';
+                  break;
+                case Languages.ZHHK:
+                  productSubName = matchProductSubType.productNameTchi || '';
+                  break;
+                default:
+                  productSubName = matchProductSubType.productNameTchi || '';
+                  break;
+              }
+            }
+          
+            // Product Addon Type
+            const matchProductAddonType = matchProductSubType?.productAddonType?.find(
+              (addon) => addon.productAddonTypeId === item.productAddonTypeId
+            );
+          
+            if (matchProductAddonType) {
+              switch (i18n.language) {
+                case Languages.ENUS:
+                  productAddOnName = matchProductAddonType.productNameEng || '';
+                  break;
+                case Languages.ZHCH:
+                  productAddOnName = matchProductAddonType.productNameSchi || '';
+                  break;
+                case Languages.ZHHK:
+                  productAddOnName = matchProductAddonType.productNameTchi || '';
+                  break;
+                default:
+                  productAddOnName = matchProductAddonType.productNameTchi || '';
+                  break;
+              }
+            }
+          }
         }
+      
         
         const packages = packagingMapping.find(
           (packageItem) => packageItem.packagingTypeId === item.packageTypeId
@@ -452,6 +512,9 @@ const Inventory: FunctionComponent = () => {
             item?.productAddonTypeRemark,
             recyName,
             subName,
+            productName,
+            productSubName,
+            productAddOnName,
             item?.packageTypeId,
             item?.weight,
             item?.unitId,
@@ -489,16 +552,41 @@ const Inventory: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'recyName',
-      headerName: t('inventory.recyleType'),
+      field: 'category',
+      headerName: t('processOrder.details.itemCategory'),
       width: 200,
-      type: 'string'
+      type: 'string',
+      valueGetter: (params) => (params.row.recycTypeId ? t('recyclables') : t('product')),
     },
     {
-      field: 'subName',
-      headerName: t('inventory.recyleSubType'),
+      field: 'type',
+      headerName: t('settings_page.recycling.main_category'),
       width: 200,
-      type: 'string'
+      type: 'string',
+      valueGetter: (params) =>
+        params.row.recycTypeId
+          ? params.row.recyName || '-'
+          : params.row.productName || '-',
+    },
+    {
+      field: 'subType',
+      headerName: t('settings_page.recycling.sub_category'),
+      width: 200,
+      type: 'string',
+      valueGetter: (params) =>
+        params.row.recycTypeId
+          ? params.row.subName || '-'
+          : params.row.productSubName || '-',
+    },
+    {
+      field: 'Addon',
+      headerName: t('settings_page.recycling.additional_category'),
+      width: 200,
+      type: 'string',
+      valueGetter: (params) =>
+        params.row.recycTypeId
+          ? '-' 
+          : params.row.productAddonName || '-',
     },
     {
       field: 'packageName',
