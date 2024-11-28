@@ -28,6 +28,7 @@ import { localStorgeKeyName } from "../../constants/constant";
 import { formatWeight } from "../../utils/utils";
 import { getDetailCheckInRequests } from "../../APICalls/Collector/warehouseManage";
 import NotifContainer from "../../contexts/NotifContainer";
+import { InternalTransferName } from "src/interfaces/internalTransferRequests";
 
 type recycItem = {
   recycType: il_item;
@@ -39,10 +40,11 @@ type recycItem = {
 
 type props = {
   onClose?: () => void;
-  selectedItem?: CheckIn;
+  selectedItem?: InternalTransferName;
 };
 
 const InternalTransferForm = ({ onClose, selectedItem }: props) => {
+  const { t } = useTranslation();
   const { marginTop } = useContainer(NotifContainer);
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -52,92 +54,8 @@ const InternalTransferForm = ({ onClose, selectedItem }: props) => {
       onClose && onClose();
     }
   };
-  const { recycType, decimalVal } = useContainer(CommonTypeContainer);
-  const { t } = useTranslation();
-  const [selectedDetail, setSelectedDetail] = useState<
-    CheckinDetail[] | undefined
-  >([]);
-  const [recycItem, setRecycItem] = useState<recycItem[]>([]);
 
-  useEffect(() => {
-    initCheckinDetail(selectedItem?.chkInId);
-    setSelectedDetail(selectedItem?.checkinDetail);
-  }, [selectedItem]);
-
-  const initCheckinDetail = async (chkInId: number | undefined) => {
-    if (chkInId !== undefined) {
-      const result = await getDetailCheckInRequests(chkInId);
-      if (result) {
-        const recycItems: recycItem[] = [];
-        const data = result.data;
-
-        data.forEach((detail: CheckinDetail) => {
-          const matchingRecycType = recycType?.find(
-            (recyc) => detail.recycTypeId === recyc.recycTypeId
-          );
-          if (matchingRecycType) {
-            const matchrecycSubType = matchingRecycType.recycSubType?.find(
-              (subtype) => subtype.recycSubTypeId === detail.recycSubTypeId
-            );
-            var name = "";
-            switch (i18n.language) {
-              case "enus":
-                name = matchingRecycType.recyclableNameEng;
-                break;
-              case "zhch":
-                name = matchingRecycType.recyclableNameSchi;
-                break;
-              case "zhhk":
-                name = matchingRecycType.recyclableNameTchi;
-                break;
-              default:
-                name = matchingRecycType.recyclableNameTchi; //default fallback language is zhhk
-                break;
-            }
-            var subName = "";
-            switch (i18n.language) {
-              case "enus":
-                subName = matchrecycSubType?.recyclableNameEng ?? "";
-                break;
-              case "zhch":
-                subName = matchrecycSubType?.recyclableNameSchi ?? "";
-                break;
-              case "zhhk":
-                subName = matchrecycSubType?.recyclableNameTchi ?? "";
-                break;
-              default:
-                subName = matchrecycSubType?.recyclableNameTchi ?? ""; //default fallback language is zhhk
-                break;
-            }
-            recycItems.push({
-              recycType: {
-                name: name,
-                id: detail.chkInDtlId.toString()
-              },
-              recycSubType: {
-                name: subName,
-                id: detail.chkInDtlId.toString()
-              },
-              weight: detail.weight,
-              packageTypeId: detail.packageTypeId,
-              checkinDetailPhoto: detail.checkinDetailPhoto
-            });
-          }
-        });
-        setRecycItem(recycItems);
-      }
-    }
-  };
-
-  const updatedDate = selectedItem?.updatedAt
-    ? dayjs(new Date(selectedItem?.updatedAt)).format(format.dateFormat1)
-    : "-";
-
-  const loginId = localStorage.getItem(localStorgeKeyName.username) || "";
-
-  const messageCheckin = `[${loginId}] ${t(
-    "check_out.approved_on"
-  )} ${updatedDate} ${t("check_out.reason_is")} ${selectedItem?.reason}`;
+  console.log('selectedItem', selectedItem)
 
   return (
     <Box sx={{ ...localstyles.modal, marginTop }} onClick={handleOverlayClick}>
@@ -147,7 +65,7 @@ const InternalTransferForm = ({ onClose, selectedItem }: props) => {
             <Typography sx={styles.header4}>
               {t("internalTransfer.internal_transfer_request")}
             </Typography>
-            <Typography sx={styles.header3}>{selectedItem?.picoId}</Typography>
+            <Typography sx={styles.header3}>{selectedItem?.detail?.gidLabel}</Typography>
           </Box>
           <Box sx={{ display: "flex", alignSelf: "center" }}>
             <IconButton onClick={onClose}>
@@ -168,7 +86,7 @@ const InternalTransferForm = ({ onClose, selectedItem }: props) => {
               {t("internalTransfer.date_time")}
             </Typography>
             <Typography sx={localstyles.typo_fieldContent}>
-              {selectedItem?.logisticName}
+              {selectedItem?.createdAt}
             </Typography>
           </Box>
 
@@ -177,7 +95,7 @@ const InternalTransferForm = ({ onClose, selectedItem }: props) => {
               {t("pick_up_order.recyclForm.item_category")}
             </Typography>
             <Typography sx={localstyles.typo_fieldContent}>
-              {selectedItem?.senderName}
+              {selectedItem?.itemType}
             </Typography>
           </Box>
 
@@ -186,7 +104,7 @@ const InternalTransferForm = ({ onClose, selectedItem }: props) => {
               {t("settings_page.recycling.main_category")}
             </Typography>
             <Typography sx={localstyles.typo_fieldContent}>
-              {selectedItem?.recipientCompany ?? "-"}
+              {selectedItem?.mainCategory}
             </Typography>
           </Box>
           <Box>
@@ -194,7 +112,7 @@ const InternalTransferForm = ({ onClose, selectedItem }: props) => {
               {t("settings_page.recycling.sub_category")}
             </Typography>
             <Typography sx={localstyles.typo_fieldContent}>
-              {selectedItem?.recipientCompany ?? "-"}
+              {selectedItem?.subCategory}
             </Typography>
           </Box>
           <Box>
@@ -202,7 +120,7 @@ const InternalTransferForm = ({ onClose, selectedItem }: props) => {
               {t("inventory.package")}
             </Typography>
             <Typography sx={localstyles.typo_fieldContent}>
-              {selectedItem?.recipientCompany ?? "-"}
+              {selectedItem?.package}
             </Typography>
           </Box>
           <Box>
@@ -210,7 +128,7 @@ const InternalTransferForm = ({ onClose, selectedItem }: props) => {
               {t("internalTransfer.sender_warehouse")}
             </Typography>
             <Typography sx={localstyles.typo_fieldContent}>
-              {selectedItem?.recipientCompany ?? "-"}
+              {selectedItem?.senderWarehouse}
             </Typography>
           </Box>
           <Box>
@@ -218,7 +136,7 @@ const InternalTransferForm = ({ onClose, selectedItem }: props) => {
               {t("internalTransfer.receiver_warehouse")}
             </Typography>
             <Typography sx={localstyles.typo_fieldContent}>
-              {selectedItem?.recipientCompany ?? "-"}
+              {selectedItem?.toWarehouse}
             </Typography>
           </Box>
           <Box>
@@ -226,7 +144,7 @@ const InternalTransferForm = ({ onClose, selectedItem }: props) => {
               {t("inventory.weight")}
             </Typography>
             <Typography sx={localstyles.typo_fieldContent}>
-              {selectedItem?.recipientCompany ?? "-"}
+              {selectedItem?.weight}
             </Typography>
           </Box>
         </Stack>

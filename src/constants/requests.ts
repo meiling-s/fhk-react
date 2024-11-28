@@ -1766,9 +1766,16 @@ export const DELETE_FACTORY_DATA = (factoryId: string): AxiosRequestConfig => ({
   url: `api/v1/factory/delFactory?factoryId=${factoryId}`
 })
 
-export const GET_INTERNAL_REQUEST = (
+export const GET_INTERNAL_TRANSFER_REQUEST = (
   tenantId: string
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/itr/all/${tenantId}`
+})
+
+export const UPDATE_INTERNAL_TRANSFER_REQUEST_STATUS = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/itr/update/${tenantId}/status`
 })

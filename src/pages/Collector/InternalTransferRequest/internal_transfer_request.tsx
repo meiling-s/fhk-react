@@ -29,11 +29,11 @@ import CheckIcon from "@mui/icons-material/Check";
 import { useNavigate } from "react-router-dom";
 import CustomItemList from "../../../components/FormComponents/CustomItemList";
 import {
-  getAllCheckInRequests,
   updateCheckinStatus,
   getCheckinReasons,
   updateCheckin,
   getInternalRequest,
+  updateInternalRequestStatus,
 } from "../../../APICalls/Collector/warehouseManage";
 import CircularLoading from "../../../components/CircularLoading";
 import { CheckInWarehouse, updateStatus } from "../../../interfaces/warehouse";
@@ -48,10 +48,9 @@ import {
   extractError,
   getPrimaryColor,
   showSuccessToast,
-  showErrorToast
+  showErrorToast,
 } from "../../../utils/utils";
 import { useTranslation } from "react-i18next";
-import { queryCheckIn } from "../../../interfaces/checkin";
 import CustomButton from "../../../components/FormComponents/CustomButton";
 import i18n from "../../../setups/i18n";
 
@@ -62,9 +61,13 @@ import { useContainer } from "unstated-next";
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 import { getPicoById } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
-import { getWarehouseById } from "../../../APICalls/warehouseManage";
 import { recycSubType, recycType } from "src/interfaces/common";
-import { queryInternalTransfer } from "src/interfaces/internalTransferRequests";
+import { InternalTransfer, InternalTransferName, queryInternalTransfer } from "src/interfaces/internalTransferRequests";
+import { mappingAddonsType, mappingProductType, mappingRecy, mappingSubProductType, mappingSubRecy } from "../ProccessOrder/utils";
+import { getAllFactoriesWarehouse } from "src/APICalls/Collector/factory";
+import { FactoryWarehouseData } from "src/interfaces/factory";
+import CustomField from "src/components/FormComponents/CustomField";
+import CustomTextField from "src/components/FormComponents/CustomTextField";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -153,6 +156,7 @@ function RejectForm({
   const { t } = useTranslation();
 
   const [rejectReasonId, setRejectReasonId] = useState<string[]>([]);
+  const [othersReason, setOthersReason] = useState<string>('')
 
   const handleConfirmRejectOnClick = async (rejectReasonId: string[]) => {
     const rejectReason = rejectReasonId.map((id) => {
@@ -211,7 +215,7 @@ function RejectForm({
               component="h2"
               sx={{ fontWeight: "bold" }}
             >
-              {t("check_in.confirm_reject")}
+              {t("internalTransfer.confirm_reject")}
             </Typography>
           </Box>
           <Box>
@@ -223,6 +227,24 @@ function RejectForm({
               multiSelect={setRejectReasonId}
               itemColor={{ bgColor: "#F0F9FF", borderColor: getPrimaryColor() }}
             />
+            {rejectReasonId.includes('99') && (
+              <CustomField
+              label={`${t("internalTransfer.others")} ${t("check_in.reject_reasons")}`}
+              mandatory={rejectReasonId.includes('99') && othersReason === ''}
+              >
+                <CustomTextField
+                  id="rejectReason"
+                  placeholder={`${t("internalTransfer.others")} ${t("check_in.reject_reasons")}`}
+                  onChange={(event) => {
+                    setOthersReason(event.target.value)
+                  }}
+                  value={othersReason}
+                  sx={{ width: "100%" }}
+                  error={rejectReasonId.includes('99') && othersReason === ''}
+                  dataTestId="astd-create-edit-pickup-order-contact-no-input-field-6429"
+                />
+              </CustomField>
+            )}
           </Box>
 
           <Box sx={{ alignSelf: "center" }}>
@@ -254,7 +276,7 @@ function RejectForm({
 type ApproveForm = {
   open: boolean;
   onClose: () => void;
-  checkedCheckIn: number[];
+  checkedInternalTransferRequest: number[];
   onApprove?: () => void;
   checkInData: CheckIn[];
   navigate: (url: string) => void;
@@ -280,72 +302,33 @@ interface CheckInDetail {
 const ApproveModal: React.FC<ApproveForm> = ({
   open,
   onClose,
-  checkedCheckIn,
+  checkedInternalTransferRequest,
   onApprove,
-  checkInData,
   navigate
 }) => {
   const { t } = useTranslation();
   const loginId = localStorage.getItem(localStorgeKeyName.username) || "";
   const handleApproveRequest = async () => {
-    const confirmReason: string[] = ["Confirmed"];
-
-    const results = await Promise.allSettled(
-      checkedCheckIn.map(async (checkInId) => {
-        const selected = checkInData.find(
-          (value) => value.chkInId === checkInId
-        );
-        try {
-          const statReason: updateStatus = {
-            status: "CONFIRMED",
-            reason: confirmReason,
-            updatedBy: loginId,
-            version: selected?.version ?? 0
-          };
-          const result = await updateCheckinStatus(checkInId, statReason);
-          const data = result?.data;
-          if (data) {
-            // console.log('updated check-in status: ', data)
-
-            // Map over each item in checkinDetail
-            data.checkinDetail.map(async (detail: any) => {
-              if (detail.picoDtlId) {
-                const picoAPI = await getPicoById(selected?.picoId ?? "");
-                const picoResult = picoAPI.data.pickupOrderDetail.find(
-                  (value: { picoDtlId: number }) =>
-                    value.picoDtlId === detail.picoDtlId
-                );
-
-                const dataCheckin: CheckInWarehouse = {
-                  checkInWeight: detail.weight || 0,
-                  checkInUnitId: detail.unitId || 0,
-                  checkInAt: data.updatedAt || "",
-                  checkInBy: data.updatedBy || "",
-                  updatedBy: loginId,
-                  version: picoResult.version
-                };
-                return await updateCheckin(
-                  checkInId,
-                  dataCheckin,
-                  detail.picoDtlId
-                );
-              }
-            });
-
-            if (onApprove) {
-              onApprove();
-            }
+    try {
+      const payLoad = {
+        items: checkedInternalTransferRequest.map((val) => {
+          return {
+            id: val,
+            status: 'APPROVED',
+            updatedBy: loginId
           }
-        } catch (error: any) {
-          const { state } = extractError(error);
-          if (state.code === STATUS_CODE[503]) {
-            navigate("/maintenance");
-          } else if (state.code === STATUS_CODE[409]) {
-            showErrorToast(error?.response?.data?.message);
-          }
-        }
-      })
-    );
+        })
+      }
+      await updateInternalRequestStatus(payLoad)
+      if (onApprove) onApprove()
+    } catch(error: any) {
+      const { state } = extractError(error);
+      if (state.code === STATUS_CODE[503]) {
+        navigate("/maintenance");
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error?.response?.data?.message);
+      }
+    }
   };
 
   return (
@@ -401,18 +384,22 @@ type TableRow = {
 function IntermalTransferRequest() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [selectedCheckin, setSelectedCheckin] = useState<number[]>([]);
+  const [selectedInternalTransfer, setSelectedCheckin] = useState<number[]>([]);
   const [selectedUnCheckin, setSelectedUnCheckin] = useState<number[]>([]);
-  const [filterShipments, setFilterShipments] = useState<CheckIn[]>([]);
+  const [filterShipments, setFilterShipments] = useState<InternalTransferName[]>([]);
   const [rejFormModal, setRejectModal] = useState<boolean>(false);
   const [approveModal, setApproveModal] = useState<boolean>(false);
+  const [warehouseDataList, setWarehouseDataList] = useState<FactoryWarehouseData[]>([])
   const [company, setCompany] = useState("");
   const [location, setLocation] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [selectAll, setSelectAll] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<CheckIn>();
-  const [checkInRequest, setCheckInRequest] = useState<CheckIn[]>();
+  const [selectedRow, setSelectedRow] = useState<InternalTransferName>();
+  const [internalTransferRequest, setInternalTransferRequest] = useState<InternalTransferName[]>();
+  const [inventoryList, setInventory] = useState<any[]>([]);
+  const [shipmentsLength, setShipmentsLength] = useState<number>(0);
+  const [othersReason, setOthersReason] = useState<string>('');
   const [page, setPage] = useState(1);
   const [confirmModal, setConfirmModal] = useState(false);
   const pageSize = 10;
@@ -425,8 +412,7 @@ function IntermalTransferRequest() {
   const [reasonList, setReasonList] = useState<any>([]);
   const { dateFormat } = useContainer(CommonTypeContainer);
   const { localeTextDataGrid } = useLocaleTextDataGrid();
-  const { logisticList, manuList, collectorList, companies, currentTenant, recycType } =
-    useContainer(CommonTypeContainer);
+  const { recycType, productType } = useContainer(CommonTypeContainer);
   const role = localStorage.getItem(localStorgeKeyName.role);
   const [category, setCateGory] = useState("");
   const [subCategory, setSubCateGory] = useState("");
@@ -455,53 +441,31 @@ function IntermalTransferRequest() {
             item.name = item[reasonName];
           }
         );
-        setReasonList(result?.data?.content);
+        setReasonList([...result?.data?.content, {id: '99', name: t('internalTransfer.others')}]);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error);
+      const { state } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
         navigate("/maintenance");
       }
     }
   };
   useEffect(() => {
-    initCheckInRequest();
+    initInternalTransferRequest();
     getRejectReason();
   }, [page, query, dateFormat, i18n.language]);
 
-  const listTranslationCompanyName = (): CompanyNameLanguages[] => {
-    const manufacturerCompany: CompanyNameLanguages[] =
-      manuList?.map((item) => {
-        return {
-          labelEnglish: item?.manufacturerNameEng ?? "",
-          labelSimpflifed: item?.manufacturerNameSchi ?? "",
-          labelTraditional: item?.manufacturerNameTchi ?? ""
-        };
-      }) ?? [];
-
-    const collectorCompany: CompanyNameLanguages[] =
-      collectorList?.map((item) => {
-        return {
-          labelEnglish: item?.collectorId ?? "",
-          labelSimpflifed: item?.collectorNameSchi ?? "",
-          labelTraditional: item?.collectorNameTchi ?? ""
-        };
-      }) ?? [];
-
-    return [...manufacturerCompany, ...collectorCompany];
-  };
-
-  const getCompanyNameById = (id: number): string => {
+  const getWarehouseByIdFunc = (id: number, warehouseDataListLocal: FactoryWarehouseData[] = warehouseDataList): string => {
     let { ENUS, ZHCH, ZHHK } = Languages;
-    let companyName: string = "";
-    const company = companies.find((item) => item.id === id);
-    if (company) {
-      if (i18n.language === ENUS) companyName = company.nameEng ?? "";
-      if (i18n.language === ZHCH) companyName = company.nameSchi ?? "";
-      if (i18n.language === ZHHK) companyName = company.nameTchi ?? "";
+    let warehouseName: string = "";
+    const warehouse = warehouseDataListLocal.find((item) => item.warehouseId === id);
+    if (warehouse) {
+      if (i18n.language === ENUS) warehouseName = warehouse?.warehouseNameEng ?? "";
+      if (i18n.language === ZHCH) warehouseName = warehouse?.warehouseNameSchi ?? "";
+      if (i18n.language === ZHHK) warehouseName = warehouse?.warehouseNameTchi ?? "";
     }
 
-    return companyName;
+    return warehouseName;
   };
 
   const getRecycTypeName = useCallback((val: recycType | recycSubType): string => {
@@ -515,83 +479,69 @@ function IntermalTransferRequest() {
     return recycType;
   }, []);
 
-  const getRecepientCompany = (): string => {
-    let recipientCompany: string = "";
-    if (i18n.language === Languages.ENUS)
-      recipientCompany = currentTenant?.nameEng ?? "";
-    if (i18n.language === Languages.ZHCH)
-      recipientCompany = currentTenant?.nameSchi ?? "";
-    if (i18n.language === Languages.ZHHK)
-      recipientCompany = currentTenant?.nameTchi ?? "";
-    return recipientCompany;
-  };
+  const initWarehouseList = (async () => {
+      try {
+        const result = await getAllFactoriesWarehouse();
+        const data = result?.data;
+      
+        if (data) {
+          setWarehouseDataList(data);
+          return data;
+        }
+      } catch (error) {
+        return []
+      }  
+  })
 
-  const cacheWarehouse: any = {};
-
-  const getWarehouseAddres = async (warehouseId: number) => {
-    let deliveryAddress: string = "";
-    if (warehouseId in cacheWarehouse) {
-      deliveryAddress = cacheWarehouse[warehouseId].address;
-    } else {
-      const warehouse = await getWarehouseDetail(warehouseId);
-
-      if (warehouse) {
-        cacheWarehouse[warehouseId] = {
-          isExist: true,
-          address: warehouse.location
-        };
-        deliveryAddress = warehouse.location;
-      } else {
-        cacheWarehouse[warehouseId] = {
-          isExist: false,
-          address: ""
-        };
-      }
-    }
-    return deliveryAddress;
-  };
-
-  const initCheckInRequest = async () => {
+  const initInternalTransferRequest = async () => {
     setIsLoading(true);
     try {
+      const warehouseList: FactoryWarehouseData[] = await initWarehouseList();
+
       const result = await getInternalRequest(page - 1, pageSize, query);
       if (result) {
-        const data = result?.data?.content;
+        const data: InternalTransfer[] = result?.data?.content;
         if (data && data.length > 0) {
-          const newData: CheckIn[] = [];
-          for (let item of data) {
-            const dateInHK = dayjs.utc(item.createdAt).tz("Asia/Hong_Kong");
-            item.createdAt = dateInHK.format(`${dateFormat} HH:mm`);
+          const newData: InternalTransferName[] = data.map((val) => {
+            const dateInHK = dayjs.utc(val?.createdAt).tz("Asia/Hong_Kong");
 
-            if (item?.logisticId) {
-              const companyName = getCompanyNameById(Number(item.logisticId));
-              item.logisticName =
-                companyName === "" ? item.logisticName : companyName;
+            const mainCategoryLocal = val?.recycTypeId === '' || val?.recycTypeId === null ? 
+              mappingProductType(val?.productTypeId, productType) 
+                : mappingRecy(val?.recycTypeId, recycType)
+            
+            const subCategoryLocal = val?.recycSubTypeId === '' || val?.recycSubTypeId === null ?
+              mappingSubProductType(val?.productTypeId, val?.productSubTypeId, productType)
+                : mappingSubRecy(val?.recycTypeId, val?.recycSubTypeId, recycType)
+            
+            const addonCategoryLocal = val?.productAddonTypeId !== '' ?
+              mappingAddonsType(val?.productTypeId, val?.productSubTypeId, val?.productAddonTypeId, productType)
+                : '-'
+
+            return {
+              id: Number(val?.id),
+              createdAt: dateInHK.format(`${dateFormat} HH:mm`),
+              itemType: val?.recycTypeId === '' ? t('product') : t('recyclables'),  //PENDING
+              mainCategory: mainCategoryLocal,
+              subCategory: subCategoryLocal,
+              addonCategory: addonCategoryLocal,
+              package: val?.packageTypeId.toString(), // DONE
+              senderWarehouse: getWarehouseByIdFunc(Number(val?.warehouseId), warehouseList || undefined),
+              toWarehouse: getWarehouseByIdFunc(Number(val?.toWarehouseId), warehouseList || undefined),
+              weight: val?.weight,
+              detail: val
             }
-
-            if (item.senderId) {
-              const companyName = getCompanyNameById(Number(item.senderId));
-              item.senderName =
-                companyName === "" ? item.senderName : companyName;
-            }
-
-            item.recipientCompany = getRecepientCompany();
-
-            if (item.warehouseId) {
-              item.deliveryAddress =
-                (await getWarehouseAddres(item.warehouseId)) ?? "";
-            }
-            newData.push(item);
-          }
-          setCheckInRequest(newData);
+          });
+          
+          setInternalTransferRequest(newData);
           setFilterShipments(newData);
+          setShipmentsLength(result?.data?.totalElements)
         } else {
           setFilterShipments([]);
         }
         setTotalData(result?.data.totalPages);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error);
+      const { state } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
         navigate("/maintenance");
       }
@@ -603,7 +553,7 @@ function IntermalTransferRequest() {
     const checked = event.target.checked;
     setSelectAll(checked);
     const selectedRows = checked
-      ? filterShipments.map((row) => row.chkInId)
+      ? filterShipments.map((row) => Number(row.id))
       : [];
     setSelectedCheckin(selectedRows);
   };
@@ -613,43 +563,43 @@ function IntermalTransferRequest() {
       let newIds: number[] = [];
 
       for (let item of filterShipments) {
-        if (!selectedUnCheckin.includes(item.chkInId)) {
-          newIds.push(item.chkInId);
+        if (!selectedUnCheckin.includes(Number(item.id))) {
+          newIds.push(Number(item.id));
         }
       }
 
-      const allId: number[] = [...selectedCheckin, ...newIds];
+      const allId: number[] = [...selectedInternalTransfer, ...newIds];
       const ids = new Set(allId);
       setSelectedCheckin(Array.from(ids));
     }
   }, [filterShipments]);
 
   useEffect(() => {
-    if (selectedCheckin.length === 0) {
+    if (selectedInternalTransfer.length === 0) {
       setSelectAll(false);
     }
-  }, [selectedCheckin]);
+  }, [selectedInternalTransfer]);
 
   const handleRowCheckboxChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    chkInId: number
+    id: number
   ) => {
     setOpen(false);
     setSelectedRow(undefined);
 
     const checked = event.target.checked;
     if (checked) {
-      setSelectedCheckin((prev) => [...prev, chkInId]);
+      setSelectedCheckin((prev) => [...prev, id]);
       setSelectedUnCheckin((prev) => {
-        const unCheck = prev.filter((id) => id !== chkInId);
+        const unCheck = prev.filter((idLocal) => idLocal !== id);
         return unCheck;
       });
     } else {
-      const updatedChecked = selectedCheckin.filter(
-        (rowId) => rowId != chkInId
+      const updatedChecked = selectedInternalTransfer.filter(
+        (rowId) => rowId !== id
       );
       setSelectedCheckin(updatedChecked);
-      setSelectedUnCheckin((prev) => [...prev, chkInId]);
+      setSelectedUnCheckin((prev) => [...prev, id]);
     }
   };
 
@@ -671,8 +621,8 @@ function IntermalTransferRequest() {
     renderHeader: () => HeaderCheckbox,
     renderCell: (params) => (
       <Checkbox
-        checked={selectedCheckin?.includes(params.row?.chkInId)}
-        onChange={(event) => handleRowCheckboxChange(event, params.row.chkInId)}
+        checked={selectedInternalTransfer?.includes(params.row?.id)}
+        onChange={(event) => handleRowCheckboxChange(event, params.row.id)}
         color="primary"
       />
     )
@@ -687,32 +637,32 @@ function IntermalTransferRequest() {
       width: 150
     },
     {
-      field: "senderName",
+      field: "itemType",
       type: "string",
       headerName: t("pick_up_order.recyclForm.item_category"),
       width: 200
     },
     {
-      field: "recipientCompany",
+      field: "mainCategory",
       type: "string",
       headerName: t("settings_page.recycling.main_category"),
       width: 200
     },
     {
-      field: "picoId",
+      field: "subCategory",
       type: "string",
       headerName: t("settings_page.recycling.sub_category"),
       width: 200
     },
     {
-      field: "adjustmentFlg",
+      field: "addonCategory",
       headerName: t("settings_page.recycling.additional_category"),
       width: 150,
       type: "string",
       renderCell: (params) => {
         return (
           <div style={{ display: "flex", gap: "8px" }}>
-            {params.row.adjustmentFlg ? (
+            {params.row.addonCategory ? (
               <CheckIcon className="text-green-primary" />
             ) : (
               <CloseIcon className="text-red" />
@@ -722,25 +672,25 @@ function IntermalTransferRequest() {
       }
     },
     {
-      field: "logisticName",
+      field: "package",
       type: "string",
       headerName: t("inventory.package"),
       width: 200
     },
     {
-      field: "senderAddr",
+      field: "senderWarehouse",
       type: "string",
       headerName: t("internalTransfer.sender_warehouse"),
       width: 200
     },
     {
-      field: "deliveryAddress",
+      field: "toWarehouse",
       type: "string",
       headerName: t("internalTransfer.receiver_warehouse"),
       width: 200
     },
     {
-      field: "warehouseId",
+      field: "weight",
       type: "string",
       headerName: t("inventory.weight"),
       width: 200
@@ -760,7 +710,7 @@ function IntermalTransferRequest() {
   const resetPage = async () => {
     setConfirmModal(false);
     setSelectedCheckin([]);
-    initCheckInRequest();
+    initInternalTransferRequest();
   };
 
   const handleClose = () => {
@@ -772,7 +722,7 @@ function IntermalTransferRequest() {
     setOpen(true);
 
     const selectedItem = filterShipments?.find(
-      (item) => item.chkInId === params.row.chkInId
+      (item) => item.id === params.row.id
     );
     setSelectedRow(selectedItem);
   };
@@ -789,14 +739,6 @@ function IntermalTransferRequest() {
     );
   }, [role]);
 
-  const getWarehouseDetail = async (id: number) => {
-    try {
-      const warehouse = await getWarehouseById(id);
-      return warehouse.data;
-    } catch (error) {
-      return null;
-    }
-  };
   const handleCateGory = (event: SelectChangeEvent) => {
     setPage(1);
     setCateGory(event.target.value);
@@ -837,7 +779,7 @@ function IntermalTransferRequest() {
       >
         <Grid container alignItems="center">
           <Grid item>
-            <StyledBadge badgeContent={4}>
+            <StyledBadge badgeContent={shipmentsLength}>
               <div className="title font-bold text-3xl pl-4">
                 {t("internalTransfer.internal_transfer_request")}
               </div>
@@ -851,7 +793,7 @@ function IntermalTransferRequest() {
               width: "90px",
               height: "40px",
               m: 0.5,
-              cursor: selectedCheckin.length === 0 ? "not-allowed" : "pointer",
+              cursor: selectedInternalTransfer.length === 0 ? "not-allowed" : "pointer",
               borderRadius: "20px",
               backgroundColor: primaryColor,
               "&.MuiButton-root:hover": { bgcolor: primaryColor },
@@ -860,10 +802,10 @@ function IntermalTransferRequest() {
               fontWeight: "bold",
               color: "white"
             }}
-            disabled={selectedCheckin.length === 0}
+            disabled={selectedInternalTransfer.length === 0}
             variant="outlined"
             onClick={() => {
-              setApproveModal(selectedCheckin.length > 0);
+              setApproveModal(selectedInternalTransfer.length > 0);
             }}
           >
             {" "}
@@ -875,7 +817,7 @@ function IntermalTransferRequest() {
               width: "90px",
               height: "40px",
               m: 0.5,
-              cursor: selectedCheckin.length === 0 ? "not-allowed" : "pointer",
+              cursor: selectedInternalTransfer.length === 0 ? "not-allowed" : "pointer",
               borderRadius: "20px",
               borderColor: primaryColor,
               borderWidth: 1,
@@ -883,8 +825,8 @@ function IntermalTransferRequest() {
               marginLeft: "20px"
             }}
             variant="outlined"
-            disabled={selectedCheckin.length === 0}
-            onClick={() => setRejectModal(selectedCheckin.length > 0)}
+            disabled={selectedInternalTransfer.length === 0}
+            onClick={() => setRejectModal(selectedInternalTransfer.length > 0)}
           >
             {" "}
             {t("check_in.reject")}
@@ -940,7 +882,7 @@ function IntermalTransferRequest() {
                 {" "}
                 <DataGrid
                   rows={filterShipments}
-                  getRowId={(row) => row.chkInId}
+                  getRowId={(row) => row.id}
                   hideFooter
                   columns={headCells}
                   disableRowSelectionOnClick
@@ -949,12 +891,12 @@ function IntermalTransferRequest() {
                   localeText={localeTextDataGrid}
                   getRowClassName={(params) =>
                     `${
-                      selectedRow && params.row.chkInId === selectedRow.chkInId
+                      selectedRow && params.row.id === selectedRow.id
                         ? "selected-row "
                         : ""
                     }${
-                      selectedCheckin &&
-                      selectedCheckin.includes(params.row.chkInId)
+                      selectedInternalTransfer &&
+                      selectedInternalTransfer.includes(params.row.id)
                         ? "checked-row"
                         : ""
                     }`
@@ -999,14 +941,15 @@ function IntermalTransferRequest() {
           </Box>
         </div>
         <RejectForm
-          checkedShipments={selectedCheckin}
+          checkedShipments={selectedInternalTransfer}
           open={rejFormModal}
           reasonList={reasonList}
           onClose={() => {
             setRejectModal(false);
           }}
           onRejected={onRejectCheckin}
-          checkInData={checkInRequest ?? []}
+          // checkInData={checkInRequest ?? []}
+          checkInData={[]}
           navigate={navigate}
         />
 
@@ -1021,8 +964,9 @@ function IntermalTransferRequest() {
             resetPage();
             // setConfirmModal(true)
           }}
-          checkedCheckIn={selectedCheckin}
-          checkInData={checkInRequest ?? []}
+          checkedInternalTransferRequest={selectedInternalTransfer}
+          // checkInData={checkInRequest ?? []}
+          checkInData={[]}
           navigate={navigate}
         />
         <ConfirmModal open={confirmModal} onClose={resetPage} />

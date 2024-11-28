@@ -886,7 +886,9 @@
     "sender_warehouse": "送出貨倉",
     "receiver_warehouse": "送入貨倉",
     "item_information": "物品資料",
-    "date_time": "日期及時間"
+    "date_time": "日期及時間",
+    "others": "其他的",
+    "confirm_reject": "確認拒絕內部運送請求嗎？"
   },
   "userGroup": {
     "title": "用戶群組",

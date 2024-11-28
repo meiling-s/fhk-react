@@ -605,3 +605,7 @@ export const objectFilter = (data: object, arr: string[]) => {
     return result
   } catch (err) {}
 }
+
+export const sleep = (ms: number) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};

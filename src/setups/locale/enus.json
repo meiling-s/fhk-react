@@ -888,7 +888,9 @@
     "sender_warehouse": "Sender Warehouse",
     "receiver_warehouse": "Receiver Warehouse",
     "item_information": "Item information",
-    "date_time":"Date and Time"
+    "date_time":"Date and Time",
+    "others": "others",
+    "confirm_reject": "Are you sure to reject the request?"
   },
   "userGroup": {
     "title": "User Group",

@@ -2,11 +2,12 @@ import axiosInstance from '../../constants/axiosInstance'
 import {
   GET_ALL_CHECKIN_REQUESTS,
   GET_CHECKIN_REASON,
-  GET_INTERNAL_REQUEST,
+  GET_INTERNAL_TRANSFER_REQUEST,
   NEW_GET_ALL_HEADER_CHECKIN_REQUESTS,
   NEW_GET_DETAIL_CHECKIN_REQUESTS,
   UPDATE_CHECK_IN,
-  UPDATE_CHECK_IN_STATUS
+  UPDATE_CHECK_IN_STATUS,
+  UPDATE_INTERNAL_TRANSFER_REQUEST_STATUS
 } from '../../constants/requests'
 import { CheckInWarehouse, updateStatus } from '../../interfaces/warehouse'
 import { localStorgeKeyName } from '../../constants/constant'
@@ -157,9 +158,10 @@ export const getInternalRequest = async (
 ) => {
   try {
     const token = returnApiToken()
+    token.tenantId = '777888'
     let response
     response = await axiosInstance({
-      ...GET_INTERNAL_REQUEST(
+      ...GET_INTERNAL_TRANSFER_REQUEST(
         token.tenantId
       ),
       baseURL: warehouseAPI.baseURL,
@@ -173,6 +175,27 @@ export const getInternalRequest = async (
     return response
   } catch (e: any) {
     // console.error('Get all check-in request failed:', e)
-    return null
+    throw (e)
+  }
+}
+
+export const updateInternalRequestStatus = async (
+  item: any
+) => {
+  try {
+    const token = returnApiToken()
+    token.tenantId = '777888'
+    let response
+    response = await axiosInstance({
+      ...UPDATE_INTERNAL_TRANSFER_REQUEST_STATUS(
+        token.tenantId
+      ),
+      baseURL: warehouseAPI.baseURL,
+      data: item
+    })
+    return response
+  } catch (e: any) {
+    // console.error('Get all check-in request failed:', e)
+    throw (e)
   }
 }
