@@ -4,6 +4,7 @@ import CustomButton from "./FormComponents/CustomButton";
 import { getFormatId, getPrimaryColor } from "../utils/utils";
 import { useEffect, useState } from "react";
 import { localStorgeKeyName } from "../constants/constant";
+import { useLocation } from "react-router-dom";
 
 interface TableOperationProps {
   row: any;
@@ -23,13 +24,21 @@ const TableOperation = ({
   const { t } = useTranslation();
   const [isShow, setIsShow] = useState<boolean>(false);
   const currentTenantId = localStorage.getItem(localStorgeKeyName.tenantId);
+  const location = useLocation();
 
   useEffect(() => {
-    const formatLogisticId = getFormatId(row.logisticId);
-    if (formatLogisticId === currentTenantId) {
-      setIsShow(true);
+    if (location.pathname === "/manufacturer/purchaseOrder") {
+      const formatSellerTenantId = getFormatId(row.sellerTenantId);
+      if (formatSellerTenantId === currentTenantId) {
+        setIsShow(true);
+      }
+    } else {
+      const formatLogisticId = getFormatId(row.logisticId);
+      if (formatLogisticId === currentTenantId) {
+        setIsShow(true);
+      }
     }
-  }, [currentTenantId, row.logisticId]);
+  }, [currentTenantId, row.logisticId, row.sellerTenantId]);
 
   return (
     <>

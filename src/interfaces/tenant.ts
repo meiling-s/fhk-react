@@ -3,6 +3,7 @@ import { type } from 'os'
 export type Company = {
   id: number
   cName: string
+  sName?: string
   eName: string
   status: string
   type: string

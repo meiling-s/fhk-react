@@ -7,13 +7,14 @@ import {
   UPDATE_TENANT_REGISTER,
   UPDATE_TENANT_STATUS,
   SEND_EMAIL_INVITATION,
-  UPDATE_TENANT_INFO
+  UPDATE_TENANT_INFO,
 } from '../constants/requests'
+import { CREATE_TENANT } from 'src/constants/requestsSocif'
 import { RegisterItem } from '../interfaces/account'
 import { CreateTenant, UpdateStatus } from '../interfaces/tenant'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import { returnApiToken } from '../utils/utils'
-import axiosInstance from '../constants/axiosInstance'
+import axiosInstance, { cleanAxiosInstance } from '../constants/axiosInstance'
 
 export const createInvitation = async (
   item: CreateTenant,
@@ -135,6 +136,20 @@ export const updateTenantStatus = async (item: any, tenantId: number) => {
     //   'Tenant register status update success:',
     //   JSON.stringify(response.data)
     // )
+    return response
+  } catch (e: any) {
+    console.error('Tenant register status update failed:', e)
+    throw e
+  }
+}
+
+export const createNewTenant = async (item: any) => {
+  try {
+    const response = await cleanAxiosInstance({
+      baseURL: window.baseURL.socif,
+      ...CREATE_TENANT('astd'),
+      data: item,
+    })
     return response
   } catch (e: any) {
     console.error('Tenant register status update failed:', e)

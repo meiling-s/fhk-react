@@ -38,7 +38,6 @@ import ProductListSingleSelect, { singleProduct } from 'src/components/Specializ
 import Switcher from 'src/components/FormComponents/CustomSwitch'
 import useModalConfirmRemarksEmpty from "src/components/ModalConfirmRemarksEmpty";
 
-
 type createRecyclable = {
   itemId: number
   recycTypeId: string
@@ -63,6 +62,11 @@ type RecycItem = {
   processOutDtlId: number
   recycType: il_item
   recycSubtype: il_item
+  productType: il_item
+  productSubtype : il_item
+  productSubtypeRemark: string
+  productAddonId :string
+  productAddonRemark: string
   weight: number
   images: string[]
   unitId?: string
@@ -110,11 +114,6 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
   const [productSubtypeRemark, setProductSubtypeRemark] = useState('');
   const [productAddonRemark, setProductAddonRemark] = useState('');
 
-  const role =
-  localStorage.getItem(localStorgeKeyName.role) || "collectoradmin";
-  const colorTheme: string = getThemeColorRole(role) || "#79CA25";
-  const customListTheme = getThemeCustomList(role) || "#E4F6DC";
-
   const {
     resetModal,
     openConfirmModal,
@@ -123,9 +122,14 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
     ModalConfirmRemarksEmpty,
   } = useModalConfirmRemarksEmpty({
     onConfirm: () => {
-      onSaveData();
+      handleSaveData()
     },
   });
+
+  const role =
+  localStorage.getItem(localStorgeKeyName.role) || "collectoradmin";
+  const colorTheme: string = getThemeColorRole(role) || "#79CA25";
+  const customListTheme = getThemeCustomList(role) || "#E4F6DC";
 
   useEffect(() => {
     setTrySubmited(false)
@@ -143,10 +147,22 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
     if (editedData != null) {
       //mapping edited data
       const defRecyc: singleRecyclable = {
-        recycTypeId: editedData.recycType.id,
-        recycSubTypeId: editedData.recycSubtype.id
+        recycTypeId: editedData.recycType.id || '',
+        recycSubTypeId: editedData.recycSubtype.id || ''
       }
+
+      const defProduct: singleProduct = {
+        productTypeId: editedData.productType.id,
+        productSubTypeId: editedData.productSubtype?.id || '',
+        productSubTypeRemark: editedData.productSubtypeRemark||'',
+        productAddonId: editedData.productAddonId ||'',  
+        productAddonTypeRemark: productAddonRemark || '',
+        isProductAddonTypeOthers: false
+      }
+
       setDefaultRecyc(defRecyc)
+      setDefaultProduct(defProduct)
+      setIsRecyc(Boolean(editedData.recycType?.id))
       setWeight(formatWeight(editedData.weight.toString(), decimalVal))
       
       const imageList: any = editedData.images.map(
@@ -172,12 +188,48 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
     const validate = async () => {
       //do validation here
       const tempV: formValidate[] = []
-      recycTypeId === '' || productTypeId === '' &&
-        tempV.push({
-          field: t('col.recycType'),
-          problem: formErr.empty,
-          type: 'error'
-        })
+      // recycTypeId === '' || productTypeId === '' &&
+      //   tempV.push({
+      //     field: t('col.recycType'),
+      //     problem: formErr.empty,
+      //     type: 'error'
+      //   })
+      if (isRecyc) {
+        if (!recycTypeId) {
+          tempV.push({
+            field: t("pick_up_order.error.recycType"),
+            problem: formErr.empty,
+            type: "error",
+          });
+        }
+        if (recycTypeId && !recycSubTypeId) {
+          tempV.push({
+            field: t("pick_up_order.error.recycSubType"),
+            problem: formErr.empty,
+            type: "error",
+          });
+      }}
+      if (!isRecyc) {
+        if (productTypeId && !productSubTypeId) {
+          tempV.push({
+            field: t("pick_up_order.error.productSubType"),
+            problem: formErr.empty,
+            type: "error",
+          });
+        }
+        if (
+          productTypeId &&
+          productSubTypeId &&
+          productAddonRemark &&
+          !productAddon
+        ) {
+          tempV.push({
+            field: t("pick_up_order.error.productAddon"),
+            problem: formErr.empty,
+            type: "error",
+          });
+        }
+      }
       weight === '0' &&
         tempV.push({
           field: t('pick_up_order.recyclForm.weight'),
@@ -194,10 +246,10 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
     }
 
     validate()
-  }, [recycTypeId, recycSubTypeId, productTypeId ,weight, pictures])
+  }, [recycTypeId, recycSubTypeId, productTypeId, productSubTypeId, productSubtypeRemark, productAddon, productAddonRemark ,weight, pictures, isRecyc])
 
   const onSaveData = () => {
-    const isRemarksConfirmed = validateRemarks({
+    const isRemarksValid = validateRemarks({
       openConfirmModal,
       values: {
         productSubTypeRemark: productSubtypeRemark,
@@ -205,26 +257,26 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
       },
     });
 
-    console.log('Remarks Confirmed:', isRemarksConfirmed);
-
-    if (!isRemarksConfirmed) {
+    if (!isRemarksValid) {
       setOpenConfirmModal({
-        ...openConfirmModal,
         isOpen: true,
+        tempData: {
+          ...openConfirmModal.tempData,
+          isConfirmed: false,
+        },
       });
-      return;
     } else {
-      resetModal();
+      handleSaveData();
     }
-    
+  };
+
+  const handleSaveData = () => {
     const imgItems: processOutImage[] = ImageToBase64(pictures).map(
-      (item, idx) => {
-        return {
-          sid: idx,
-          photo: item
-        }
-      }
-    )
+      (item, idx) => ({
+        sid: idx,
+        photo: item
+      })
+    );
 
     const data: createRecyclable = {
       itemId: editedData ? editedData.processOutDtlId : generateNumericId(),
@@ -243,18 +295,76 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
       createdBy: loginId,
       updatedBy: loginId,
       version: editedData?.version ?? 0
-    }
+    };
 
     if (validation.length === 0) {
-
       action == 'add' ? 
-      onCreateRecycle(data) : onEditRecycle(data, editedData!!.processOutDtlId)
-      resetData()
-      handleDrawerClose()
+        onCreateRecycle(data) : onEditRecycle(data, editedData!!.processOutDtlId);
+      resetData();
+      handleDrawerClose();
     } else {
-      setTrySubmited(true)
+      setTrySubmited(true);
     }
-  }
+  };
+
+
+  // const onSaveData = () => {
+  //   const isRemarksConfirmed = validateRemarks({
+  //     openConfirmModal,
+  //     values: {
+  //       productSubTypeRemark: productSubtypeRemark,
+  //       productAddonTypeRemark: productAddonRemark,
+  //     },
+  //   });
+
+  //   setOpenConfirmModal({
+  //     ...openConfirmModal,
+  //     isOpen: true,
+  //   });
+  //   if (!isRemarksConfirmed) {
+  //     return;
+  //   } else {
+  //     resetModal();
+  //   }
+    
+  //   const imgItems: processOutImage[] = ImageToBase64(pictures).map(
+  //     (item, idx) => {
+  //       return {
+  //         sid: idx,
+  //         photo: item
+  //       }
+  //     }
+  //   )
+
+  //   const data: createRecyclable = {
+  //     itemId: editedData ? editedData.processOutDtlId : generateNumericId(),
+  //     recycTypeId: recycTypeId,
+  //     recycSubTypeId: recycSubTypeId,
+  //     productTypeId: productTypeId,
+  //     productSubTypeId: productSubTypeId,
+  //     productSubTypeRemark: productSubtypeRemark,
+  //     productAddonTypeId: productAddon,
+  //     productAddonTypeRemark: productAddonRemark,
+  //     packageTypeId: '',
+  //     weight: parseFloat(weight),
+  //     unitId: selectedWeightId,
+  //     status: "ACTIVE",
+  //     processoutDetailPhoto: imgItems,
+  //     createdBy: loginId,
+  //     updatedBy: loginId,
+  //     version: editedData?.version ?? 0
+  //   }
+
+  //   if (validation.length === 0) {
+
+  //     action == 'add' ? 
+  //     onCreateRecycle(data) : onEditRecycle(data, editedData!!.processOutDtlId)
+  //     resetData()
+  //     handleDrawerClose()
+  //   } else {
+  //     setTrySubmited(true)
+  //   }
+  // }
 
   const onHandleDelete = () => {
     if (editedData != null) {
@@ -283,25 +393,30 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
   }
 
   const handleRecycChange = (values: any) => {
+    console.log('Recycle Change Values:', values);
+
     if(values && values.recycTypeId){
         const newDefaultRecyc: singleRecyclable = {
-            recycTypeId: values.recycTypeId,
-            recycSubTypeId: values.recycSubTypeId,
+          recycTypeId: values.recycTypeId,
+          recycSubTypeId: values.recycSubTypeId,
         };
         
-          setRecycTypeId(values.recycTypeId);
-        
-            if (values.recycSubTypeId) {
-                setRecycSubTypeId(values.recycSubTypeId);
-            }
-        
-            setDefaultRecyc(newDefaultRecyc);
-          } else if (values === undefined) {
-            setRecycTypeId('');
-            setRecycSubTypeId('');
-            setDefaultRecyc(undefined)
-          };
-          }
+        setRecycTypeId(values.recycTypeId);
+        setDefaultProduct(undefined);
+        setProductAddon('')
+        setProductSubTypeId('')
+        setProductTypeId('');
+        setProductAddonRemark('');
+        setProductSubtypeRemark('')
+      
+        if (values.recycSubTypeId) {
+            setRecycSubTypeId(values.recycSubTypeId);
+        }
+    
+        setDefaultRecyc(newDefaultRecyc);
+      }
+      
+    };
 
   const handleProductChange = (values: any) => {
     if (values && values.productTypeId) {
@@ -317,13 +432,8 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
         setProductTypeId(values.productTypeId);
         setProductAddonRemark(values.productAddOnTypeRemark);
         setProductSubtypeRemark(values.productSubTypeRemark)
-        
-        if (values.productSubTypeId) {
-            setProductSubTypeId(values.productSubTypeId);
-        }
-        if (values.productAddonId) {
-            setProductAddon(values.productAddonId);
-        }
+        setRecycTypeId('')
+        setRecycSubTypeId('')
         setOpenConfirmModal({
           ...openConfirmModal,
           tempData: {
@@ -336,13 +446,14 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
             ),
           },
         });
-    } else if (values === undefined) {
-      setDefaultProduct(undefined);
-      setProductTypeId('');
-      setProductAddonRemark('');
-      setProductSubtypeRemark('')
-      setProductSubTypeId('')
-      setProductAddon('')
+        console.log(openConfirmModal)
+        
+        if (values.productSubTypeId) {
+            setProductSubTypeId(values.productSubTypeId);
+        }
+        if (values.productAddonId) {
+            setProductAddon(values.productAddonId);
+        }
     }
   };
 
@@ -415,11 +526,6 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
                         defaultValue={isRecyc}
                         setState={(newValue: boolean) => {
                             setIsRecyc(newValue);
-                            if(newValue){
-                                handleRecycChange(undefined)
-                            } else {
-                                handleProductChange(undefined)
-                            }
                         }}
                     />
                 </CustomField>
@@ -580,8 +686,8 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
                   ))}
               </Grid>
             </Grid>
-            <ModalConfirmRemarksEmpty />  
           </Box>
+          <ModalConfirmRemarksEmpty />  
         </RightOverlayForm>
       </div>
     </>

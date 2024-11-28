@@ -4,6 +4,12 @@ export type processOutImage = {
   }
   
   export type ProcessOutItem = {
+    status: string | undefined
+    productTypeId: any
+    productAddonTypeId: any
+    productAddonTypeRemark: any
+    productSubTypeId: any
+    productSubTypeRemark: any
     processOutDtlId: number
     recycTypeId: string
     recycSubTypeId: string

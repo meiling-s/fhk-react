@@ -36,9 +36,15 @@ type RecycItem = {
   processOutDtlId: number
   recycType: il_item
   recycSubtype: il_item
+  productType: il_item
+  productSubtype : il_item
+  productSubtypeRemark: string
+  productAddonId :string
+  productAddonRemark: string
   weight: number
   images: string[]
   unitId?: string
+  status?: string
   version: number
 }
 
@@ -54,7 +60,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   selectedRow
 }) => {
   const { t, i18n} = useTranslation()
-  const { recycType, decimalVal, processType, dateFormat, weightUnits } = useContainer(CommonTypeContainer)
+  const { recycType, decimalVal, processType, dateFormat, weightUnits, productType } = useContainer(CommonTypeContainer)
   const [drawerRecyclable, setDrawerRecyclable] = useState(false)
   const [action, setAction] = useState<
     'none' | 'add' | 'edit' | 'delete' | undefined
@@ -65,30 +71,34 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   const [recycItem, setRecycItem] = useState<RecycItem[]>([])
   const [selectedItem, setSelectedItem] = useState<RecycItem | null>(null)
   const navigate = useNavigate()
+  const emptyList= {
+    name: '',
+    id: ''
+  }
 
   const mappingProcessName = (processTypeId: string) => {
     
     const  matchingProcess = processType?.find((item: ProcessType)=> item.processTypeId == processTypeId)
- 
+
     if(matchingProcess) {
     var name = ""
     switch (i18n.language) {
-     case 'enus':
-       name = matchingProcess.processTypeNameEng
-       break
-     case 'zhch':
-       name = matchingProcess.processTypeNameSchi
-       break
-     case 'zhhk':
-       name = matchingProcess.processTypeNameTchi
-       break
-     default:
-       name = matchingProcess.processTypeNameTchi
-       break
-     }
-     return name
-   }
-   }
+      case 'enus':
+        name = matchingProcess.processTypeNameEng
+        break
+      case 'zhch':
+        name = matchingProcess.processTypeNameSchi
+        break
+      case 'zhhk':
+        name = matchingProcess.processTypeNameTchi
+        break
+      default:
+        name = matchingProcess.processTypeNameTchi
+        break
+      }
+      return name
+    }
+  }
 
   const fieldItem = [
     {
@@ -153,6 +163,60 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     }
   }
 
+  const mappingProductName = (
+    productTypeId: string, 
+    productSubTypeId: string, 
+  ) => {
+    const matchingProductType = productType?.find(
+      (product) => product.productTypeId === productTypeId
+    )
+
+    if (matchingProductType) {
+      const matchProductSubType = matchingProductType.productSubType?.find(
+        (subtype) => subtype.productSubTypeId === productSubTypeId
+      )
+
+      // Product Type Name
+      let productTypeName = ''
+      switch (i18n.language) {
+        case 'enus':
+          productTypeName = matchingProductType.productNameEng
+          break
+        case 'zhch':
+          productTypeName = matchingProductType.productNameSchi
+          break
+        case 'zhhk':
+          productTypeName = matchingProductType.productNameTchi
+          break
+        default:
+          productTypeName = matchingProductType.productNameTchi
+          break
+      }
+
+      // Product Subtype Name
+      let productSubTypeName = ''
+      switch (i18n.language) {
+        case 'enus':
+          productSubTypeName = matchProductSubType?.productNameEng ?? ''
+          break
+        case 'zhch':
+          productSubTypeName = matchProductSubType?.productNameSchi ?? ''
+          break
+        case 'zhhk':
+          productSubTypeName = matchProductSubType?.productNameTchi ?? ''
+          break
+        default:
+          productSubTypeName = matchProductSubType?.productNameTchi ?? ''
+          break
+      }
+
+      return { 
+        productTypeName, 
+        productSubTypeName, 
+      }
+    }
+  }
+
   const showErrorToast = (toastMsg: string) => {
     toast.error(toastMsg, {
       position: 'top-center',
@@ -193,29 +257,44 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   useEffect(() => {
     setRecycItem([])
     const getDetail = async () => {
-       const processOut = await getProcessDetail();
+        const processOut = await getProcessDetail();
       if (selectedRow && processOut ) {
       
         const recycItems: RecycItem[] = []
   
         processOut.forEach((detail: ProcessOutItem) => {
-          const result = mappingRecyName(
-            detail.recycTypeId,
-            detail.recycSubTypeId
-          )
-          if (result) {
-            const { name, subName } = result
+          if (detail.status === 'ACTIVE') {
+            const recycResult = mappingRecyName(
+              detail.recycTypeId,
+              detail.recycSubTypeId
+            )
+            const productResult = mappingProductName(
+              detail.productTypeId,
+              detail.productSubTypeId
+            )
+            
             recycItems.push({
               itemId: detail.itemId,
               processOutDtlId: detail.processOutDtlId,
-              recycType: {
-                name: name,
+              recycType: detail.recycTypeId ? {
+                name: recycResult?.name || '',
                 id: detail.recycTypeId
-              },
-              recycSubtype: {
-                name: subName,
+              } : emptyList,
+              recycSubtype: detail.recycSubTypeId ? {
+                name: recycResult?.subName || '',
                 id: detail.recycSubTypeId
-              },
+              } : emptyList,
+              productType: detail.productTypeId ? {
+                name: productResult?.productTypeName || '',
+                id: detail.productTypeId
+              } : emptyList,
+              productSubtype: detail.productSubTypeId ? {
+                name: productResult?.productSubTypeName || '',
+                id: detail.productSubTypeId
+              } : emptyList,
+              productSubtypeRemark: detail.productSubTypeRemark,
+              productAddonId :detail.productAddonTypeId,
+              productAddonRemark: detail.productAddonTypeId,
               weight: detail.weight,
               images: detail.processoutDetailPhoto.map((item) => {
                 if (item.photo.startsWith('data:image/jpeg;base64,')) {
@@ -224,7 +303,8 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                 return `data:image/jpeg;base64,${item.photo}`;
               }),
               unitId: detail.unitId,
-              version: detail.version
+              version: detail.version,
+              status: detail.status
             })
           }
         })
@@ -233,12 +313,14 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
       }
     };
     getDetail();
-
-   
+    
   }, [selectedRow, recycType, reloadData])
 
+  useEffect(() => {
+    console.log('item', recycItem)
+  }, [recycItem])
+
   const onSaveData = async () => {
-   
   }
 
   const constractForm = (data: CreateRecyclable, type: string) => {
@@ -404,22 +486,40 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                         <div className="detail flex justify-between items-center">
                           <div className="recyle-type flex items-center gap-2">
                             <div className="category" style={categoryRecyle}>
-                              {item.recycType.name.charAt(0)}
+                            {item.recycType?.name 
+                              ? item.recycType.name.charAt(0) 
+                              : item.productType?.name?.charAt(0) || '?'}
                             </div>
-                            <div className="type-item">
-                              <div className="sub-type text-xs text-black font-bold tracking-widest">
-                                {item.recycType.name}
-                              </div>
-                              <div className="type text-mini text-[#ACACAC] font-normal tracking-widest mb-2">
-                                {item.recycSubtype.name}
-                              </div>
-                            </div>
+                            {item.recycType?.name && (
+                              <>
+                                <div className="sub-type text-xs text-black font-bold tracking-widest">
+                                  {item.recycType.name}
+                                </div>
+                                {item.recycSubtype?.name && (
+                                  <div className="type text-mini text-[#ACACAC] font-normal tracking-widest mb-2">
+                                    {item.recycSubtype.name}
+                                  </div>
+                                )}
+                              </>
+                            )}
+
+                            {!item.recycType?.name && (
+                              <>
+                                <div className="sub-type text-xs text-black font-bold tracking-widest">
+                                  {item.productType.name}
+                                </div>
+                                {item.productSubtype?.name && (
+                                  <div className="type text-mini text-[#9CA3AF] font-normal tracking-widest">
+                                    {item.productSubtype.name}
+                                  </div>
+                                )}
+                              </>
+                            )}
                           </div>
                           <div className="right action flex items-center gap-2">
                             <div className="weight font-bold font-base">
                               {formatWeight(item.weight, decimalVal)}{weightUnit}
                             </div>
-                            {/* {item.processOutId == 0 && ( */}
                               <Box>
                                 <DriveFileRenameOutlineOutlinedIcon
                                   onClick={() => {

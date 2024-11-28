@@ -145,7 +145,8 @@ const Inventory: FunctionComponent = () => {
     labelId: null,
     warehouseId: null,
     recycTypeId: '',
-    recycSubTypeId: ''
+    recycSubTypeId: '',
+    idleDays: null,
   })
   const [warehouseList, setWarehouseList] = useState<Option[]>([])
   const [recycList, setRecycList] = useState<Option[]>([])
@@ -488,7 +489,13 @@ const Inventory: FunctionComponent = () => {
       field: 'warehouseId',
       options: warehouseList,
       placeholder: t('placeHolder.any')
-    }
+    },
+    {
+      label: t('common.idleDays'),
+      disableIcon: true,
+      field: 'idleDays',
+      placeholder: t('common.filledIdleDays')
+    },
   ]
 
   function getUniqueOptions(propertyName: keyof InventoryItem) {
@@ -672,6 +679,7 @@ const Inventory: FunctionComponent = () => {
               width={s?.width}
               placeholder={s.placeholder}
               field={s.field}
+              disableIcon={s.disableIcon}
               options={s.options || []}
               onChange={handleSearch}
             />

@@ -14,6 +14,8 @@ const refreshTokenAxiosInstance = axios.create({
   baseURL: window.baseURL?.account
 })
 
+export const cleanAxiosInstance = axios.create()
+
 export const parseJwtToken = (token: string, tokenPart: number) => {
   try {
     return JSON.parse(atob(token.split('.')[tokenPart]))
