@@ -28,6 +28,7 @@ import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { formErr } from '../../../constants/constant'
 import { ImageToBase64, formatWeight, getThemeColorRole, getThemeCustomList, onChangeWeight, returnErrorMsg } from '../../../utils/utils'
+import { ImageToBase64, formatWeight, getThemeColorRole, getThemeCustomList, onChangeWeight, returnErrorMsg } from '../../../utils/utils'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate, weightUnit } from '../../../interfaces/common'
 import { generateNumericId } from '../../../utils/uuidgenerator'
@@ -42,6 +43,11 @@ type createRecyclable = {
   itemId: number
   recycTypeId: string
   recycSubTypeId: string
+  productTypeId: string,
+  productSubTypeId: string,
+  productSubTypeRemark: string,
+  productAddonTypeId: string,
+  productAddonTypeRemark: string,
   productTypeId: string,
   productSubTypeId: string,
   productSubTypeRemark: string,
@@ -100,6 +106,8 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
   const [recycTypeId, setRecycTypeId] = useState('')
   const [recycSubTypeId, setRecycSubTypeId] = useState('')
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
+  const [defaultProduct, setDefaultProduct] = useState<singleProduct>()
+  const {recycType, productType, imgSettings, decimalVal } = useContainer(CommonTypeContainer)
   const [defaultProduct, setDefaultProduct] = useState<singleProduct>()
   const {recycType, productType, imgSettings, decimalVal } = useContainer(CommonTypeContainer)
   const [pictures, setPictures] = useState<ImageListType>([])
@@ -318,6 +326,11 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
       itemId: editedData ? editedData.processOutDtlId : generateNumericId(),
       recycTypeId: recycTypeId,
       recycSubTypeId: recycSubTypeId,
+      productTypeId: productTypeId,
+      productSubTypeId: productSubTypeId,
+      productSubTypeRemark: productSubtypeRemark,
+      productAddonTypeId: productAddon,
+      productAddonTypeRemark: productAddonRemark,
       productTypeId: productTypeId,
       productSubTypeId: productSubTypeId,
       productSubTypeRemark: productSubtypeRemark,
