@@ -288,6 +288,8 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
           setProductType(s);
           setProductSubType("");
           setProductAddon("");
+          setChoosenProductAddon(null);
+          setChoosenProductType(null)
         }}
         itemColor={itemColor || null}
         setLastSelect={setCurProduct}
@@ -320,6 +322,7 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
             singleSelect={(s) => {
               setProductSubType(s);
               setProductAddon("");
+              setChoosenProductAddon(null);
             }}
             defaultSelected={productSubType}
             itemColor={itemColor || null}
@@ -348,7 +351,7 @@ const ProductListSingleSelect: React.FC<ProductListSingleSelectProps> = ({
                 " " +
                 t("general_settings.remark")
               }
-              onChange={(event) => setProductSubTypeRemark(event.target.value)}
+              onChange={(event) => {setProductSubTypeRemark(event.target.value); setChoosenProductAddon(null)}}
               value={productSubTypeRemark}
               dataTestId="astd-create-edit-pickup-order-product-subtype-remark"
             />
