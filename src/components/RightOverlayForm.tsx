@@ -187,7 +187,7 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
       <div
         className={`border-b-[1px] border-grey-line h-full ${
           isOpen
-            ? `md:w-[${width ? width : "550"}px] w-[100vw] mt-[${marginTop}]`
+            ? `md:w-[${width ? width : "550px"}] w-[100vw] mt-[${marginTop}]`
             : "hidden"
         }`}
       >
