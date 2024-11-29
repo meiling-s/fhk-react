@@ -120,6 +120,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
     
     useEffect(() => {
             resetData()
+            console.log('diinventory', productType)
     }, [drawerOpen])
 
     const resetData = () => {
@@ -290,7 +291,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                     processoutDetail: [{
                         recycTypeId: isRecyc? selectedRecycType : '',
                         recycSubTypeId: isRecyc ? selectedRecycSubType : '',
-                        productTypeId: !isRecyc ? productSubTypeId: '',
+                        productTypeId: !isRecyc ? productTypeId: '',
                         productSubTypeId: !isRecyc ? productSubTypeId : '',
                         productSubTypeRemark: !isRecyc ? productSubtypeRemark : '',
                         productAddonTypeId: !isRecyc ? productAddon : '',
@@ -334,9 +335,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
         setPictures(newPictures)
     }
     
-    const handleRecycChange = (values: any) => {
-        console.log('Recycle Change Values:', values);
-    
+    const handleRecycChange = (values: any) => {    
         if(values && values.recycTypeId){
             const newDefaultRecyc: singleRecyclable = {
                 recycTypeId: values.recycTypeId,
@@ -367,13 +366,8 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
             setProductTypeId(values.productTypeId);
             setProductAddonRemark(values.productAddOnTypeRemark);
             setProductSubtypeRemark(values.productSubTypeRemark)
-            
-            if (values.productSubTypeId) {
-                setProductSubTypeId(values.productSubTypeId);
-            }
-            if (values.productAddonId) {
-                setProductAddon(values.productAddonId);
-            }
+            setProductSubTypeId(values.productSubTypeId);
+            setProductAddon(values.productAddonId);
         }
     };
 
@@ -505,7 +499,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                             <RecyclablesListSingleSelect
                                 showError={undefined} 
                                 recycL={recycType ?? []}
-                                setState={(values) => handleRecycChange(values)}
+                                setState={handleRecycChange}
                                 itemColor={{
                                 bgColor: customListTheme ? customListTheme.bgColor : '#E4F6DC',
                                 borderColor: customListTheme ? customListTheme.border : '79CA25'
@@ -591,8 +585,9 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                                 }
                             }}
                         >
-                            {/* Collection Points Section */}
-                            <MenuItem disabled>{t('collection_Point')}</MenuItem>
+                            {colList.length > 0  && 
+                                <MenuItem disabled>{t('collection_Point')}</MenuItem>
+                            }
                             {colList.map((point) => (
                                 <MenuItem 
                                     key={`collection-${point.colId}`} 

@@ -82,6 +82,12 @@ interface Option {
   label: string
 }
 
+type productItem = {
+  productType: il_item
+  productSubType: il_item[]
+  productAddonType: il_item[]
+}
+
 type recycItem = {
   recycType: il_item
   recycSubType: il_item[]
@@ -91,6 +97,7 @@ function createInventory(
   itemId: number,
   labelId: string,
   warehouseId: number,
+  colId: number,
   recyclingNumber: string,
   recycTypeId: string,
   recycSubTypeId: string,
@@ -120,6 +127,7 @@ function createInventory(
     itemId,
     labelId,
     warehouseId,
+    colId,
     recyclingNumber,
     recycTypeId,
     recycSubTypeId,
@@ -183,6 +191,8 @@ const Inventory: FunctionComponent = () => {
   const [colList, setColList] = useState<collectionPoint[]>([])
   const [allFactoryDataList, setAllFactoryDataList] = useState<FactoryData[]>([])
   const [warehouseDataList, setWarehouseDataList] = useState<FactoryWarehouseData[]>([])
+  const [productItem, setProductItem] = useState<productItem[]>([])
+
 
 
   async function initCollectionPoint() {
@@ -250,16 +260,14 @@ const Inventory: FunctionComponent = () => {
 
   useEffect(() => {
     mappingRecyleItem()
+    mappingProductItem()
     initpackagingUnit()
-    initAllFactoryList()
-    initWarehouseList()
-    initCollectionPoint()
     getAllPickupOrder()
-  }, [recycType, i18n.language])
+  }, [recycType, productType, i18n.language])
 
   useEffect(() => {
     if (realmApi !== 'account') {
-      if (recycItem.length > 0) {
+      if (recycItem.length > 0 && productItem.length > 0) {
         initInventory()
         initWarehouse()
         initAllFactoryList()
@@ -267,7 +275,87 @@ const Inventory: FunctionComponent = () => {
         initCollectionPoint()
       }
     }
-  }, [recycItem, page, realmApi, query, i18n.language])
+  }, [recycItem, productItem, page, realmApi, query, i18n.language])
+
+  const mappingProductItem = () => {
+    const productMapping: productItem[] = []
+    
+    productType?.forEach((product) => {
+      var productItem: productItem = {
+        productType: { name: '', id: '' },
+        productSubType: [],
+        productAddonType: []
+      }
+  
+      var name = ''
+      switch (i18n.language) {
+        case 'enus':
+          name = product.productNameEng
+          break
+        case 'zhch':
+          name = product.productNameSchi
+          break
+        case 'zhhk':
+          name = product.productNameTchi
+          break
+        default:
+          name = product.productNameTchi
+          break
+      }
+      productItem.productType = { name: name, id: product.productTypeId }
+  
+      product.productSubType?.forEach((subType) => {
+        var subName = ''
+        switch (i18n.language) {
+          case 'enus':
+            subName = subType.productNameEng
+            break
+          case 'zhch':
+            subName = subType.productNameSchi
+            break
+          case 'zhhk':
+            subName = subType.productNameTchi
+            break
+          default:
+            subName = subType.productNameTchi
+            break
+        }
+  
+        productItem.productSubType.push({ 
+          name: subName, 
+          id: subType.productSubTypeId 
+        })
+  
+        subType.productAddonType?.forEach((addonType) => {
+          var addonName = ''
+          switch (i18n.language) {
+            case 'enus':
+              addonName = addonType.productNameEng
+              break
+            case 'zhch':
+              addonName = addonType.productNameSchi
+              break
+            case 'zhhk':
+              addonName = addonType.productNameTchi
+              break
+            default:
+              addonName = addonType.productNameTchi
+              break
+          }
+  
+          productItem.productAddonType.push({
+            name: addonName,
+            id: addonType.productAddonTypeId
+          })
+        })
+      })
+  
+      productMapping.push(productItem)
+    })
+  
+    setProductItem(productMapping)
+  }
+  
 
   const mappingRecyleItem = () => {
     const recyleMapping: recycItem[] = []
@@ -502,6 +590,7 @@ const Inventory: FunctionComponent = () => {
             item?.itemId,
             item?.labelId,
             item?.warehouseId,
+            item?.colId,
             item?.recycTypeId,
             item?.recycTypeId,
             item?.recycSubTypeId,
@@ -535,6 +624,11 @@ const Inventory: FunctionComponent = () => {
     }
     setIsLoading(false)
   }
+
+  useEffect(()=>{
+    console.log('name', inventoryList)
+    console.log('product', productItem)
+  },[inventoryList, productItem])
 
   const handleSubmit = async (type: string, msg: string) => {
     if (type === 'success') {
@@ -586,7 +680,7 @@ const Inventory: FunctionComponent = () => {
       valueGetter: (params) =>
         params.row.recycTypeId
           ? '-' 
-          : params.row.productAddonName || '-',
+          : params.row.productAddOnName || '-',
     },
     {
       field: 'packageName',
@@ -604,7 +698,50 @@ const Inventory: FunctionComponent = () => {
       field: 'location',
       headerName: t('inventory.inventoryLocation'),
       width: 200,
-      type: 'string'
+      type: 'string',
+      valueGetter: (params) => {
+        // If warehouse, find warehouse name
+        if (params.row.warehouseId && params.row.warehouseId !== 0) {
+          const warehouse = warehouseDataList.find(
+            (warehouse) => warehouse.warehouseId === params.row.warehouseId
+          );
+          
+          if (warehouse) {
+            switch (i18n.language) {
+              case Languages.ENUS:
+                return warehouse.warehouseNameEng || '-';
+              case Languages.ZHCH:
+                return warehouse.warehouseNameSchi || '-';
+              case Languages.ZHHK:
+                return warehouse.warehouseNameTchi || '-';
+              default:
+                return warehouse.warehouseNameTchi || '-';
+            }
+          }
+        }
+        
+        // If collection point, find collection point name
+        if (params.row.colId && params.row.colId !== 0) {
+          const collectionPoint = colList.find(
+            (col) => col.colId === params.row.colId
+          );
+          
+          if (collectionPoint) {
+            switch (i18n.language) {
+              case Languages.ENUS:
+                return collectionPoint.colName || '-';
+              case Languages.ZHCH:
+                return collectionPoint.colName || '-';
+              case Languages.ZHHK:
+                return collectionPoint.colName || '-';
+              default:
+                return collectionPoint.colName || '-';
+            }
+          }
+        }
+        
+        return '-';
+      }
     },
     {
       field: 'weight',
@@ -876,6 +1013,7 @@ const Inventory: FunctionComponent = () => {
           <Typography fontSize={16} color="black" fontWeight="bold">
             {t('inventory.recyclingInformation')}
           </Typography>
+          {realmApi !== 'account' && 
           <Button
             onClick={() => {
               setCreateDrawerOpen(true)
@@ -893,6 +1031,7 @@ const Inventory: FunctionComponent = () => {
           >
             + {t('col.create')}
           </Button>
+          }
         </Box>
         <Stack direction="row" mt={3}>
           {searchfield.map((s, index) => (
