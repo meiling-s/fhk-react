@@ -370,7 +370,6 @@ function IntermalTransferRequest() {
   const [open, setOpen] = useState<boolean>(false);
   const [selectAll, setSelectAll] = useState(false);
   const [selectedRow, setSelectedRow] = useState<InternalTransferName>();
-  const [internalTransferRequest, setInternalTransferRequest] = useState<InternalTransferName[]>();
   const [shipmentsLength, setShipmentsLength] = useState<number>(0);
   const [page, setPage] = useState(1);
   const [confirmModal, setConfirmModal] = useState(false);
@@ -380,12 +379,11 @@ function IntermalTransferRequest() {
     recycSubTypeId: "",
     recycTypeId: "",
   });
-  const [primaryColor, setPrimaryColor] = useState<string>("#79CA25");
+  const [primaryColor, setPrimaryColor] = useState<string>(getPrimaryColor());
   const [reasonList, setReasonList] = useState<any>([]);
   const { dateFormat } = useContainer(CommonTypeContainer);
   const { localeTextDataGrid } = useLocaleTextDataGrid();
   const { recycType, productType } = useContainer(CommonTypeContainer);
-  const role = localStorage.getItem(localStorgeKeyName.role);
   const [category, setCateGory] = useState("");
   const [subCategory, setSubCateGory] = useState("");
   const getRejectReason = async () => {
@@ -425,7 +423,7 @@ function IntermalTransferRequest() {
   useEffect(() => {
     initInternalTransferRequest();
     getRejectReason();
-  }, [page, query, dateFormat, i18n.language]);
+  }, [page, query, dateFormat, i18n.language, recycType, productType]);
 
   const getWarehouseByIdFunc = (id: number, warehouseDataListLocal: FactoryWarehouseData[] = warehouseDataList): string => {
     let { ENUS, ZHCH, ZHHK } = Languages;
@@ -504,7 +502,6 @@ function IntermalTransferRequest() {
             }
           });
           
-          setInternalTransferRequest(newData);
           setFilterShipments(newData);
           setShipmentsLength(result?.data?.totalElements)
         } else {
@@ -704,12 +701,6 @@ function IntermalTransferRequest() {
       top: params.isFirstVisible ? 0 : 10
     };
   }, []);
-
-  useEffect(() => {
-    setPrimaryColor(
-      role === "manufacturer" || role === "customer" ? "#6BC7FF" : "#79CA25"
-    );
-  }, [role]);
 
   const handleCateGory = (event: SelectChangeEvent) => {
     setPage(1);
