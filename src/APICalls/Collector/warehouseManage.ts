@@ -158,9 +158,7 @@ export const getInternalRequest = async (
 ) => {
   try {
     const token = returnApiToken()
-    token.tenantId = '777888'
-    let response
-    response = await axiosInstance({
+    let response = await axiosInstance({
       ...GET_INTERNAL_TRANSFER_REQUEST(
         token.tenantId
       ),
@@ -185,9 +183,7 @@ export const updateInternalRequestStatus = async (
 ) => {
   try {
     const token = returnApiToken()
-    token.tenantId = '777888'
-    let response
-    response = await axiosInstance({
+    let response = await axiosInstance({
       ...UPDATE_INTERNAL_TRANSFER_REQUEST_STATUS(
         token.tenantId
       ),

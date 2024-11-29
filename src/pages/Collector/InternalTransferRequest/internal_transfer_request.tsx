@@ -46,6 +46,7 @@ import {
   showSuccessToast,
   showErrorToast,
   getPrimaryLightColor,
+  formatWeight,
 } from "../../../utils/utils";
 import { useTranslation } from "react-i18next";
 import CustomButton from "../../../components/FormComponents/CustomButton";
@@ -384,7 +385,7 @@ function IntermalTransferRequest() {
   const [reasonList, setReasonList] = useState<any>([]);
   const { dateFormat } = useContainer(CommonTypeContainer);
   const { localeTextDataGrid } = useLocaleTextDataGrid();
-  const { recycType, productType } = useContainer(CommonTypeContainer);
+  const { decimalVal, recycType, productType, weightUnits } = useContainer(CommonTypeContainer);
   const [category, setCateGory] = useState("");
   const [subCategory, setSubCateGory] = useState("");
   const getRejectReason = async () => {
@@ -519,6 +520,43 @@ function IntermalTransferRequest() {
     setIsLoading(false);
   };
 
+  const getWeightUnits = (): { unitId: number; lang: string }[] => {
+    let units: { unitId: number; lang: string }[] = [];
+    if (i18n.language === Languages.ENUS) {
+      units = weightUnits.map((item) => {
+        return {
+          unitId: item?.unitId,
+          lang: item?.unitNameEng,
+        };
+      });
+    } else if (i18n.language === Languages.ZHCH) {
+      units = weightUnits.map((item) => {
+        return {
+          unitId: item?.unitId,
+          lang: item?.unitNameSchi,
+        };
+      });
+    } else {
+      units = weightUnits.map((item) => {
+        return {
+          unitId: item?.unitId,
+          lang: item?.unitNameTchi,
+        };
+      });
+    }
+
+    return units;
+  };
+
+  const getUnitName = (unitId: number): { unitId: number; lang: string } => {
+    let unitName: { unitId: number; lang: string } = { unitId: 0, lang: "" };
+    const unit = getWeightUnits().find((item) => item.unitId === unitId);
+    if (unit) {
+      unitName = unit;
+    }
+    return unitName;
+  };
+
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
     setSelectAll(checked);
@@ -632,7 +670,7 @@ function IntermalTransferRequest() {
       renderCell: (params) => {
         return (
           <div style={{ display: "flex", gap: "8px" }}>
-            {params.row.addonCategory ? (
+            {params.row.addonCategory !== '-' ? (
               <CheckIcon className="text-green-primary" />
             ) : (
               <CloseIcon className="text-red" />
@@ -663,7 +701,11 @@ function IntermalTransferRequest() {
       field: "weight",
       type: "string",
       headerName: t("inventory.weight"),
-      width: 200
+      width: 200,
+      valueGetter: ({ row }) => {
+        const unit = getUnitName(Number(row?.detail.unitId));
+        return `${formatWeight(row.weight, decimalVal)} ${unit.lang}`;
+      },
     }
   ];
 
