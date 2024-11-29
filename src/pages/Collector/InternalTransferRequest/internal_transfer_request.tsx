@@ -45,6 +45,7 @@ import {
   getPrimaryColor,
   showSuccessToast,
   showErrorToast,
+  getPrimaryLightColor,
 } from "../../../utils/utils";
 import { useTranslation } from "react-i18next";
 import CustomButton from "../../../components/FormComponents/CustomButton";
@@ -894,7 +895,7 @@ function IntermalTransferRequest() {
                       overflow: "visible !important"
                     },
                     "& .selected-row": {
-                      backgroundColor: "#F6FDF2 !important",
+                      backgroundColor: `${getPrimaryLightColor()} !important`,
                       border: "1px solid #79CA25"
                     }
                   }}
