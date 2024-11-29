@@ -429,7 +429,7 @@ const CheckoutRequest: FunctionComponent = () => {
           case 'zhch':
             reasonName = 'reasonNameSchi'
             break
-          case 'zhhk':
+   
             reasonName = 'reasonNameTchi'
             break
           default:

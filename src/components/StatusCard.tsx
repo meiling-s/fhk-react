@@ -44,6 +44,11 @@ const StatusCard = ({ status }: { status: string | undefined }) => {
       fontColor = '#FFFFFF'
       name = t('status.closed')
       break
+    case 'CLOSED':
+      bgColor = '#ACACAC'
+      fontColor = '#FFFFFF'
+      name = t('status.closed')
+      break
     case 'OUTSTANDING':
       bgColor = '#F4F4F4'
       fontColor = '#ACACAC'
@@ -63,6 +68,16 @@ const StatusCard = ({ status }: { status: string | undefined }) => {
       bgColor = '#FFF0F4'
       fontColor = '#FF4242'
       name = t('status.deny')
+      break
+    case 'ASSIGNED':
+      bgColor = '#E4F6DC'
+      fontColor = '#79CA25'
+      name = t('status.assigned')
+      break
+    case 'UNASSIGNED':
+      bgColor = '#FFF0F4'
+      fontColor = '#FF4242'
+      name = t('status.unassigned')
       break
     // proccess records status
     case 'processing':
@@ -91,6 +106,11 @@ const StatusCard = ({ status }: { status: string | undefined }) => {
       name = t('processRecord.completed')
       break
     case 'cancelled':
+      bgColor = '#BFBFBF'
+      fontColor = '#FFFFFF'
+      name = t('processRecord.cancelled')
+      break
+    case 'CANCELLED':
       bgColor = '#BFBFBF'
       fontColor = '#FFFFFF'
       name = t('processRecord.cancelled')

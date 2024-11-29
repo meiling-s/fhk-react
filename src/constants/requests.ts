@@ -263,6 +263,10 @@ export const GET_MANULIST = (
   url: `api/v1/${realmApiRoute}/manulist/${table}?size=1000`
 })
 
+export const GET_CUSTOMERLIST = (realmApiRoute: string, table: string) => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/customerlist/${table}?size=1000`
+})
 export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'put',
   url: 'api/v1/administrator/pico/V3'
@@ -1762,3 +1766,18 @@ export const DELETE_FACTORY_DATA = (factoryId: string): AxiosRequestConfig => ({
   url: `api/v1/factory/delFactory?factoryId=${factoryId}`
 })
 
+export const CREATE_PROCESS_IN = (  
+  realmApiRoute: string,
+  table: string,
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/processin/${table}` 
+})
+
+export const CREATE_PROCESS_OUT = (  
+  realmApiRoute: string,
+  table: string,
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/processout/${table}/header`
+})

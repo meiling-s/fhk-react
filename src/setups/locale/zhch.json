@@ -8,6 +8,8 @@
     "saveFailed": "保存失败",
     "editSuccessfully": "编辑成功",
     "editFailed": "编辑失败",
+    "cancelSuccessfully": "取消成功",
+    "cancelFailed": "取消失败",
     "deletedSuccessfully": "删除成功",
     "deleteFailed": "删除失败",
     "enterName": "请输入名称",
@@ -48,7 +50,12 @@
     "leaveConfirmMsg": "您确定要离开此页面吗？未保存的更改将会丢失",
     "noData": "没有数据",
     "category": "类别",
-    "subCategory": "次类别"
+    "subCategory": "次类别",
+    "idleDays": "空闲的日子",
+    "filledIdleDays": "输入闲置天数",
+    "pageUnderConstruction": "页面正在建设中",
+    "vehicleRouteTracker":"车辆追踪",
+    "jobOrderScheduleBoard":"司机日程"
   },
   "col": {
     "createCP": "建立回收点",
@@ -217,6 +224,7 @@
     "save": "储存",
     "delete": "删除",
     "type_name": "请输入名称",
+    "recyclable_subcategories": "物品类别",
     "place_placeholders": "请输入地点",
     "subtype": "亚型",
     "recycle_type": "可回收物类别",
@@ -237,7 +245,9 @@
     "workshopFlag": "是否工厂",
     "warningCloseWarehouse": "仓库里还有库存, 确定要关闭仓库吗?",
     "warningDeleteExistingRecy": "仓库里还有库存, 确定要刪除仓库吗?",
-    "warningDeleteWarehouse": "你确定要删除吗?"
+    "warningDeleteWarehouse": "你确定要删除吗?",
+    "product": "产品",
+    "recyling": "回收物品"
   },
   "check_in": {
     "transport_information": "运输资料",
@@ -356,7 +366,9 @@
     "enable": "启用",
     "not_enabled": "未启用",
     "terminated": "已终止",
-    "deactivate": "停用"
+    "deactivate": "停用",
+    "assigned": "已指派",
+    "unassigned": "未指派"
   },
   "appBar": {
     "simplified_cn": "简体中文",
@@ -709,6 +721,7 @@
     "inventoryLocation": "库存地点",
     "weight": "重量",
     "at": "于",
+    "select_location": "选择位置",
     "handover": "交给"
   },
   "processRecord": {
@@ -1098,8 +1111,8 @@
     },
     "vehicleMenu": {
       "vehicle_number": "车辆编码",
-      "imei":"IMEI 号码",
-      "isCompactor":"是否压缩车",
+      "imei": "IMEI 号码",
+      "isCompactor": "是否压缩车",
       "license_plate_number": "车牌号码",
       "vehicle_type": "车辆种类",
       "vehicle_cargo_capacity": "车辆载货量",
@@ -1384,7 +1397,8 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒",
-    "collector": "回收物仪表盘"
+    "collector": "回收物仪表盘",
+    "capacity": "容量"
   },
   "dashboard_manufacturer": {
     "data": "数据",
@@ -1528,6 +1542,39 @@
     "createdAt": "送出入日期及时间",
     "shippingCompany": "状态",
     "inventoryLocation": "送出地点"
+  },
+  "processOrder": {
+    "title": "处理订单",
+    "processOrder": "处理订单",
+    "enterOrderNumber": "输入订单编号",
+    "porDatetime": "处理日期及时间",
+    "porCategory": "处理类别",
+    "orderNumber": "订单编号",
+    "workshop": "工场",
+    "createdate": "处理日期及地点",
+    "create": {
+      "classification": "分类",
+      "sol": "溶胶",
+      "package": "包装",
+      "itemToProcessIn": "预计待处理物品",
+      "itemToProcessOut": "预计处理后物品",
+      "itemCategory": "物品类别（点选类别显示子类别，双击取消选择）",
+      "recycling": "回收",
+      "product": "产品",
+      "warehouse": "仓库"
+    },
+    "details": {
+      "oderDetail": "订单详情",
+      "cancelTitle": "确认取消处理订单吗？",
+      "cancelSubTitle": "取消原因（可多选）",
+      "startdateTime": "開始日期和時間",
+      "itemCategory": "項目類別"
+    },
+    "table": {
+      "startOrFinishDate": "開始/結束日期",
+      "processIn": "进程",
+      "processOut": "处理出"
+    }
   },
   "factory": {
     "factory": "工场",

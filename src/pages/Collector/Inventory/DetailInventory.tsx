@@ -52,12 +52,26 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
       value: selectedRow?.createdAt
     },
     {
-      label: t('inventory.recyleType'),
-      value: selectedRow?.recyName
+      label: t('processOrder.details.itemCategory'),
+      value: selectedRow?.recycTypeId ? t('recyclables') : t('product')
     },
     {
-      label: t('inventory.recyleSubType'),
-      value: selectedRow?.subName
+      label: t('settings_page.recycling.main_category'),
+      value: selectedRow?.recycTypeId 
+        ? (selectedRow?.recyName || '-') 
+        : (selectedRow?.productName || '-')
+    },
+    {
+      label: t('settings_page.recycling.sub_category'),
+      value: selectedRow?.recycTypeId 
+        ? (selectedRow?.subName || '-') 
+        : (selectedRow?.productSubName || '-')
+    },
+    {
+      label: t('settings_page.recycling.additional_category'),
+      value: selectedRow?.recycTypeId 
+        ? '-' 
+        : (selectedRow?.productAddOnName || '-')
     },
     {
       label: t('inventory.package'),

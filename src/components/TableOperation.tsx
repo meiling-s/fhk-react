@@ -4,6 +4,7 @@ import CustomButton from './FormComponents/CustomButton'
 import { getFormatId, getPrimaryColor } from '../utils/utils'
 import { useEffect, useState } from 'react'
 import { localStorgeKeyName } from '../constants/constant'
+import { useLocation } from 'react-router-dom'
 
 interface TableOperationProps {
   row: any
@@ -61,13 +62,6 @@ const TableOperation = ({
             <></>
           )}
         </Box>
-      ) : row.status === 'STARTED' || row.status === 'OUTSTANDING' ? (
-        <CustomButton
-          text={t('pick_up_order.table.create_job_order')}
-          onClick={() => {
-            navigateToJobOrder(row)
-          }}
-        ></CustomButton>
       ) : null}
     </>
   )

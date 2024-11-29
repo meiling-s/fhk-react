@@ -8,6 +8,8 @@
     "saveFailed": "保存失敗",
     "editSuccessfully": "編輯成功",
     "editFailed": "編輯失敗",
+    "cancelSuccessfully": "取消成功",
+    "cancelFailed": "取消失敗",
     "deletedSuccessfully": "刪除成功",
     "deleteFailed": "刪除失敗",
     "enterName": "請輸入名稱",
@@ -46,9 +48,14 @@
     "vehicle": "車輛",
     "theNameAlreadyExist": "員工職位名稱已存在",
     "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失",
-     "noData": "沒有數據",
-     "category": "類別",
-    "subCategory": "次類別"
+    "noData": "沒有數據",
+    "category": "類別",
+    "subCategory": "次類別",
+    "idleDays": "空閒的日子",
+    "filledIdleDays": "輸入空閒天數",
+    "pageUnderConstruction": "頁面正在建設中",
+    "vehicleRouteTracker":"車輛追蹤",
+    "jobOrderScheduleBoard":"司機日程"
   },
   "col": {
     "createCP": "建立回收點",
@@ -218,6 +225,7 @@
     "delete": "刪除",
     "type_name": "請輸入名稱",
     "place_placeholders": "請輸入地點",
+    "recyclable_subcategories": "物品類別",
     "subtype": "亞型",
     "recycle_type": "可回收物類別",
     "weight": "請輸入重量",
@@ -237,7 +245,9 @@
     "workshopFlag": "是否工場",
     "warningCloseWarehouse": "倉庫裡還有庫存, 確定要關閉倉庫嗎?",
     "warningDeleteExistingRecy": "倉庫裡還有庫存, 確定要刪除倉庫嗎?",
-    "warningDeleteWarehouse": "你確定要刪除嗎？"
+    "warningDeleteWarehouse": "你確定要刪除嗎？",
+    "product": "產品",
+    "recyling": "回收物"
   },
   "check_in": {
     "transport_information": "運輸資料",
@@ -355,7 +365,9 @@
     "enable": "啟用",
     "not_enabled": "未啟用",
     "terminated": "已終止",
-    "deactivate": "停用"
+    "deactivate": "停用",
+    "assigned": "已指派",
+    "unassigned": "未指派"
   },
   "appBar": {
     "simplified_cn": "简体中文",
@@ -707,6 +719,7 @@
     "inventoryLocation": "庫存地點",
     "weight": "重量",
     "at": "於",
+    "select_location": "選擇位置",
     "handover": "交給"
   },
   "processRecord": {
@@ -882,11 +895,11 @@
     "userAccountUsed": "用戶群組無法刪除，因為其中仍有帳戶"
   },
   "notify": {
-    "successCreated": "成功已创造",
+    "successCreated": "成功已創造",
     "errorCreated": "创建错误",
     "SuccessEdited": "成功编辑",
     "errorEdited": "错误已编辑",
-    "successDeleted": "删除成功",
+    "successDeleted": "刪除成功",
     "errorDeleted": "错误删除"
   },
   "job_order": {
@@ -1097,8 +1110,8 @@
     },
     "vehicleMenu": {
       "vehicle_number": "車輛編碼",
-      "imei":"IMEI 號碼",
-      "isCompactor":"是否壓縮車",
+      "imei": "IMEI 號碼",
+      "isCompactor": "是否壓縮車",
       "license_plate_number": "車牌號碼",
       "vehicle_type": "車輛類型",
       "vehicle_cargo_capacity": "車輛載貨量",
@@ -1323,7 +1336,7 @@
     "1kg_equivalent": "1kg 相等於",
     "enter_weight": "請輸入重量",
     "confirm_delete": "確認刪除",
-    "confirm_text": "如你要删除主類別, 相關的次類別也會删除, 需要繼續嗎?",
+    "confirm_text": "如你要刪除主類別，相關的次類別也會刪除，需要繼續嗎？",
     "weight_error": "權重不能低於0"
   },
   "recycling_point": {
@@ -1377,7 +1390,8 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒",
-    "collector": "回收物儀表盤"
+    "collector": "回收物儀表盤",
+    "capacity": "容量"
   },
   "dashboard_manufacturer": {
     "data": "數據",
@@ -1522,6 +1536,39 @@
     "createdAt": "送出入日期及時間",
     "shippingCompany": "狀態",
     "inventoryLocation": "送出地點"
+  },
+  "processOrder": {
+    "title": "處理訂單",
+    "processOrder": "處理訂單",
+    "enterOrderNumber": "輸入訂單編號",
+    "porDatetime": "處理日期及時間",
+    "porCategory": "處理類別",
+    "orderNumber": "訂單編號",
+    "workshop": "工場",
+    "createdate": "處理日期及地點",
+    "create": {
+      "classification": "分類",
+      "sol": "溶膠",
+      "package": "包裝",
+      "itemToProcessIn": "預計待處理物品",
+      "itemToProcessOut": "預計處理後物品",
+      "itemCategory": "物品類別 (按一下類別顯示子類別，按兩下取消選擇)",
+      "recycling": "回收物",
+      "product": "產品",
+      "warehouse": "貨倉"
+    },
+    "details": {
+      "oderDetail": "訂單詳情",
+      "cancelTitle": "確認取消處理訂單嗎？",
+      "cancelSubTitle": "取消原因（可多選）",
+      "startdateTime": "開始日期和時間",
+      "itemCategory": "項目類別"
+    },
+    "table": {
+      "startOrFinishDate": "開始/結束日期",
+      "processIn": "處理輸入",
+      "processOut": "處理出"
+    }
   },
   "factory": {
     "factory": "工場",

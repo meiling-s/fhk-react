@@ -23,6 +23,7 @@ export interface ProductSubType {
 };
 
 export interface Products {
+  find(arg0: (addon: any) => boolean): unknown;
   productTypeId: string;
   productSubTypeId?: string;
   productNameTchi: string;

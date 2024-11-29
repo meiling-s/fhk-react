@@ -14,6 +14,8 @@ const refreshTokenAxiosInstance = axios.create({
   baseURL: window.baseURL?.account
 })
 
+export const cleanAxiosInstance = axios.create()
+
 export const parseJwtToken = (token: string, tokenPart: number) => {
   try {
     return JSON.parse(atob(token.split('.')[tokenPart]))
@@ -136,66 +138,38 @@ const __getNewAccessToken = async () => {
   return localStorage.getItem(localStorgeKeyName.keycloakToken) || ''
 }
 
-axiosInstance?.interceptors.response.use(
-  (response) => {
-    return response
-  },
+axiosInstance.interceptors.response.use(
+  (response) => response,
   async (error) => {
-    const originalRequest = error.config
+    const originalRequest = error.config;
 
-    // if (error.response.status === 401 && !originalRequest._retry) {
-    //     console.log('originalRequest 401', originalRequest.headers.url)
-    //     expiredAccessToken = true
-    //     originalRequest._retry = true;
-    //     originalRequest.headers.AuthToken = __getNewAccessToken()
-    //     return axios(originalRequest);
-    // }
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
 
-    // if (error.response.status === 400) {
-    //     console.log('originalRequest 404', originalRequest.headers.url)
-    //     expiredAccessToken = true
-    //     originalRequest.headers.AuthToken = __getNewAccessToken()
-    //     return axios(originalRequest);
-    // }
+      try {
+        // Refresh the access token
+        const newAccessToken = await __getNewAccessToken();
 
-    // if (error.response.status === 403) {
-    //     console.log('originalRequest 403', originalRequest.headers.url)
-    //     expiredAccessToken = true
-    //     originalRequest.headers.AuthToken = __getNewAccessToken()
-    //     return axios(originalRequest);
-    // }
+        if (newAccessToken) {
+          originalRequest.headers.AuthToken = newAccessToken;
 
-    // if (error.response.status === 401) {
-    //     console.log('originalRequest 401', originalRequest.headers.url)
-    //     localStorage.clear();
-    //     window.location.href = '/';
-    // }
+          return axiosInstance(originalRequest);
+        } else {
+          console.log('Failed to refresh token. Redirecting to login.');
+          localStorage.clear();
+          window.location.href = '/';
+        }
+      } catch (refreshError) {
+        console.error('Error refreshing token:', refreshError);
 
-    // const exipredTokenStatus = [STATUS_CODE[401], STATUS_CODE[403]]
-    const exipredTokenStatus = [STATUS_CODE[401]]
-    if (
-      error?.response &&
-      exipredTokenStatus.includes(error?.response?.status)
-    ) {
-      originalRequest._retry = true
-      const accessToken =
-        localStorage.getItem(localStorgeKeyName.keycloakToken) || ''
-      if (isTokenExpired(accessToken)) {
-        expiredAccessToken = true
-        await __getNewAccessToken()
+        localStorage.clear();
+        window.location.href = '/';
       }
-
-      const retryOriginalRequest = new Promise((resolve) => {
-        originalRequest.headers.AuthToken = localStorage.getItem(
-          localStorgeKeyName.keycloakToken
-        )
-        resolve(axiosInstance(originalRequest))
-      })
-
-      return retryOriginalRequest
     }
-    return Promise.reject(error)
+
+    // Reject any other errors
+    return Promise.reject(error);
   }
-)
+);
 
 export default axiosInstance
