@@ -585,8 +585,9 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                                 }
                             }}
                         >
-                            {/* Collection Points Section */}
-                            <MenuItem disabled>{t('collection_Point')}</MenuItem>
+                            {colList.length > 0  && 
+                                <MenuItem disabled>{t('collection_Point')}</MenuItem>
+                            }
                             {colList.map((point) => (
                                 <MenuItem 
                                     key={`collection-${point.colId}`} 
