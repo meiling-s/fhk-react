@@ -143,10 +143,9 @@ function RejectForm({
 
     if (rejectReasonId.includes('99') && othersReason !== '') {
       rejectReason = rejectReason.map(val => {
-        if (val === t('internalTransfer.others')) {
-          return othersReason
+        if (val !== t('internalTransfer.others')) {
+          return val
         }
-        return val
       })
     }
 
@@ -161,7 +160,8 @@ function RejectForm({
             updatedBy: loginId
           }
         }),
-        reason: rejectReason
+        reason: rejectReason,
+        remark: rejectReasonId.includes('99') ? othersReason : ''
       };
 
       await updateInternalRequestStatus(payLoad);
@@ -714,7 +714,7 @@ function IntermalTransferRequest() {
     setPage(1);
     setCateGory(event.target.value);
     var recycTypeId = event.target.value;
-    updateQuery({ recycTypeId: recycTypeId });
+    updateQuery({ recycTypeId: recycTypeId, recycSubTypeId: '' });
   };
   const handleSubCateGory = (event: SelectChangeEvent) => {
     setPage(1);
