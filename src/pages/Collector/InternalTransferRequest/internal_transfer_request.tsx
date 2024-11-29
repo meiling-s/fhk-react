@@ -813,7 +813,7 @@ function IntermalTransferRequest() {
                   <MenuItem value={val?.recycTypeId}>{getRecycTypeName(val)}</MenuItem>    
                 )
               })}
-              <MenuItem value={''}>NoType</MenuItem>
+              <MenuItem value={''}>{t('checkinandcheckout.any')}</MenuItem>
             </Select>
           </FormControl>
           <FormControl sx={styles.inputStyle}>
@@ -833,7 +833,7 @@ function IntermalTransferRequest() {
                   <MenuItem value={value?.recycSubTypeId}>{getRecycTypeName(value)}</MenuItem>
                 )
               })}
-              <MenuItem value={''}>NoType</MenuItem>
+              <MenuItem value={''}>{t('checkinandcheckout.any')}</MenuItem>
             </Select>
           </FormControl>
         </Box>
