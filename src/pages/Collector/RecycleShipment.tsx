@@ -438,6 +438,7 @@ function ShipmentManage() {
   const { logisticList, manuList, collectorList, companies, currentTenant } =
     useContainer(CommonTypeContainer)
   const role = localStorage.getItem(localStorgeKeyName.role)
+  const isAdmin = localStorage.getItem('isAdmin') === 'true'
 
   const getRejectReason = async () => {
     try {
@@ -983,7 +984,7 @@ function ShipmentManage() {
               fontWeight: 'bold',
               color: 'white'
             }}
-            disabled={selectedCheckin.length === 0}
+            disabled={selectedCheckin.length === 0 || !isAdmin}
             variant="outlined"
             onClick={() => {
               //handleApproveOnClick();
@@ -994,20 +995,17 @@ function ShipmentManage() {
             {t('check_in.approve')}
           </Button>
           <Button
-            sx={{
+           sx={[
+            styles.buttonOutlinedGreen,
+            {
               mt: 3,
               width: '90px',
               height: '40px',
-              m: 0.5,
-              cursor: selectedCheckin.length === 0 ? 'not-allowed' : 'pointer',
-              borderRadius: '20px',
-              borderColor: primaryColor,
-              borderWidth: 1,
-              fontWeight: 'bold',
-              marginLeft: '20px'
-            }}
+              m: 0.5
+            }
+          ]}
             variant="outlined"
-            disabled={selectedCheckin.length === 0}
+            disabled={selectedCheckin.length === 0 || !isAdmin}
             onClick={() => setRejectModal(selectedCheckin.length > 0)}
           >
             {' '}
