@@ -168,11 +168,11 @@ function RejectForm({
       await updateInternalRequestStatus(payLoad);
       if (onRejected) {
         onRejected();
+        onCloseLocal();
       } 
-      resetState();
     } catch(error: any) {
       const { state } = extractError(error);
-      resetState();
+      onCloseLocal();
       if (state.code === STATUS_CODE[503]) {
         navigate("/maintenance");
       } else if (state.code === STATUS_CODE[409]) {
@@ -253,7 +253,6 @@ function RejectForm({
               style={{ width: "175px", marginRight: "10px" }}
               onClick={() => {
                 handleConfirmRejectOnClick(rejectReasonId);
-                onCloseLocal();
               }}
             />
             <CustomButton
@@ -296,9 +295,11 @@ const ApproveModal: React.FC<ApproveForm> = ({
           return {
             id: val,
             status: 'APPROVED',
-            updatedBy: loginId
+            updatedBy: loginId,
           }
-        })
+        }),
+        reason: [],
+        remark: ''
       }
       await updateInternalRequestStatus(payLoad)
       if (onApprove) onApprove()
