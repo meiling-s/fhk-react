@@ -262,9 +262,6 @@ const Inventory: FunctionComponent = () => {
     mappingRecyleItem()
     mappingProductItem()
     initpackagingUnit()
-    initAllFactoryList()
-    initWarehouseList()
-    initCollectionPoint()
     getAllPickupOrder()
   }, [recycType, productType, i18n.language])
 
@@ -1016,6 +1013,7 @@ const Inventory: FunctionComponent = () => {
           <Typography fontSize={16} color="black" fontWeight="bold">
             {t('inventory.recyclingInformation')}
           </Typography>
+          {realmApi !== 'account' && 
           <Button
             onClick={() => {
               setCreateDrawerOpen(true)
@@ -1033,6 +1031,7 @@ const Inventory: FunctionComponent = () => {
           >
             + {t('col.create')}
           </Button>
+          }
         </Box>
         <Stack direction="row" mt={3}>
           {searchfield.map((s, index) => (
