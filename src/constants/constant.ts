@@ -11,7 +11,8 @@ export const localStorgeKeyName = {
   // 20240129 add function list daniel keung end
   tenantId: 'tenantId',
   realmApiRoute: 'realmApiRoute',
-  selectedLanguage: 'selectedLanguage'
+  selectedLanguage: 'selectedLanguage',
+  isAdmin: 'isAdmin'
 }
 
 export const defaultPath = {
