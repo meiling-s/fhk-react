@@ -54,8 +54,8 @@
     "idleDays": "空闲的日子",
     "filledIdleDays": "输入闲置天数",
     "pageUnderConstruction": "页面正在建设中",
-    "vehicleRouteTracker":"车辆追踪",
-    "jobOrderScheduleBoard":"司机日程"
+    "vehicleRouteTracker": "车辆追踪",
+    "jobOrderScheduleBoard": "司机日程"
   },
   "col": {
     "createCP": "建立回收点",
@@ -368,7 +368,8 @@
     "terminated": "已终止",
     "deactivate": "停用",
     "assigned": "已指派",
-    "unassigned": "未指派"
+    "unassigned": "未指派",
+    "processing": "已處理"
   },
   "appBar": {
     "simplified_cn": "简体中文",

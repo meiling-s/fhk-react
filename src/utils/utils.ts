@@ -583,6 +583,12 @@ export const porStatusList: StatusPickUpOrder[] = [
     labelTchi: '取消'
   },
   {
+    value: 'PROCESSEDIN',
+    labelEng: 'PROCESSED IN',
+    labelSchi: '已處理',
+    labelTchi: '已处理'
+  },
+  {
     value: '',
     labelEng: 'ANY',
     labelSchi: '任何',

@@ -367,7 +367,8 @@
     "terminated": "已終止",
     "deactivate": "停用",
     "assigned": "已指派",
-    "unassigned": "未指派"
+    "unassigned": "未指派",
+    "processing": "已处理"
   },
   "appBar": {
     "simplified_cn": "简体中文",
