@@ -54,8 +54,8 @@
     "idleDays": "Idle Days",
     "filledIdleDays": "Enter the number of idle days",
     "pageUnderConstruction": "Page Under Construction",
-    "vehicleRouteTracker":"Vehicle Route Tracker",
-    "jobOrderScheduleBoard":"Job Order Schedule Board"
+    "vehicleRouteTracker": "Vehicle Route Tracker",
+    "jobOrderScheduleBoard": "Job Order Schedule Board"
   },
   "col": {
     "createCP": "Create Collection Point",
@@ -368,7 +368,8 @@
     "terminated": "Terminated",
     "deactivate": "Deactivate",
     "assigned": "Assigned",
-    "unassigned": "Unassigned"
+    "unassigned": "Unassigned",
+    "processing": "ProcessedIn"
   },
   "appBar": {
     "simplified_cn": "简体中文",
@@ -1113,8 +1114,8 @@
     },
     "vehicleMenu": {
       "vehicle_number": "Vehicle ID",
-      "imei":"IMEI Number",
-      "isCompactor":"Is Compactor",
+      "imei": "IMEI Number",
+      "isCompactor": "Is Compactor",
       "license_plate_number": "License Plate No.",
       "vehicle_type": "Vehicle Type",
       "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
