@@ -171,15 +171,12 @@ const CreateProcessOrder = ({}: {}) => {
         if (params.row.processAction !== '') {
           if (params.row.processAction === 'PROCESS_IN') {
             dateTime = params.row.datetime
-              ? dayjs(params.row.datetime)
-                  .tz('Asia/Hong_Kong')
-                  .format(`${dateFormat} HH:mm`)
-              : dayjs(params.row?.datetime)
-                  .tz('Asia/Hong_Kong')
-                  .format(`${dateFormat} HH:mm`)
+              ? dayjs.utc(params.row.datetime).format(`${dateFormat} HH:mm`)
+              : dayjs.utc(params.row?.datetime).format(`${dateFormat} HH:mm`)
           } else {
-            dateTime = dayjs(params.row?.datetime)
-              .tz('Asia/Hong_Kong')
+            dateTime = dayjs
+              .utc(params.row?.datetime)
+
               .format(`${dateFormat} HH:mm`)
           }
         }
@@ -442,15 +439,19 @@ const CreateProcessOrder = ({}: {}) => {
   ) => {
     let rawProcessOrderInDtl: ProcessInDtlData[] = []
     let rowData: rowPorDtl[] = []
+    console.log('updated source', updatedSource)
 
+    let processNameFirst: string = ''
     updatedSource.map((item: CreateProcessOrderDetailPairs) => {
       rowData = []
       Object.entries(item).map(([key, value]) => {
         // constract product
         value.processOrderDetailProduct.map((val1, idx1) => {
-          if (idx1 == 0) {
+         
+          if (processNameFirst !== value.processAction) {
+            processNameFirst = value.processAction
             rowData.push({
-              id: value.processAction + value.processTypeId,
+              id: 'product-' + value.processAction + value.processTypeId,
               processTypeId: value.processTypeId,
               processAction: value.processAction,
               datetime:
@@ -464,7 +465,7 @@ const CreateProcessOrder = ({}: {}) => {
                 value.processAction === 'PROCESS_IN'
                   ? item.processIn.estInWeight
                   : item.processOut.estOutWeight,
-              itemCategory: value.itemCategory ?? '-',
+              itemCategory: 'product',
               mainCategory: val1.productTypeId,
               subCategory: val1.productSubTypeId,
               additionalInfo: val1.productAddonId
@@ -477,7 +478,7 @@ const CreateProcessOrder = ({}: {}) => {
               datetime: '',
               warehouse: '',
               weight: '',
-              itemCategory: value.itemCategory ?? '-',
+              itemCategory: 'product',
               mainCategory: val1.productTypeId,
               subCategory: val1.productSubTypeId,
               additionalInfo: val1.productAddonId
@@ -487,9 +488,11 @@ const CreateProcessOrder = ({}: {}) => {
 
         // constract recylcling
         value.processOrderDetailRecyc.map((val1, idx1) => {
-          if (idx1 == 0) {
+         
+          if (processNameFirst !== value.processAction) {
+            processNameFirst = value.processAction
             rowData.push({
-              id: value.processAction + value.processTypeId,
+              id: 'recyling-' + value.processAction + value.processTypeId,
               processTypeId: value.processTypeId,
               processAction: value.processAction,
               datetime:
@@ -503,7 +506,7 @@ const CreateProcessOrder = ({}: {}) => {
                 value.processAction === 'PROCESS_IN'
                   ? item.processIn.estInWeight
                   : item.processOut.estOutWeight,
-              itemCategory: value.itemCategory ?? '-',
+              itemCategory: 'recybel',
               mainCategory: val1.recycTypeId,
               subCategory: val1.recycSubTypeId ?? '-',
               additionalInfo: '-'
@@ -516,7 +519,7 @@ const CreateProcessOrder = ({}: {}) => {
               datetime: '',
               warehouse: '',
               weight: '',
-              itemCategory: value.itemCategory ?? '-',
+              itemCategory: 'recybel',
               mainCategory: val1.recycTypeId,
               subCategory: val1.recycSubTypeId ?? '-',
               additionalInfo: '-'
@@ -618,7 +621,7 @@ const CreateProcessOrder = ({}: {}) => {
   }
 
   const formattedDate = (dateData: dayjs.Dayjs) => {
-    return dayjs.utc(dateData).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+    return dayjs(dateData).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
   }
 
   const handleEdit = (item: ProcessInDtlData) => {

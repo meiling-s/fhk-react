@@ -457,6 +457,25 @@ const DetailProcessOrder = ({
     return mappingSubProductType(productTypeId, subId, productType)
   }
 
+  const getItemCategoryTitle = (item: DetailPORItem) => {
+    let label = ''
+    if (
+      item.porItem.productTypeIds.length > 0 &&
+      item.porItem.recycTypeIds.length > 0
+    ) {
+      label = `${
+        t('processOrder.create.recycling') +
+        ',' +
+        t('processOrder.create.product')
+      }`
+    } else if (item.porItem.recycTypeIds.length > 0) {
+      label = t('processOrder.create.recycling')
+    } else {
+      label = t('processOrder.create.product')
+    }
+    return label
+  }
+
   return (
     <>
       <Box>
@@ -605,9 +624,13 @@ const DetailProcessOrder = ({
                           </div>
                           <Box>
                             <Typography sx={{ ...localStyles.value }}>
-                              {item.porItem.recycTypeIds.length > 0
-                                ? t('processOrder.create.recycling')
-                                : t('processOrder.create.product')}
+                              {getItemCategoryTitle(item)}
+                              {/* {item.porItem.recycTypeIds.length}
+                              {item.porItem.productTypeIds.length}
+                              {item.porItem.recycTypeIds.length > 0 &&
+                                item.porItem.productTypeIds.length > 0 &&
+                                (t('processOrder.create.recycling'),
+                                t('processOrder.create.product'))} */}
                             </Typography>
                           </Box>
                         </Box>

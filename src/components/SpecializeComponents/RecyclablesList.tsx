@@ -217,7 +217,7 @@ export default function RecyclablesList({
   const toRecyclables = () => {
     var recyclableS: recyclable[] = []
     recycTypeList.map((recyc) => {
-      const recycType = recycL.find(r => r.recycTypeId === recyc);
+      const recycType = recycL.find((r) => r.recycTypeId === recyc)
       if (recycType && recycType.recycSubType.length > 0) {
         const subId = returnSubTypesId(recyc)
         const subList = subTypeList.filter((sub) => {
