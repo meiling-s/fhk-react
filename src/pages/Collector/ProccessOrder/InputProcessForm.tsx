@@ -41,11 +41,10 @@ import ProductListSingleSelect, {
   singleProduct
 } from '../../../components/SpecializeComponents/ProductListSingleSelect'
 import RecyclablesList from 'src/components/SpecializeComponents/RecyclablesList'
-import { getEstimateWeight } from 'src/APICalls/processOrder'
+import { getEstimateEndTime } from 'src/APICalls/processOrder'
 import dayjs from 'dayjs'
 import { formValidate } from 'src/interfaces/common'
 import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
-import { error } from 'console'
 
 const InputProcessForm = ({
   drawerOpen,
@@ -162,8 +161,6 @@ const InputProcessForm = ({
       }))
       setProcessTypeId(editedValue[0].processIn.processTypeId)
       setProcessOrderDetail(mappedData)
-
-      console.log('mapping data', mappedData)
     }
   }
 
@@ -248,7 +245,6 @@ const InputProcessForm = ({
         })
 
       // validation rectype and product type type
-
       //processIn
       processOrderDetail[0].processIn.itemCategory === 'recycling'
         ? processOrderDetail[0].processIn.processOrderDetailRecyc.length ===
@@ -318,8 +314,10 @@ const InputProcessForm = ({
           type: 'error'
         })
 
-      // weight validation
-      processOrderDetail[0].processIn.estInWeight === '0' &&
+      //weight validation
+      if (
+        parseFloat(processOrderDetail[0].processIn.estInWeight as string) <= 0
+      )
         tempV.push({
           field:
             t('pick_up_order.recyclForm.weight') +
@@ -329,7 +327,9 @@ const InputProcessForm = ({
           type: 'error'
         })
 
-      processOrderDetail[0].processOut.estOutWeight === '0' &&
+      if (
+        parseFloat(processOrderDetail[0].processOut.estOutWeight as string) <= 0
+      )
         tempV.push({
           field:
             t('pick_up_order.recyclForm.weight') +
@@ -343,7 +343,12 @@ const InputProcessForm = ({
     }
 
     validate()
-  }, [processTypeId, processOrderDetail[0]])
+  }, [
+    processTypeId,
+    processOrderDetail[0],
+    processOrderDetail[0].processIn.estInWeight,
+    processOrderDetail[0].processOut.estOutWeight
+  ])
 
   const onChangeItemCategory = (
     key: 'processIn' | 'processOut',
@@ -354,10 +359,10 @@ const InputProcessForm = ({
         ...item,
         [key]: {
           ...item[key],
-          itemCategory: selectedItem,
-          ...(selectedItem === 'recycle'
-            ? { processOrderDetailRecyc: [] }
-            : { processOrderDetailProduct: [] })
+          itemCategory: selectedItem
+          // ...(selectedItem === 'recycle'
+          //   ? { processOrderDetailRecyc: [] }
+          //   : { processOrderDetailProduct: [] })
         }
       }))
     )
@@ -366,8 +371,7 @@ const InputProcessForm = ({
   //to do : change to multiple product select
   const handleProductChange = (type: string, value: singleProduct) => {
     let tempProduct: any[] = []
-    if (value.productTypeId && value.productSubTypeId != '')
-      tempProduct.push(value)
+    if (value.productTypeId) tempProduct.push(value)
 
     setProcessOrderDetail((prevDetails) =>
       prevDetails.map((detail) => ({
@@ -378,6 +382,8 @@ const InputProcessForm = ({
         }
       }))
     )
+
+    console.log('handleProductChange', processOrderDetail)
   }
 
   const handleRecycChange = (type: string, value: recyclable[]) => {
@@ -465,10 +471,10 @@ const InputProcessForm = ({
     const params: QueryEstEndDatetime = {
       processTypeId: processTypeId,
       estInWeight: Number(processOrderDetail[0].processIn.estInWeight),
-      plannedStartAt: dayjs(plannedStartAt).format('YYYY-MM-DDTHH:mm:ss')
+      plannedStartAt: dayjs.utc(plannedStartAt).format('YYYY-MM-DDTHH:mm:ss')
     }
     let plannedEndAt = ''
-    const result = await getEstimateWeight(params)
+    const result = await getEstimateEndTime(params)
     if (result) {
       plannedEndAt = result.data
     }
@@ -511,9 +517,9 @@ const InputProcessForm = ({
       processOrderDetail[0].processOut.plannedEndAt = plannedEndAtData
       value.idPair = tempRandomId
     })
-    console.log(processOrderDetail)
 
     onSave(processOrderDetail, isUpdate)
+    console.log('submit data', processOrderDetail)
     handleDrawerClose()
   }
 
@@ -532,43 +538,41 @@ const InputProcessForm = ({
   }
 
   const getProductData = (key: string) => {
-    if (action === 'edit') {
-      const selectedProduct =
-        key === 'processIn'
-          ? processOrderDetail[0].processIn.processOrderDetailProduct[0]
-          : processOrderDetail[0].processOut.processOrderDetailProduct[0]
+    // if (action === 'edit') {
+    const selectedProduct =
+      key === 'processIn'
+        ? processOrderDetail[0].processIn.processOrderDetailProduct[0]
+        : processOrderDetail[0].processOut.processOrderDetailProduct[0]
 
-      if (selectedProduct) {
-        const product: singleProduct = {
-          productTypeId: selectedProduct?.productTypeId,
-          productSubTypeId: selectedProduct?.productSubTypeId,
-          productAddonId: selectedProduct?.productAddonId,
-          productSubTypeRemark: '',
-          productAddonTypeRemark: ''
-        }
-        return product
+    if (selectedProduct) {
+      const product: singleProduct = {
+        productTypeId: selectedProduct?.productTypeId,
+        productSubTypeId: selectedProduct?.productSubTypeId,
+        productAddonId: selectedProduct?.productAddonId,
+        productSubTypeRemark: '',
+        productAddonTypeRemark: ''
       }
+      return product
     }
+    // }
 
     return undefined
   }
 
   const getDefaultRecy = (key: string) => {
-    if (action === 'edit') {
-      const dataRecy =
-        key === 'processIn'
-          ? processOrderDetail[0].processIn?.processOrderDetailRecyc
-          : processOrderDetail[0].processOut?.processOrderDetailRecyc
+    const dataRecy =
+      key === 'processIn'
+        ? processOrderDetail[0].processIn?.processOrderDetailRecyc
+        : processOrderDetail[0].processOut?.processOrderDetailRecyc
 
-      const defaultData: recyclable[] = dataRecy.map((item) => ({
-        recycTypeId: item.recycTypeId,
-        recycSubTypeId: Array.isArray(item.recycSubTypeId)
-          ? item.recycSubTypeId
-          : [item.recycSubTypeId]
-      }))
+    const defaultData: recyclable[] = dataRecy.map((item) => ({
+      recycTypeId: item.recycTypeId,
+      recycSubTypeId: Array.isArray(item.recycSubTypeId)
+        ? item.recycSubTypeId
+        : [item.recycSubTypeId]
+    }))
 
-      return defaultData
-    }
+    return defaultData
   }
 
   return (
@@ -770,7 +774,7 @@ const InputProcessForm = ({
                                 : processOrderDetail[0].processOut.estOutWeight
                             }
                             error={
-                              !trySubmited &&
+                              trySubmited &&
                               (key === 'processIn'
                                 ? processOrderDetail[0].processIn
                                     .estInWeight === '0'

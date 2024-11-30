@@ -1779,3 +1779,19 @@ export const UPDATE_INTERNAL_TRANSFER_REQUEST_STATUS = (
   method: 'patch',
   url: `api/v1/administrator/itr/update/${tenantId}/status`
 })
+
+export const CREATE_PROCESS_IN = (  
+  realmApiRoute: string,
+  table: string,
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/processin/${table}` 
+})
+
+export const CREATE_PROCESS_OUT = (  
+  realmApiRoute: string,
+  table: string,
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/processout/${table}/header`
+})

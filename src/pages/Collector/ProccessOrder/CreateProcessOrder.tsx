@@ -35,10 +35,12 @@ import {
 } from '../../../constants/constant'
 import {
   CreatePorForm,
-  CreateProcessOrderDetailPairs
+  CreateProcessOrderDetailPairs,
+  QueryEstEndDatetime
 } from '../../../interfaces/processOrderQuery'
 import {
   createProcessOrder,
+  getEstimateEndTime,
   getFactories
 } from '../../../APICalls/processOrder'
 
@@ -170,14 +172,11 @@ const CreateProcessOrder = ({}: {}) => {
           if (params.row.processAction === 'PROCESS_IN') {
             dateTime = params.row.datetime
               ? dayjs.utc(params.row.datetime).format(`${dateFormat} HH:mm`)
-              : dayjs
-                  .utc(params.row?.datetime)
-                  .tz('Asia/Hong_Kong')
-                  .format(`${dateFormat} HH:mm`)
+              : dayjs.utc(params.row?.datetime).format(`${dateFormat} HH:mm`)
           } else {
             dateTime = dayjs
               .utc(params.row?.datetime)
-              .tz('Asia/Hong_Kong')
+
               .format(`${dateFormat} HH:mm`)
           }
         }
@@ -360,6 +359,47 @@ const CreateProcessOrder = ({}: {}) => {
     }
   }
 
+  const getEstimateEndDate = async (
+    processTypeId: string,
+    plannedStartAt: string,
+    estInWeight: string
+  ) => {
+    const params: QueryEstEndDatetime = {
+      processTypeId: processTypeId,
+      estInWeight: parseInt(estInWeight),
+      plannedStartAt: dayjs(plannedStartAt).format('YYYY-MM-DDTHH:mm:ss')
+    }
+    let plannedEndAt = ''
+    const result = await getEstimateEndTime(params)
+    if (result) {
+      plannedEndAt = result.data
+    }
+
+    return plannedEndAt
+  }
+
+  const updateDateOnProcessDetail = async (
+    dataSet: CreateProcessOrderDetailPairs[]
+  ) => {
+    for (let index = 0; index < dataSet.length; index++) {
+      const detail = dataSet[index]
+
+      if (index == 0) {
+        detail.processIn.plannedStartAt = formattedDate(processStartAt)
+      } else {
+        detail.processIn.plannedStartAt =
+          dataSet[index - 1].processOut.plannedEndAt
+      }
+
+      detail.processOut.plannedEndAt = await getEstimateEndDate(
+        detail.processIn.processTypeId,
+        processStartAt.toISOString(),
+        detail.processIn.estInWeight as string
+      )
+    }
+    mappingProcessOrderDtl(dataSet)
+  }
+
   useEffect(() => {
     getProcessTypeList()
     initWarehouse()
@@ -373,6 +413,10 @@ const CreateProcessOrder = ({}: {}) => {
     initProcessType()
     initFactory()
   }, [i18n.language])
+
+  useEffect(() => {
+    updateDateOnProcessDetail(processOrderDtlSource)
+  }, [processStartAt])
 
   useEffect(() => {
     const validate = async () => {
@@ -395,15 +439,19 @@ const CreateProcessOrder = ({}: {}) => {
   ) => {
     let rawProcessOrderInDtl: ProcessInDtlData[] = []
     let rowData: rowPorDtl[] = []
+    console.log('updated source', updatedSource)
 
+    let processNameFirst: string = ''
     updatedSource.map((item: CreateProcessOrderDetailPairs) => {
       rowData = []
       Object.entries(item).map(([key, value]) => {
         // constract product
         value.processOrderDetailProduct.map((val1, idx1) => {
-          if (idx1 == 0) {
+         
+          if (processNameFirst !== value.processAction) {
+            processNameFirst = value.processAction
             rowData.push({
-              id: value.processAction + value.processTypeId,
+              id: 'product-' + value.processAction + value.processTypeId,
               processTypeId: value.processTypeId,
               processAction: value.processAction,
               datetime:
@@ -417,7 +465,7 @@ const CreateProcessOrder = ({}: {}) => {
                 value.processAction === 'PROCESS_IN'
                   ? item.processIn.estInWeight
                   : item.processOut.estOutWeight,
-              itemCategory: value.itemCategory ?? '-',
+              itemCategory: 'product',
               mainCategory: val1.productTypeId,
               subCategory: val1.productSubTypeId,
               additionalInfo: val1.productAddonId
@@ -430,7 +478,7 @@ const CreateProcessOrder = ({}: {}) => {
               datetime: '',
               warehouse: '',
               weight: '',
-              itemCategory: value.itemCategory ?? '-',
+              itemCategory: 'product',
               mainCategory: val1.productTypeId,
               subCategory: val1.productSubTypeId,
               additionalInfo: val1.productAddonId
@@ -440,9 +488,11 @@ const CreateProcessOrder = ({}: {}) => {
 
         // constract recylcling
         value.processOrderDetailRecyc.map((val1, idx1) => {
-          if (idx1 == 0) {
+         
+          if (processNameFirst !== value.processAction) {
+            processNameFirst = value.processAction
             rowData.push({
-              id: value.processAction + value.processTypeId,
+              id: 'recyling-' + value.processAction + value.processTypeId,
               processTypeId: value.processTypeId,
               processAction: value.processAction,
               datetime:
@@ -456,7 +506,7 @@ const CreateProcessOrder = ({}: {}) => {
                 value.processAction === 'PROCESS_IN'
                   ? item.processIn.estInWeight
                   : item.processOut.estOutWeight,
-              itemCategory: value.itemCategory ?? '-',
+              itemCategory: 'recybel',
               mainCategory: val1.recycTypeId,
               subCategory: val1.recycSubTypeId ?? '-',
               additionalInfo: '-'
@@ -469,7 +519,7 @@ const CreateProcessOrder = ({}: {}) => {
               datetime: '',
               warehouse: '',
               weight: '',
-              itemCategory: value.itemCategory ?? '-',
+              itemCategory: 'recybel',
               mainCategory: val1.recycTypeId,
               subCategory: val1.recycSubTypeId ?? '-',
               additionalInfo: '-'
@@ -571,7 +621,7 @@ const CreateProcessOrder = ({}: {}) => {
   }
 
   const formattedDate = (dateData: dayjs.Dayjs) => {
-    return dateData.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+    return dayjs(dateData).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
   }
 
   const handleEdit = (item: ProcessInDtlData) => {
@@ -592,9 +642,10 @@ const CreateProcessOrder = ({}: {}) => {
     const updatedProcessOrderDtlSource = processOrderDtlSource.filter(
       (item) => item.processIn.idPair !== idPair
     )
-
     setProcessInDetailData(updatedProcessInDetailData)
     setProcessOrderDtlSource(updatedProcessOrderDtlSource)
+    // update plannedAt and plannedEnd
+    updateDateOnProcessDetail(updatedProcessOrderDtlSource)
   }
 
   return (

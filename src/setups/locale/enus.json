@@ -54,8 +54,8 @@
     "idleDays": "Idle Days",
     "filledIdleDays": "Enter the number of idle days",
     "pageUnderConstruction": "Page Under Construction",
-    "vehicleRouteTracker":"Vehicle Route Tracker",
-    "jobOrderScheduleBoard":"Job Order Schedule Board"
+    "vehicleRouteTracker": "Vehicle Route Tracker",
+    "jobOrderScheduleBoard": "Job Order Schedule Board"
   },
   "col": {
     "createCP": "Create Collection Point",
@@ -368,7 +368,8 @@
     "terminated": "Terminated",
     "deactivate": "Deactivate",
     "assigned": "Assigned",
-    "unassigned": "Unassigned"
+    "unassigned": "Unassigned",
+    "processing": "ProcessedIn"
   },
   "appBar": {
     "simplified_cn": "简体中文",
@@ -721,6 +722,7 @@
     "inventoryLocation": "Inventory Location",
     "weight": "Weight",
     "at": "at",
+    "select_location": "select location",
     "handover": "hand over"
   },
   "processRecord": {
@@ -1121,8 +1123,8 @@
     },
     "vehicleMenu": {
       "vehicle_number": "Vehicle ID",
-      "imei":"IMEI Number",
-      "isCompactor":"Is Compactor",
+      "imei": "IMEI Number",
+      "isCompactor": "Is Compactor",
       "license_plate_number": "License Plate No.",
       "vehicle_type": "Vehicle Type",
       "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
@@ -1567,7 +1569,7 @@
       "itemToProcessIn": "Expected process in items",
       "itemToProcessOut": "Expected process out items",
       "itemCategory": "Item category (click a category to display subcategories, double-click",
-      "recycling": "Recycling",
+      "recycling": "Recyclable",
       "product": "Product",
       "warehouse": "Warehouse"
     },
