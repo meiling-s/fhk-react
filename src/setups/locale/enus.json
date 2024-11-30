@@ -885,6 +885,15 @@
     "recyle_loc_info": "Estimated recycling location information",
     "recyc_loc_info": "Recycling location information"
   },
+  "internalTransfer": {
+    "internal_transfer_request": "Internal Transfer Request",
+    "sender_warehouse": "Sender Warehouse",
+    "receiver_warehouse": "Receiver Warehouse",
+    "item_information": "Item information",
+    "date_time":"Date and Time",
+    "others": "Others",
+    "confirm_reject": "Are you sure to reject the request?"
+  },
   "userGroup": {
     "title": "User Group",
     "change": "Change",

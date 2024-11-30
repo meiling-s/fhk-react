@@ -883,6 +883,15 @@
     "recyle_loc_info": "預計回收地點資料",
     "recyc_loc_info": "回收地點資料"
   },
+  "internalTransfer": {
+    "internal_transfer_request": "内部運送請求",
+    "sender_warehouse": "送出貨倉",
+    "receiver_warehouse": "送入貨倉",
+    "item_information": "物品資料",
+    "date_time": "日期及時間",
+    "others": "其他的",
+    "confirm_reject": "确认拒绝内部运送请求吗？"
+  },
   "userGroup": {
     "title": "用戶群組",
     "change": "更改",
