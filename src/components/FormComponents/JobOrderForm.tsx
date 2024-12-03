@@ -4,104 +4,131 @@ import {
   Divider,
   IconButton,
   Stack,
-  Typography
-} from '@mui/material'
-import React, { useEffect, useState } from 'react'
-import { styles } from '../../constants/styles'
-import KeyboardTabIcon from '@mui/icons-material/KeyboardTab'
-import CustomField from './CustomField'
-import StatusCard from '../StatusCard'
-import { DriverDetail, JobListOrder, Row } from '../../interfaces/JobOrderInterfaces'
-import { useNavigate } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
-import { displayCreatedDate, extractError } from '../../utils/utils'
-import { localStorgeKeyName, STATUS_CODE } from '../../constants/constant'
-import { PickupOrderDetail } from '../../interfaces/pickupOrder'
-import { getPicoById } from '../../APICalls/Collector/pickupOrder/pickupOrder'
-import JobOrderCard from '../JobOrderCard'
-import CustomButton from './CustomButton'
-import { getDriverDetailById } from '../../APICalls/jobOrder'
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
-import { useContainer } from 'unstated-next'
-import CommonTypeContainer from '../../contexts/CommonTypeContainer'
-import { getTenantById } from '../../APICalls/tenantManage'
-import { getAllDenialReason } from '../../APICalls/Collector/denialReason'
-import { DenialReason } from '../../interfaces/denialReason'
+  Typography,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { styles } from "../../constants/styles";
+import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
+import CustomField from "./CustomField";
+import StatusCard from "../StatusCard";
+import {
+  DriverDetail,
+  JobListOrder,
+  Row,
+} from "../../interfaces/JobOrderInterfaces";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import {
+  displayCreatedDate,
+  extractError,
+  getThemeColorRole,
+  returnApiToken,
+} from "../../utils/utils";
+import { localStorgeKeyName, STATUS_CODE } from "../../constants/constant";
+import { PickupOrderDetail } from "../../interfaces/pickupOrder";
+import { getPicoById } from "../../APICalls/Collector/pickupOrder/pickupOrder";
+import JobOrderCard from "../JobOrderCard";
+import CustomButton from "./CustomButton";
+import {
+  editJobOrderStatus,
+  getDriverDetailById,
+} from "../../APICalls/jobOrder";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import { useContainer } from "unstated-next";
+import CommonTypeContainer from "../../contexts/CommonTypeContainer";
+import { getTenantById } from "../../APICalls/tenantManage";
+import { getAllDenialReason } from "../../APICalls/Collector/denialReason";
+import { DenialReason } from "../../interfaces/denialReason";
+import CustomDatePicker from "./CustomDatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { toast } from "react-toastify";
 
-dayjs.extend(utc)
-dayjs.extend(timezone)
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const JobOrderForm = ({
   onClose,
   selectedRow,
-  onApproved
+  onApproved,
+  onReject,
+  onSuccess,
 }: {
-  onClose?: () => void
-  selectedRow: Row | null
-  onApproved: () => void
+  onClose: () => void;
+  selectedRow: Row | null;
+  onApproved: () => void;
+  onReject: () => void;
+  onSuccess: () => void;
 }) => {
-  const { t, i18n } = useTranslation()
-  const role = localStorage.getItem(localStorgeKeyName.role)
+  console.log(selectedRow, "row");
+  const { t, i18n } = useTranslation();
+  const role =
+    localStorage.getItem(localStorgeKeyName.role) || "collectoradmin";
 
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     if (event.target === event.currentTarget) {
       // If the overlay is clicked (not its children), close the modal
-      onClose && onClose()
+      onClose && onClose();
     }
-  }
-  const navigate = useNavigate()
+  };
+  const navigate = useNavigate();
 
-  const [selectedJobOrder, setSelectedJobOrder] = useState<Row>()
-  const [pickupOrderDetail, setPickUpOrderDetail] = useState<PickupOrderDetail[]>()
-  const [driverDetail, setDriverDetail] = useState<DriverDetail>()
-  const { dateFormat, logisticList } = useContainer(CommonTypeContainer)
-  const [denialReasonList, setDenialReasonList] = useState<DenialReason[]>([])
+  const [selectedJobOrder, setSelectedJobOrder] = useState<Row>();
+  const [pickupOrderDetail, setPickUpOrderDetail] =
+    useState<PickupOrderDetail[]>();
+  const [driverDetail, setDriverDetail] = useState<DriverDetail>();
+  const { dateFormat, logisticList } = useContainer(CommonTypeContainer);
+  const [denialReasonList, setDenialReasonList] = useState<DenialReason[]>([]);
+  const [selectedDate, setSelectedDate] = useState("");
+  const auth = returnApiToken();
 
   const fetchTenantDetails = async (tenantId: number) => {
     try {
-      const result = await getTenantById(tenantId)
-      const data = result?.data
+      const result = await getTenantById(tenantId);
+      const data = result?.data;
 
-      if (i18n.language === 'enus') {
-        return data.companyNameEng
-      } else if (i18n.language === 'zhhk') {
-        return data.companyNameTchi
+      if (i18n.language === "enus") {
+        return data.companyNameEng;
+      } else if (i18n.language === "zhhk") {
+        return data.companyNameTchi;
       } else {
-        return data.companyNameSchi
+        return data.companyNameSchi;
       }
     } catch (error: any) {
-      const { state } = extractError(error)
+      const { state } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
-      console.error(`Error fetching tenant ${tenantId}:`, error)
-      return null
+      console.error(`Error fetching tenant ${tenantId}:`, error);
+      return null;
     }
-  }
+  };
 
   const getPicoDetail = async () => {
     if (selectedRow?.picoId) {
       const result = await getPicoById(selectedRow?.picoId.toString());
       if (result?.data.pickupOrderDetail?.length > 0) {
         const updatedPickupOrderDetails = await Promise.all(
-          result.data.pickupOrderDetail.map(async (item: {
-            receiverName: any;
-            receiverId: number;
-            senderId: number;
-            senderName: any
-          }) => {
-            const senderName = await fetchTenantDetails(item.senderId);
-            const receiverName = await fetchTenantDetails(item.receiverId);
-            return {
-              ...item,
-              senderName: senderName || item.senderName,
-              receiverName: receiverName || item.receiverName
-            };
-          })
+          result.data.pickupOrderDetail.map(
+            async (item: {
+              receiverName: any;
+              receiverId: number;
+              senderId: number;
+              senderName: any;
+            }) => {
+              const senderName = await fetchTenantDetails(item.senderId);
+              const receiverName = await fetchTenantDetails(item.receiverId);
+              return {
+                ...item,
+                senderName: senderName || item.senderName,
+                receiverName: receiverName || item.receiverName,
+              };
+            }
+          )
         );
 
         const picoDetailItem = updatedPickupOrderDetails.find(
@@ -112,147 +139,251 @@ const JobOrderForm = ({
     }
   };
 
-  const getDriverDetail = async () => {
-    if (selectedRow?.driverId) {
-      const result = await getDriverDetailById(selectedRow?.driverId.toString())
-      if (result?.data) {
-        setDriverDetail(result.data || {})
-      }
-    }
-  }
+  const onSaveDate = async () => {
+    const updateJOStatus = {
+      status: "UNASSIGNED",
+      reason: [],
+      updatedBy: auth.loginId,
+      pickupDate: selectedDate.split("T")[0],
+    };
 
-  const getDenialReason = async () => {
-    const result = await getAllDenialReason(0, 1000)
-    const data = result.data.content
-    if (data) {
-      setDenialReasonList(data)
-    }
-  }
-
-  useEffect(() => {
     if (selectedRow) {
-      setSelectedJobOrder(selectedRow)
-      getPicoDetail()
-      getDriverDetail()
-      getDenialReason()
-    }
-  }, [selectedRow])
-
-  const getReasonName = (reasonId: string) => {
-    const selectedReason = denialReasonList.find(value => value.reasonId.toString() === reasonId);
-    switch (i18n.language) {
-      case 'zhhk':
-        return selectedReason?.reasonNameTchi || '';
-      case 'zhch':
-        return selectedReason?.reasonNameSchi || '';
-      case 'enus':
-        return selectedReason?.reasonNameEng || '';
-      default:
-        return selectedReason?.reasonNameEng || '';
+      try {
+        const result = await editJobOrderStatus(
+          selectedRow?.joId,
+          updateJOStatus
+        );
+        if (result) {
+          toast.info(t("job_order.approved_success"), {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+          onSuccess();
+        }
+      } catch (error) {
+        console.error("Error Update Date:", error);
+      }
     }
   };
 
-  const reasons = selectedRow?.reason?.map(reason => getReasonName(reason)).filter(reasonName => reasonName.length > 0) || [];
+  const getDriverDetail = async () => {
+    if (selectedRow?.driverId) {
+      const result = await getDriverDetailById(
+        selectedRow?.driverId.toString()
+      );
+      if (result?.data) {
+        setDriverDetail(result.data || {});
+      }
+    }
+  };
+
+  const getDenialReason = async () => {
+    const result = await getAllDenialReason(0, 1000);
+    const data = result.data.content;
+    if (data) {
+      setDenialReasonList(data);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedRow) {
+      console.log(selectedRow, "selectedRow");
+      setSelectedDate(selectedRow.pickupAt ?? "");
+      setSelectedJobOrder(selectedRow);
+      getPicoDetail();
+      getDriverDetail();
+      getDenialReason();
+    }
+  }, [selectedRow]);
+
+  const getReasonName = (reasonId: string) => {
+    const selectedReason = denialReasonList.find(
+      (value) => value.reasonId.toString() === reasonId
+    );
+    switch (i18n.language) {
+      case "zhhk":
+        return selectedReason?.reasonNameTchi || "";
+      case "zhch":
+        return selectedReason?.reasonNameSchi || "";
+      case "enus":
+        return selectedReason?.reasonNameEng || "";
+      default:
+        return selectedReason?.reasonNameEng || "";
+    }
+  };
+
+  const reasons =
+    selectedRow?.reason
+      ?.map((reason) => getReasonName(reason))
+      .filter((reasonName) => reasonName.length > 0) || [];
 
   const formattedReasons = reasons
-    .map((reason, index) => index === reasons.length - 1 ? reason + '.' : reason + ', ')
-    .join('');
+    .map((reason, index) =>
+      index === reasons.length - 1 ? reason + "." : reason + ", "
+    )
+    .join("");
 
   const itemCheck = () => {
     if (selectedRow?.reason !== undefined && selectedRow?.reason?.length > 0) {
-      if (i18n.language === 'enus') {
+      if (i18n.language === "enus") {
         if (selectedRow?.reason?.length < 2) {
-          return t('job_order.reason_single')
+          return t("job_order.reason_single");
         } else {
-          return t('job_order.reason_multi')
+          return t("job_order.reason_multi");
         }
       } else {
-        return t('job_order.reason_single')
+        return t("job_order.reason_single");
       }
     }
-  }
+  };
 
   return (
     <>
       <Box sx={localstyles.modal} onClick={handleOverlayClick}>
-        <Box sx={localstyles.container}>
-          <Box sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}>
-            <Box>
-              <Typography sx={styles.header4}>{t('job_order.item.detail')}</Typography>
-              <Typography sx={styles.header3}>
-                {selectedJobOrder?.labelId}
-              </Typography>
-            </Box>
-            <Box sx={{ display: 'flex', flexShrink: 0, ml: '20px' }}>
-              <StatusCard status={selectedJobOrder?.status} />
-            </Box>
-            <Box sx={{ marginLeft: 'auto' }}>
-              {
-                selectedRow?.status === 'DENY' &&
-                <CustomButton text={t('job_order.table.approve')} onClick={() => {
-                  onApproved()
-                }}></CustomButton>
-              }
-              <IconButton sx={{ ml: '25px' }} onClick={onClose}>
-                <KeyboardTabIcon sx={{ fontSize: '30px' }} />
-              </IconButton>
-            </Box>
-          </Box>
-          <Divider />
-          <Stack spacing={2} sx={localstyles.content}>
-            <Box>
-              <Typography sx={localstyles.typo_header}>{t('job_order.item.shipping_info')}</Typography>
-            </Box>
-
-            <CustomField label={t('job_order.item.date_time')}>
-              <Typography sx={localstyles.typo_fieldContent}>
-                {selectedJobOrder?.createdAt ? dayjs.utc(selectedJobOrder?.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`) : ''}
-              </Typography>
-            </CustomField>
-
-            <CustomField label={t('job_order.item.reference_po_number')}>
-              <Typography sx={localstyles.typo_fieldContent}>
-                {selectedJobOrder?.picoId}
-              </Typography>
-            </CustomField>
-            <Typography sx={localstyles.typo_header}>{t('job_order.item.rec_loc_info')}</Typography>
-            <JobOrderCard plateNo={selectedRow?.plateNo} pickupOrderDetail={pickupOrderDetail ?? []} driverDetail={driverDetail} />
-            {selectedRow?.status === 'DENY' && (
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
+          <Box sx={localstyles.container}>
+            <Box
+              sx={{ display: "flex", flex: "1", p: 4, alignItems: "center" }}
+            >
               <Box>
-                <Typography>{i18n.language === 'enus' ? driverDetail?.driverNameEng : i18n.language === 'zhch' ? driverDetail?.driverNameSchi : driverDetail?.driverNameTchi} {t('job_order.rejected_at')} {dayjs(selectedRow?.updatedAt).format(`${dateFormat} HH:mm`)}, {itemCheck()} {formattedReasons}</Typography>
+                <Typography sx={styles.header4}>
+                  {t("job_order.item.detail")}
+                </Typography>
+                <Typography sx={styles.header3}>
+                  {selectedJobOrder?.labelId}
+                </Typography>
               </Box>
-            )}
-          </Stack>
-        </Box>
+              {/* <Box sx={{ display: "flex", flexShrink: 0, ml: "20px" }}>
+                <StatusCard status={selectedJobOrder?.status} />
+              </Box> */}
+              <Box sx={{ marginLeft: "auto" }}>
+                {selectedRow?.status === "DENY" && (
+                  <CustomButton
+                    text={t("job_order.table.approve")}
+                    onClick={() => {
+                      onApproved();
+                    }}
+                  ></CustomButton>
+                )}
+                {selectedRow?.status === "UNASSIGNED" ||
+                selectedRow?.status === "ASSIGNED" ? (
+                  <CustomButton
+                    text={t("notification.modify_template.app.button_submit")}
+                    onClick={() => onSaveDate()}
+                    disabled={selectedDate === "" ? true : false}
+                  ></CustomButton>
+                ) : null}
+                {selectedRow?.status === "UNASSIGNED" ||
+                selectedRow?.status === "ASSIGNED" ? (
+                  <CustomButton
+                    text={t("job_order.cancel")}
+                    onClick={() => onReject()}
+                  ></CustomButton>
+                ) : null}
+                <IconButton sx={{ ml: "25px" }} onClick={onClose}>
+                  <KeyboardTabIcon sx={{ fontSize: "30px" }} />
+                </IconButton>
+              </Box>
+            </Box>
+            <Divider />
+            <Stack spacing={2} sx={localstyles.content}>
+              <Box>
+                <Typography sx={localstyles.typo_header}>
+                  {t("job_order.item.shipping_info")}
+                </Typography>
+              </Box>
+
+              <CustomField label={t("job_order.item.date_time")}>
+                <Typography sx={localstyles.typo_fieldContent}>
+                  {selectedJobOrder?.createdAt
+                    ? dayjs
+                        .utc(selectedJobOrder?.createdAt)
+                        .tz("Asia/Hong_Kong")
+                        .format(`${dateFormat} HH:mm`)
+                    : ""}
+                </Typography>
+              </CustomField>
+
+              <CustomField label={t("job_order.item.reference_po_number")}>
+                <Typography sx={localstyles.typo_fieldContent}>
+                  {selectedJobOrder?.picoId}
+                </Typography>
+              </CustomField>
+              <Typography sx={localstyles.typo_header}>
+                {t("job_order.item.rec_loc_info")}
+              </Typography>
+              <CustomField label={t("jobOrder.shippingDateAndTime")}>
+                <DatePicker
+                  value={dayjs(selectedDate)}
+                  slotProps={{ textField: { size: "small" } }}
+                  sx={localstyles.datePicker()}
+                  onChange={(values: any) => {
+                    setSelectedDate(
+                      dayjs(values).format("YYYY-MM-DDTHH:mm:ss")
+                    );
+                  }}
+                  format={dateFormat}
+                />
+              </CustomField>
+              <JobOrderCard
+                plateNo={selectedRow?.plateNo}
+                pickupOrderDetail={pickupOrderDetail ?? []}
+                driverDetail={driverDetail}
+              />
+              {selectedRow?.status === "DENY" && (
+                <Box>
+                  <Typography>
+                    {i18n.language === "enus"
+                      ? driverDetail?.driverNameEng
+                      : i18n.language === "zhch"
+                      ? driverDetail?.driverNameSchi
+                      : driverDetail?.driverNameTchi}{" "}
+                    {t("job_order.rejected_at")}{" "}
+                    {dayjs(selectedRow?.updatedAt).format(
+                      `${dateFormat} HH:mm`
+                    )}
+                    , {itemCheck()} {formattedReasons}
+                  </Typography>
+                </Box>
+              )}
+            </Stack>
+          </Box>
+        </LocalizationProvider>
       </Box>
     </>
-  )
-}
+  );
+};
 
 let localstyles = {
   modal: {
-    display: 'flex',
-    height: '100vh',
-    width: '100%',
-    justifyContent: 'flex-end'
+    display: "flex",
+    height: "100vh",
+    width: "100%",
+    justifyContent: "flex-end",
   },
   container: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    width: '40%',
-    bgcolor: 'white',
-    overflowY: 'scroll'
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+    width: "40%",
+    bgcolor: "white",
+    overflowY: "scroll",
   },
 
   button: {
-    borderColor: 'lightgreen',
-    color: 'green',
-    width: '100px',
-    height: '35px',
+    borderColor: "lightgreen",
+    color: "green",
+    width: "100px",
+    height: "35px",
     p: 1,
-    borderRadius: '18px',
-    mr: '10px'
+    borderRadius: "18px",
+    mr: "10px",
   },
   // header: {
   //   display: "flex",
@@ -263,26 +394,32 @@ let localstyles = {
   //
   content: {
     flex: 9,
-    p: 4
+    p: 4,
   },
   typo_header: {
-    fontSize: '16px',
-    fontWeight: '700',
-    color: '#717171',
-    letterSpacing: '1px',
-    mt: '10px'
+    fontSize: "16px",
+    fontWeight: "700",
+    color: "#717171",
+    letterSpacing: "1px",
+    mt: "10px",
   },
   typo_fieldTitle: {
-    fontSize: '13px',
-    color: '#ACACAC',
-    letterSpacing: '1px',
+    fontSize: "13px",
+    color: "#ACACAC",
+    letterSpacing: "1px",
   },
   typo_fieldContent: {
-    fontSize: '15px',
-    fontWeight: '700',
-    letterSpacing: '0.5px',
-    marginTop: '2px'
-  }
-}
+    fontSize: "15px",
+    fontWeight: "700",
+    letterSpacing: "0.5px",
+    marginTop: "2px",
+  },
+  datePicker: () => ({
+    width: "100%",
+    "& .MuiIconButton-edgeEnd": {
+      color: "#63D884",
+    },
+  }),
+};
 
-export default JobOrderForm
+export default JobOrderForm;
