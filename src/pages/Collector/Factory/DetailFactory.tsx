@@ -250,6 +250,7 @@ const DetailFactory: FunctionComponent<Props> = ({
       remark: remark,
       createdBy: token.loginId,
       updatedBy: token.loginId,
+      ...(action === 'edit' && {version: selectedItem?.version})
     }
 
     if (action === 'add') {
@@ -295,6 +296,8 @@ const DetailFactory: FunctionComponent<Props> = ({
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error.response.data.message)
       }
     }
   }
@@ -418,6 +421,7 @@ const DetailFactory: FunctionComponent<Props> = ({
                 onChange={(event) => setPlace(event.target.value)}
                 multiline={true}
                 disabled={action === 'delete'}
+                error={checkString(place)}
               />
             </CustomField>
             <CustomField label={t('factory.warehouse')} mandatory>
@@ -435,6 +439,7 @@ const DetailFactory: FunctionComponent<Props> = ({
                   editable={action !== 'delete'}
                   defaultSelected={selectedWarehouses}
                   needPrimaryColor={true}
+                  error={selectedWarehouses.length === 0}
                 />
               )) }
             </CustomField>
