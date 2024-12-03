@@ -2,16 +2,19 @@ import axiosInstance from '../../constants/axiosInstance'
 import {
   GET_ALL_CHECKIN_REQUESTS,
   GET_CHECKIN_REASON,
+  GET_INTERNAL_TRANSFER_REQUEST,
   NEW_GET_ALL_HEADER_CHECKIN_REQUESTS,
   NEW_GET_DETAIL_CHECKIN_REQUESTS,
   UPDATE_CHECK_IN,
-  UPDATE_CHECK_IN_STATUS
+  UPDATE_CHECK_IN_STATUS,
+  UPDATE_INTERNAL_TRANSFER_REQUEST_STATUS
 } from '../../constants/requests'
 import { CheckInWarehouse, updateStatus } from '../../interfaces/warehouse'
 import { localStorgeKeyName } from '../../constants/constant'
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs'
 import { returnApiToken } from '../../utils/utils'
 import { queryCheckIn } from '../../interfaces/checkin'
+import { queryInternalTransfer } from 'src/interfaces/internalTransferRequests'
 
 const warehouseAPI = {
   baseURL: window.baseURL.collector
@@ -145,5 +148,51 @@ export const getCheckinReasons = async () => {
   } catch (e) {
     console.error('get checkin reasons failed:', e)
     throw e
+  }
+}
+
+export const getInternalRequest = async (
+  page: number,
+  size: number,
+  query?: queryInternalTransfer
+) => {
+  try {
+    const token = returnApiToken()
+    let response = await axiosInstance({
+      ...GET_INTERNAL_TRANSFER_REQUEST(
+        token.tenantId
+      ),
+      baseURL: warehouseAPI.baseURL,
+      params: {
+        page: page,
+        size: size,
+        sort: "string",
+        recycTypeId: query?.recycTypeId,
+        recycSubTypeId: query?.recycSubTypeId
+      }
+    })
+    return response
+  } catch (e: any) {
+    // console.error('Get all check-in request failed:', e)
+    throw (e)
+  }
+}
+
+export const updateInternalRequestStatus = async (
+  item: any
+) => {
+  try {
+    const token = returnApiToken()
+    let response = await axiosInstance({
+      ...UPDATE_INTERNAL_TRANSFER_REQUEST_STATUS(
+        token.tenantId
+      ),
+      baseURL: warehouseAPI.baseURL,
+      data: item
+    })
+    return response
+  } catch (e: any) {
+    // console.error('Get all check-in request failed:', e)
+    throw (e)
   }
 }
