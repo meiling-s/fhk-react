@@ -43,12 +43,12 @@ const Tabs: React.FC<TabsProps> = ({
       <MuiTabs
         value={selected}
         onChange={handleChange}
-        variant={isMobile ? 'scrollable' : 'standard'}
+        variant={'scrollable'}
         scrollButtons
         allowScrollButtonsMobile
         className={`${className}`}
         sx={{
-          borderBottom: '1px solid #E2E2E2;'
+          borderBottom: '1px solid #E2E2E2;',
         }}
         TabIndicatorProps={{
           style: {
@@ -63,7 +63,7 @@ const Tabs: React.FC<TabsProps> = ({
               <span
                 style={{
                   fontWeight: selected === index ? 'bold' : 'normal',
-                  color: 'black'
+                  color: 'black',
                 }}
               >
                 {tab}
