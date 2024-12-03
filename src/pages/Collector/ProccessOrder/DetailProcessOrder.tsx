@@ -26,7 +26,11 @@ import {
   ProcessOrderDetailRecyc,
   ProcessOrderDetailProduct
 } from '../../../interfaces/processOrderQuery'
-import { getPrimaryColor, returnErrorMsg } from '../../../utils/utils'
+import {
+  getPrimaryColor,
+  returnErrorMsg,
+  showErrorToast
+} from '../../../utils/utils'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import { styles } from '../../../constants/styles'
@@ -45,21 +49,21 @@ import { il_item } from 'src/components/FormComponents/CustomItemListRecyble'
 import i18n from 'src/setups/i18n'
 import CustomTextField from 'src/components/FormComponents/CustomTextField'
 import { ProcessType } from 'src/interfaces/common'
-import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
-import { factory } from 'typescript'
 
 type CancelForm = {
   open: boolean
   onClose: () => void
   onRejected: () => void
   processOrderId: number | undefined
+  version: number
 }
 
 const CancelModal: React.FC<CancelForm> = ({
   open,
   onClose,
   onRejected,
-  processOrderId
+  processOrderId,
+  version
 }) => {
   const { t } = useTranslation()
   const role = localStorage.getItem(localStorgeKeyName.role) || ''
@@ -71,8 +75,8 @@ const CancelModal: React.FC<CancelForm> = ({
   const [otherReason, setOtherReason] = useState<il_item | undefined>(undefined)
   const [showRemark, setShowRemark] = useState<boolean>(false)
   const [remarkVal, setRemarkVal] = useState<string>('')
-  const [trySubmited, setTrySubmited] = useState<boolean>(false)
 
+  console.log(version)
   const initDenialReasonList = async () => {
     let result = null
     if (isCollectors()) {
@@ -113,8 +117,7 @@ const CancelModal: React.FC<CancelForm> = ({
     }
   }
 
-  const handleDeleteRequest = async () => {
-    setTrySubmited(true)
+  const handleCancelRequest = async () => {
     let reasonData: PorReason[] = []
     rejectReasonId.map((item) => {
       reasonData.push({
@@ -126,21 +129,16 @@ const CancelModal: React.FC<CancelForm> = ({
     const form: CancelFormPor = {
       status: 'CANCELLED',
       updatedBy: role,
-      version: 1,
+      version: version++,
       processOrderRejectReason: reasonData
-    }
-
-    if (showRemark && remarkVal === '') {
-      return
     }
 
     const result = await deleteProcessOrder(form, processOrderId!!)
     if (result) {
-      setTrySubmited(false)
       onClose()
       onRejected()
     } else {
-      setTrySubmited(true)
+      showErrorToast(t('common.cancelFailed'))
     }
   }
 
@@ -176,7 +174,7 @@ const CancelModal: React.FC<CancelForm> = ({
             />
             {showRemark && (
               <Box>
-                <CustomField label={t('common.remark')} mandatory>
+                <CustomField label={t('common.remark')}>
                   <CustomTextField
                     id="remark"
                     value={remarkVal}
@@ -184,30 +182,18 @@ const CancelModal: React.FC<CancelForm> = ({
                       'settings_page.recycling.remark_placeholder'
                     )}
                     onChange={(event) => setRemarkVal(event.target.value)}
-                    error={showRemark && remarkVal === '' && trySubmited}
                   />
                 </CustomField>
               </Box>
             )}
           </Box>
-
-          <Grid item sx={{ width: '100%', paddingRight: '42px' }}>
-            {showRemark && remarkVal === '' && trySubmited && (
-              <FormErrorMsg
-                key={'remark'}
-                field={t('common.remark')}
-                errorMsg={returnErrorMsg(formErr.empty, t)}
-                type={'error'}
-              />
-            )}
-          </Grid>
-
           <Box sx={{ alignSelf: 'center' }}>
             <CustomButton
               text={t('check_in.confirm')}
               color="blue"
+              disabled={rejectReasonId.length === 0}
               style={{ width: '175px', marginRight: '10px' }}
-              onClick={handleDeleteRequest}
+              onClick={handleCancelRequest}
             />
             <CustomButton
               text={t('check_in.cancel')}
@@ -700,6 +686,7 @@ const DetailProcessOrder = ({
               handleDrawerClose()
             }}
             onRejected={onDeleteReason}
+            version={selectedRow?.version || 1}
             processOrderId={selectedRow?.processOrderId}
           ></CancelModal>
         </RightOverlayForm>
