@@ -488,6 +488,13 @@ const InputProcessForm = ({
       return
     }
 
+    let tempRandomId = Math.floor(Math.random() * 90000) + 10000
+    let isUpdate = false
+    if (processOrderDetail[0].processIn.idPair) {
+      tempRandomId = processOrderDetail[0].processIn.idPair
+      isUpdate = true
+    }
+
     /** note :
      * eg: PAIR A
      * plannedEndAtData = plannedStartAt(from input) + duration (from api)
@@ -496,30 +503,33 @@ const InputProcessForm = ({
      * plannedEndAtData = plannedEndAtData B + duration
      * and continues sequence
      * **/
-    const plannedStartAtData =
-      dataSet.length === 0
-        ? plannedStartAtInput
-        : dataSet[dataSet.length - 1].processOut.plannedEndAt
-    const estEndTime = await getEstimateEndDate(plannedStartAtData)
-    const plannedEndAtData = dayjs(estEndTime).format(
-      'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
-    )
 
-    let tempRandomId = Math.floor(Math.random() * 90000) + 10000
-    let isUpdate = false
-    if (processOrderDetail[0].processIn.idPair) {
-      tempRandomId = processOrderDetail[0].processIn.idPair
-      isUpdate = true
-    }
-    Object.entries(processOrderDetail[0]).map(([key, value]) => {
-      value.processTypeId = processTypeId
+    if (!isUpdate) {
+      const plannedStartAtData =
+        dataSet.length === 0
+          ? plannedStartAtInput
+          : dataSet[dataSet.length - 1].processOut.plannedEndAt
+
+      const estEndTime = await getEstimateEndDate(plannedStartAtData)
+      const plannedEndAtData = dayjs(estEndTime).format(
+        'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
+      )
+
+      // Only update processOrderDetail's plannedStartAt and plannedEndAt when not updating
       processOrderDetail[0].processIn.plannedStartAt = plannedStartAtData
       processOrderDetail[0].processOut.plannedEndAt = plannedEndAtData
+    }
+
+    Object.entries(processOrderDetail[0]).map(([key, value]) => {
+      value.processTypeId = processTypeId
+      // if (!isUpdate) {
+      // processOrderDetail[0].processIn.plannedStartAt = plannedStartAtData
+      // processOrderDetail[0].processOut.plannedEndAt = plannedEndAtData
+      // }
       value.idPair = tempRandomId
     })
 
     onSave(processOrderDetail, isUpdate)
-    console.log('submit data', processOrderDetail)
     handleDrawerClose()
   }
 
