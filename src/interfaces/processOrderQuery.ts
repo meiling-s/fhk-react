@@ -79,6 +79,7 @@ export type ProcessOrderItem = {
   updatedBy: string | null
   processOrderDetail: ProcessOrderDetail[]
   processOrderRejectReason: ProcessOrderRejectReason[]
+  version: number
 }
 
 type ProcessInItem = {

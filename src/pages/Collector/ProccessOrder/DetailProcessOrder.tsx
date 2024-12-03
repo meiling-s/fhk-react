@@ -26,7 +26,11 @@ import {
   ProcessOrderDetailRecyc,
   ProcessOrderDetailProduct
 } from '../../../interfaces/processOrderQuery'
-import { getPrimaryColor, returnErrorMsg } from '../../../utils/utils'
+import {
+  getPrimaryColor,
+  returnErrorMsg,
+  showErrorToast
+} from '../../../utils/utils'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import { styles } from '../../../constants/styles'
@@ -45,42 +49,21 @@ import { il_item } from 'src/components/FormComponents/CustomItemListRecyble'
 import i18n from 'src/setups/i18n'
 import CustomTextField from 'src/components/FormComponents/CustomTextField'
 import { ProcessType } from 'src/interfaces/common'
-import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
-import ConfirmModal from 'src/components/SpecializeComponents/ConfirmationModal'
-
-type remarksForm = {
-  open: boolean
-  onClose: () => void
-  onConfirm: () => void
-}
-
-const RemarksModal: React.FC<remarksForm> = ({ open, onClose, onConfirm }) => {
-  const { t } = useTranslation()
-
-  return (
-    <ConfirmModal
-      isOpen={open}
-      message={t('pick_up_order.confirm_empty_remarks')}
-      onConfirm={async () => {
-        onConfirm()
-      }}
-      onCancel={() => onClose()}
-    />
-  )
-}
 
 type CancelForm = {
   open: boolean
   onClose: () => void
   onRejected: () => void
   processOrderId: number | undefined
+  version: number
 }
 
 const CancelModal: React.FC<CancelForm> = ({
   open,
   onClose,
   onRejected,
-  processOrderId
+  processOrderId,
+  version
 }) => {
   const { t } = useTranslation()
   const role = localStorage.getItem(localStorgeKeyName.role) || ''
@@ -92,9 +75,8 @@ const CancelModal: React.FC<CancelForm> = ({
   const [otherReason, setOtherReason] = useState<il_item | undefined>(undefined)
   const [showRemark, setShowRemark] = useState<boolean>(false)
   const [remarkVal, setRemarkVal] = useState<string>('')
-  const [trySubmited, setTrySubmited] = useState<boolean>(false)
-  const [showRemarksModal, setShowRemarksModal] = useState<boolean>(false)
 
+  console.log(version)
   const initDenialReasonList = async () => {
     let result = null
     if (isCollectors()) {
@@ -135,14 +117,7 @@ const CancelModal: React.FC<CancelForm> = ({
     }
   }
 
-  const checkRemarks = () => {
-    if (remarkVal === '' && showRemark) {
-      setShowRemarksModal(true)
-    }
-  }
-
   const handleCancelRequest = async () => {
-    setTrySubmited(true)
     let reasonData: PorReason[] = []
     rejectReasonId.map((item) => {
       reasonData.push({
@@ -154,17 +129,16 @@ const CancelModal: React.FC<CancelForm> = ({
     const form: CancelFormPor = {
       status: 'CANCELLED',
       updatedBy: role,
-      version: 2,
+      version: version++,
       processOrderRejectReason: reasonData
     }
 
     const result = await deleteProcessOrder(form, processOrderId!!)
     if (result) {
-      setTrySubmited(false)
       onClose()
       onRejected()
     } else {
-      setTrySubmited(true)
+      showErrorToast(t('common.cancelFailed'))
     }
   }
 
@@ -219,7 +193,7 @@ const CancelModal: React.FC<CancelForm> = ({
               color="blue"
               disabled={rejectReasonId.length === 0}
               style={{ width: '175px', marginRight: '10px' }}
-              onClick={checkRemarks}
+              onClick={handleCancelRequest}
             />
             <CustomButton
               text={t('check_in.cancel')}
@@ -232,11 +206,6 @@ const CancelModal: React.FC<CancelForm> = ({
             />
           </Box>
         </Stack>
-        <RemarksModal
-          open={showRemarksModal}
-          onClose={() => setShowRemarksModal(false)}
-          onConfirm={handleCancelRequest}
-        ></RemarksModal>
       </Box>
     </Modal>
   )
@@ -717,6 +686,7 @@ const DetailProcessOrder = ({
               handleDrawerClose()
             }}
             onRejected={onDeleteReason}
+            version={selectedRow?.version || 1}
             processOrderId={selectedRow?.processOrderId}
           ></CancelModal>
         </RightOverlayForm>
