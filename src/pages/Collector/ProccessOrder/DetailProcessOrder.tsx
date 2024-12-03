@@ -46,7 +46,28 @@ import i18n from 'src/setups/i18n'
 import CustomTextField from 'src/components/FormComponents/CustomTextField'
 import { ProcessType } from 'src/interfaces/common'
 import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
-import { factory } from 'typescript'
+import ConfirmModal from 'src/components/SpecializeComponents/ConfirmationModal'
+
+type remarksForm = {
+  open: boolean
+  onClose: () => void
+  onConfirm: () => void
+}
+
+const RemarksModal: React.FC<remarksForm> = ({ open, onClose, onConfirm }) => {
+  const { t } = useTranslation()
+
+  return (
+    <ConfirmModal
+      isOpen={open}
+      message={t('pick_up_order.confirm_empty_remarks')}
+      onConfirm={async () => {
+        onConfirm()
+      }}
+      onCancel={() => onClose()}
+    />
+  )
+}
 
 type CancelForm = {
   open: boolean
@@ -72,6 +93,7 @@ const CancelModal: React.FC<CancelForm> = ({
   const [showRemark, setShowRemark] = useState<boolean>(false)
   const [remarkVal, setRemarkVal] = useState<string>('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
+  const [showRemarksModal, setShowRemarksModal] = useState<boolean>(false)
 
   const initDenialReasonList = async () => {
     let result = null
@@ -113,7 +135,13 @@ const CancelModal: React.FC<CancelForm> = ({
     }
   }
 
-  const handleDeleteRequest = async () => {
+  const checkRemarks = () => {
+    if (remarkVal === '' && showRemark) {
+      setShowRemarksModal(true)
+    }
+  }
+
+  const handleCancelRequest = async () => {
     setTrySubmited(true)
     let reasonData: PorReason[] = []
     rejectReasonId.map((item) => {
@@ -126,12 +154,8 @@ const CancelModal: React.FC<CancelForm> = ({
     const form: CancelFormPor = {
       status: 'CANCELLED',
       updatedBy: role,
-      version: 1,
+      version: 2,
       processOrderRejectReason: reasonData
-    }
-
-    if (showRemark && remarkVal === '') {
-      return
     }
 
     const result = await deleteProcessOrder(form, processOrderId!!)
@@ -176,7 +200,7 @@ const CancelModal: React.FC<CancelForm> = ({
             />
             {showRemark && (
               <Box>
-                <CustomField label={t('common.remark')} mandatory>
+                <CustomField label={t('common.remark')}>
                   <CustomTextField
                     id="remark"
                     value={remarkVal}
@@ -184,30 +208,18 @@ const CancelModal: React.FC<CancelForm> = ({
                       'settings_page.recycling.remark_placeholder'
                     )}
                     onChange={(event) => setRemarkVal(event.target.value)}
-                    error={showRemark && remarkVal === '' && trySubmited}
                   />
                 </CustomField>
               </Box>
             )}
           </Box>
-
-          <Grid item sx={{ width: '100%', paddingRight: '42px' }}>
-            {showRemark && remarkVal === '' && trySubmited && (
-              <FormErrorMsg
-                key={'remark'}
-                field={t('common.remark')}
-                errorMsg={returnErrorMsg(formErr.empty, t)}
-                type={'error'}
-              />
-            )}
-          </Grid>
-
           <Box sx={{ alignSelf: 'center' }}>
             <CustomButton
               text={t('check_in.confirm')}
               color="blue"
+              disabled={rejectReasonId.length === 0}
               style={{ width: '175px', marginRight: '10px' }}
-              onClick={handleDeleteRequest}
+              onClick={checkRemarks}
             />
             <CustomButton
               text={t('check_in.cancel')}
@@ -220,6 +232,11 @@ const CancelModal: React.FC<CancelForm> = ({
             />
           </Box>
         </Stack>
+        <RemarksModal
+          open={showRemarksModal}
+          onClose={() => setShowRemarksModal(false)}
+          onConfirm={handleCancelRequest}
+        ></RemarksModal>
       </Box>
     </Modal>
   )

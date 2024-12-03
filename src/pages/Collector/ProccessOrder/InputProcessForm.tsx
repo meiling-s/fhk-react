@@ -522,10 +522,6 @@ const InputProcessForm = ({
 
     Object.entries(processOrderDetail[0]).map(([key, value]) => {
       value.processTypeId = processTypeId
-      // if (!isUpdate) {
-      // processOrderDetail[0].processIn.plannedStartAt = plannedStartAtData
-      // processOrderDetail[0].processOut.plannedEndAt = plannedEndAtData
-      // }
       value.idPair = tempRandomId
     })
 
