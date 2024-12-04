@@ -974,7 +974,8 @@
     "success_assign": "Success Assign Job Order",
     "failed_assign": "Failed Assign Job Order",
     "cancel_alert": "Are you sure to cancel the Job Order?",
-    "cancel_reason": "Cancel reason(s)"
+    "cancel_reason": "Cancel reason(s)",
+    "store_date": "Change Date Successfully"
   },
   "notification": {
     "notification_menu": "Notice Template",

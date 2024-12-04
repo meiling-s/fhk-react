@@ -154,7 +154,7 @@ const JobOrderForm = ({
           updateJOStatus
         );
         if (result) {
-          toast.info(t("job_order.approved_success"), {
+          toast.info(t("jobOrder.store_date"), {
             position: "top-center",
             autoClose: 3000,
             hideProgressBar: true,
@@ -331,6 +331,7 @@ const JobOrderForm = ({
                     );
                   }}
                   format={dateFormat}
+                  minDate={dayjs()}
                 />
               </CustomField>
               <JobOrderCard

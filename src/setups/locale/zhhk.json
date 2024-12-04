@@ -971,7 +971,8 @@
     "success_assign": "成功分配工作訂單",
     "failed_assign": "分配作業訂單失敗",
     "cancel_alert": "您確定取消工作訂單嗎？",
-    "cancel_reason": "取消原因"
+    "cancel_reason": "取消原因",
+    "store_date": "更改日期成功"
   },
   "notification": {
     "notification_menu": "通知範本",
