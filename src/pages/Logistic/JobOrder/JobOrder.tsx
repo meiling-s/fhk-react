@@ -210,7 +210,7 @@ const RejectModal: React.FC<RejectForm> = ({
           updateJOStatus
         );
         if (result) {
-          toast.info(t("pick_up_order.rejected_success"), {
+          toast.info(t("common.cancelSuccessfully"), {
             position: "top-center",
             autoClose: 3000,
             hideProgressBar: true,
@@ -244,13 +244,13 @@ const RejectModal: React.FC<RejectForm> = ({
               component="h2"
               sx={{ fontWeight: "bold" }}
             >
-              {t("check_out.confirm_reject")}
+              {t("jobOrder.cancel_alert")}
             </Typography>
           </Box>
           <Divider />
           <Box>
             <Typography sx={localstyles.typo}>
-              {t("check_out.reject_reasons")}
+              {t("jobOrder.cancel_reason")}
             </Typography>
             <CustomItemList
               items={reasonList}
@@ -351,6 +351,12 @@ const JobOrder = () => {
       labelEng: "ASSIGNED",
       labelSchi: "已指派",
       labelTchi: "已指派",
+    },
+    {
+      value: "CANCELLED",
+      labelEng: "CANCELLED",
+      labelSchi: "已取消",
+      labelTchi: "已取消",
     },
     {
       value: "",
@@ -570,6 +576,8 @@ const JobOrder = () => {
   const resetPage = async () => {
     setApproveModal(false);
     setRejectModal(false);
+    setOpenModal(false);
+    setSelectedRow(null);
     initJobOrderRequest();
   };
 
@@ -767,7 +775,8 @@ const JobOrder = () => {
   }, 1000);
 
   const successChangeDate = () => {
-    handleCloses();
+    setOpenModal(false);
+    setSelectedRow(null);
     initJobOrderRequest();
   };
 

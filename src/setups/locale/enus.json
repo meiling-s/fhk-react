@@ -972,7 +972,9 @@
     "assign_driver": "Assign a driver",
     "shippingDateAndTime": "Shipping Datetime",
     "success_assign": "Success Assign Job Order",
-    "failed_assign": "Failed Assign Job Order"
+    "failed_assign": "Failed Assign Job Order",
+    "cancel_alert": "Are you sure to cancel the Job Order?",
+    "cancel_reason": "Cancel reason(s)"
   },
   "notification": {
     "notification_menu": "Notice Template",

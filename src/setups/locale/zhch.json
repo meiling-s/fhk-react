@@ -972,7 +972,9 @@
     "assign_driver": "指派司机",
     "shippingDateAndTime": "运输日期及时间",
     "success_assign": "成功分配工作订单",
-    "failed_assign": "分配作业订单失败"
+    "failed_assign": "分配作业订单失败",
+    "cancel_alert": "您确定要取消该工作订单吗？",
+    "cancel_reason": "取消原因"
   },
   "notification": {
     "notification_menu": "通知范本",

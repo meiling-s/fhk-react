@@ -259,9 +259,9 @@ const JobOrderForm = ({
                   {selectedJobOrder?.labelId}
                 </Typography>
               </Box>
-              {/* <Box sx={{ display: "flex", flexShrink: 0, ml: "20px" }}>
+              <Box sx={{ display: "flex", flexShrink: 0, ml: "20px" }}>
                 <StatusCard status={selectedJobOrder?.status} />
-              </Box> */}
+              </Box>
               <Box sx={{ marginLeft: "auto" }}>
                 {selectedRow?.status === "DENY" && (
                   <CustomButton
@@ -277,6 +277,7 @@ const JobOrderForm = ({
                     text={t("notification.modify_template.app.button_submit")}
                     onClick={() => onSaveDate()}
                     disabled={selectedDate === "" ? true : false}
+                    style={{ marginRight: 10 }}
                   ></CustomButton>
                 ) : null}
                 {selectedRow?.status === "UNASSIGNED" ||
@@ -284,6 +285,7 @@ const JobOrderForm = ({
                   <CustomButton
                     text={t("job_order.cancel")}
                     onClick={() => onReject()}
+                    outlined={true}
                   ></CustomButton>
                 ) : null}
                 <IconButton sx={{ ml: "25px" }} onClick={onClose}>
@@ -371,7 +373,7 @@ let localstyles = {
     display: "flex",
     flexDirection: "column",
     height: "100%",
-    width: "40%",
+    width: "45%",
     bgcolor: "white",
     overflowY: "scroll",
   },
