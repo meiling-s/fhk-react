@@ -1590,5 +1590,9 @@
     "factory": "工场",
     "warehouse": "貨倉",
     "introduction": "簡介"
+  },
+  "globalItemId": {
+    "globalItemId": "物品编号",
+    "enterGlobalItemId": "输入物品编号"
   }
 }

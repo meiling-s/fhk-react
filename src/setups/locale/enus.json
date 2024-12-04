@@ -1590,5 +1590,9 @@
     "factory": "Factory",
     "warehouse": "Warehouse",
     "introduction": "Introduction"
+  },
+  "globalItemId": {
+    "globalItemId": "Global Item ID",
+    "enterGlobalItemId": "Enter the Global Item ID"
   }
 }

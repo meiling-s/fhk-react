@@ -1584,5 +1584,9 @@
     "factory": "工場",
     "warehouse": "貨倉",
     "introduction": "簡介"
+  },
+  "globalItemId": {
+    "globalItemId": "物品編號",
+    "enterGlobalItemId": "輸入物品編號"
   }
 }
