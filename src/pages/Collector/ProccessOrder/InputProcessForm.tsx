@@ -245,7 +245,6 @@ const InputProcessForm = ({
         })
 
       // validation rectype and product type type
-      //processIn
       processOrderDetail[0].processIn.itemCategory === 'recycling'
         ? processOrderDetail[0].processIn.processOrderDetailRecyc.length ===
             0 &&
@@ -290,6 +289,150 @@ const InputProcessForm = ({
             problem: formErr.empty,
             type: 'error'
           })
+
+      // validation rectype and product subtype required
+      if (processOrderDetail[0].processIn.itemCategory === 'recycling') {
+        const recyData = processOrderDetail[0].processIn.processOrderDetailRecyc
+        recyData.forEach((item) => {
+          const selectedRecy = recycType?.find(
+            (src) => src.recycTypeId === item.recycTypeId
+          )
+
+          if (selectedRecy) {
+            if (
+              selectedRecy.recycSubType.length > 0 &&
+              item.recycSubTypeId === ''
+            ) {
+              tempV.push({
+                field:
+                  t('jobOrder.subcategory') +
+                  ' - ' +
+                  t('processOrder.table.processIn'),
+                problem: formErr.empty,
+                type: 'error'
+              })
+            }
+          }
+        })
+      } else {
+        const productData =
+          processOrderDetail[0].processIn.processOrderDetailProduct
+
+        productData.forEach((item) => {
+          const selectedProduct = productType?.find(
+            (src) => src.productTypeId === item.productTypeId
+          )
+
+          if (selectedProduct) {
+            //check subproduct
+            if (
+              selectedProduct.productSubType!!.length > 0 &&
+              item.productSubTypeId === ''
+            ) {
+              tempV.push({
+                field:
+                  t('pick_up_order.product_type.subtype') +
+                  ' - ' +
+                  t('processOrder.table.processIn'),
+                problem: formErr.empty,
+                type: 'error'
+              })
+            }
+
+            //check addonproduct
+            const subProduct = selectedProduct.productSubType?.find(
+              (src) => src.productSubTypeId === item.productSubTypeId
+            )
+            if (subProduct) {
+              if (
+                subProduct.productAddonType!!.length > 0 &&
+                item.productAddonId === ''
+              ) {
+                tempV.push({
+                  field:
+                    t('pick_up_order.product_type.add-on') +
+                    ' - ' +
+                    t('processOrder.table.processIn'),
+                  problem: formErr.empty,
+                  type: 'error'
+                })
+              }
+            }
+          }
+        })
+      }
+
+      if (processOrderDetail[0].processOut.itemCategory === 'recycling') {
+        const recyData =
+          processOrderDetail[0].processOut.processOrderDetailRecyc
+        recyData.forEach((item) => {
+          const selectedRecy = recycType?.find(
+            (src) => src.recycTypeId === item.recycTypeId
+          )
+
+          if (selectedRecy) {
+            if (
+              selectedRecy.recycSubType.length > 0 &&
+              item.recycSubTypeId === ''
+            ) {
+              tempV.push({
+                field:
+                  t('jobOrder.subcategory') +
+                  ' - ' +
+                  t('processOrder.table.processOut'),
+                problem: formErr.empty,
+                type: 'error'
+              })
+            }
+          }
+        })
+      } else {
+        const productData =
+          processOrderDetail[0].processOut.processOrderDetailProduct
+
+        productData.forEach((item) => {
+          const selectedProduct = productType?.find(
+            (src) => src.productTypeId === item.productTypeId
+          )
+
+          if (selectedProduct) {
+            //check subproduct
+            if (
+              selectedProduct.productSubType!!.length > 0 &&
+              item.productSubTypeId === ''
+            ) {
+              tempV.push({
+                field:
+                  t('pick_up_order.product_type.subtype') +
+                  ' - ' +
+                  t('processOrder.table.processOut'),
+                problem: formErr.empty,
+                type: 'error'
+              })
+            }
+
+            //check addonproduct
+            const subProduct = selectedProduct.productSubType?.find(
+              (src) => src.productSubTypeId === item.productSubTypeId
+            )
+            if (subProduct) {
+              if (
+                subProduct.productAddonType!!.length > 0 &&
+                item.productAddonId === ''
+              ) {
+                tempV.push({
+                  field:
+                    t('pick_up_order.product_type.add-on') +
+                    ' - ' +
+                    t('processOrder.table.processOut'),
+                  problem: formErr.empty,
+                  type: 'error'
+                })
+              }
+            }
+          }
+        })
+      }
 
       //warehouse validation
       processOrderDetail[0].processIn.processOrderDetailWarehouse.length ===

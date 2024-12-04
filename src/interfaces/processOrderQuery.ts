@@ -29,12 +29,6 @@ export type ProcessOrderDetailRecyc = {
   recycSubTypeId: string
 }
 
-// export type ProcessOrderDetailProduct = {
-//   productTypeId: string
-//   productSubTypeId: string
-//   productAddonId: string
-// }
-
 export type ProcessOrderDetailProduct = {
   productTypeId: string
   productSubTypeId: string
