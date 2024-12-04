@@ -972,7 +972,9 @@
     "failed_assign": "分配作業訂單失敗",
     "cancel_alert": "您確定取消工作訂單嗎？",
     "cancel_reason": "取消原因",
-    "store_date": "更改日期成功"
+    "store_date": "更改日期成功",
+    "changedate_alert": "確認更改運輸日期嗎？",
+    "changedate_reason": "更改原因（可多選）"
   },
   "notification": {
     "notification_menu": "通知範本",

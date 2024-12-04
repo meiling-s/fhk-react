@@ -3,6 +3,7 @@ import {
   Button,
   Divider,
   IconButton,
+  Modal,
   Stack,
   Typography,
 } from "@mui/material";
@@ -21,6 +22,7 @@ import { useTranslation } from "react-i18next";
 import {
   displayCreatedDate,
   extractError,
+  getPrimaryColor,
   getThemeColorRole,
   returnApiToken,
 } from "../../utils/utils";
@@ -45,6 +47,7 @@ import CustomDatePicker from "./CustomDatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { toast } from "react-toastify";
+import CustomItemList from "./CustomItemList";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -55,14 +58,21 @@ const JobOrderForm = ({
   onApproved,
   onReject,
   onSuccess,
+  reasonList,
+  setReasonModal,
+  selectedDate,
+  setSelectedDate,
 }: {
   onClose: () => void;
   selectedRow: Row | null;
   onApproved: () => void;
   onReject: () => void;
   onSuccess: () => void;
+  reasonList: any;
+  setReasonModal: (value: boolean) => void;
+  selectedDate: string;
+  setSelectedDate: (value: string) => void;
 }) => {
-  console.log(selectedRow, "row");
   const { t, i18n } = useTranslation();
   const role =
     localStorage.getItem(localStorgeKeyName.role) || "collectoradmin";
@@ -83,7 +93,6 @@ const JobOrderForm = ({
   const [driverDetail, setDriverDetail] = useState<DriverDetail>();
   const { dateFormat, logisticList } = useContainer(CommonTypeContainer);
   const [denialReasonList, setDenialReasonList] = useState<DenialReason[]>([]);
-  const [selectedDate, setSelectedDate] = useState("");
   const auth = returnApiToken();
 
   const fetchTenantDetails = async (tenantId: number) => {
@@ -275,7 +284,7 @@ const JobOrderForm = ({
                 selectedRow?.status === "ASSIGNED" ? (
                   <CustomButton
                     text={t("notification.modify_template.app.button_submit")}
-                    onClick={() => onSaveDate()}
+                    onClick={() => setReasonModal(true)}
                     disabled={selectedDate === "" ? true : false}
                     style={{ marginRight: 10 }}
                   ></CustomButton>
@@ -416,6 +425,12 @@ let localstyles = {
     fontWeight: "700",
     letterSpacing: "0.5px",
     marginTop: "2px",
+  },
+  typo: {
+    color: "#ACACAC",
+    fontSize: 13,
+    // fontWeight: "bold",
+    display: "flex",
   },
   datePicker: () => ({
     width: "100%",

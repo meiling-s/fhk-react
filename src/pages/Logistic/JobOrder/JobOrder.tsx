@@ -101,6 +101,123 @@ function createDenialReason(
   };
 }
 
+type ReasonForm = {
+  open: boolean;
+  onClose: () => void;
+  reasonList: any;
+  selectedRow: Row | null;
+  selectedDate: string;
+  onSuccess: () => void;
+};
+
+const SelectReasonModal: React.FC<ReasonForm> = ({
+  open,
+  onClose,
+  reasonList,
+  selectedRow,
+  selectedDate,
+  onSuccess,
+}) => {
+  const { t } = useTranslation();
+  const [rejectReasonId, setRejectReasonId] = useState<string[]>([]);
+
+  const handleSubmitRequest = async (rejectReasonId: string[]) => {
+    const auth = returnApiToken();
+    const rejectReason = rejectReasonId.map((id) => {
+      const reasonItem = reasonList.find(
+        (reason: { id: string }) => reason.id === id
+      );
+      return reasonItem ? reasonItem.name : "";
+    });
+    const updateJOStatus = {
+      status: "UNASSIGNED",
+      reason: rejectReason,
+      updatedBy: auth.loginId,
+      pickupDate: selectedDate.split("T")[0],
+    };
+
+    if (selectedRow) {
+      try {
+        const result = await editJobOrderStatus(
+          selectedRow?.joId,
+          updateJOStatus
+        );
+        if (result) {
+          toast.info(t("jobOrder.store_date"), {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+          onSuccess();
+        }
+      } catch (error) {
+        console.error("Error Update Date:", error);
+      }
+    }
+  };
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={localstyles.modal}>
+        <Stack spacing={2}>
+          <Box>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: "bold" }}
+            >
+              {t("jobOrder.changedate_alert")}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box>
+            <Typography sx={localstyles.typo}>
+              {t("jobOrder.changedate_reason")}
+            </Typography>
+            <CustomItemList
+              items={reasonList}
+              multiSelect={setRejectReasonId}
+              itemColor={{ bgColor: "#F0F9FF", borderColor: getPrimaryColor() }}
+            />
+          </Box>
+
+          <Box sx={{ alignSelf: "center" }}>
+            <CustomButton
+              text={t("check_in.confirm")}
+              color="blue"
+              style={{ width: "175px", marginRight: "10px" }}
+              onClick={() => {
+                handleSubmitRequest(rejectReasonId);
+                onClose();
+              }}
+            />
+            <CustomButton
+              text={t("check_in.cancel")}
+              color="blue"
+              outlined
+              style={{ width: "175px" }}
+              onClick={() => {
+                onClose();
+              }}
+            />
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  );
+};
+
 const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow }) => {
   const { t } = useTranslation();
   const auth = returnApiToken();
@@ -491,6 +608,8 @@ const JobOrder = () => {
   const [rejectModal, setRejectModal] = useState(false);
   const [reasonList, setReasonList] = useState<DenialReason[]>([]);
   const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const [reasonModal, setReasonModal] = useState<boolean>(false);
+  const [selectedDate, setSelectedDate] = useState<string>("");
 
   const initJobOrderRequest = async () => {
     // setIsLoading(true)
@@ -577,6 +696,7 @@ const JobOrder = () => {
     setApproveModal(false);
     setRejectModal(false);
     setOpenModal(false);
+    setReasonModal(false);
     setSelectedRow(null);
     initJobOrderRequest();
   };
@@ -794,6 +914,10 @@ const JobOrder = () => {
             onApproved={() => setApproveModal(true)}
             onReject={() => setRejectModal(true)}
             onSuccess={() => successChangeDate()}
+            setReasonModal={() => setReasonModal(!reasonModal)}
+            reasonList={reasonList}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
           />
         </Modal>
         <Box sx={{ display: "flex", alignItems: "center", ml: "6px" }}>
@@ -878,6 +1002,14 @@ const JobOrder = () => {
           onClose={resetPage}
           selectedRow={selectedRow}
           reasonList={reasonList}
+        />
+        <SelectReasonModal
+          open={reasonModal}
+          onClose={resetPage}
+          selectedRow={selectedRow}
+          reasonList={reasonList}
+          selectedDate={selectedDate}
+          onSuccess={() => setReasonModal(false)}
         />
       </Box>
     </>
