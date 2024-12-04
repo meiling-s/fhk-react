@@ -244,55 +244,68 @@ const InputProcessForm = ({
           type: 'error'
         })
 
-      // validation rectype and product type type
-      processOrderDetail[0].processIn.itemCategory === 'recycling'
-        ? processOrderDetail[0].processIn.processOrderDetailRecyc.length ===
-            0 &&
+      // 1. validation rectype and product type type
+      const productItemIn = processOrderDetail[0].processIn
+      const recyItemIn = processOrderDetail[0].processIn
+      const productItemOut = processOrderDetail[0].processOut
+      const recyItemOut = processOrderDetail[0].processOut
+
+      if (productItemIn.itemCategory === 'product') {
+        if (productItemIn.processOrderDetailProduct.length === 0) {
+          tempV.push({
+            field:
+              t('pick_up_order.product_type.product') +
+              '- ' +
+              t('processOrder.table.processIn'),
+
+            problem: formErr.empty,
+            type: 'error'
+          })
+        }
+      }
+
+      if (recyItemIn.itemCategory === 'recycling') {
+        if (recyItemIn.processOrderDetailRecyc.length === 0) {
           tempV.push({
             field:
               t('jobOrder.main_category') +
-              ' - ' +
+              '- ' +
               t('processOrder.table.processIn'),
             problem: formErr.empty,
             type: 'error'
           })
-        : processOrderDetail[0].processIn.processOrderDetailProduct.length ===
-            0 &&
+        }
+      }
+
+      if (productItemOut.itemCategory === 'product') {
+        if (productItemOut.processOrderDetailProduct.length === 0) {
           tempV.push({
             field:
               t('pick_up_order.product_type.product') +
-              ' - ' +
-              t('processOrder.table.processIn'),
+              '- ' +
+              t('processOrder.table.processOut'),
             problem: formErr.empty,
             type: 'error'
           })
+        }
+      }
 
-      //processOut
-      processOrderDetail[0].processOut.itemCategory === 'recycling'
-        ? processOrderDetail[0].processOut.processOrderDetailRecyc.length ===
-            0 &&
+      if (recyItemOut.itemCategory === 'recycling') {
+        if (recyItemOut.processOrderDetailRecyc.length === 0) {
           tempV.push({
             field:
               t('jobOrder.main_category') +
-              ' - ' +
+              '- ' +
               t('processOrder.table.processOut'),
             problem: formErr.empty,
             type: 'error'
           })
-        : processOrderDetail[0].processOut.processOrderDetailProduct.length ===
-            0 &&
-          tempV.push({
-            field:
-              t('pick_up_order.product_type.product') +
-              ' - ' +
-              t('processOrder.table.processOut'),
-            problem: formErr.empty,
-            type: 'error'
-          })
+        }
+      }
 
-      // validation rectype and product subtype required
-      if (processOrderDetail[0].processIn.itemCategory === 'recycling') {
-        const recyData = processOrderDetail[0].processIn.processOrderDetailRecyc
+      //2. validation rectype and product subtype required
+      if (recyItemIn.itemCategory === 'recycling') {
+        const recyData = recyItemIn.processOrderDetailRecyc
         recyData.forEach((item) => {
           const selectedRecy = recycType?.find(
             (src) => src.recycTypeId === item.recycTypeId
@@ -314,10 +327,10 @@ const InputProcessForm = ({
             }
           }
         })
-      } else {
-        const productData =
-          processOrderDetail[0].processIn.processOrderDetailProduct
+      }
 
+      if (productItemIn.itemCategory === 'product') {
+        const productData = productItemIn.processOrderDetailProduct
         productData.forEach((item) => {
           const selectedProduct = productType?.find(
             (src) => src.productTypeId === item.productTypeId
@@ -362,9 +375,8 @@ const InputProcessForm = ({
         })
       }
 
-      if (processOrderDetail[0].processOut.itemCategory === 'recycling') {
-        const recyData =
-          processOrderDetail[0].processOut.processOrderDetailRecyc
+      if (recyItemOut.itemCategory === 'recycling') {
+        const recyData = recyItemOut.processOrderDetailRecyc
         recyData.forEach((item) => {
           const selectedRecy = recycType?.find(
             (src) => src.recycTypeId === item.recycTypeId
@@ -386,9 +398,9 @@ const InputProcessForm = ({
             }
           }
         })
-      } else {
-        const productData =
-          processOrderDetail[0].processOut.processOrderDetailProduct
+      }
+      if (productItemOut.itemCategory === 'product') {
+        const productData = productItemOut.processOrderDetailProduct
 
         productData.forEach((item) => {
           const selectedProduct = productType?.find(
@@ -488,7 +500,7 @@ const InputProcessForm = ({
     validate()
   }, [
     processTypeId,
-    processOrderDetail[0],
+    processOrderDetail,
     processOrderDetail[0].processIn.estInWeight,
     processOrderDetail[0].processOut.estOutWeight
   ])
@@ -820,6 +832,7 @@ const InputProcessForm = ({
                                     : 'processOut'
                                 handleRecycChange(keyType, value)
                               }}
+                              subTypeRequired={true}
                               defaultRecycL={getDefaultRecy(key)}
                             />
                           </CustomField>
