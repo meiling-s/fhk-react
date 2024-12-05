@@ -151,8 +151,8 @@ const useDropupWeightDashboardWithIdRecycable = () => {
   };
 
   useEffect(() => {
-    getDropoffWeightData([], "0", vehicleId);
-  }, [vehicleId, recycType, productType, frmDate, toDate]);
+    getDropoffWeightData([], categoryType, vehicleId);
+  }, [vehicleId,categoryType, recycType, productType, frmDate, toDate]);
   const getDropoffWeightData = async (
     idList: string[],
     cateType: string,
@@ -255,7 +255,6 @@ const useDropupWeightDashboardWithIdRecycable = () => {
   const onCategoryChange = (value: string | "") => {
     setCategoryType(value);
     setCategoryList(getCategoryList(value));
-    getDropoffWeightData([], value, vehicleId);
   };
   const onVehicleNumberChange = (value: string | "") => {
     setVehicleId(value);

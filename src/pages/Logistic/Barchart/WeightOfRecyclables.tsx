@@ -46,21 +46,6 @@ const WeightOfRecyclables: FunctionComponent = () => {
         {t("dashboard_weight_of_recyclables.record")}
       </Typography>
       <Dashboard
-        labels={labels}
-        dataset={dataset}
-        onChangeFromDate={setFrmDate}
-        onChangeToDate={setToDate}
-        frmDate={frmDate}
-        toDate={toDate}
-        vehicleList={vehicleList}
-        categoryList={categoryList}
-        onMultipleCategoryChange={onMultipleCategoryChange}
-        onCategoryChange={onCategoryChange}
-        onVehicleNumberChange={onVehicleNumberChange}
-        title={t("dashboard_weight_of_recyclables.delivered_weight")}
-        typeChart="bar"
-      />
-      <Dashboard
         labels={labelsPick}
         dataset={datasetPick}
         onChangeFromDate={setFrmDatePick}
@@ -72,9 +57,25 @@ const WeightOfRecyclables: FunctionComponent = () => {
         onMultipleCategoryChange={onMultipleCategoryChangePick}
         onCategoryChange={onCategoryChangePick}
         onVehicleNumberChange={onVehicleNumberChangePick}
+        title={t("dashboard_weight_of_recyclables.delivered_weight")}
+        typeChart="bar"
+      />
+      <Dashboard
+        labels={labels}
+        dataset={dataset}
+        onChangeFromDate={setFrmDate}
+        onChangeToDate={setToDate}
+        frmDate={frmDate}
+        toDate={toDate}
+        vehicleList={vehicleList}
+        categoryList={categoryList}
+        onMultipleCategoryChange={onMultipleCategoryChange}
+        onCategoryChange={onCategoryChange}
+        onVehicleNumberChange={onVehicleNumberChange}
         title={t("dashboard_weight_of_recyclables.unloaded_weight")}
         typeChart="bar"
       />
+      
     </Box>
   );
 };

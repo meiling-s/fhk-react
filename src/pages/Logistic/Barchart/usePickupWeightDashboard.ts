@@ -157,8 +157,8 @@ const usePickupWeightDashboardWithIdRecycable = () => {
   };
 
   useEffect(() => {
-    getPickupWeightData([], "0", vehicleId);
-  }, [vehicleId, recycType, productType, frmDate, toDate]);
+    getPickupWeightData([], categoryType, vehicleId);
+  }, [vehicleId, categoryType, recycType, productType, frmDate, toDate]);
 
   const getPickupWeightData = async (
     idList: string[],
@@ -263,7 +263,6 @@ const usePickupWeightDashboardWithIdRecycable = () => {
   const onCategoryChange = (value: string | "") => {
     setCategoryType(value);
     setCategoryList(getCategoryList(value));
-    getPickupWeightData([], value, vehicleId);
   };
   const onVehicleNumberChange = (value: string | "") => {
     setVehicleId(value);
