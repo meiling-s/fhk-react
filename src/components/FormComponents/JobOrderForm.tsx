@@ -95,6 +95,7 @@ const JobOrderForm = ({
   const { dateFormat, logisticList } = useContainer(CommonTypeContainer);
   const [denialReasonList, setDenialReasonList] = useState<DenialReason[]>([]);
   const [isJoExists, setJoExists] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<boolean>(false);
   const auth = returnApiToken();
 
   const fetchTenantDetails = async (tenantId: number) => {
@@ -276,18 +277,13 @@ const JobOrderForm = ({
     if (reformatDate >= today) {
       setReasonModal(true);
     } else {
-      toast.info(t("jobOrder.invalid_date"), {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      setErrorMessage(true);
     }
   };
+
+  useEffect(() => {
+    setErrorMessage(false);
+  }, [selectedDate]);
 
   return (
     <Box sx={localstyles.modal} onClick={handleOverlayClick}>
@@ -343,7 +339,6 @@ const JobOrderForm = ({
                 {t("job_order.item.shipping_info")}
               </Typography>
             </Box>
-
             <CustomField label={t("job_order.item.date_time")}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedJobOrder?.createdAt
@@ -376,6 +371,11 @@ const JobOrderForm = ({
                 disabled={isJoExists}
               />
             </CustomField>
+            {errorMessage && (
+              <Typography sx={localstyles.errorMessage}>
+                {t("jobOrder.invalid_date")}
+              </Typography>
+            )}
             <JobOrderCard
               plateNo={selectedRow?.plateNo}
               pickupOrderDetail={pickupOrderDetail ?? []}
@@ -461,6 +461,12 @@ let localstyles = {
     fontSize: 13,
     // fontWeight: "bold",
     display: "flex",
+  },
+  errorMessage: {
+    fontSize: 14,
+    color: "red",
+    marginBottom: 10,
+    marginTop: 5,
   },
   datePicker: () => ({
     width: "100%",

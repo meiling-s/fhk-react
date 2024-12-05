@@ -215,7 +215,7 @@ const SelectReasonModal: React.FC<ReasonForm> = ({
           </Box>
           {isUsingOtherRemark && (
             <Grid item>
-              <CustomField label={t("tenant.detail.remark")} mandatory={true}>
+              <CustomField label={t("tenant.detail.remark")}>
                 <CustomTextField
                   id="otherRemark"
                   value={otherRemark}
