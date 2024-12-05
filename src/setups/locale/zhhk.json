@@ -974,7 +974,8 @@
     "cancel_reason": "取消原因",
     "store_date": "更改日期成功",
     "changedate_alert": "確認更改運輸日期嗎？",
-    "changedate_reason": "更改原因（可多選）"
+    "changedate_reason": "更改原因（可多選）",
+    "invalid_date": "選擇的日期早於今天。"
   },
   "notification": {
     "notification_menu": "通知範本",

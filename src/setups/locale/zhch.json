@@ -977,7 +977,8 @@
     "cancel_reason": "取消原因",
     "store_date": "更改日期成功",
     "changedate_alert": "确认更改运输日期吗？",
-    "changedate_reason": "更改原因（可多选）"
+    "changedate_reason": "更改原因（可多选）",
+    "invalid_date": "选择的日期早于今天。"
   },
   "notification": {
     "notification_menu": "通知范本",

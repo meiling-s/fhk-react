@@ -1,4 +1,11 @@
-import { Button, Modal, Typography, Pagination, Divider } from "@mui/material";
+import {
+  Button,
+  Modal,
+  Typography,
+  Pagination,
+  Divider,
+  Grid,
+} from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import { useLocation, useNavigate } from "react-router";
 import {
@@ -55,6 +62,8 @@ import {
   getAllDenialReason,
   getAllDenialReasonByFunctionId,
 } from "src/APICalls/Collector/denialReason";
+import CustomField from "src/components/FormComponents/CustomField";
+import CustomTextField from "src/components/FormComponents/CustomTextField";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -120,6 +129,18 @@ const SelectReasonModal: React.FC<ReasonForm> = ({
 }) => {
   const { t } = useTranslation();
   const [rejectReasonId, setRejectReasonId] = useState<string[]>([]);
+  const [otherRemark, setOtherRemark] = useState<string>("");
+  const [isUsingOtherRemark, setIsUsingOtherRemark] = useState<boolean>(false);
+
+  useEffect(() => {
+    const selectedReason = rejectReasonId.find((value) => value == "43");
+    if (!selectedReason) {
+      setOtherRemark("");
+      setIsUsingOtherRemark(false);
+    } else {
+      setIsUsingOtherRemark(true);
+    }
+  }, [rejectReasonId]);
 
   const handleSubmitRequest = async (rejectReasonId: string[]) => {
     const auth = returnApiToken();
@@ -134,6 +155,7 @@ const SelectReasonModal: React.FC<ReasonForm> = ({
       reason: rejectReason,
       updatedBy: auth.loginId,
       pickupDate: selectedDate.split("T")[0],
+      remark: isUsingOtherRemark ? otherRemark : "",
     };
 
     if (selectedRow) {
@@ -191,7 +213,18 @@ const SelectReasonModal: React.FC<ReasonForm> = ({
               itemColor={{ bgColor: "#F0F9FF", borderColor: getPrimaryColor() }}
             />
           </Box>
-
+          {isUsingOtherRemark && (
+            <Grid item>
+              <CustomField label={t("tenant.detail.remark")} mandatory={true}>
+                <CustomTextField
+                  id="otherRemark"
+                  value={otherRemark}
+                  placeholder={t("tenant.detail.remark")}
+                  onChange={(event) => setOtherRemark(event.target.value)}
+                />
+              </CustomField>
+            </Grid>
+          )}
           <Box sx={{ alignSelf: "center" }}>
             <CustomButton
               text={t("check_in.confirm")}

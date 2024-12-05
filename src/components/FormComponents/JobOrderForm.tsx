@@ -252,6 +252,29 @@ const JobOrderForm = ({
     }
   };
 
+  const handleClickStore = () => {
+    const reformatDate = new Date(selectedDate);
+    const today = new Date();
+
+    // Clear the time part of today's date for accurate comparison
+    today.setHours(0, 0, 0, 0);
+
+    if (reformatDate >= today) {
+      setReasonModal(true);
+    } else {
+      toast.info(t("jobOrder.invalid_date"), {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
   return (
     <>
       <Box sx={localstyles.modal} onClick={handleOverlayClick}>
@@ -284,7 +307,7 @@ const JobOrderForm = ({
                 selectedRow?.status === "ASSIGNED" ? (
                   <CustomButton
                     text={t("notification.modify_template.app.button_submit")}
-                    onClick={() => setReasonModal(true)}
+                    onClick={() => handleClickStore()}
                     disabled={selectedDate === "" ? true : false}
                     style={{ marginRight: 10 }}
                   ></CustomButton>
