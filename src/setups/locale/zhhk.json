@@ -1403,6 +1403,13 @@
     "collector": "回收物儀表盤",
     "capacity": "容量"
   },
+  "dashboard_weight_of_recyclables": {
+    "record": "提貨卸貨紀錄",
+    "delivered_weight": "提貨物品重量",
+    "unloaded_weight": "卸貨物品重量",
+    "item_type": "物品種類",
+    "car_number": "車牌號碼"
+  },
   "dashboard_manufacturer": {
     "data": "數據",
     "recycling_station": "各個回收站的回收物重量",

@@ -360,6 +360,12 @@ function MainDrawer() {
         value: t('vehicle.vehicle'),
         path: `/${realm}/vehicleDashboard`,
         functionName: 'vehicleDashboard'
+      },
+      {
+        name: "weightOfRecyclables",
+        value: t("dashboard_weight_of_recyclables.record"),
+        path: `/logistic/weightOfRecyclables`,
+        functionName: "weightOfRecyclables"
       }
     ]
   }
