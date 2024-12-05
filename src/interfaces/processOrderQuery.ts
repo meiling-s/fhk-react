@@ -29,12 +29,6 @@ export type ProcessOrderDetailRecyc = {
   recycSubTypeId: string
 }
 
-// export type ProcessOrderDetailProduct = {
-//   productTypeId: string
-//   productSubTypeId: string
-//   productAddonId: string
-// }
-
 export type ProcessOrderDetailProduct = {
   productTypeId: string
   productSubTypeId: string
@@ -79,6 +73,7 @@ export type ProcessOrderItem = {
   updatedBy: string | null
   processOrderDetail: ProcessOrderDetail[]
   processOrderRejectReason: ProcessOrderRejectReason[]
+  version: number
 }
 
 type ProcessInItem = {
