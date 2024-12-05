@@ -972,7 +972,13 @@
     "assign_driver": "Assign a driver",
     "shippingDateAndTime": "Shipping Datetime",
     "success_assign": "Success Assign Job Order",
-    "failed_assign": "Failed Assign Job Order"
+    "failed_assign": "Failed Assign Job Order",
+    "cancel_alert": "Are you sure to cancel the Job Order?",
+    "cancel_reason": "Cancel reason(s)",
+    "store_date": "Change Date Successfully",
+    "changedate_alert": "Are you sure you want to change the shipping date?",
+    "changedate_reason": "Reason for change (multiple choices available)",
+    "invalid_date": "Selected date is earlier than today."
   },
   "notification": {
     "notification_menu": "Notice Template",

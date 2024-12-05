@@ -59,6 +59,7 @@ export interface JobListOrder {
     updatedAt: string;
     updatedBy: string;
     reason: string[];
+    pickupAt?: string;
   }
   
   export interface DriverDetail {

@@ -1,7 +1,8 @@
 import {
   ASSIGN_DRIVER, REJECT_REASSIGN_DRIVER, GET_DRIVER, GET_VEHICLE_LOGISTIC, GET_ALL_JOB_ORDER, UPDATE_JOB_ORDER_STATUS, GET_DRIVER_DETAIL_BY_ID,
   GET_VEHICLE_PLATE_LIST,
-  GET_DRIVER_DATA
+  GET_DRIVER_DATA,
+  GET_PUJO_DATA
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
@@ -162,5 +163,19 @@ export const getVehicleDriverList = async () => {
     return response
   } catch (error) {
     throw(error)
+  }
+}
+
+export const getPuJoData = async (joId: string) => {
+  try {
+    const token = returnApiToken()
+    const response = await axiosInstance({
+      baseURL: window.baseURL.logistic,
+      ...GET_PUJO_DATA(token.realmApiRoute, token.decodeKeycloack, joId)
+    })
+
+    return response
+  } catch (error) {
+    throw (error)
   }
 }
