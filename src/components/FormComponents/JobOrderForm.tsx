@@ -34,6 +34,7 @@ import CustomButton from "./CustomButton";
 import {
   editJobOrderStatus,
   getDriverDetailById,
+  getPuJoData,
 } from "../../APICalls/jobOrder";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -93,6 +94,7 @@ const JobOrderForm = ({
   const [driverDetail, setDriverDetail] = useState<DriverDetail>();
   const { dateFormat, logisticList } = useContainer(CommonTypeContainer);
   const [denialReasonList, setDenialReasonList] = useState<DenialReason[]>([]);
+  const [isJoExists, setJoExists] = useState<boolean>(false);
   const auth = returnApiToken();
 
   const fetchTenantDetails = async (tenantId: number) => {
@@ -200,14 +202,26 @@ const JobOrderForm = ({
     }
   };
 
+  const getPuJoDetail = async () => {
+    if (selectedRow) {
+      const result = await getPuJoData(selectedRow?.joId);
+      const data = result.data;
+
+      console.log(data, "pujo data");
+      if (data.length > 0) {
+        setJoExists(true);
+      }
+    }
+  };
+
   useEffect(() => {
     if (selectedRow) {
-      console.log(selectedRow, "selectedRow");
       setSelectedDate(selectedRow.pickupAt ?? "");
       setSelectedJobOrder(selectedRow);
       getPicoDetail();
       getDriverDetail();
       getDenialReason();
+      getPuJoDetail();
     }
   }, [selectedRow]);
 
@@ -276,122 +290,115 @@ const JobOrderForm = ({
   };
 
   return (
-    <>
-      <Box sx={localstyles.modal} onClick={handleOverlayClick}>
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
-          <Box sx={localstyles.container}>
-            <Box
-              sx={{ display: "flex", flex: "1", p: 4, alignItems: "center" }}
-            >
-              <Box>
-                <Typography sx={styles.header4}>
-                  {t("job_order.item.detail")}
-                </Typography>
-                <Typography sx={styles.header3}>
-                  {selectedJobOrder?.labelId}
-                </Typography>
-              </Box>
-              <Box sx={{ display: "flex", flexShrink: 0, ml: "20px" }}>
-                <StatusCard status={selectedJobOrder?.status} />
-              </Box>
-              <Box sx={{ marginLeft: "auto" }}>
-                {selectedRow?.status === "DENY" && (
-                  <CustomButton
-                    text={t("job_order.table.approve")}
-                    onClick={() => {
-                      onApproved();
-                    }}
-                  ></CustomButton>
-                )}
-                {selectedRow?.status === "UNASSIGNED" ||
-                selectedRow?.status === "ASSIGNED" ? (
-                  <CustomButton
-                    text={t("notification.modify_template.app.button_submit")}
-                    onClick={() => handleClickStore()}
-                    disabled={selectedDate === "" ? true : false}
-                    style={{ marginRight: 10 }}
-                  ></CustomButton>
-                ) : null}
-                {selectedRow?.status === "UNASSIGNED" ||
-                selectedRow?.status === "ASSIGNED" ? (
-                  <CustomButton
-                    text={t("job_order.cancel")}
-                    onClick={() => onReject()}
-                    outlined={true}
-                  ></CustomButton>
-                ) : null}
-                <IconButton sx={{ ml: "25px" }} onClick={onClose}>
-                  <KeyboardTabIcon sx={{ fontSize: "30px" }} />
-                </IconButton>
-              </Box>
-            </Box>
-            <Divider />
-            <Stack spacing={2} sx={localstyles.content}>
-              <Box>
-                <Typography sx={localstyles.typo_header}>
-                  {t("job_order.item.shipping_info")}
-                </Typography>
-              </Box>
-
-              <CustomField label={t("job_order.item.date_time")}>
-                <Typography sx={localstyles.typo_fieldContent}>
-                  {selectedJobOrder?.createdAt
-                    ? dayjs
-                        .utc(selectedJobOrder?.createdAt)
-                        .tz("Asia/Hong_Kong")
-                        .format(`${dateFormat} HH:mm`)
-                    : ""}
-                </Typography>
-              </CustomField>
-
-              <CustomField label={t("job_order.item.reference_po_number")}>
-                <Typography sx={localstyles.typo_fieldContent}>
-                  {selectedJobOrder?.picoId}
-                </Typography>
-              </CustomField>
-              <Typography sx={localstyles.typo_header}>
-                {t("job_order.item.rec_loc_info")}
+    <Box sx={localstyles.modal} onClick={handleOverlayClick}>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
+        <Box sx={localstyles.container}>
+          <Box sx={{ display: "flex", flex: "1", p: 4, alignItems: "center" }}>
+            <Box>
+              <Typography sx={styles.header4}>
+                {t("job_order.item.detail")}
               </Typography>
-              <CustomField label={t("jobOrder.shippingDateAndTime")}>
-                <DatePicker
-                  value={dayjs(selectedDate)}
-                  slotProps={{ textField: { size: "small" } }}
-                  sx={localstyles.datePicker()}
-                  onChange={(values: any) => {
-                    setSelectedDate(
-                      dayjs(values).format("YYYY-MM-DDTHH:mm:ss")
-                    );
-                  }}
-                  format={dateFormat}
-                  minDate={dayjs()}
-                />
-              </CustomField>
-              <JobOrderCard
-                plateNo={selectedRow?.plateNo}
-                pickupOrderDetail={pickupOrderDetail ?? []}
-                driverDetail={driverDetail}
-              />
+              <Typography sx={styles.header3}>
+                {selectedJobOrder?.labelId}
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", flexShrink: 0, ml: "20px" }}>
+              <StatusCard status={selectedJobOrder?.status} />
+            </Box>
+            <Box sx={{ marginLeft: "auto" }}>
               {selectedRow?.status === "DENY" && (
-                <Box>
-                  <Typography>
-                    {i18n.language === "enus"
-                      ? driverDetail?.driverNameEng
-                      : i18n.language === "zhch"
-                      ? driverDetail?.driverNameSchi
-                      : driverDetail?.driverNameTchi}{" "}
-                    {t("job_order.rejected_at")}{" "}
-                    {dayjs(selectedRow?.updatedAt).format(
-                      `${dateFormat} HH:mm`
-                    )}
-                    , {itemCheck()} {formattedReasons}
-                  </Typography>
-                </Box>
+                <CustomButton
+                  text={t("job_order.table.approve")}
+                  onClick={() => {
+                    onApproved();
+                  }}
+                ></CustomButton>
               )}
-            </Stack>
+              {selectedRow?.status === "UNASSIGNED" ||
+              selectedRow?.status === "ASSIGNED" ? (
+                <CustomButton
+                  text={t("notification.modify_template.app.button_submit")}
+                  onClick={() => handleClickStore()}
+                  disabled={isJoExists}
+                  style={{ marginRight: 10 }}
+                ></CustomButton>
+              ) : null}
+              {selectedRow?.status === "UNASSIGNED" ||
+              selectedRow?.status === "ASSIGNED" ? (
+                <CustomButton
+                  text={t("job_order.cancel")}
+                  onClick={() => onReject()}
+                  outlined={true}
+                ></CustomButton>
+              ) : null}
+              <IconButton sx={{ ml: "25px" }} onClick={onClose}>
+                <KeyboardTabIcon sx={{ fontSize: "30px" }} />
+              </IconButton>
+            </Box>
           </Box>
-        </LocalizationProvider>
-      </Box>
-    </>
+          <Divider />
+          <Stack spacing={2} sx={localstyles.content}>
+            <Box>
+              <Typography sx={localstyles.typo_header}>
+                {t("job_order.item.shipping_info")}
+              </Typography>
+            </Box>
+
+            <CustomField label={t("job_order.item.date_time")}>
+              <Typography sx={localstyles.typo_fieldContent}>
+                {selectedJobOrder?.createdAt
+                  ? dayjs
+                      .utc(selectedJobOrder?.createdAt)
+                      .tz("Asia/Hong_Kong")
+                      .format(`${dateFormat} HH:mm`)
+                  : ""}
+              </Typography>
+            </CustomField>
+
+            <CustomField label={t("job_order.item.reference_po_number")}>
+              <Typography sx={localstyles.typo_fieldContent}>
+                {selectedJobOrder?.picoId}
+              </Typography>
+            </CustomField>
+            <Typography sx={localstyles.typo_header}>
+              {t("job_order.item.rec_loc_info")}
+            </Typography>
+            <CustomField label={t("jobOrder.shippingDateAndTime")}>
+              <DatePicker
+                value={dayjs(selectedDate)}
+                slotProps={{ textField: { size: "small" } }}
+                sx={localstyles.datePicker()}
+                onChange={(values: any) => {
+                  setSelectedDate(dayjs(values).format("YYYY-MM-DDTHH:mm:ss"));
+                }}
+                format={dateFormat}
+                minDate={dayjs()}
+                disabled={isJoExists}
+              />
+            </CustomField>
+            <JobOrderCard
+              plateNo={selectedRow?.plateNo}
+              pickupOrderDetail={pickupOrderDetail ?? []}
+              driverDetail={driverDetail}
+            />
+            {selectedRow?.status === "DENY" && (
+              <Box>
+                <Typography>
+                  {i18n.language === "enus"
+                    ? driverDetail?.driverNameEng
+                    : i18n.language === "zhch"
+                    ? driverDetail?.driverNameSchi
+                    : driverDetail?.driverNameTchi}{" "}
+                  {t("job_order.rejected_at")}{" "}
+                  {dayjs(selectedRow?.updatedAt).format(`${dateFormat} HH:mm`)},{" "}
+                  {itemCheck()} {formattedReasons}
+                </Typography>
+              </Box>
+            )}
+          </Stack>
+        </Box>
+      </LocalizationProvider>
+    </Box>
   );
 };
 

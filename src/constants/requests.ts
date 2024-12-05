@@ -1795,3 +1795,8 @@ export const CREATE_PROCESS_OUT = (
   method: 'post',
   url: `api/v1/${realmApiRoute}/processout/${table}/header`
 })
+
+export const GET_PUJO_DATA = (realmApiRoute: string, table: string, joId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/pu/jo/${table}/${joId}`
+})
