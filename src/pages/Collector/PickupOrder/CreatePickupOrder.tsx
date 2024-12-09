@@ -17,6 +17,8 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { refactorPickUpOrderDetail } from './utils'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -29,6 +31,8 @@ const CreatePickupOrder = () => {
   const { t } = useTranslation()
   const [picoTypeValue, setPicoType] = useState<string>('ROUTINE')
   const role = localStorage.getItem(localStorgeKeyName.role)
+  const { dateFormat } = useContainer(CommonTypeContainer)
+
 
   function getTenantId() {
     const tenantId = returnApiToken().decodeKeycloack.substring(
@@ -108,7 +112,7 @@ const CreatePickupOrder = () => {
           values.specificDates = values.routine
             .map(value => {
               // Format to 'YYYY-MM-DD' first, then parse it in the user's timezone
-              const formattedDate = dayjs(value, 'DD-MM-YY').format('YYYY-MM-DD');
+              const formattedDate = dayjs(value, dateFormat).format('YYYY-MM-DD');
               const parsedDate = dayjs.tz(formattedDate, dayjs.tz.guess());
 
               if (!parsedDate.isValid()) {
