@@ -116,6 +116,7 @@ const DetailFactory: FunctionComponent<Props> = ({
   useEffect(() => {
     setValidation([])
     if (action !== 'add') {
+      resetData()
       mappingData()
       initWarehouseList()
     } else {
@@ -133,6 +134,8 @@ const DetailFactory: FunctionComponent<Props> = ({
     setIntroduction('')
     setRemark('')
     setSelectedWarehouses([])
+    setWarehouseList([])
+    setFormattedWarehouseList([])
   }
 
   const checkString = (s: string) => {
@@ -439,7 +442,7 @@ const DetailFactory: FunctionComponent<Props> = ({
                   editable={action !== 'delete'}
                   defaultSelected={selectedWarehouses}
                   needPrimaryColor={true}
-                  error={selectedWarehouses.length === 0}
+                  error={trySubmited && selectedWarehouses.length === 0}
                 />
               )) }
             </CustomField>
