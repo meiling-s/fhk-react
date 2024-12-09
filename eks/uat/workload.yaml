@@ -28,7 +28,7 @@ spec:
         intent: apps
       containers:
         - name: web-api
-          image: 307426213411.dkr.ecr.ap-east-1.amazonaws.com/astd/react:1-0-0beta-385
+          image: 307426213411.dkr.ecr.ap-east-1.amazonaws.com/astd/react:1-0-0beta-386
           ports:
             - name: http
               containerPort: 3000
