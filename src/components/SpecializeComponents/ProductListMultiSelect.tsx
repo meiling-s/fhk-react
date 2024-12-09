@@ -433,6 +433,22 @@ export default function ProductListMultiSelect({
   }
 
   const selectSubProduct = (selectedSubType: string[]) => {
+    console.log('selectedSubType', selectedSubType)
+
+    const lastSubId = selectedSubType[selectedSubType.length - 1] || ''
+    const currProduct = options.find(
+      (item) => item.productTypeId === curProduct
+    )
+
+    if (currProduct && lastSubId) {
+      const subItem = currProduct.productSubType?.find(
+        (item) => item.productSubTypeId === lastSubId
+      )
+      if (subItem) {
+        setChoosenSubProductType(subItem)
+      }
+    }
+
     setProductSubType(selectedSubType)
   }
 
@@ -461,7 +477,7 @@ export default function ProductListMultiSelect({
           >
             <CustomItemListRecyble
               items={returnSubProduct(curProduct)}
-              withSubItems={returnWithSubItem()}
+              //withSubItems={returnWithSubItem()}
               multiSelect={selectSubProduct}
               setLastSelect={setCurSubProduct}
               defaultSelected={productSubType}
@@ -504,12 +520,16 @@ export default function ProductListMultiSelect({
         !subProductWithNoAddonItems.includes(curSubProduct) && (
           <Collapse sx={{ mt: 1 }} in={productSubType.length > 0} unmountOnExit>
             <CustomField
-              label={getNameFromSubId(curSubProduct) + t('col.category')}
+              label={
+                getNameFromSubId(curSubProduct) +
+                t('pick_up_order.product_type.add-on')
+              }
               mandatory
             >
               <CustomItemListRecyble
                 items={returnAddonList(curSubProduct)}
                 multiSelect={selectAddon}
+                setLastSelect={setCurAddonProduct}
                 defaultSelected={productAddon}
               />
             </CustomField>
