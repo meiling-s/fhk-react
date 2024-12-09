@@ -12,14 +12,18 @@ type ConfirmationModalProps = {
   isOpen: boolean
   onConfirm: () => void;
   onCancel: () => void;
+  message?: string,
 }
 
 const ConfirmModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
   onConfirm,
-  onCancel
+  onCancel,
+  message,
 }) => {
+
   const { t } = useTranslation()
+
   return (
     <Modal
       open={isOpen}
@@ -36,7 +40,7 @@ const ConfirmModal: React.FC<ConfirmationModalProps> = ({
               component="h2"
               sx={{ fontWeight: 'bold' }}
             >
-              <p>{t('common.leaveConfirmMsg')}</p>
+              <p>{message || t('common.leaveConfirmMsg')}</p>
             </Typography>
           </Box>
           <Divider />

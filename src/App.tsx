@@ -1,4 +1,4 @@
-import { ThemeProvider } from 'styled-components'
+import { ThemeProvider } from '@mui/material/styles'
 import Router from './Router'
 import NotifContainerContext from './contexts/NotifContainer'
 import CommonTypeContainer from './contexts/CommonTypeContainer'

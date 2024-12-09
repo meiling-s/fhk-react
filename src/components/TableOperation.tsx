@@ -4,6 +4,7 @@ import CustomButton from "./FormComponents/CustomButton";
 import { getFormatId, getPrimaryColor } from "../utils/utils";
 import { useEffect, useState } from "react";
 import { localStorgeKeyName } from "../constants/constant";
+import { useLocation } from "react-router-dom";
 
 interface TableOperationProps {
   row: any;
@@ -23,13 +24,22 @@ const TableOperation = ({
   const { t } = useTranslation();
   const [isShow, setIsShow] = useState<boolean>(false);
   const currentTenantId = localStorage.getItem(localStorgeKeyName.tenantId);
+  const isAdmin = localStorage.getItem("isAdmin") === "true";
+  const location = useLocation();
 
   useEffect(() => {
-    const formatLogisticId = getFormatId(row.logisticId);
-    if (formatLogisticId === currentTenantId) {
-      setIsShow(true);
+    if (location.pathname === "/manufacturer/purchaseOrder") {
+      const formatSellerTenantId = getFormatId(row.sellerTenantId);
+      if (formatSellerTenantId === currentTenantId) {
+        setIsShow(true);
+      }
+    } else {
+      const formatLogisticId = getFormatId(row.logisticId);
+      if (formatLogisticId === currentTenantId) {
+        setIsShow(true);
+      }
     }
-  }, [currentTenantId, row.logisticId]);
+  }, [currentTenantId, row.logisticId, row.sellerTenantId]);
 
   return (
     <>
@@ -39,7 +49,10 @@ const TableOperation = ({
             <>
               <CustomButton
                 text={t("pick_up_order.table.approve")}
-                style={{ marginRight: "8px" }}
+                style={{
+                  marginRight: "8px",
+                }}
+                disabled={!isAdmin}
                 onClick={() => {
                   onApprove(row);
                 }}
@@ -47,6 +60,7 @@ const TableOperation = ({
               <CustomButton
                 text={t("pick_up_order.table.reject")}
                 outlined={true}
+                disabled={!isAdmin}
                 onClick={() => {
                   onReject(row);
                 }}
@@ -56,13 +70,6 @@ const TableOperation = ({
             <></>
           )}
         </Box>
-      ) : row.status === "STARTED" || row.status === "OUTSTANDING" ? (
-        <CustomButton
-          text={t("pick_up_order.table.create_job_order")}
-          onClick={() => {
-            navigateToJobOrder(row);
-          }}
-        ></CustomButton>
       ) : null}
     </>
   );

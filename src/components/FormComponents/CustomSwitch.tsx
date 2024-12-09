@@ -1,6 +1,5 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
-import { red } from "@mui/material/colors";
 
 type Props = {
   onText: string;
@@ -10,10 +9,11 @@ type Props = {
   disabled?: boolean;
   value?: string;
   helperText?: string;
+  styles?: object;
   dataTestId?: string;
 };
 
-export default function Switches({
+export default function Switcher({
   onText,
   offText,
   defaultValue,
@@ -21,6 +21,7 @@ export default function Switches({
   disabled,
   value,
   helperText,
+  styles,
   dataTestId
 }: Props) {
   const [onOff, setOnOff] = useState<boolean>(defaultValue !== undefined ? defaultValue : false);
@@ -39,65 +40,71 @@ export default function Switches({
 
   return (
     <>
-      <Button
-        sx={localStyles.container}
+      <Box
+        sx={{
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          width: "200px",
+          height: "50px",
+          borderRadius: "50px",
+          backgroundColor: "#E2E2E2",
+          cursor: disabled ? "not-allowed" : "pointer",
+          padding: "5px",
+          justifyContent: "space-between", 
+          marginTop: "5px"
+        }}
         onClick={handleSwitchChange}
-        disabled={disabled}
         data-testId={dataTestId}
       >
         <Box
-          sx={[
-            disabled ? localStyles.switch_disabled : localStyles.switch,
-            { ml: onOff ? "5px" : "105px" },
-          ]}
+          sx={{
+            position: "absolute",
+            left: onOff ? "5px" : "calc(100% - 100px)",
+            width: "95px",
+            height: "100%",
+            backgroundColor: "white",
+            borderRadius: "50px",
+            transition: "left 0.3s ease",
+            zIndex: 0,
+          }}
         />
-        <Typography sx={localStyles.onOffLabel}>{onText}</Typography>
-        <Typography sx={localStyles.onOffLabel}>{offText}</Typography>
-      </Button>
+
+        {/* On Text */}
+        <Typography
+          sx={{
+            zIndex: 1, 
+            fontWeight: "bold",
+            color: onOff ? "#000" : "#717171", 
+            width: "90px",
+            textAlign: "center",
+            fontSize: 14
+          }}
+        >
+          {onText}
+        </Typography>
+
+        {/* Off Text */}
+        <Typography
+          sx={{
+            zIndex: 1,
+            fontWeight: "bold",
+            color: !onOff ? "#000" : "#717171",
+            width: "90px",
+            textAlign: "center",
+            fontSize: 14
+          }}
+        >
+          {offText}
+        </Typography>
+      </Box>
+
+      {/* Helper text */}
       {helperText && (
-        <Typography color={red[500]} ml="15px">
+        <Typography color="red" ml="15px">
           {helperText}
         </Typography>
       )}
     </>
   );
 }
-
-const sharedSwitchStyles = {
-  width: "90px",
-  height: "50px",
-  position: "absolute",
-  borderRadius: "50px",
-  transition: "transform 0.3s ease",
-};
-
-const localStyles = {
-  container: {
-    display: "flex",
-    flexDirection: "row",
-    width: "200px",
-    height: "60px",
-    backgroundColor: "#E2E2E2",
-    borderRadius: "50px",
-    justifyContent: "flex-start",
-    padding: 0,
-    position: "relative",
-  },
-  switch: {
-    ...sharedSwitchStyles,
-    backgroundColor: "white",
-  },
-  switch_disabled: {
-    ...sharedSwitchStyles,
-    backgroundColor: "#CBCBCB",
-  },
-  onOffLabel: {
-    zIndex: 1,
-    display: "flex",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#717171",
-    fontWeight: "bold",
-  },
-};

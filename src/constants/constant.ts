@@ -11,7 +11,8 @@ export const localStorgeKeyName = {
   // 20240129 add function list daniel keung end
   tenantId: 'tenantId',
   realmApiRoute: 'realmApiRoute',
-  selectedLanguage: 'selectedLanguage'
+  selectedLanguage: 'selectedLanguage',
+  isAdmin: 'isAdmin'
 }
 
 export const defaultPath = {
@@ -37,6 +38,8 @@ export const format = {
   dateFormat4: 'yyyy/MM/dd',
   timeFormat: 'HH:mm:ss'
 }
+
+export const configDateFormatFull = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
 
 export const formErr = {
   empty: 'empty',

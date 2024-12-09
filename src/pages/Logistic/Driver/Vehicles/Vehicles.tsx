@@ -29,7 +29,8 @@ import {
 import {
   getAllVehicles,
   getVehicleImages,
-  searchVehicle
+  searchVehicle,
+  searchVehicleNew
 } from '../../../../APICalls/Logistic/vehicles'
 import { ToastContainer, toast } from 'react-toastify'
 
@@ -53,6 +54,8 @@ function createVehicles(
   plateNo: string,
   photo: string[],
   status: string,
+  deviceId: string,
+  compactor: 1 | 0,
   netWeight: number,
   createdBy: string,
   updatedBy: string,
@@ -67,6 +70,8 @@ function createVehicles(
     netWeight,
     photo,
     status,
+    deviceId,
+    compactor,
     createdBy,
     updatedBy,
     createdAt,
@@ -87,14 +92,17 @@ const Vehicles: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [plateList, setPlateList] = useState<string[]>([])
+  const [deviceIdList, setDeviceIdList] = useState<string[]>([])
   const [searchValue, setSearchValue] = useState<string>('')
   const [isSearching, setSearching] = useState(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
-
+  
+  
   useEffect(() => {
     initVehicleList()
-    //initAllVehicleList()
+    initAllVehicleList()
+    initAllVehicleList()
   }, [page])
 
   const initVehicleList = useCallback(async () => {
@@ -102,7 +110,6 @@ const Vehicles: FunctionComponent = () => {
     setVehicleList([])
     const result = await getAllVehicles(page - 1, pageSize)
     const data = result?.data
-    const newPlateList: string[] = []
     const table = localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
   
     if (data) {
@@ -118,6 +125,8 @@ const Vehicles: FunctionComponent = () => {
               item?.plateNo,
               vehicleImages.photo,
               item?.status,
+              item?.deviceId,
+              item?.compactor,
               item?.netWeight,
               item?.createdBy,
               item?.updatedBy,
@@ -125,7 +134,6 @@ const Vehicles: FunctionComponent = () => {
               item?.updatedAt,
               item?.version,
             )
-            newPlateList.push(item?.plateNo)
             return vehicle
           }
           return null
@@ -143,38 +151,41 @@ const Vehicles: FunctionComponent = () => {
    
   }, [page, pageSize])
 
-  // const initAllVehicleList = useCallback(async () => {
-  //   setIsLoading(true)
-  //   const result = await getAllVehicles(0, 1000)
-  //   const data = result?.data
-  //   const newPlateList: string[] = []
-  //   if (data) {
-  //     var vehicleMapping: VehicleItem[] = []
-  //     data.content.map((item: any) => {
-  //       vehicleMapping.push(
-  //         createVehicles(
-  //           item?.vehicleId,
-  //           item?.vehicleTypeId,
-  //           item?.plateNo,
-  //           item?.photo,
-  //           item?.status,
-  //           item?.netWeight,
-  //           item?.createdBy,
-  //           item?.updatedBy,
-  //           item?.createdAt,
-  //           item?.updatedAt,
-  //           item?.version
-  //         )
-  //       )
+  const initAllVehicleList = useCallback(async () => {
+    const result = await getAllVehicles(0, 1000)
+    const data = result?.data
+    const newPlateList: string[] = []
+    const newDeviceIdList: string[] = []
+    if (data) {
+      var vehicleMapping: VehicleItem[] = []
+      data.content.map((item: any) => {
+        vehicleMapping.push(
+          createVehicles(
+            item?.vehicleId,
+            item?.vehicleTypeId,
+            item?.plateNo,
+            item?.photo,
+            item?.status,
+            item?.deviceId,
+            item?.compactor,
+            item?.netWeight,
+            item?.createdBy,
+            item?.updatedBy,
+            item?.createdAt,
+            item?.updatedAt,
+            item?.version
+          )
+        )
 
-  //       //mappping plate list
-  //       newPlateList.push(item?.plateNo)
-  //     })
-  //     // setVehicleList(vehicleMapping)
-  //     setPlateList(newPlateList)
-  //   }
-  //   setIsLoading(false)
-  // }, [])
+        //mappping plate list
+        newPlateList.push(item?.plateNo)
+        newDeviceIdList.push(item?.deviceId)
+      })
+      // setVehicleList(vehicleMapping)
+      setPlateList(newPlateList)
+      setDeviceIdList(newDeviceIdList)
+    }
+  }, [])
 
   const columns: GridColDef[] = [
     {
@@ -223,6 +234,19 @@ const Vehicles: FunctionComponent = () => {
       }
     },
     {
+      field: 'compactor',
+      headerName: t('driver.vehicleMenu.isCompactor'),
+      width: 200,
+      type: 'string',
+      renderCell: (params) => {
+        if (params.row.compactor === 1){
+          return <div>{t('common.yes')}</div>
+        } else {
+          return <div>{t('common.no')}</div>
+        }
+      }
+    },
+    {
       field: 'netWeight',
       headerName: t('driver.vehicleMenu.vehicle_cargo_capacity'),
       width: 200,
@@ -247,7 +271,7 @@ const Vehicles: FunctionComponent = () => {
                   className="w-[30px] h-[30px]"
                   src={imgdata}
                   alt=""
-                     style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                  style={{ width: '50px', height: '50px', objectFit: 'cover' }}
                 />
               )
             })}
@@ -262,7 +286,7 @@ const Vehicles: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} data-testid="logistic-vehicles-edit-button-7448">
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
@@ -282,7 +306,7 @@ const Vehicles: FunctionComponent = () => {
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }} data-testid="logistic-vehicles-delete-button-8214">
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
@@ -343,6 +367,8 @@ const Vehicles: FunctionComponent = () => {
 
   const onSubmitData = (type: string, msg: string) => {
     initVehicleList()
+    initAllVehicleList()
+    initAllVehicleList()
     if (type == 'success') {
       showSuccessToast(msg)
     } else {
@@ -356,22 +382,50 @@ const Vehicles: FunctionComponent = () => {
     }
   }, [])
 
-  const handleSearch = async (value: string) => {
-    if (value) {
-      setIsLoading(true)
-      setVehicleList([])
-      const result = await searchVehicle(value)
-      const data = result?.data
-      if (data) {
-        var vehicleMapping: VehicleItem[] = []
-        vehicleMapping.push(data)
-        setPage(1)
-        setTotalData(vehicleMapping.length)
-        setVehicleList(vehicleMapping)
-        setSearching(true)
-      }
-      setIsLoading(false)
+  const handleSearch = async (keyName?: string, value?: string) => {
+    let deviceId;
+    let vehicleId;
+    setIsLoading(true)
+    setVehicleList([])
+    if (keyName === 'deviceId') {
+      deviceId = value !== undefined ? value : ''
+    } else {
+      vehicleId = value !== undefined ? value : ''
     }
+    const result = await searchVehicleNew(vehicleId, deviceId)
+    const data = result?.data
+    const table = localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
+  
+    if (data && data.content) {
+      const vehicleMapping: VehicleItem[] = await Promise.all(
+        (Array.isArray(data.content) ? data.content : [data.content]).map(async (item: any) => {
+          const result = await getVehicleImages(table, item.vehicleId)
+          const vehicleImages = result?.data
+          if (result) {
+            return createVehicles(
+              item?.vehicleId,
+              item?.vehicleTypeId,
+              item?.plateNo,
+              vehicleImages.photo,
+              item?.status,
+              item?.deviceId, 
+              item?.compactor,
+              item?.netWeight,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt,
+              item?.version,
+            )
+          }
+          return null
+        }).filter(Boolean)
+      )
+      setVehicleList(vehicleMapping)
+      setSearching(true)
+    }
+    setTotalData(data.totalPages)
+    setIsLoading(false)
   }
 
   const handleChange = async (keyName: string, value: string) => {
@@ -380,6 +434,7 @@ const Vehicles: FunctionComponent = () => {
       //setSearching(false)
       setVehicleList([])
       initVehicleList()
+      initAllVehicleList()
     }
   }
 
@@ -405,6 +460,7 @@ const Vehicles: FunctionComponent = () => {
           }}
         >
           <Button
+            data-testid="logistic-vehicles-new-button-7614"
             sx={[
               styles.buttonOutlinedGreen,
               {
@@ -414,20 +470,41 @@ const Vehicles: FunctionComponent = () => {
             ]}
             variant="outlined"
             onClick={() => {
-              setDrawerOpen(true)
+              setDrawerOpen(true);
               setAction('add')
             }}
           >
             <ADD_ICON /> {t('top_menu.add_new_vehicle')}
           </Button>
         </Box>
-        <CustomSearchField
-          label={t('driver.vehicleMenu.vehicle_number')}
-          width={'100%'}
-          field={'searchValue'}
-          placeholder={t('driver.vehicleMenu.vehicle_number')}
-          onChange={handleChange}
-        />
+        <Box
+          sx={{
+            display: 'flex',
+            gap: '16px',
+            width: '100%'
+          }}
+        >
+          <Box sx={{ flexGrow: 1 }}>
+            <CustomSearchField
+              dataTestId='logistic-vehicles-search-vehicle-id-8158'
+              label={t('driver.vehicleMenu.vehicle_number')}
+              width={'100%'}
+              field={'vehicleId'}
+              placeholder={t('driver.vehicleMenu.vehicle_number')}
+              onChange={handleSearch}
+            />
+          </Box>
+          <Box sx={{ flexGrow: 1 }}>
+            <CustomSearchField
+              dataTestId='logistic-vehicles-search-imei-4288'
+              label={t('driver.vehicleMenu.imei')}
+              width={'100%'}
+              field={'deviceId'}
+              placeholder={t('driver.vehicleMenu.imei')}
+              onChange={handleSearch}
+            />
+          </Box>
+        </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
             {isLoading ? (
@@ -499,6 +576,7 @@ const Vehicles: FunctionComponent = () => {
             selectedItem={selectedRow}
             onSubmitData={onSubmitData}
             plateListExist={plateList}
+            deviceIdListExist={deviceIdList}
           />
         )}
       </Box>

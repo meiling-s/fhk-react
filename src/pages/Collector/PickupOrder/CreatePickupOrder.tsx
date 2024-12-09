@@ -13,6 +13,15 @@ import { useTranslation } from 'react-i18next'
 import { extractError, returnApiToken, showErrorToast } from '../../../utils/utils'
 import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { refactorPickUpOrderDetail } from './utils'
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(customParseFormat);
+
 
 const CreatePickupOrder = () => {
   const navigate = useNavigate()
@@ -42,11 +51,14 @@ const CreatePickupOrder = () => {
 
 
   const submitPickUpOrder = async (values: CreatePO) => {
+
     try {
+
       return await createPickUpOrder(values)
+
     } catch (error) {
-      const { state, realm} = extractError(error);
-      if(state.code == STATUS_CODE[503]){
+      const { state, realm } = extractError(error);
+      if (state.code == STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
         return null
@@ -74,24 +86,56 @@ const CreatePickupOrder = () => {
       contractNo: '',
       createdBy: 'Admin',
       updatedBy: 'Admin',
-      createPicoDetail: []
+      createPicoDetail: [],
+      specificDates: [],
+      refPicoId: ''
     },
+
     // validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
-      values.createPicoDetail = addRow;
-      if(picoTypeValue === 'AD_HOC'){
+      const refactorPicoDetail: any = refactorPickUpOrderDetail(addRow)
+      values.createPicoDetail = refactorPicoDetail
+
+
+      if (picoTypeValue === 'AD_HOC') {
         values.routine = [];
+      } else if (picoTypeValue === 'ROUTINE') {
+        if (values.routineType === 'specificDate') {
+          // Get current time (hour and minute) from the user's local time
+          const currentHour = dayjs().hour();
+          const currentMinute = dayjs().minute();
+
+          values.specificDates = values.routine
+            .map(value => {
+              // Format to 'YYYY-MM-DD' first, then parse it in the user's timezone
+              const formattedDate = dayjs(value, 'DD-MM-YY').format('YYYY-MM-DD');
+              const parsedDate = dayjs.tz(formattedDate, dayjs.tz.guess());
+
+              if (!parsedDate.isValid()) {
+                console.error(`Invalid date format: ${value}`);
+                return null; // Handle invalid dates as needed
+              }
+
+              // Set current hour and minute, then convert to ISO string
+              return parsedDate
+                .set('hour', currentHour)
+                .set('minute', currentMinute)
+                .toISOString();
+            })
+            .filter(date => date !== null) as string[]; // Filter out nulls and cast as string[]
+        } else if (values.routineType === 'weekly') {
+          values.specificDates = [];
+        }
       }
+
+      const result = await submitPickUpOrder(values);
       
-      const result = await submitPickUpOrder(values)
-      const data = result?.data
+      const data = result?.data;
       if (data) {
-        //console.log('all pickup order: ', data)
-        const routeName = role
-        navigate(`/${routeName}/PickupOrder`, { state: 'created' })
-        //navigate('/collector/PickupOrder', { state: 'created' })
+          const routeName = role;
+          navigate(`/${routeName}/PickupOrder`, { state: 'created' });
       } else {
-        showErrorToast('fail to create pickup order')
+          showErrorToast('fail to create pickup order');
       }
     }
   })
@@ -99,7 +143,7 @@ const CreatePickupOrder = () => {
   useEffect(() => {
     setPicoType(createPickupOrder.values.picoType)
   }, [createPickupOrder.values.picoType])
-  
+
   return (
     <PickupOrderCreateForm
       formik={createPickupOrder}

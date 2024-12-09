@@ -19,6 +19,7 @@ import Overview from './pages/Collector/Manage/CheckoutRequest'
 import Settings from './pages/Collector/Warehouse/Settings'
 import Vehicles from './pages/Collector/Vehicles/Vechicles'
 import WarehouseDashboard from './pages/Collector/Warehouse/WarehouseDashboard'
+import InternalTransferRequest from './pages/Collector/InternalTransferRequest/internal_transfer_request'
 //Tenant Register
 // import CompanyDetails from "./pages/TenantRegister/CompanyDetails";
 // import CompanyContact from "./pages/TenantRegister/CompanyContact";
@@ -33,6 +34,8 @@ import Staff from './pages/Collector/Staff'
 //import Report from "./pages/Collector/Report";
 import Report from './pages/GeneralModule/Report/Report'
 import RecycleShipment from './pages/Collector/RecycleShipment'
+import ProcessOrder from './pages/Collector/ProccessOrder/ProcessOrder'
+import CreateProcessOrder from './pages/Collector/ProccessOrder/CreateProcessOrder'
 
 //import ProcessRecord from "./pages/Collector/Manage/ProcessRecord";
 import ProcessRecord from './pages/Collector/ProcessRecord/ProcessRecord'
@@ -74,6 +77,8 @@ import MaintenancePage from './pages/Common/MaintenancePage'
 import AuthCheck from './components/AuthCheck'
 
 import LoadingPage from './pages/GeneralModule/LoadingPage'
+import VehicleRouteTracker from './pages/Logistic/VehicleRouteTracker/VehicleRouteTracker'
+import JobOrderScheduleBoard from './pages/Logistic/JobOrderScheduleBoard/JobOrderScheduleBoard'
 
 const Router = () => {
   return (
@@ -152,7 +157,12 @@ const Router = () => {
               path="/collector/warehouse"
               element={<WarehouseDashboard />}
             />
-             <Route path="/collector/compactorDashboard" element={<CompactorDashboard />} />
+            <Route path="/collector/processOrder" element={<ProcessOrder />} />
+            <Route
+              path="/collector/createProcessOrder"
+              element={<CreateProcessOrder />}
+            />
+               <Route path="/collector/compactorDashboard" element={<CompactorDashboard />} />
           </Route>
 
           <Route element={<MainLayout />}>
@@ -191,6 +201,10 @@ const Router = () => {
             <Route path="/warehouse" element={<WarehouseDashboard />} />
             <Route path="/warehouse/shipment" element={<RecycleShipment />} />
             <Route path="/warehouse/checkout" element={<CheckoutRequest />} />
+            <Route
+              path="/warehouse/InternalTransferRequest"
+              element={<InternalTransferRequest />}
+            />
             <Route path="/warehouse/process" element={<ProcessRecord />} />
             {/* <Route path="/warehouse/staff" element={<StaffManagement />} /> */}
             <Route path="/warehouse/settings" element={<Settings />} />
@@ -201,6 +215,8 @@ const Router = () => {
           <Route element={<MainLayout />}>
             <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
             <Route path="/logistic/jobOrder" element={<JobOrder />} />
+            <Route path="/logistic/vehicleRouteTracker" element={<VehicleRouteTracker />} />
+            <Route path="/logistic/jobOrderScheduleBoard" element={<JobOrderScheduleBoard />} />
             <Route
               path="/logistic/createJobOrder/:picoId"
               element={<CreateOrUpdateJobOrder />}
@@ -276,7 +292,15 @@ const Router = () => {
               element={<CheckInAndCheckOut />}
             />
             <Route path="/manufacturer/report" element={<Report />} />
-            <Route path="/manufacturer/compactorDashboard" element={<CompactorDashboard />} />
+            <Route
+              path="/manufacturer/processOrder"
+              element={<ProcessOrder />}
+            />
+            <Route
+              path="/manufacturer/createProcessOrder"
+              element={<CreateProcessOrder />}
+            />
+              <Route path="/manufacturer/compactorDashboard" element={<CompactorDashboard />} />
           </Route>
 
           <Route element={<MainLayout />}>

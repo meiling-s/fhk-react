@@ -1,4 +1,4 @@
-import { Button } from '@mui/joy'
+import { Button } from '@mui/material'
 import { SetStateAction, useEffect, useState } from 'react'
 import { Functions } from '../../../interfaces/userGroup'
 import { styles } from '../../../constants/styles'
@@ -16,7 +16,7 @@ export default function FunctionList({
   keyId: number
   item: Functions
   functions: number[]
-  disabled: boolean,
+  disabled: boolean
   readOnly?: boolean
   setFunctions: (value: SetStateAction<number[]>) => void
 }) {
@@ -24,7 +24,7 @@ export default function FunctionList({
 
   const handleClick = () => {
     const index = functions.indexOf(item.functionId)
-    if(readOnly) return
+    if (readOnly) return
     let newValue
     if (index !== -1) {
       // Remove the functionId from the array
@@ -47,7 +47,7 @@ export default function FunctionList({
       datatest-id="astd-user-group-form-available-feature-select-button-9031"
       value={item.functionId}
       color="success"
-      variant={selected ? 'soft' : 'outlined'}
+      //variant={selected ? 'soft' : 'outlined'}
       sx={[
         selected ? styles.tagOutlineActive : styles.tagOutlineDefault,
         {

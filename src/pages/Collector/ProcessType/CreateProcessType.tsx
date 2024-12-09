@@ -1,36 +1,15 @@
 import { FunctionComponent, useState, useEffect } from 'react'
 import { Box, Divider, FormControl, Grid, MenuItem } from '@mui/material'
-import dayjs from 'dayjs'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { styles } from '../../../constants/styles'
-
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
-import {
-  Vehicle,
-  CreateVehicle as CreateVehicleForm
-} from '../../../interfaces/vehicles'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
 import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
-import { il_item } from '../../../components/FormComponents/CustomItemList'
-import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { useContainer } from 'unstated-next'
 import { localStorgeKeyName } from '../../../constants/constant'
-import i18n from '../../../setups/i18n'
-
-import {
-  CreatePackagingUnit as CreatePackagingUnitProps,
-  PackagingUnit
-} from '../../../interfaces/packagingUnit'
-import {
-  createPackaging,
-  editPackaging
-} from '../../../APICalls/Collector/packagingUnit'
-import CustomItemList from '../../../components/FormComponents/CustomItemList'
 import { useNavigate } from 'react-router-dom'
 import { CreateProcessTypeProps, ProcessTypeData } from '../../../interfaces/processType'
 import { WeightUnit } from '../../../interfaces/weightUnit'
@@ -70,7 +49,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
   const [processNumber, setProcessNumber] = useState<string>('')
   const [processWeight, setProcessWeight] = useState<string>('')
   const navigate = useNavigate();
-  const number = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  const number = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60]
   const time = [
     {
       id: 'D',
@@ -132,42 +111,56 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
 
   useEffect(() => {
     const validate = async () => {
-      const tempV: formValidate[] = []
-
-      tChineseName.toString() == '' &&
+      const tempV: formValidate[] = [];
+  
+      // Validate each individual field separately
+      if (tChineseName.toString() === '') {
         tempV.push({
           field: t('process_type.traditional_chinese_name'),
           problem: formErr.empty,
           type: 'error',
           dataTestId: 'astd-product-type-form-tc-err-warning-3762'
-        })
-      sChineseName.toString() == '' &&
+        });
+      }
+  
+      if (sChineseName.toString() === '') {
         tempV.push({
           field: t('process_type.simplified_chinese_name'),
           problem: formErr.empty,
           type: 'error',
           dataTestId: 'astd-product-type-form-sc-err-warning-3672'
-        })
-      englishName.toString() == '' &&
+        });
+      }
+  
+      if (englishName.toString() === '') {
         tempV.push({
           field: t('process_type.english_name'),
           problem: formErr.empty,
           type: 'error',
           dataTestId: 'astd-product-type-form-en-err-warning-3278'
-        })
-      processNumber.toString() == '' && processTime.toString() == '' && processWeight.toString() == '' &&
+        });
+      }
+  
+      // Grouped validation for processNumber, processTime, and processWeight
+      if (
+        processNumber.toString() === '' ||
+        processTime.toString() === '' ||
+        processWeight.toString() === ''
+      ) {
         tempV.push({
-          field: t('process_type.time'),
+          field: t('process_type.time'),  // You can adjust this field label if needed
           problem: formErr.empty,
           type: 'error',
           dataTestId: 'astd-product-type-form-time-err-warning-6697'
-        })
-
-      setValidation(tempV)
-    }
-
-    validate()
-  }, [tChineseName, sChineseName, englishName, processNumber, processTime, processWeight, i18n.language])
+        });
+      }
+  
+      setValidation(tempV);
+    };
+  
+    validate();
+  }, [tChineseName, sChineseName, englishName, processNumber, processTime, processWeight, i18n.language]);
+  
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -178,9 +171,6 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
   }
 
   const handleSubmit = () => {
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
-    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
-
     const formData: CreateProcessTypeProps = {
       processTypeNameTchi: tChineseName,
       processTypeNameSchi: sChineseName,

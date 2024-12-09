@@ -145,16 +145,18 @@ const ApproveModal: React.FC<ApproveForm> = ({
   checkedCheckOut,
   onApprove,
   checkOutData,
-  navigate,
+  navigate
 }) => {
   const { t } = useTranslation()
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const handleApproveRequest = async () => {
     const confirmReason: string[] = ['Confirmed']
-    
+
     const results = await Promise.allSettled(
       checkedCheckOut.map(async (chkOutId) => {
-        const selected = checkOutData.find(value => value.chkOutId === chkOutId)
+        const selected = checkOutData.find(
+          (value) => value.chkOutId === chkOutId
+        )
         try {
           const statReason: updateStatus = {
             status: 'CONFIRMED',
@@ -169,15 +171,18 @@ const ApproveModal: React.FC<ApproveForm> = ({
             data.checkoutDetail.map(async (detail: any) => {
               if (detail.picoDtlId) {
                 const picoAPI = await getPicoById(selected?.picoId ?? '')
-                const picoResult = picoAPI.data.pickupOrderDetail.find((value: { picoDtlId: number }) => value.picoDtlId === detail.picoDtlId)
-  
+                const picoResult = picoAPI.data.pickupOrderDetail.find(
+                  (value: { picoDtlId: number }) =>
+                    value.picoDtlId === detail.picoDtlId
+                )
+
                 const dataCheckout: CheckOutWarehouse = {
                   checkOutWeight: detail.weight || 0,
                   checkOutUnitId: detail.unitId || 0,
                   checkOutAt: data.updatedAt || '',
                   checkOutBy: data.updatedBy || '',
                   updatedBy: loginId,
-                  version: picoResult.version,
+                  version: picoResult.version
                 }
                 return await updateCheckout(
                   chkOutId,
@@ -274,10 +279,12 @@ const RejectModal: React.FC<RejectForm> = ({
       return reasonItem ? reasonItem.name : ''
     })
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
-    
+
     const results = await Promise.allSettled(
       checkedCheckOut.map(async (chkOutId) => {
-        const selected = checkOutData.find(value => value.chkOutId === chkOutId)
+        const selected = checkOutData.find(
+          (value) => value.chkOutId === chkOutId
+        )
         try {
           const statReason: updateStatus = {
             status: 'REJECTED',
@@ -399,9 +406,16 @@ const CheckoutRequest: FunctionComponent = () => {
     receiverAddr: ''
   })
   const [reasonList, setReasonList] = useState<any>([])
-  const { dateFormat, manuList, collectorList, logisticList, companies, currentTenant } =
-    useContainer(CommonTypeContainer)
+  const {
+    dateFormat,
+    manuList,
+    collectorList,
+    logisticList,
+    companies,
+    currentTenant
+  } = useContainer(CommonTypeContainer)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const isAdmin = localStorage.getItem('isAdmin') === 'true'
 
   const getRejectReason = async () => {
     try {
@@ -415,7 +429,7 @@ const CheckoutRequest: FunctionComponent = () => {
           case 'zhch':
             reasonName = 'reasonNameSchi'
             break
-          case 'zhhk':
+   
             reasonName = 'reasonNameTchi'
             break
           default:
@@ -691,7 +705,7 @@ const CheckoutRequest: FunctionComponent = () => {
             item.receiverName =
               item.receiverId !== '' ? companyName : item.receiverName
           }
-          
+
           item.senderCompany = getSenderCompany()
 
           checkoutData.push(item)
@@ -876,7 +890,7 @@ const CheckoutRequest: FunctionComponent = () => {
                 cursor: checkedCheckOut.length === 0 ? 'not-allowed' : 'pointer'
               }
             ]}
-            disabled={checkedCheckOut.length === 0}
+            disabled={checkedCheckOut.length === 0 || !isAdmin}
             variant="outlined"
             onClick={() => setApproveModal(checkedCheckOut.length > 0)}
           >
@@ -892,7 +906,7 @@ const CheckoutRequest: FunctionComponent = () => {
                 m: 0.5
               }
             ]}
-            disabled={checkedCheckOut.length === 0}
+            disabled={checkedCheckOut.length === 0 || !isAdmin}
             variant="outlined"
             onClick={() => setRejectModal(checkedCheckOut.length > 0)}
           >

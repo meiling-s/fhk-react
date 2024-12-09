@@ -26,7 +26,7 @@ import logo_company from '../logo_company.png'
 import { useNavigate } from 'react-router-dom'
 import React, { useState } from 'react'
 import { Collapse, createTheme } from '@mui/material'
-import { ExpandLess, ExpandMore, Login, StarBorder } from '@mui/icons-material'
+import { CalendarTodayOutlined, ExpandLess, ExpandMore, FmdGoodOutlined, Login, StarBorder } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -41,10 +41,12 @@ import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
 import VerticalAlignCenterRoundedIcon from '@mui/icons-material/VerticalAlignCenterRounded';
 import InventoryIcon from '@mui/icons-material/Inventory'
+import RecyclingIcon from '@mui/icons-material/Recycling';
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
 import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined'
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
+import ScreenRotationAltIcon from "@mui/icons-material/ScreenRotationAlt";
 import BarChartIcon from '@mui/icons-material/BarChart'
 import { dynamicpath, returnApiToken, creatioPageList } from '../utils/utils'
 import { useContainer } from 'unstated-next'
@@ -151,6 +153,14 @@ function MainDrawer() {
         path: `/${realm}/pickupOrder`,
         functionName: 'Pickup order'
       },
+      'process order': {
+        name: t('processOrder.title'),
+        icon: <RecyclingIcon />,
+        onClick: () => navigate(`/${realm}/processOrder`),
+        collapse: false,
+        path: `/${realm}/processOrder`,
+        functionName: 'Process order'
+      },
       'Purchase order': {
         name: t('purchase_order.enquiry_po'),
         icon: <ShoppingCartOutlinedIcon />,
@@ -167,6 +177,22 @@ function MainDrawer() {
         path: `/${realm}/jobOrder`,
         functionName: 'Job order'
       },
+      'Vehicle mapping': {
+        name: t('common.vehicleRouteTracker'),
+        icon: <FmdGoodOutlined />,
+        onClick: () => navigate(`/${realm}/vehicleRouteTracker`),
+        collapse: false,
+        path: `/${realm}/vehicleRouteTracker`,
+        functionName: 'Vehicle mapping'
+      },
+      'Schedule board': {
+        name: t('common.jobOrderScheduleBoard'),
+        icon: <CalendarTodayOutlined />,
+        onClick: () => navigate(`/${realm}/jobOrderScheduleBoard`),
+        collapse: false,
+        path: `/${realm}/jobOrderScheduleBoard`,
+        functionName: 'Schedule board'
+      },
       'Request check-in': {
         name: t('check_in.request_check_in'),
         icon: <LoginIcon />,
@@ -182,6 +208,14 @@ function MainDrawer() {
         collapse: false,
         path: '/warehouse/checkout',
         functionName: 'Request checkout'
+      },
+      "Internal transfer request": {
+        name: t("internalTransfer.internal_transfer_request"),
+        icon: <ScreenRotationAltIcon />,
+        onClick: () => navigate("/warehouse/InternalTransferRequest"),
+        collapse: false,
+        path: "/warehouse/InternalTransferRequest",
+        functionName: "Internal transfer request"
       },
       'Check-in and check-out': {
         name: t('checkinandcheckout.checkinandcheckout'),

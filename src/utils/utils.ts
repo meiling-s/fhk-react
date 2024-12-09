@@ -492,15 +492,122 @@ export function debounce<T extends (...args: any[]) => void>(
   }
 }
 
-export const getFormatId = (id:string):string => {
-  let initId:string = '000000';
- 
-  if(id?.length === 0 || !id) {
-      initId = '';
-  } else if(id?.length < 6){
-      initId = initId.slice(id?.length, initId?.length) + id
+export const getFormatId = (id: string): string => {
+  let initId: string = '000000'
+
+  if (id?.length === 0 || !id) {
+    initId = ''
+  } else if (id?.length < 6) {
+    initId = initId.slice(id?.length, initId?.length) + id
   } else {
-      initId = id;
+    initId = id
   }
   return initId
-};
+}
+
+interface StatusPickUpOrder {
+  value: string
+  labelEng: string
+  labelSchi: string
+  labelTchi: string
+}
+
+export const statusList: StatusPickUpOrder[] = [
+  {
+    value: '0',
+    labelEng: 'CREATED',
+    labelSchi: '待处理',
+    labelTchi: '待處理'
+  },
+  {
+    value: '1',
+    labelEng: 'STARTED',
+    labelSchi: '处理中',
+    labelTchi: '處理中'
+  },
+  {
+    value: '2',
+    labelEng: 'CONFIRMED',
+    labelSchi: '已确认',
+    labelTchi: '已確認'
+  },
+  {
+    value: '3',
+    labelEng: 'REJECTED',
+    labelSchi: '已拒绝',
+    labelTchi: '已拒絕'
+  },
+  {
+    value: '4',
+    labelEng: 'COMPLETED',
+    labelSchi: '已完成',
+    labelTchi: '已完成'
+  },
+  {
+    value: '5',
+    labelEng: 'CLOSED',
+    labelSchi: '已取消',
+    labelTchi: '已取消'
+  },
+  {
+    value: '6',
+    labelEng: 'OUTSTANDING',
+    labelSchi: '已逾期',
+    labelTchi: '已逾期'
+  },
+  {
+    value: '',
+    labelEng: 'Any',
+    labelSchi: '任何',
+    labelTchi: '任何'
+  }
+]
+
+export const porStatusList: StatusPickUpOrder[] = [
+  {
+    value: 'CREATED',
+    labelEng: 'CREATED',
+    labelSchi: '待处理',
+    labelTchi: '待處理'
+  },
+  {
+    value: 'COMPLETED',
+    labelEng: 'COMPLETED',
+    labelSchi: '已完成',
+    labelTchi: '已完成'
+  },
+  {
+    value: 'CANCELLED',
+    labelEng: 'CANCELLED',
+    labelSchi: '取消',
+    labelTchi: '取消'
+  },
+  {
+    value: 'PROCESSEDIN',
+    labelEng: 'PROCESSED IN',
+    labelSchi: '已处理',
+    labelTchi: '已處理'
+  },
+  {
+    value: '',
+    labelEng: 'ANY',
+    labelSchi: '任何',
+    labelTchi: '任何'
+  }
+]
+
+export const cloneData = (data: any) => {
+  return JSON.parse(JSON.stringify(data))
+}
+
+export const objectFilter = (data: object, arr: string[]) => {
+  try {
+    const result = Object.keys(data)
+      .filter((key) => !arr.includes(key))
+      .reduce((obj: any, key) => {
+        obj[key] = data[key as keyof object]
+        return obj
+      }, {})
+    return result
+  } catch (err) {}
+}

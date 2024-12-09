@@ -34,6 +34,13 @@ export interface PickupOrderDetail {
     checkOutByNameEng?: string | null,
     checkOutByNameSchi?: string | null,
     checkOutByNameTchi?: string | null,
+    productType?: any,
+    productSubType?: any | string;
+    productSubTypeId?: any | string;
+    productAddon?: any | string;
+    productAddonType?: any;
+    productSubTypeRemark?: string;
+    productAddOnTypeRemark?: string
 }
 
 export interface PickupOrder {
@@ -97,6 +104,8 @@ export interface CreatePO {
     createdBy:        string;
     updatedBy:        string;
     createPicoDetail: CreatePicoDetail[];
+    specificDates: string[];
+    refPicoId?:        string;
 }
 
 export interface CreatePicoDetail {
@@ -115,10 +124,19 @@ export interface CreatePicoDetail {
     createdBy:       string;
     updatedBy:       string;
     pickupAt:        string;
-    recycType:    string;
-    recycSubType: string;
+    recycType?:    string;
+    recycSubType?: string;
     weight:       string;
+    itemCategory?: string;
     version?: number;
+    addon?: string;
+    productType?: any | string;
+    productSubType?: any | string;
+    productAddon?: any | string;
+    productAddonType?: any;
+    productSubTypeRemark?: string;
+    productAddonTypeRemark?: string;
+    isAutomation?: boolean;
     
 }
 
@@ -172,6 +190,7 @@ export interface Row {
     refPicoId:     string ;
     updatePicoDetail: CreatePicoDetail[]
     version?: number;
+    specificDates: string[];
     
 }
 

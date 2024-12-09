@@ -32,6 +32,10 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useNavigate } from 'react-router-dom'
 import { extractError, getPrimaryColor } from '../../../utils/utils'
+import utc from 'dayjs/plugin/utc'
+
+
+dayjs.extend(utc)
 
 const BasicServicePicture = () => {
   const { t } = useTranslation()
@@ -121,7 +125,7 @@ const BasicServicePicture = () => {
   }, [startDate, endDate, place, serviceImages,numberOfPeople])
 
   const formattedDate = (dateData: dayjs.Dayjs) => {
-    return dateData.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+    return dateData.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
   }
 
   const submitServiceInfo = async () => {

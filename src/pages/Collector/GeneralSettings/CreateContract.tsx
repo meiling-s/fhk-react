@@ -1,55 +1,55 @@
-import { FunctionComponent, useState, useEffect } from 'react'
-import { Box, Divider, Grid } from '@mui/material'
-import dayjs from 'dayjs'
-import RightOverlayForm from '../../../components/RightOverlayForm'
-import CustomField from '../../../components/FormComponents/CustomField'
-import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { EVENT_RECORDING } from '../../../constants/configs'
-import { styles } from '../../../constants/styles'
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import { FunctionComponent, useState, useEffect } from "react";
+import { Box, Divider, Grid } from "@mui/material";
+import dayjs from "dayjs";
+import RightOverlayForm from "../../../components/RightOverlayForm";
+import CustomField from "../../../components/FormComponents/CustomField";
+import CustomTextField from "../../../components/FormComponents/CustomTextField";
+import { EVENT_RECORDING } from "../../../constants/configs";
+import { styles } from "../../../constants/styles";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
-import { useTranslation } from 'react-i18next'
-import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
-import { formValidate } from '../../../interfaces/common'
+import { useTranslation } from "react-i18next";
+import { FormErrorMsg } from "../../../components/FormComponents/FormErrorMsg";
+import { formValidate } from "../../../interfaces/common";
 import {
   Vehicle,
-  CreateVehicle as CreateVehicleForm
-} from '../../../interfaces/vehicles'
-import { STATUS_CODE, formErr, format } from '../../../constants/constant'
+  CreateVehicle as CreateVehicleForm,
+} from "../../../interfaces/vehicles";
+import { STATUS_CODE, formErr, format } from "../../../constants/constant";
 import {
   extractError,
   getPrimaryColor,
   returnErrorMsg,
   showErrorToast,
-  validDayjsISODate
-} from '../../../utils/utils'
-import { il_item } from '../../../components/FormComponents/CustomItemList'
-import { localStorgeKeyName } from '../../../constants/constant'
-import i18n from '../../../setups/i18n'
+  validDayjsISODate,
+} from "../../../utils/utils";
+import { il_item } from "../../../components/FormComponents/CustomItemList";
+import { localStorgeKeyName } from "../../../constants/constant";
+import i18n from "../../../setups/i18n";
 import {
   Contract,
-  CreateContract as CreateContractProps
-} from '../../../interfaces/contract'
-import LabelField from '../../../components/FormComponents/CustomField'
-import Switcher from '../../../components/FormComponents/CustomSwitch'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+  CreateContract as CreateContractProps,
+} from "../../../interfaces/contract";
+import LabelField from "../../../components/FormComponents/CustomField";
+import Switcher from "../../../components/FormComponents/CustomSwitch";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   createContract,
   editContract,
-  deleteContract
-} from '../../../APICalls/Collector/contracts'
-import { useContainer } from 'unstated-next'
-import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { useNavigate } from 'react-router-dom'
+  deleteContract,
+} from "../../../APICalls/Collector/contracts";
+import { useContainer } from "unstated-next";
+import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
+import { useNavigate } from "react-router-dom";
 
 interface CreateVehicleProps {
-  drawerOpen: boolean
-  handleDrawerClose: () => void
-  action: 'add' | 'edit' | 'delete' | 'none'
-  onSubmitData: (type: string, msg: string) => void
-  rowId?: number
-  selectedItem?: Contract | null
-  contractList: Contract[]
+  drawerOpen: boolean;
+  handleDrawerClose: () => void;
+  action: "add" | "edit" | "delete" | "none";
+  onSubmitData: (type: string, msg: string) => void;
+  rowId?: number;
+  selectedItem?: Contract | null;
+  contractList: Contract[];
 }
 
 const CreateContract: FunctionComponent<CreateVehicleProps> = ({
@@ -59,71 +59,71 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   onSubmitData,
   rowId,
   selectedItem,
-  contractList = []
+  contractList = [],
 }) => {
-  const { t } = useTranslation()
-  const [contractNo, setContractNo] = useState('')
-  const [referenceNumber, setReferenceNumber] = useState('')
-  const [contractStatus, setContractStatus] = useState(true)
-  const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs())
-  const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs())
-  const [remark, setRemark] = useState('')
-  const [whether, setWhether] = useState(false)
-  const [trySubmited, setTrySubmited] = useState<boolean>(false)
-  const [validation, setValidation] = useState<formValidate[]>([])
-  const [version, setVersion] = useState<number>(0)
-  const [existingContract, setExistingContract] = useState<Contract[]>([])
-  const { dateFormat } = useContainer(CommonTypeContainer)
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const [contractNo, setContractNo] = useState("");
+  const [referenceNumber, setReferenceNumber] = useState("");
+  const [contractStatus, setContractStatus] = useState(true);
+  const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs());
+  const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs());
+  const [remark, setRemark] = useState("");
+  const [whether, setWhether] = useState(false);
+  const [trySubmited, setTrySubmited] = useState<boolean>(false);
+  const [validation, setValidation] = useState<formValidate[]>([]);
+  const [version, setVersion] = useState<number>(0);
+  const [existingContract, setExistingContract] = useState<Contract[]>([]);
+  const { dateFormat } = useContainer(CommonTypeContainer);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    resetData()
-    if (action === 'edit' || action === 'delete') {
+    resetData();
+    if (action === "edit" || action === "delete") {
       if (selectedItem !== null && selectedItem !== undefined) {
-        setContractNo(selectedItem?.contractNo)
-        setReferenceNumber(selectedItem?.parentContractNo)
-        setContractStatus(selectedItem?.status === 'ACTIVE' ? true : false)
-        setStartDate(dayjs(selectedItem?.contractFrmDate))
-        setEndDate(dayjs(selectedItem?.contractToDate))
-        setRemark(selectedItem?.remark)
-        setWhether(selectedItem?.epdFlg)
-        setVersion(selectedItem?.version ?? 0)
+        setContractNo(selectedItem?.contractNo);
+        setReferenceNumber(selectedItem?.parentContractNo);
+        setContractStatus(selectedItem?.status === "ACTIVE" ? true : false);
+        setStartDate(dayjs(selectedItem?.contractFrmDate));
+        setEndDate(dayjs(selectedItem?.contractToDate));
+        setRemark(selectedItem?.remark);
+        setWhether(selectedItem?.epdFlg);
+        setVersion(selectedItem?.version ?? 0);
 
         setExistingContract(
           contractList.filter(
             (item) => item.contractNo != selectedItem.contractNo
           )
-        )
+        );
       }
-    } else if (action === 'add') {
-      resetData()
-      setExistingContract(contractList)
+    } else if (action === "add") {
+      resetData();
+      setExistingContract(contractList);
     }
-  }, [selectedItem, action, drawerOpen])
+  }, [selectedItem, action, drawerOpen]);
 
   const resetData = () => {
-    setContractNo('')
-    setReferenceNumber('')
-    setContractStatus(true)
-    setStartDate(dayjs())
-    setEndDate(dayjs())
-    setRemark('')
-    setValidation([])
-    setWhether(false)
-    setTrySubmited(false)
-    setVersion(0)
-  }
+    setContractNo("");
+    setReferenceNumber("");
+    setContractStatus(true);
+    setStartDate(dayjs());
+    setEndDate(dayjs());
+    setRemark("");
+    setValidation([]);
+    setWhether(false);
+    setTrySubmited(false);
+    setVersion(0);
+  };
 
   useEffect(() => {
     const validate = async () => {
-      const tempV: formValidate[] = []
+      const tempV: formValidate[] = [];
 
-      contractNo.toString() == '' &&
+      contractNo.toString() == "" &&
         tempV.push({
-          field: t('general_settings.contract_number'),
+          field: t("general_settings.contract_number"),
           problem: formErr.empty,
-          type: 'error'
-        })
+          type: "error",
+        });
       // existingContract.forEach((item) => {
       //   if (item.contractNo.toLowerCase() === contractNo.toLowerCase()) {
       //     tempV.push({
@@ -133,244 +133,242 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       //     })
       //   }
       // })
-      contractNo !== '' &&
-        referenceNumber !== '' &&
+      contractNo !== "" &&
+        referenceNumber !== "" &&
         contractNo === referenceNumber &&
         tempV.push({
-          field: `${t('general_settings.contract_number_must_be_different')}`,
+          field: `${t("general_settings.contract_number_must_be_different")}`,
           problem: formErr.cannotBeSame,
-          type: 'error'
-        })
+          type: "error",
+        });
       startDate == null &&
         tempV.push({
-          field: t('general_settings.start_date'),
+          field: t("general_settings.start_date"),
           problem: formErr.empty,
-          type: 'error'
-        })
+          type: "error",
+        });
       startDate &&
         !validDayjsISODate(startDate) &&
         tempV.push({
-          field: t('general_settings.start_date'),
+          field: t("general_settings.start_date"),
           problem: formErr.wrongFormat,
-          type: 'error'
-        })
+          type: "error",
+        });
       endDate == null &&
         tempV.push({
-          field: t('general_settings.end_date'),
+          field: t("general_settings.end_date"),
           problem: formErr.empty,
-          type: 'error'
-        })
+          type: "error",
+        });
       endDate &&
         !validDayjsISODate(endDate) &&
         tempV.push({
-          field: t('general_settings.end_date'),
+          field: t("general_settings.end_date"),
           problem: formErr.wrongFormat,
-          type: 'error'
-        })
+          type: "error",
+        });
       startDate > endDate &&
         tempV.push({
-          field: t('general_settings.start_date'),
+          field: t("general_settings.start_date"),
           problem: formErr.startDateBehindEndDate,
-          type: 'error'
-        })
+          type: "error",
+        });
       endDate < startDate &&
         tempV.push({
-          field: t('general_settings.end_date'),
+          field: t("general_settings.end_date"),
           problem: formErr.endDateEarlyThanStartDate,
-          type: 'error'
-        })
+          type: "error",
+        });
 
-      setValidation(tempV)
-    }
+      setValidation(tempV);
+    };
 
-    validate()
-  }, [contractNo, referenceNumber, startDate, endDate, i18n])
+    validate();
+  }, [contractNo, referenceNumber, startDate, endDate, i18n]);
 
   const checkString = (s: string) => {
     if (!trySubmited) {
       //before first submit, don't check the validation
-      return false
+      return false;
     }
-    return s == ''
-  }
+    return s == "";
+  };
 
   const handleSubmit = () => {
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
-    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || "";
+    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || "";
 
     const formData: CreateContractProps = {
       tenantId: tenantId,
       contractNo: contractNo,
       parentContractNo: referenceNumber,
-      status: contractStatus === true ? 'ACTIVE' : 'INACTIVE',
-      contractFrmDate: startDate ? startDate.format('YYYY-MM-DD') : '',
-      contractToDate: endDate ? endDate.format('YYYY-MM-DD') : '',
+      status: contractStatus === true ? "ACTIVE" : "INACTIVE",
+      contractFrmDate: startDate ? startDate.format("YYYY-MM-DD") : "",
+      contractToDate: endDate ? endDate.format("YYYY-MM-DD") : "",
       remark: remark,
       epdFlg: whether,
       createdBy: loginId,
       updatedBy: loginId,
-      ...(action === 'edit' && {version: version})
-    }
+      ...(action === "edit" && { version: version }),
+    };
 
-    if (action == 'add') {
-      handleCreateContract(formData)
-    } else if (action == 'edit') {
-      handleEditContract(formData)
-    } else if (action === 'delete') {
-      handleDelete()
+    if (action == "add") {
+      handleCreateContract(formData);
+    } else if (action == "edit") {
+      handleEditContract(formData);
+    } else if (action === "delete") {
+      handleDelete();
     }
-  }
+  };
 
   const handleCreateContract = async (formData: CreateContractProps) => {
     try {
       if (validation.length === 0) {
-        const result = await createContract(formData)
+        const result = await createContract(formData);
         if (result) {
-          onSubmitData('success', t('common.saveSuccessfully'))
-          resetData()
-          handleDrawerClose()
+          onSubmitData("success", t("common.saveSuccessfully"));
+          resetData();
+          handleDrawerClose();
         } else {
-          onSubmitData('error', t('common.saveFailed'))
+          onSubmitData("error", t("common.saveFailed"));
         }
       } else {
-        setTrySubmited(true)
+        setTrySubmited(true);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       } else {
-        let field = t('common.saveFailed');
-        let problem = ''
-        if(error?.response?.data?.status === STATUS_CODE[500]){
-          field = t('general_settings.contract_number')
-          problem = formErr.alreadyExist
-        } 
-        setValidation(
-          [
-            {
-              field,
-              problem,
-              type: 'error'
-            }
-          ]
-        )
-        setTrySubmited(true)
+        let field = t("common.saveFailed");
+        let problem = "";
+        if (error?.response?.data?.status === STATUS_CODE[500]) {
+          field = t("general_settings.contract_number");
+          problem = formErr.alreadyExist;
+        }
+        setValidation([
+          {
+            field,
+            problem,
+            type: "error",
+          },
+        ]);
+        setTrySubmited(true);
         // onSubmitData('error', t('common.saveFailed'))
       }
     }
-  }
+  };
 
   const handleEditContract = async (formData: CreateContractProps) => {
     try {
       if (validation.length === 0) {
-        const result = await editContract(formData)
+        const result = await editContract(formData);
         if (result) {
-          onSubmitData('success', t('common.editSuccessfully'))
-          resetData()
-          handleDrawerClose()
+          onSubmitData("success", t("common.editSuccessfully"));
+          resetData();
+          handleDrawerClose();
         }
       } else {
-        setTrySubmited(true)
+        setTrySubmited(true);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
-      } else if (state.code === STATUS_CODE[409]){
+        navigate("/maintenance");
+      } else if (state.code === STATUS_CODE[409]) {
         showErrorToast(error.response.data.message);
       }
     }
-  }
+  };
 
   const handleDelete = async () => {
     try {
-      const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
-      const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
+      const loginId = localStorage.getItem(localStorgeKeyName.username) || "";
+      const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || "";
 
       const formData: any = {
-        status: 'DELETED',
+        status: "DELETED",
         updatedBy: loginId,
-        version: version
-      }
+        version: version,
+      };
       if (selectedItem != null) {
-        const result = await deleteContract(formData, selectedItem.contractNo)
+        const result = await deleteContract(formData, selectedItem.contractNo);
         if (result) {
-          onSubmitData('success', t('common.deletedSuccessfully'))
-          resetData()
-          handleDrawerClose()
+          onSubmitData("success", t("common.deletedSuccessfully"));
+          resetData();
+          handleDrawerClose();
         } else {
-          onSubmitData('error', t('common.deleteFailed'))
+          onSubmitData("error", t("common.deleteFailed"));
         }
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       } else {
-        onSubmitData('error', t('common.deleteFailed'))
+        onSubmitData("error", t("common.deleteFailed"));
       }
     }
-  }
+  };
 
   return (
     <div className="add-vehicle">
       <RightOverlayForm
         open={drawerOpen}
         onClose={handleDrawerClose}
-        anchor={'right'}
+        anchor={"right"}
         action={action}
         headerProps={{
           title:
-            action == 'add'
-              ? t('top_menu.add_new')
-              : action == 'delete'
-              ? t('common.delete')
+            action == "add"
+              ? t("top_menu.add_new")
+              : action == "delete"
+              ? t("common.delete")
               : selectedItem?.contractNo,
-          subTitle: t('general_settings.contracts'),
-          submitText: t('add_warehouse_page.save'),
-          cancelText: t('add_warehouse_page.delete'),
+          subTitle: t("general_settings.contracts"),
+          submitText: t("add_warehouse_page.save"),
+          cancelText: t("add_warehouse_page.delete"),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
           onDelete: handleDelete,
-          deleteText: t('common.deleteMessage')
+          deleteText: t("common.deleteMessage"),
         }}
       >
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
           <Box sx={{ marginY: 2 }}>
-            <CustomField label={t('general_settings.contract_number')}>
+            <CustomField label={t("general_settings.contract_number")}>
               <CustomTextField
                 id="contractNo"
                 value={contractNo}
-                disabled={action != 'add'}
-                placeholder={t('general_settings.enter_contracts_number')}
+                disabled={action != "add"}
+                placeholder={t("general_settings.enter_contracts_number")}
                 onChange={(event) => setContractNo(event.target.value)}
                 error={checkString(contractNo)}
               />
             </CustomField>
           </Box>
           <Box sx={{ marginY: 2 }}>
-            <CustomField label={t('general_settings.reference_number')}>
+            <CustomField label={t("general_settings.reference_number")}>
               <CustomTextField
                 id="referenceNumber"
                 value={referenceNumber}
-                disabled={action === 'delete'}
-                placeholder={t('general_settings.enter_reference_number')}
+                disabled={action === "delete"}
+                placeholder={t("general_settings.enter_reference_number")}
                 onChange={(event) => setReferenceNumber(event.target.value)}
               />
             </CustomField>
           </Box>
           <Box sx={{ marginY: 2 }}>
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
-              <LabelField label={t('general_settings.state')} />
+              <LabelField label={t("general_settings.state")} />
               <Switcher
-                onText={t('status.active')}
-                offText={t('status.inactive')}
-                disabled={action === 'delete'}
+                onText={t("status.active")}
+                offText={t("status.inactive")}
+                disabled={action === "delete"}
                 defaultValue={contractStatus}
                 setState={(newValue) => {
-                  setContractStatus(newValue)
+                  setContractStatus(newValue);
                 }}
               />
             </div>
@@ -383,13 +381,18 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
               className="filter-date"
               sx={{
                 marginY: 2,
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-evenly'
+                display: "flex",
+                flexDirection: "row",
               }}
             >
-              <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
-                <LabelField label={t('general_settings.start_date')} />
+              <Box
+                sx={{
+                  ...localstyles.DateItem,
+                  flexDirection: "column",
+                  marginRight: 5,
+                }}
+              >
+                <LabelField label={t("general_settings.start_date")} />
                 <DatePicker
                   defaultValue={dayjs(startDate)}
                   format={dateFormat}
@@ -398,8 +401,8 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                   maxDate={dayjs(endDate)}
                 />
               </Box>
-              <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
-                <LabelField label={t('general_settings.end_date')} />
+              <Box sx={{ ...localstyles.DateItem, flexDirection: "column" }}>
+                <LabelField label={t("general_settings.end_date")} />
                 <DatePicker
                   defaultValue={dayjs(endDate)}
                   format={dateFormat}
@@ -410,25 +413,25 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
               </Box>
             </Box>
           </LocalizationProvider>
-          <CustomField label={t('general_settings.remark')} mandatory={false}>
+          <CustomField label={t("general_settings.remark")} mandatory={false}>
             <CustomTextField
               id="remark"
               value={remark}
-              placeholder={t('general_settings.enter_remark')}
+              placeholder={t("general_settings.enter_remark")}
               onChange={(event) => setRemark(event.target.value)}
               multiline={true}
             />
           </CustomField>
           <Box sx={{ marginY: 2 }}>
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
-              <LabelField label={t('general_settings.whether')} />
+              <LabelField label={t("general_settings.whether")} />
               <Switcher
-                onText={t('common.yes')}
-                offText={t('common.no')}
-                disabled={action === 'delete'}
+                onText={t("common.yes")}
+                offText={t("common.no")}
+                disabled={action === "delete"}
                 defaultValue={whether}
                 setState={(newValue) => {
-                  setWhether(newValue)
+                  setWhether(newValue);
                 }}
               />
             </div>
@@ -447,61 +450,61 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
         </Box>
       </RightOverlayForm>
     </div>
-  )
-}
+  );
+};
 
 const localstyles = {
   textField: {
-    borderRadius: '10px',
-    fontWeight: '500',
-    '& .MuiOutlinedInput-input': {
-      padding: '10px'
-    }
+    borderRadius: "10px",
+    fontWeight: "500",
+    "& .MuiOutlinedInput-input": {
+      padding: "10px",
+    },
   },
   imagesContainer: {
-    width: '100%',
-    height: 'fit-content'
+    width: "100%",
+    height: "fit-content",
   },
   image: {
-    aspectRatio: '1/1',
-    width: '100px',
-    borderRadius: 2
+    aspectRatio: "1/1",
+    width: "100px",
+    borderRadius: 2,
   },
   cardImg: {
     borderRadius: 2,
-    backgroundColor: '#E3E3E3',
-    width: '100%',
+    backgroundColor: "#E3E3E3",
+    width: "100%",
     height: 150,
-    boxShadow: 'none'
+    boxShadow: "none",
   },
   btnBase: {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center'
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
   container: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    borderRadius: 10
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    borderRadius: 10,
   },
   imgError: {
-    border: '1px solid red'
+    border: "1px solid red",
   },
   datePicker: {
     ...styles.textField,
-    width: '250px',
-    '& .MuiIconButton-edgeEnd': {
-      color: getPrimaryColor()
-    }
+    width: "250px",
+    "& .MuiIconButton-edgeEnd": {
+      color: getPrimaryColor(),
+    },
   },
   DateItem: {
-    display: 'flex',
-    height: 'fit-content'
-  }
-}
+    display: "flex",
+    height: "fit-content",
+  },
+};
 
-export default CreateContract
+export default CreateContract;

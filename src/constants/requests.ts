@@ -263,6 +263,10 @@ export const GET_MANULIST = (
   url: `api/v1/${realmApiRoute}/manulist/${table}?size=1000`
 })
 
+export const GET_CUSTOMERLIST = (realmApiRoute: string, table: string) => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/customerlist/${table}?size=1000`
+})
 export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'put',
   url: 'api/v1/administrator/pico/V3'
@@ -633,6 +637,26 @@ export const SEARCH_LOGISTIC_VEHICLE = (
   method: 'get',
   url: `api/v1/logistic/vehicle/${table}/${vehicleId}`
 })
+
+export const NEW_SEARCH_LOGISTIC_VEHICLE = (
+  table: string,
+  vehicleId?: string,
+  deviceId?: string
+): AxiosRequestConfig => {
+  let url = `api/v1/logistic/vehicle/${table}/search`
+  // if (vehicleId !== undefined) {
+  //   url += `?vehicleId=${vehicleId}`;
+  // }
+
+  // if (deviceId) {
+  //   url += vehicleId ? `&deviceId=${deviceId}` : `?deviceId=${deviceId}`;
+  // }
+
+  return {
+    method: 'get',
+    url: `${url}`
+  }
+}
 
 export const CREATE_LOGISTIC_VEHICLE = (table: string): AxiosRequestConfig => ({
   method: 'post',
@@ -1710,4 +1734,69 @@ export const UPDATE_PROCESS_TYPE_DATA = (realmApiRoute: string, processTypeId: s
 export const DELETE_PROCESS_TYPE_DATA = (realmApiRoute: string, processTypeId: string): AxiosRequestConfig => ({
   method: 'delete',
   url: `api/v1/${realmApiRoute}/processtype/${processTypeId}`
+})
+
+export const GET_FACTORY_LIST_DATA = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/factory/getFactories/${tenantId}`
+})
+
+export const GET_FACTORY_WAREHOUSE_LIST_DATA = (): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/factory/getWarehouseList`
+})
+
+export const GET_ALL_FACTORY_WAREHOUSE_LIST_DATA = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/factory/getAllWarehouseList?tenantId=${tenantId}`
+})
+
+export const CREATE_FACTORY_DATA = (): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/factory/createFactory`
+})
+
+export const UPDATE_FACTORY_DATA = (factoryId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/factory/updateFactory?factoryId=${factoryId}`
+})
+
+export const DELETE_FACTORY_DATA = (factoryId: string): AxiosRequestConfig => ({
+  method: 'delete',
+  url: `api/v1/factory/delFactory?factoryId=${factoryId}`
+})
+
+export const GET_INTERNAL_TRANSFER_REQUEST = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/itr/all/${tenantId}`
+})
+
+export const UPDATE_INTERNAL_TRANSFER_REQUEST_STATUS = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/itr/update/${tenantId}/status`
+})
+
+export const CREATE_PROCESS_IN = (  
+  realmApiRoute: string,
+  table: string,
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/processin/${table}` 
+})
+
+export const CREATE_PROCESS_OUT = (  
+  realmApiRoute: string,
+  table: string,
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/processout/${table}/header`
+})
+
+export const GET_PUJO_DATA = (realmApiRoute: string, table: string, joId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/pu/jo/${table}/${joId}`
 })
