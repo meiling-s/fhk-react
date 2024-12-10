@@ -33,6 +33,8 @@ export type InventoryItem = {
   updatedAt: string
   location: string
   packageName?: string,
+  gid: number,
+  gidLabel: string
 }
 
 export type InventoryQuery = {
@@ -41,6 +43,64 @@ export type InventoryQuery = {
   recycTypeId: string
   recycSubTypeId: string
   idleDays: number | null,
+}
+
+export type ProcessInOutEventDetail = {
+  gid: number[],
+  warehouse_tc: string
+  warehouse_sc: string
+  start_date_time: string
+  warehouse_en: string
+  total_weight: string
+  gidLabel: string
+}
+
+export type EventDetailTracking = {
+  tenant_id: string,
+  company_name_en: string
+  company_name_sc: string
+  company_name_tc: string
+  factory_name_en: string
+  factory_name_sc: string
+  factory_name_tc: string
+  process_out: ProcessInOutEventDetail,
+  process_type_en: string
+  process_type_sc: string
+  process_type_tc: string
+  process_in: ProcessInOutEventDetail
+}
+
+export type EventTrackingData = {
+  gidEventId: number
+  tenantId: string
+  eventType: string
+  eventDetail: string
+  details: EventDetailTracking
+  remarks: string | null
+  createdBy: string
+  createdAt: string
+}
+
+export type InventoryTracking = {
+  gid: number[]
+  labelId: string
+  parentIds: number[]
+  childrenIds: number[]
+  recycTypeId: string
+  recycSubTypeId: string
+  productTypeId: string
+  productSubTypeId: string
+  productSubTypeRemark: string
+  productAddonTypeId: string
+  productAddonTypeRemark: string
+  packageTypeId: string
+  weight: number
+  unitId: string
+  createdBy: string
+  updatedBy: string
+  createdAt: string
+  updatedAt: string
+  event: EventTrackingData[]
 }
 
 export interface ProcessInType {

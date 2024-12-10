@@ -723,7 +723,20 @@
     "weight": "重量",
     "at": "于",
     "select_location": "选择位置",
-    "handover": "交给"
+    "handover": "交给",
+    "track": "追踪",
+    "company": "公司",
+    "beforeProcessing": "處理前",
+    "afterProcessing": "處理後",
+    "itemNumber": "物品編號",
+    "start_date": "開始日期及時間",
+    "warehouse": "货仓",
+    "factory": "工场",
+    "shipping_receiver": "寄件及收件公司",
+    "delivery_to_warehouse": "送入/送出货仓",
+    "delivery_location": "送入/送出货仓地点",
+    "warehouse_recycling": "货仓/回收点",
+    "internal_transfer": "内部运输"
   },
   "processRecord": {
     "processing": "处理中",

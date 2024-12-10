@@ -1,4 +1,4 @@
-import { useEffect, useState, FunctionComponent, useCallback } from 'react'
+import { useEffect, useState, FunctionComponent, useCallback } from "react";
 import {
   Box,
   Typography,
@@ -8,90 +8,91 @@ import {
   InputAdornment,
   IconButton,
   CircularProgress,
-  Button
-} from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+  Button,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import {
   DataGrid,
   GridColDef,
   GridRowParams,
   GridRowSpacingParams,
-  GridRenderCellParams
-} from '@mui/x-data-grid'
-import { styles } from '../../../constants/styles'
-import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
-import InventoryDetail from './DetailInventory'
-import CreateInventoryItem from './CreateInventory'
-import { useContainer } from 'unstated-next'
+  GridRenderCellParams,
+} from "@mui/x-data-grid";
+import { styles } from "../../../constants/styles";
+import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
+import InventoryDetail from "./DetailInventory";
+import CreateInventoryItem from "./CreateInventory";
+import { useContainer } from "unstated-next";
 import {
   InventoryItem,
-  InventoryDetail as InvDetails
-} from '../../../interfaces/inventory'
-import { il_item } from '../../../components/FormComponents/CustomItemList'
+  InventoryDetail as InvDetails,
+} from "../../../interfaces/inventory";
+import { il_item } from "../../../components/FormComponents/CustomItemList";
 import {
   astdGetAllInventory,
-  getAllInventory
-} from '../../../APICalls/Collector/inventory'
+  getAllInventory,
+} from "../../../APICalls/Collector/inventory";
 import {
   format,
   Languages,
   localStorgeKeyName,
-  STATUS_CODE
-} from '../../../constants/constant'
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
-import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+  STATUS_CODE,
+} from "../../../constants/constant";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import {
   getPicoById,
   getAllLogisticsPickUpOrder,
-  getAllPickUpOrder
-} from '../../../APICalls/Collector/pickupOrder/pickupOrder'
-import { PickupOrder } from '../../../interfaces/pickupOrder'
-import { astdSearchWarehouse } from '../../../APICalls/warehouseManage'
-import { useTranslation } from 'react-i18next'
-import i18n from '../../../setups/i18n'
-import { ADD_ICON, SEARCH_ICON } from '../../../themes/icons'
-import useDebounce from '../../../hooks/useDebounce'
-import CircularLoading from '../../../components/CircularLoading'
+  getAllPickUpOrder,
+} from "../../../APICalls/Collector/pickupOrder/pickupOrder";
+import { PickupOrder } from "../../../interfaces/pickupOrder";
+import { astdSearchWarehouse } from "../../../APICalls/warehouseManage";
+import { useTranslation } from "react-i18next";
+import i18n from "../../../setups/i18n";
+import { ADD_ICON, SEARCH_ICON } from "../../../themes/icons";
+import useDebounce from "../../../hooks/useDebounce";
+import CircularLoading from "../../../components/CircularLoading";
 import {
   returnApiToken,
   extractError,
   getPrimaryColor,
   debounce,
   showErrorToast,
-  showSuccessToast
-} from '../../../utils/utils'
-import { getAllWarehouse } from '../../../APICalls/warehouseManage'
-import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
-import { InventoryQuery } from '../../../interfaces/inventory'
-import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
-import { PackagingUnit } from '../../../interfaces/packagingUnit'
-import { getAllFactories, getAllFactoriesWarehouse,  } from '../../../APICalls/Collector/factory'
-import { getCollectionPoint } from '../../../APICalls/Collector/collectionPointManage'
-import { collectionPoint } from 'src/interfaces/collectionPoint'
-import { FactoryData, FactoryWarehouseData } from 'src/interfaces/factory'
+  showSuccessToast,
+} from "../../../utils/utils";
+import { getAllWarehouse } from "../../../APICalls/warehouseManage";
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
+import { InventoryQuery } from "../../../interfaces/inventory";
+import { getAllPackagingUnit } from "../../../APICalls/Collector/packagingUnit";
+import { PackagingUnit } from "../../../interfaces/packagingUnit";
+import {
+  getAllFactories,
+  getAllFactoriesWarehouse,
+} from "../../../APICalls/Collector/factory";
+import { getCollectionPoint } from "../../../APICalls/Collector/collectionPointManage";
+import { collectionPoint } from "src/interfaces/collectionPoint";
+import { FactoryData, FactoryWarehouseData } from "src/interfaces/factory";
 
-
-
-dayjs.extend(utc)
-dayjs.extend(timezone)
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 interface Option {
-  value: string
-  label: string
+  value: string;
+  label: string;
 }
 
 type productItem = {
-  productType: il_item
-  productSubType: il_item[]
-  productAddonType: il_item[]
-}
+  productType: il_item;
+  productSubType: il_item[];
+  productAddonType: il_item[];
+};
 
 type recycItem = {
-  recycType: il_item
-  recycSubType: il_item[]
-}
+  recycType: il_item;
+  recycSubType: il_item[];
+};
 
 function createInventory(
   itemId: number,
@@ -121,6 +122,8 @@ function createInventory(
   createdAt: string,
   updatedAt: string,
   location: string,
+  gid: number,
+  gidLabel: string,
   packageName?: string
 ): InventoryItem {
   return {
@@ -151,262 +154,265 @@ function createInventory(
     createdAt,
     updatedAt,
     location,
-    packageName
-  }
+    gid,
+    gidLabel,
+    packageName,
+  };
 }
 
 const Inventory: FunctionComponent = () => {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const [drawerOpen, setDrawerOpen] = useState(false)
-  const [createDrawerOpen, setCreateDrawerOpen] = useState(false)
-  const [inventoryData, setInventoryData] = useState<any[]>([])
-  const [inventoryList, setInventory] = useState<any[]>([])
-  const [filteredInventory, setFilteredInventory] = useState<any[]>([])
-  const [selectedRow, setSelectedRow] = useState<any | null>(null)
-  const [rowId, setRowId] = useState<number>(1)
-  const [page, setPage] = useState(1)
-  const pageSize = 10
-  const [totalData, setTotalData] = useState<number>(0)
-  const { recycType, dateFormat, productType } = useContainer(CommonTypeContainer)
-  const [recycItem, setRecycItem] = useState<recycItem[]>([])
-  const [picoList, setPicoList] = useState<PickupOrder[]>([])
-  const [selectedPico, setSelectedPico] = useState<PickupOrder[]>([])
-  const [searchText, setSearchText] = useState<string>('')
-  const realmApi = localStorage.getItem(localStorgeKeyName.realmApiRoute)
-  const debouncedSearchValue: string = useDebounce(searchText, 1000)
-  const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [createDrawerOpen, setCreateDrawerOpen] = useState(false);
+  const [inventoryData, setInventoryData] = useState<any[]>([]);
+  const [inventoryList, setInventory] = useState<any[]>([]);
+  const [filteredInventory, setFilteredInventory] = useState<any[]>([]);
+  const [selectedRow, setSelectedRow] = useState<any | null>(null);
+  const [rowId, setRowId] = useState<number>(1);
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const [totalData, setTotalData] = useState<number>(0);
+  const { recycType, dateFormat, productType } =
+    useContainer(CommonTypeContainer);
+  const [recycItem, setRecycItem] = useState<recycItem[]>([]);
+  const [picoList, setPicoList] = useState<PickupOrder[]>([]);
+  const [selectedPico, setSelectedPico] = useState<PickupOrder[]>([]);
+  const [searchText, setSearchText] = useState<string>("");
+  const realmApi = localStorage.getItem(localStorgeKeyName.realmApiRoute);
+  const debouncedSearchValue: string = useDebounce(searchText, 1000);
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
   const [query, setQuery] = useState<InventoryQuery>({
     labelId: null,
     warehouseId: null,
-    recycTypeId: '',
-    recycSubTypeId: '',
+    recycTypeId: "",
+    recycSubTypeId: "",
     idleDays: null,
-  })
-  const [warehouseList, setWarehouseList] = useState<Option[]>([])
-  const [recycList, setRecycList] = useState<Option[]>([])
-  const [packagingMapping, setPackagingMapping] = useState<PackagingUnit[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
-  const [colList, setColList] = useState<collectionPoint[]>([])
-  const [allFactoryDataList, setAllFactoryDataList] = useState<FactoryData[]>([])
-  const [warehouseDataList, setWarehouseDataList] = useState<FactoryWarehouseData[]>([])
-  const [productItem, setProductItem] = useState<productItem[]>([])
-
-
+  });
+  const [warehouseList, setWarehouseList] = useState<Option[]>([]);
+  const [recycList, setRecycList] = useState<Option[]>([]);
+  const [packagingMapping, setPackagingMapping] = useState<PackagingUnit[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const role =
+    localStorage.getItem(localStorgeKeyName.role) || "collectoradmin";
+  const [colList, setColList] = useState<collectionPoint[]>([]);
+  const [allFactoryDataList, setAllFactoryDataList] = useState<FactoryData[]>(
+    []
+  );
+  const [warehouseDataList, setWarehouseDataList] = useState<
+    FactoryWarehouseData[]
+  >([]);
+  const [productItem, setProductItem] = useState<productItem[]>([]);
 
   async function initCollectionPoint() {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const result = await getCollectionPoint(0, 1000)
+      const result = await getCollectionPoint(0, 1000);
       if (result?.status === STATUS_CODE[200]) {
-        setColList([])
-        const data = result?.data.content
+        setColList([]);
+        const data = result?.data.content;
         if (data && data.length > 0) {
-          setColList(data)
+          setColList(data);
         }
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-    setIsLoading(false)
+    setIsLoading(false);
   }
 
-  const initAllFactoryList = (async () => {
-    setIsLoading(true)
-    setAllFactoryDataList([])
-    const result = await getAllFactories(0, 1000)
-    const data = result?.data
-  
-    if (data) {
-      setAllFactoryDataList(data.content)
-      setIsLoading(false)
-    }   
-  })
+  const initAllFactoryList = async () => {
+    setIsLoading(true);
+    setAllFactoryDataList([]);
+    const result = await getAllFactories(0, 1000);
+    const data = result?.data;
 
-  const initWarehouseList = (async () => {
-    setIsLoading(true)
-    setWarehouseDataList([])
-    const result = await getAllFactoriesWarehouse()
-    const data = result?.data 
-  
     if (data) {
-      setWarehouseDataList(data)
-      setIsLoading(false)
-    }   
-  })
+      setAllFactoryDataList(data.content);
+      setIsLoading(false);
+    }
+  };
 
+  const initWarehouseList = async () => {
+    setIsLoading(true);
+    setWarehouseDataList([]);
+    const result = await getAllFactoriesWarehouse();
+    const data = result?.data;
+
+    if (data) {
+      setWarehouseDataList(data);
+      setIsLoading(false);
+    }
+  };
 
   const initpackagingUnit = async () => {
     try {
-      const result = await getAllPackagingUnit(0, 1000)
-      const data = result?.data
+      const result = await getAllPackagingUnit(0, 1000);
+      const data = result?.data;
 
       if (data) {
-        setPackagingMapping(data.content)
-        console.log('data packunit', data.content)
+        setPackagingMapping(data.content);
+        console.log("data packunit", data.content);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-  }
-
-
-  useEffect(() => {
-    mappingRecyleItem()
-    mappingProductItem()
-    initpackagingUnit()
-    getAllPickupOrder()
-  }, [recycType, productType, i18n.language])
+  };
 
   useEffect(() => {
-    if (realmApi !== 'account') {
+    mappingRecyleItem();
+    mappingProductItem();
+    initpackagingUnit();
+    getAllPickupOrder();
+  }, [recycType, productType, i18n.language]);
+
+  useEffect(() => {
+    if (realmApi !== "account") {
       if (recycItem.length > 0 && productItem.length > 0) {
-        initInventory()
-        initWarehouse()
-        initAllFactoryList()
-        initWarehouseList()
-        initCollectionPoint()
+        initInventory();
+        initWarehouse();
+        initAllFactoryList();
+        initWarehouseList();
+        initCollectionPoint();
       }
     }
-  }, [recycItem, productItem, page, realmApi, query, i18n.language])
+  }, [recycItem, productItem, page, realmApi, query, i18n.language]);
 
   const mappingProductItem = () => {
-    const productMapping: productItem[] = []
-    
+    const productMapping: productItem[] = [];
+
     productType?.forEach((product) => {
       var productItem: productItem = {
-        productType: { name: '', id: '' },
+        productType: { name: "", id: "" },
         productSubType: [],
-        productAddonType: []
-      }
-  
-      var name = ''
+        productAddonType: [],
+      };
+
+      var name = "";
       switch (i18n.language) {
-        case 'enus':
-          name = product.productNameEng
-          break
-        case 'zhch':
-          name = product.productNameSchi
-          break
-        case 'zhhk':
-          name = product.productNameTchi
-          break
+        case "enus":
+          name = product.productNameEng;
+          break;
+        case "zhch":
+          name = product.productNameSchi;
+          break;
+        case "zhhk":
+          name = product.productNameTchi;
+          break;
         default:
-          name = product.productNameTchi
-          break
+          name = product.productNameTchi;
+          break;
       }
-      productItem.productType = { name: name, id: product.productTypeId }
-  
+      productItem.productType = { name: name, id: product.productTypeId };
+
       product.productSubType?.forEach((subType) => {
-        var subName = ''
+        var subName = "";
         switch (i18n.language) {
-          case 'enus':
-            subName = subType.productNameEng
-            break
-          case 'zhch':
-            subName = subType.productNameSchi
-            break
-          case 'zhhk':
-            subName = subType.productNameTchi
-            break
+          case "enus":
+            subName = subType.productNameEng;
+            break;
+          case "zhch":
+            subName = subType.productNameSchi;
+            break;
+          case "zhhk":
+            subName = subType.productNameTchi;
+            break;
           default:
-            subName = subType.productNameTchi
-            break
+            subName = subType.productNameTchi;
+            break;
         }
-  
-        productItem.productSubType.push({ 
-          name: subName, 
-          id: subType.productSubTypeId 
-        })
-  
+
+        productItem.productSubType.push({
+          name: subName,
+          id: subType.productSubTypeId,
+        });
+
         subType.productAddonType?.forEach((addonType) => {
-          var addonName = ''
+          var addonName = "";
           switch (i18n.language) {
-            case 'enus':
-              addonName = addonType.productNameEng
-              break
-            case 'zhch':
-              addonName = addonType.productNameSchi
-              break
-            case 'zhhk':
-              addonName = addonType.productNameTchi
-              break
+            case "enus":
+              addonName = addonType.productNameEng;
+              break;
+            case "zhch":
+              addonName = addonType.productNameSchi;
+              break;
+            case "zhhk":
+              addonName = addonType.productNameTchi;
+              break;
             default:
-              addonName = addonType.productNameTchi
-              break
+              addonName = addonType.productNameTchi;
+              break;
           }
-  
+
           productItem.productAddonType.push({
             name: addonName,
-            id: addonType.productAddonTypeId
-          })
-        })
-      })
-  
-      productMapping.push(productItem)
-    })
-  
-    setProductItem(productMapping)
-  }
-  
+            id: addonType.productAddonTypeId,
+          });
+        });
+      });
+
+      productMapping.push(productItem);
+    });
+
+    setProductItem(productMapping);
+  };
 
   const mappingRecyleItem = () => {
-    const recyleMapping: recycItem[] = []
+    const recyleMapping: recycItem[] = [];
     recycType?.forEach((re) => {
       var reItem: recycItem = {
-        recycType: { name: '', id: '' },
-        recycSubType: []
-      }
-      var subItem: il_item[] = []
-      var name = ''
+        recycType: { name: "", id: "" },
+        recycSubType: [],
+      };
+      var subItem: il_item[] = [];
+      var name = "";
       switch (i18n.language) {
-        case 'enus':
-          name = re.recyclableNameEng
-          break
-        case 'zhch':
-          name = re.recyclableNameSchi
-          break
-        case 'zhhk':
-          name = re.recyclableNameTchi
-          break
+        case "enus":
+          name = re.recyclableNameEng;
+          break;
+        case "zhch":
+          name = re.recyclableNameSchi;
+          break;
+        case "zhhk":
+          name = re.recyclableNameTchi;
+          break;
         default:
-          name = re.recyclableNameTchi
-          break
+          name = re.recyclableNameTchi;
+          break;
       }
-      reItem.recycType = { name: name, id: re.recycTypeId }
+      reItem.recycType = { name: name, id: re.recycTypeId };
 
       re.recycSubType.map((sub) => {
-        var subName = ''
+        var subName = "";
         switch (i18n.language) {
-          case 'enus':
-            subName = sub.recyclableNameEng
-            break
-          case 'zhch':
-            subName = sub.recyclableNameSchi
-            break
-          case 'zhhk':
-            subName = sub.recyclableNameTchi
-            break
+          case "enus":
+            subName = sub.recyclableNameEng;
+            break;
+          case "zhch":
+            subName = sub.recyclableNameSchi;
+            break;
+          case "zhhk":
+            subName = sub.recyclableNameTchi;
+            break;
           default:
-            subName = sub.recyclableNameTchi
-            break
+            subName = sub.recyclableNameTchi;
+            break;
         }
 
-        reItem.recycSubType = subItem
-        subItem.push({ name: subName, id: sub.recycSubTypeId })
-      })
-      reItem.recycSubType = subItem
-      recyleMapping.push(reItem)
-    })
-    setRecycItem(recyleMapping)
-  }
+        reItem.recycSubType = subItem;
+        subItem.push({ name: subName, id: sub.recycSubTypeId });
+      });
+      reItem.recycSubType = subItem;
+      recyleMapping.push(reItem);
+    });
+    setRecycItem(recyleMapping);
+  };
 
   // const getPicoDetail = async (sourcePicoId: string) => {
   //   try {
@@ -435,149 +441,153 @@ const Inventory: FunctionComponent = () => {
   // }
 
   const getAllPickupOrder = async () => {
-    const result = await getAllPickUpOrder(page - 1, 1000)
-    let data = result?.data.content
+    const result = await getAllPickUpOrder(page - 1, 1000);
+    let data = result?.data.content;
     if (data && data.length > 0) {
-      setPicoList(data)
+      setPicoList(data);
     }
-  }
+  };
 
   const initInventory = async () => {
-    setIsLoading(true)
-    setFilteredInventory([])
-    let result
-    if (realmApi === 'account') {
-      result = await astdGetAllInventory(page - 1, pageSize, searchText, query)
+    setIsLoading(true);
+    setFilteredInventory([]);
+    let result;
+    if (realmApi === "account") {
+      result = await astdGetAllInventory(page - 1, pageSize, searchText, query);
     } else {
-      result = await getAllInventory(page - 1, pageSize, query)
+      result = await getAllInventory(page - 1, pageSize, query);
     }
-    const data = result?.data
-    setInventoryData(data?.content || [])
+    const data = result?.data;
+    setInventoryData(data?.content || []);
 
     if (data) {
       // const picoData = await getAllPickupOrder(data.content)
-      var inventoryMapping: InventoryItem[] = []
+      var inventoryMapping: InventoryItem[] = [];
       data.content.map((item: InventoryItem) => {
-        let recyName: string = '-'
-        let subName: string = '-'
-        let productName = '-';
-        let productSubName = '-';
-        let productAddOnName = '-';
-        item.packageName = item.packageTypeId
+        let recyName: string = "-";
+        let subName: string = "-";
+        let productName = "-";
+        let productSubName = "-";
+        let productAddOnName = "-";
+        item.packageName = item.packageTypeId;
         const recyclables = recycType?.find(
           (re) => re.recycTypeId === item.recycTypeId
-        )
-        
+        );
+
         if (recyclables) {
           if (i18n.language === Languages.ENUS)
-            recyName = recyclables.recyclableNameEng
+            recyName = recyclables.recyclableNameEng;
           if (i18n.language === Languages.ZHCH)
-            recyName = recyclables.recyclableNameSchi
+            recyName = recyclables.recyclableNameSchi;
           if (i18n.language === Languages.ZHHK)
-            recyName = recyclables.recyclableNameTchi
+            recyName = recyclables.recyclableNameTchi;
           const subs = recyclables.recycSubType.find(
             (sub) => sub.recycSubTypeId === item.recycSubTypeId
-          )
+          );
           if (subs) {
             if (i18n.language === Languages.ENUS)
-              subName = subs.recyclableNameEng
+              subName = subs.recyclableNameEng;
             if (i18n.language === Languages.ZHCH)
-              subName = subs.recyclableNameSchi
+              subName = subs.recyclableNameSchi;
             if (i18n.language === Languages.ZHHK)
-              subName = subs.recyclableNameTchi
+              subName = subs.recyclableNameTchi;
           }
         }
 
         const product = productType?.find(
           (re) => re.productTypeId === item.productTypeId
-        )
+        );
 
         if (product) {
           const matchingProductType = productType?.find(
             (product) => product.productTypeId === item.productTypeId
           );
-          
+
           if (matchingProductType) {
             // Product Type Name
             switch (i18n.language) {
               case Languages.ENUS:
-                productName = matchingProductType.productNameEng || '';
+                productName = matchingProductType.productNameEng || "";
                 break;
               case Languages.ZHCH:
-                productName = matchingProductType.productNameSchi || '';
+                productName = matchingProductType.productNameSchi || "";
                 break;
               case Languages.ZHHK:
-                productName = matchingProductType.productNameTchi || '';
+                productName = matchingProductType.productNameTchi || "";
                 break;
               default:
-                productName = matchingProductType.productNameTchi || '';
+                productName = matchingProductType.productNameTchi || "";
                 break;
             }
-          
+
             // Product Subtype
-            const matchProductSubType = matchingProductType.productSubType?.find(
-              (subtype) => subtype.productSubTypeId === item.productSubTypeId
-            );
-          
+            const matchProductSubType =
+              matchingProductType.productSubType?.find(
+                (subtype) => subtype.productSubTypeId === item.productSubTypeId
+              );
+
             if (matchProductSubType) {
               switch (i18n.language) {
                 case Languages.ENUS:
-                  productSubName = matchProductSubType.productNameEng || '';
+                  productSubName = matchProductSubType.productNameEng || "";
                   break;
                 case Languages.ZHCH:
-                  productSubName = matchProductSubType.productNameSchi || '';
+                  productSubName = matchProductSubType.productNameSchi || "";
                   break;
                 case Languages.ZHHK:
-                  productSubName = matchProductSubType.productNameTchi || '';
+                  productSubName = matchProductSubType.productNameTchi || "";
                   break;
                 default:
-                  productSubName = matchProductSubType.productNameTchi || '';
+                  productSubName = matchProductSubType.productNameTchi || "";
                   break;
               }
             }
-          
+
             // Product Addon Type
-            const matchProductAddonType = matchProductSubType?.productAddonType?.find(
-              (addon) => addon.productAddonTypeId === item.productAddonTypeId
-            );
-          
+            const matchProductAddonType =
+              matchProductSubType?.productAddonType?.find(
+                (addon) => addon.productAddonTypeId === item.productAddonTypeId
+              );
+
             if (matchProductAddonType) {
               switch (i18n.language) {
                 case Languages.ENUS:
-                  productAddOnName = matchProductAddonType.productNameEng || '';
+                  productAddOnName = matchProductAddonType.productNameEng || "";
                   break;
                 case Languages.ZHCH:
-                  productAddOnName = matchProductAddonType.productNameSchi || '';
+                  productAddOnName =
+                    matchProductAddonType.productNameSchi || "";
                   break;
                 case Languages.ZHHK:
-                  productAddOnName = matchProductAddonType.productNameTchi || '';
+                  productAddOnName =
+                    matchProductAddonType.productNameTchi || "";
                   break;
                 default:
-                  productAddOnName = matchProductAddonType.productNameTchi || '';
+                  productAddOnName =
+                    matchProductAddonType.productNameTchi || "";
                   break;
               }
             }
           }
         }
-      
-        
+
         const packages = packagingMapping.find(
           (packageItem) => packageItem.packagingTypeId === item.packageTypeId
-        )
+        );
 
         if (packages) {
           if (i18n.language === Languages.ENUS)
-            item.packageName = packages.packagingNameEng
+            item.packageName = packages.packagingNameEng;
           if (i18n.language === Languages.ZHCH)
-            item.packageName = packages.packagingNameSchi
+            item.packageName = packages.packagingNameSchi;
           if (i18n.language === Languages.ZHHK)
-            item.packageName = packages.packagingNameTchi
+            item.packageName = packages.packagingNameTchi;
         }
 
-        const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
-        const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
+        const dateInHK = dayjs.utc(item.createdAt).tz("Asia/Hong_Kong");
+        const createdAt = dateInHK.format(`${dateFormat} HH:mm`);
 
-        let selectedPico: PickupOrder[] = []
+        let selectedPico: PickupOrder[] = [];
 
         // item.inventoryDetail?.map((invDetail: InvDetails) => {
         //   selectedPico = picoList.filter(
@@ -610,312 +620,313 @@ const Inventory: FunctionComponent = () => {
             item?.status,
             item?.updatedBy,
             item?.createdBy,
-            item?.inventoryDetail || '-',
+            item?.inventoryDetail || "-",
             createdAt,
             item?.updatedAt,
             item?.location,
+            item?.gid,
+            item?.gidLabel,
             item?.packageName
           )
-        )
-      })
-      setInventory(inventoryMapping)
-      setFilteredInventory(inventoryMapping)
-      setTotalData(data.totalPages)
+        );
+      });
+      setInventory(inventoryMapping);
+      setFilteredInventory(inventoryMapping);
+      setTotalData(data.totalPages);
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
-  useEffect(()=>{
-    console.log('name', inventoryList)
-    console.log('product', productItem)
-  },[inventoryList, productItem])
+  useEffect(() => {
+    console.log("name", inventoryList);
+    console.log("product", productItem);
+  }, [inventoryList, productItem]);
 
   const handleSubmit = async (type: string, msg: string) => {
-    if (type === 'success') {
-      showSuccessToast(msg)
+    if (type === "success") {
+      showSuccessToast(msg);
     } else {
-      showErrorToast(msg)
+      showErrorToast(msg);
     }
   };
 
   const columns: GridColDef[] = [
     {
-      field: 'createdAt',
-      headerName: t('inventory.date'),
+      field: "createdAt",
+      headerName: t("inventory.date"),
       width: 200,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'category',
-      headerName: t('processOrder.details.itemCategory'),
+      field: "category",
+      headerName: t("processOrder.details.itemCategory"),
       width: 200,
-      type: 'string',
-      valueGetter: (params) => (params.row.recycTypeId ? t('recyclables') : t('product')),
+      type: "string",
+      valueGetter: (params) =>
+        params.row.recycTypeId ? t("recyclables") : t("product"),
     },
     {
-      field: 'type',
-      headerName: t('settings_page.recycling.main_category'),
+      field: "type",
+      headerName: t("settings_page.recycling.main_category"),
       width: 200,
-      type: 'string',
+      type: "string",
       valueGetter: (params) =>
         params.row.recycTypeId
-          ? params.row.recyName || '-'
-          : params.row.productName || '-',
+          ? params.row.recyName || "-"
+          : params.row.productName || "-",
     },
     {
-      field: 'subType',
-      headerName: t('settings_page.recycling.sub_category'),
+      field: "subType",
+      headerName: t("settings_page.recycling.sub_category"),
       width: 200,
-      type: 'string',
+      type: "string",
       valueGetter: (params) =>
         params.row.recycTypeId
-          ? params.row.subName || '-'
-          : params.row.productSubName || '-',
+          ? params.row.subName || "-"
+          : params.row.productSubName || "-",
     },
     {
-      field: 'Addon',
-      headerName: t('settings_page.recycling.additional_category'),
+      field: "Addon",
+      headerName: t("settings_page.recycling.additional_category"),
       width: 200,
-      type: 'string',
+      type: "string",
       valueGetter: (params) =>
-        params.row.recycTypeId
-          ? '-' 
-          : params.row.productAddOnName || '-',
+        params.row.recycTypeId ? "-" : params.row.productAddOnName || "-",
     },
     {
-      field: 'packageName',
-      headerName: t('inventory.package'),
+      field: "packageName",
+      headerName: t("inventory.package"),
       width: 200,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'labelId',
-      headerName: t('inventory.recyclingNumber'),
+      field: "labelId",
+      headerName: t("inventory.recyclingNumber"),
       width: 200,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'location',
-      headerName: t('inventory.inventoryLocation'),
+      field: "location",
+      headerName: t("inventory.inventoryLocation"),
       width: 200,
-      type: 'string',
+      type: "string",
       valueGetter: (params) => {
         // If warehouse, find warehouse name
         if (params.row.warehouseId && params.row.warehouseId !== 0) {
           const warehouse = warehouseDataList.find(
             (warehouse) => warehouse.warehouseId === params.row.warehouseId
           );
-          
+
           if (warehouse) {
             switch (i18n.language) {
               case Languages.ENUS:
-                return warehouse.warehouseNameEng || '-';
+                return warehouse.warehouseNameEng || "-";
               case Languages.ZHCH:
-                return warehouse.warehouseNameSchi || '-';
+                return warehouse.warehouseNameSchi || "-";
               case Languages.ZHHK:
-                return warehouse.warehouseNameTchi || '-';
+                return warehouse.warehouseNameTchi || "-";
               default:
-                return warehouse.warehouseNameTchi || '-';
+                return warehouse.warehouseNameTchi || "-";
             }
           }
         }
-        
+
         // If collection point, find collection point name
         if (params.row.colId && params.row.colId !== 0) {
           const collectionPoint = colList.find(
             (col) => col.colId === params.row.colId
           );
-          
+
           if (collectionPoint) {
             switch (i18n.language) {
               case Languages.ENUS:
-                return collectionPoint.colName || '-';
+                return collectionPoint.colName || "-";
               case Languages.ZHCH:
-                return collectionPoint.colName || '-';
+                return collectionPoint.colName || "-";
               case Languages.ZHHK:
-                return collectionPoint.colName || '-';
+                return collectionPoint.colName || "-";
               default:
-                return collectionPoint.colName || '-';
+                return collectionPoint.colName || "-";
             }
           }
         }
-        
-        return '-';
-      }
+
+        return "-";
+      },
     },
     {
-      field: 'weight',
-      headerName: t('inventory.weight'),
+      field: "weight",
+      headerName: t("inventory.weight"),
       width: 200,
-      type: 'string',
+      type: "string",
       renderCell: (params) => {
-        return <div>{params.row.weight} kg</div>
-      }
-    }
-  ]
+        return <div>{params.row.weight} kg</div>;
+      },
+    },
+  ];
 
   const initWarehouse = async () => {
     try {
-      let result
-      if (realmApi === 'account') {
-        result = await astdSearchWarehouse(0, 1000, searchText)
+      let result;
+      if (realmApi === "account") {
+        result = await astdSearchWarehouse(0, 1000, searchText);
       } else {
-        result = await getAllWarehouse(0, 1000)
+        result = await getAllWarehouse(0, 1000);
       }
       if (result) {
-        let capacityTotal = 0
-        let warehouse: { label: string; value: string }[] = []
-        const data = result.data.content
+        let capacityTotal = 0;
+        let warehouse: { label: string; value: string }[] = [];
+        const data = result.data.content;
         data.forEach((item: any) => {
           item.warehouseRecyc?.forEach((recy: any) => {
-            capacityTotal += recy.recycSubTypeCapacity
-          })
-          var warehouseName = ''
+            capacityTotal += recy.recycSubTypeCapacity;
+          });
+          var warehouseName = "";
           switch (i18n.language) {
-            case 'zhhk':
-              warehouseName = item.warehouseNameTchi
-              break
-            case 'zhch':
-              warehouseName = item.warehouseNameSchi
-              break
-            case 'enus':
-              warehouseName = item.warehouseNameEng
-              break
+            case "zhhk":
+              warehouseName = item.warehouseNameTchi;
+              break;
+            case "zhch":
+              warehouseName = item.warehouseNameSchi;
+              break;
+            case "enus":
+              warehouseName = item.warehouseNameEng;
+              break;
             default:
-              warehouseName = item.warehouseNameTchi
-              break
+              warehouseName = item.warehouseNameTchi;
+              break;
           }
           warehouse.push({
             value: item.warehouseId,
-            label: warehouseName
-          })
-        })
+            label: warehouseName,
+          });
+        });
         warehouse.push({
-          value: '',
-          label: t('check_in.any')
-        })
-        setWarehouseList(warehouse)
+          value: "",
+          label: t("check_in.any"),
+        });
+        setWarehouseList(warehouse);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-  }
+  };
 
   const searchfield = [
     {
-      label: t('inventory.recyclingNumber'),
-      field: 'labelId',
-      placeholder: t('placeHolder.enterRecyclingNumber'),
-      width: '280px'
+      label: t("inventory.recyclingNumber"),
+      field: "labelId",
+      placeholder: t("placeHolder.enterRecyclingNumber"),
+      width: "280px",
     },
     {
-      label: t('placeHolder.classification'),
-      options: getUniqueOptions('recyName'),
-      field: 'recycTypeId',
-      placeholder: t('placeHolder.any')
+      label: t("placeHolder.classification"),
+      options: getUniqueOptions("recyName"),
+      field: "recycTypeId",
+      placeholder: t("placeHolder.any"),
     },
     {
-      label: t('placeHolder.subclassification'),
-      options: getUniqueOptions('subName'),
-      field: 'recycSubTypeId',
-      placeholder: t('placeHolder.any')
+      label: t("placeHolder.subclassification"),
+      options: getUniqueOptions("subName"),
+      field: "recycSubTypeId",
+      placeholder: t("placeHolder.any"),
     },
     {
-      label: t('placeHolder.place'),
-      field: 'warehouseId',
+      label: t("placeHolder.place"),
+      field: "warehouseId",
       options: warehouseList,
-      placeholder: t('placeHolder.any')
+      placeholder: t("placeHolder.any"),
     },
     {
-      label: t('common.idleDays'),
+      label: t("common.idleDays"),
       disableIcon: true,
-      field: 'idleDays',
-      placeholder: t('common.filledIdleDays')
+      field: "idleDays",
+      placeholder: t("common.filledIdleDays"),
     },
-  ]
+  ];
 
   function getUniqueOptions(propertyName: keyof InventoryItem) {
-    const optionMap = new Map()
+    const optionMap = new Map();
 
-    if (propertyName === 'recyName') {
+    if (propertyName === "recyName") {
       inventoryList.forEach((row) => {
         if (row[propertyName]) {
-          optionMap.set(row['recycTypeId'], row.recyName)
+          optionMap.set(row["recycTypeId"], row.recyName);
         }
-      })
-    } else if (propertyName === 'subName') {
+      });
+    } else if (propertyName === "subName") {
       inventoryList.forEach((row) => {
         if (row[propertyName]) {
-          optionMap.set(row['recycSubTypeId'], row.subName)
+          optionMap.set(row["recycSubTypeId"], row.subName);
         }
-      })
+      });
     } else {
       inventoryList.forEach((row) => {
-        optionMap.set(row[propertyName], row[propertyName])
-      })
+        optionMap.set(row[propertyName], row[propertyName]);
+      });
     }
 
     const options = Array.from(optionMap.entries()).map(([key, value]) => ({
       value: key,
-      label: value
-    }))
+      label: value,
+    }));
 
-    const cache: any = {}
+    const cache: any = {};
 
     for (let item of options) {
       if (!(item.label in cache)) {
-        const newItem = item.label
+        const newItem = item.label;
         cache[newItem] = {
-          ...item
-        }
+          ...item,
+        };
       }
     }
 
-    const filter: Option[] = Object.values(cache)
+    const filter: Option[] = Object.values(cache);
 
     filter.push({
-      value: '',
-      label: t('check_in.any')
-    })
+      value: "",
+      label: t("check_in.any"),
+    });
 
-    return filter
+    return filter;
   }
 
   const handleSelectRow = (params: GridRowParams) => {
     const selectedInv: InventoryItem = inventoryList.find(
       (item) => item.itemId == params.row.itemId
-    )
-    let selectedPicoList: PickupOrder[] = []
+    );
+    let selectedPicoList: PickupOrder[] = [];
     // console.log('selectedInv', selectedInv)
     // console.log('selectedInv', picoList)
     selectedInv.inventoryDetail?.forEach((item) => {
-      const pico = picoList.find((pico) => pico.picoId == item.sourcePicoId)
+      const pico = picoList.find((pico) => pico.picoId == item.sourcePicoId);
       if (pico) {
-        selectedPicoList.push(pico)
+        selectedPicoList.push(pico);
       }
-      console.log('pico', pico)
-    })
-    setSelectedRow(selectedInv)
-    setSelectedPico(selectedPicoList)
-    setDrawerOpen(true)
-  }
+      console.log("pico", pico);
+    });
+    setSelectedRow(selectedInv);
+    setSelectedPico(selectedPicoList);
+    setDrawerOpen(true);
+  };
 
   useEffect(() => {
-    console.log('row', selectedRow)
-  }, [selectedRow])
+    console.log("row", selectedRow);
+  }, [selectedRow]);
 
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
-      top: params.isFirstVisible ? 0 : 10
-    }
-  }, [])
+      top: params.isFirstVisible ? 0 : 10,
+    };
+  }, []);
 
   const updateQuery = (newQuery: Partial<InventoryQuery>) => {
-    setQuery({ ...query, ...newQuery })
-  }
+    setQuery({ ...query, ...newQuery });
+  };
 
   // function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
   //   let timeoutID: ReturnType<typeof setTimeout> | null
@@ -931,65 +942,65 @@ const Inventory: FunctionComponent = () => {
   // }
 
   const handleSearch = debounce((keyName, value) => {
-    if (value.trim() === '' && query.labelId == null) {
-      return
+    if (value.trim() === "" && query.labelId == null) {
+      return;
     }
-    updateQuery({ [keyName]: value })
-    setPage(1)
-  }, 500)
+    updateQuery({ [keyName]: value });
+    setPage(1);
+  }, 500);
 
   const handleSearchByPoNumb = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (event.target.value === '') {
-      setFilteredInventory([])
+    if (event.target.value === "") {
+      setFilteredInventory([]);
     }
-    const numericValue = event.target.value.replace(/\D/g, '')
-    event.target.value = numericValue
+    const numericValue = event.target.value.replace(/\D/g, "");
+    event.target.value = numericValue;
 
     if (numericValue.length === 6) {
-      setSearchText(`company${numericValue}`)
+      setSearchText(`company${numericValue}`);
     } else {
-      setSearchText('')
+      setSearchText("");
     }
-  }
+  };
 
   useEffect(() => {
     if (debouncedSearchValue) {
-      setInventory([])
-      setFilteredInventory([])
-      setSelectedRow(null)
-      setPage(1)
-      setTotalData(0)
-      setPicoList([])
-      setSelectedPico([])
-      initInventory()
-      initWarehouse()
+      setInventory([]);
+      setFilteredInventory([]);
+      setSelectedRow(null);
+      setPage(1);
+      setTotalData(0);
+      setPicoList([]);
+      setSelectedPico([]);
+      initInventory();
+      initWarehouse();
     }
-  }, [debouncedSearchValue, query, i18n.language])
+  }, [debouncedSearchValue, query, i18n.language]);
 
   return (
     <>
       <Box
         sx={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          pr: 4
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          pr: 4,
         }}
       >
-        {realmApi === 'account' && (
+        {realmApi === "account" && (
           <TextField
             id="search-tenantId-inventory"
             onChange={handleSearchByPoNumb}
             sx={styles.inputStyle}
-            label={t('tenant.invite_form.company_number')}
-            placeholder={t('tenant.enter_company_number')}
+            label={t("tenant.invite_form.company_number")}
+            placeholder={t("tenant.enter_company_number")}
             inputProps={{
-              inputMode: 'numeric',
-              pattern: '[0-9]*',
-              maxLength: 6
+              inputMode: "numeric",
+              pattern: "[0-9]*",
+              maxLength: 6,
             }}
             InputProps={{
               endAdornment: (
@@ -998,40 +1009,40 @@ const Inventory: FunctionComponent = () => {
                     <SEARCH_ICON style={{ color: getPrimaryColor() }} />
                   </IconButton>
                 </InputAdornment>
-              )
+              ),
             }}
           />
         )}
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            marginY: 4
+            display: "flex",
+            alignItems: "center",
+            gap: "16px",
+            marginY: 4,
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
-            {t('inventory.recyclingInformation')}
+            {t("inventory.recyclingInformation")}
           </Typography>
-          {realmApi !== 'account' && 
-          <Button
-            onClick={() => {
-              setCreateDrawerOpen(true)
-            }}
-            sx={{
-              borderRadius: '20px',
-              backgroundColor: getPrimaryColor(),
-              '&.MuiButton-root:hover': { bgcolor: getPrimaryColor() },
-              width: 'fit-content',
-              height: '40px',
-              marginLeft: '20px'
-            }}
-            variant="contained"
-            data-testId={'astd-pickup-order-new-button-5743'}
-          >
-            + {t('col.create')}
-          </Button>
-          }
+          {realmApi !== "account" && (
+            <Button
+              onClick={() => {
+                setCreateDrawerOpen(true);
+              }}
+              sx={{
+                borderRadius: "20px",
+                backgroundColor: getPrimaryColor(),
+                "&.MuiButton-root:hover": { bgcolor: getPrimaryColor() },
+                width: "fit-content",
+                height: "40px",
+                marginLeft: "20px",
+              }}
+              variant="contained"
+              data-testId={"astd-pickup-order-new-button-5743"}
+            >
+              + {t("col.create")}
+            </Button>
+          )}
         </Box>
         <Stack direction="row" mt={3}>
           {searchfield.map((s, index) => (
@@ -1048,7 +1059,7 @@ const Inventory: FunctionComponent = () => {
           ))}
         </Stack>
         <div className="table-vehicle">
-          <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
+          <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
             {isLoading ? (
               <CircularLoading />
             ) : (
@@ -1063,31 +1074,31 @@ const Inventory: FunctionComponent = () => {
                   localeText={localeTextDataGrid}
                   getRowClassName={(params) =>
                     selectedRow && params.row.itemId === selectedRow.itemId
-                      ? 'selected-row'
-                      : ''
+                      ? "selected-row"
+                      : ""
                   }
                   sx={{
-                    border: 'none',
-                    '& .MuiDataGrid-cell': {
-                      border: 'none'
+                    border: "none",
+                    "& .MuiDataGrid-cell": {
+                      border: "none",
                     },
-                    '& .MuiDataGrid-row': {
-                      bgcolor: 'white',
-                      borderRadius: '10px'
+                    "& .MuiDataGrid-row": {
+                      bgcolor: "white",
+                      borderRadius: "10px",
                     },
-                    '&>.MuiDataGrid-main': {
-                      '&>.MuiDataGrid-columnHeaders': {
-                        borderBottom: 'none'
-                      }
+                    "&>.MuiDataGrid-main": {
+                      "&>.MuiDataGrid-columnHeaders": {
+                        borderBottom: "none",
+                      },
                     },
-                    '.MuiDataGrid-columnHeaderTitle': {
-                      fontWeight: 'bold !important',
-                      overflow: 'visible !important'
+                    ".MuiDataGrid-columnHeaderTitle": {
+                      fontWeight: "bold !important",
+                      overflow: "visible !important",
                     },
-                    '& .selected-row': {
-                      backgroundColor: '#F6FDF2 !important',
-                      border: '1px solid #79CA25'
-                    }
+                    "& .selected-row": {
+                      backgroundColor: "#F6FDF2 !important",
+                      border: "1px solid #79CA25",
+                    },
                   }}
                 />
                 <Pagination
@@ -1095,7 +1106,7 @@ const Inventory: FunctionComponent = () => {
                   count={Math.ceil(totalData)}
                   page={page}
                   onChange={(_, newPage) => {
-                    setPage(newPage)
+                    setPage(newPage);
                   }}
                 />
               </Box>
@@ -1104,13 +1115,13 @@ const Inventory: FunctionComponent = () => {
           <InventoryDetail
             drawerOpen={drawerOpen}
             handleDrawerClose={() => {
-              setDrawerOpen(false)
-              setSelectedRow(null)
+              setDrawerOpen(false);
+              setSelectedRow(null);
             }}
             selectedRow={selectedRow}
             selectedPico={selectedPico}
           />
-          <CreateInventoryItem          
+          <CreateInventoryItem
             drawerOpen={createDrawerOpen}
             colList={colList}
             factoryDataList={allFactoryDataList}
@@ -1122,7 +1133,7 @@ const Inventory: FunctionComponent = () => {
         </div>
       </Box>
     </>
-  )
-}
+  );
+};
 
-export default Inventory
+export default Inventory;
