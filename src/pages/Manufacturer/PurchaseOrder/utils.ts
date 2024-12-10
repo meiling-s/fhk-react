@@ -1,8 +1,10 @@
-import { recycType } from 'src/interfaces/common'
+import { manuList, recycType } from 'src/interfaces/common'
 import { CreatePicoDetail } from 'src/interfaces/pickupOrder'
 import { Products } from 'src/interfaces/productType'
 import { CreatePurchaseOrderDetail, PurchaseOrderDetail } from 'src/interfaces/purchaseOrder'
 import { cloneData, objectFilter } from 'src/utils/utils'
+import i18n from "../../../setups/i18n";
+import { Languages } from 'src/constants/constant'
 import * as Yup from 'yup'
 
 export const ValidateSchemaCreateRecycleFormPurchaseOrder = ({
@@ -214,3 +216,32 @@ export const refactorPurchaseOrderDetail = (data: PurchaseOrderDetail[]) => {
   }
 
 }
+
+export const getManufacturerBasedLang = (senderName: string, manuList: manuList[] | undefined) => {
+  try {
+    var manu = null;
+    manu = manuList?.find(val => val?.manufacturerNameEng === senderName);
+    if (manu === null || manu === undefined) {
+      manu = manuList?.find(val => val?.manufacturerNameSchi === senderName);
+    }
+
+    if (manu === null || manu === undefined) {
+      manu = manuList?.find(val => val?.manufacturerNameTchi === senderName);
+    }
+
+    if (manu === null || manu === undefined) {
+      return senderName;
+    }
+
+    if (i18n.language === Languages.ENUS) {
+      return manu?.manufacturerNameEng;
+    } else if (i18n.language === Languages.ZHCH) {
+      return manu?.manufacturerNameSchi;
+    } else {
+      return manu?.manufacturerNameTchi;
+    }
+  } catch(error) {
+    console.log('errorManu', error);
+    return senderName;
+  }
+};
