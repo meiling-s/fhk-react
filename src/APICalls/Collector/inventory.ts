@@ -45,7 +45,7 @@ export const getAllInventory = async (
 }
 
 export const getItemTrackInventory = async (
-  gid: number
+  gid: string
 ) => {
   try {
     const response = await axiosInstance({

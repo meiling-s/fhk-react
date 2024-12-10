@@ -24,11 +24,14 @@ import { useContainer } from "unstated-next";
 import {
   InventoryItem,
   InventoryDetail as InvDetails,
+  GIDQuery,
+  GIDItem,
 } from "../../../interfaces/inventory";
 import { il_item } from "../../../components/FormComponents/CustomItemList";
 import {
   astdGetAllInventory,
   getAllInventory,
+  getItemTrackInventory,
 } from "../../../APICalls/Collector/inventory";
 import {
   format,
@@ -72,6 +75,7 @@ import {
 import { getCollectionPoint } from "../../../APICalls/Collector/collectionPointManage";
 import { collectionPoint } from "src/interfaces/collectionPoint";
 import { FactoryData, FactoryWarehouseData } from "src/interfaces/factory";
+import InventoryDetail from "src/pages/Collector/Inventory/DetailInventory";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -92,12 +96,8 @@ type recycItem = {
   recycSubType: il_item[];
 };
 
-function createInventory(
-  itemId: number,
+function createGID(
   labelId: string,
-  warehouseId: number,
-  colId: number,
-  recyclingNumber: string,
   recycTypeId: string,
   recycSubTypeId: string,
   productTypeId: string,
@@ -113,21 +113,15 @@ function createInventory(
   packageTypeId: string,
   weight: number,
   unitId: string,
-  status: string,
-  createdBy: string,
   updatedBy: string,
-  inventoryDetail: InvDetails[],
+  createdBy: string,
   createdAt: string,
   updatedAt: string,
-  location: string,
-  packageName?: string
-): InventoryItem {
+  gid: number,
+  packageName: string
+): GIDItem {
   return {
-    itemId,
     labelId,
-    warehouseId,
-    colId,
-    recyclingNumber,
     recycTypeId,
     recycSubTypeId,
     productTypeId,
@@ -143,18 +137,16 @@ function createInventory(
     packageTypeId,
     weight,
     unitId,
-    status,
-    createdBy,
     updatedBy,
-    inventoryDetail,
+    createdBy,
     createdAt,
     updatedAt,
-    location,
+    gid,
     packageName,
   };
 }
 
-const GlobalItemId: FunctionComponent = () => {
+const Inventory: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -176,8 +168,8 @@ const GlobalItemId: FunctionComponent = () => {
   const realmApi = localStorage.getItem(localStorgeKeyName.realmApiRoute);
   const debouncedSearchValue: string = useDebounce(searchText, 1000);
   const { localeTextDataGrid } = useLocaleTextDataGrid();
-  const [query, setQuery] = useState<InventoryQuery>({
-    labelId: null,
+  const [query, setQuery] = useState<GIDQuery>({
+    gid: "",
     warehouseId: null,
     recycTypeId: "",
     recycSubTypeId: "",
@@ -249,7 +241,6 @@ const GlobalItemId: FunctionComponent = () => {
 
       if (data) {
         setPackagingMapping(data.content);
-        console.log("data packunit", data.content);
       }
     } catch (error: any) {
       const { state, realm } = extractError(error);
@@ -267,16 +258,10 @@ const GlobalItemId: FunctionComponent = () => {
   }, [recycType, productType, i18n.language]);
 
   useEffect(() => {
-    if (realmApi !== "account") {
-      if (recycItem.length > 0 && productItem.length > 0) {
-        initInventory();
-        initWarehouse();
-        initAllFactoryList();
-        initWarehouseList();
-        initCollectionPoint();
-      }
+    if (query.gid !== "") {
+      initInventory();
     }
-  }, [recycItem, productItem, page, realmApi, query, i18n.language]);
+  }, [query]);
 
   const mappingProductItem = () => {
     const productMapping: productItem[] = [];
@@ -443,196 +428,176 @@ const GlobalItemId: FunctionComponent = () => {
   };
 
   const initInventory = async () => {
+    var inventoryMapping: GIDItem[] = [];
     setIsLoading(true);
     setFilteredInventory([]);
     let result;
-    if (realmApi === "account") {
-      result = await astdGetAllInventory(page - 1, pageSize, searchText, query);
-    } else {
-      result = await getAllInventory(page - 1, pageSize, query);
-    }
+    result = await getItemTrackInventory(query.gid);
     const data = result?.data;
-    setInventoryData(data?.content || []);
-
+    console.log(data, "data");
+    // setInventoryData(data?.content || []);
     if (data) {
-      // const picoData = await getAllPickupOrder(data.content)
-      var inventoryMapping: InventoryItem[] = [];
-      data.content.map((item: InventoryItem) => {
-        let recyName: string = "-";
-        let subName: string = "-";
-        let productName = "-";
-        let productSubName = "-";
-        let productAddOnName = "-";
-        item.packageName = item.packageTypeId;
-        const recyclables = recycType?.find(
-          (re) => re.recycTypeId === item.recycTypeId
+      // const picoData = await getAllPickUpOrder()
+      let recyName: string = "-";
+      let subName: string = "-";
+      let productName = "-";
+      let productSubName = "-";
+      let productAddOnName = "-";
+      data.packageName = data.packageTypeId;
+      const recyclables = recycType?.find(
+        (re) => re.recycTypeId === data.recycTypeId
+      );
+      if (recyclables) {
+        if (i18n.language === Languages.ENUS)
+          recyName = recyclables.recyclableNameEng;
+        if (i18n.language === Languages.ZHCH)
+          recyName = recyclables.recyclableNameSchi;
+        if (i18n.language === Languages.ZHHK)
+          recyName = recyclables.recyclableNameTchi;
+        const subs = recyclables.recycSubType.find(
+          (sub) => sub.recycSubTypeId === data.recycSubTypeId
         );
-
-        if (recyclables) {
+        if (subs) {
           if (i18n.language === Languages.ENUS)
-            recyName = recyclables.recyclableNameEng;
+            subName = subs.recyclableNameEng;
           if (i18n.language === Languages.ZHCH)
-            recyName = recyclables.recyclableNameSchi;
+            subName = subs.recyclableNameSchi;
           if (i18n.language === Languages.ZHHK)
-            recyName = recyclables.recyclableNameTchi;
-          const subs = recyclables.recycSubType.find(
-            (sub) => sub.recycSubTypeId === item.recycSubTypeId
-          );
-          if (subs) {
-            if (i18n.language === Languages.ENUS)
-              subName = subs.recyclableNameEng;
-            if (i18n.language === Languages.ZHCH)
-              subName = subs.recyclableNameSchi;
-            if (i18n.language === Languages.ZHHK)
-              subName = subs.recyclableNameTchi;
-          }
+            subName = subs.recyclableNameTchi;
         }
+      }
+      const product = productType?.find(
+        (re) => re.productTypeId === data.productTypeId
+      );
 
-        const product = productType?.find(
-          (re) => re.productTypeId === item.productTypeId
+      if (product) {
+        const matchingProductType = productType?.find(
+          (product) => product.productTypeId === data.productTypeId
         );
 
-        if (product) {
-          const matchingProductType = productType?.find(
-            (product) => product.productTypeId === item.productTypeId
+        if (matchingProductType) {
+          // Product Type Name
+          switch (i18n.language) {
+            case Languages.ENUS:
+              productName = matchingProductType.productNameEng || "";
+              break;
+            case Languages.ZHCH:
+              productName = matchingProductType.productNameSchi || "";
+              break;
+            case Languages.ZHHK:
+              productName = matchingProductType.productNameTchi || "";
+              break;
+            default:
+              productName = matchingProductType.productNameTchi || "";
+              break;
+          }
+
+          // Product Subtype
+          const matchProductSubType = matchingProductType.productSubType?.find(
+            (subtype) => subtype.productSubTypeId === data.productSubTypeId
           );
 
-          if (matchingProductType) {
-            // Product Type Name
+          if (matchProductSubType) {
             switch (i18n.language) {
               case Languages.ENUS:
-                productName = matchingProductType.productNameEng || "";
+                productSubName = matchProductSubType.productNameEng || "";
                 break;
               case Languages.ZHCH:
-                productName = matchingProductType.productNameSchi || "";
+                productSubName = matchProductSubType.productNameSchi || "";
                 break;
               case Languages.ZHHK:
-                productName = matchingProductType.productNameTchi || "";
+                productSubName = matchProductSubType.productNameTchi || "";
                 break;
               default:
-                productName = matchingProductType.productNameTchi || "";
+                productSubName = matchProductSubType.productNameTchi || "";
                 break;
             }
+          }
 
-            // Product Subtype
-            const matchProductSubType =
-              matchingProductType.productSubType?.find(
-                (subtype) => subtype.productSubTypeId === item.productSubTypeId
-              );
+          // Product Addon Type
+          const matchProductAddonType =
+            matchProductSubType?.productAddonType?.find(
+              (addon) => addon.productAddonTypeId === data.productAddonTypeId
+            );
 
-            if (matchProductSubType) {
-              switch (i18n.language) {
-                case Languages.ENUS:
-                  productSubName = matchProductSubType.productNameEng || "";
-                  break;
-                case Languages.ZHCH:
-                  productSubName = matchProductSubType.productNameSchi || "";
-                  break;
-                case Languages.ZHHK:
-                  productSubName = matchProductSubType.productNameTchi || "";
-                  break;
-                default:
-                  productSubName = matchProductSubType.productNameTchi || "";
-                  break;
-              }
-            }
-
-            // Product Addon Type
-            const matchProductAddonType =
-              matchProductSubType?.productAddonType?.find(
-                (addon) => addon.productAddonTypeId === item.productAddonTypeId
-              );
-
-            if (matchProductAddonType) {
-              switch (i18n.language) {
-                case Languages.ENUS:
-                  productAddOnName = matchProductAddonType.productNameEng || "";
-                  break;
-                case Languages.ZHCH:
-                  productAddOnName =
-                    matchProductAddonType.productNameSchi || "";
-                  break;
-                case Languages.ZHHK:
-                  productAddOnName =
-                    matchProductAddonType.productNameTchi || "";
-                  break;
-                default:
-                  productAddOnName =
-                    matchProductAddonType.productNameTchi || "";
-                  break;
-              }
+          if (matchProductAddonType) {
+            switch (i18n.language) {
+              case Languages.ENUS:
+                productAddOnName = matchProductAddonType.productNameEng || "";
+                break;
+              case Languages.ZHCH:
+                productAddOnName = matchProductAddonType.productNameSchi || "";
+                break;
+              case Languages.ZHHK:
+                productAddOnName = matchProductAddonType.productNameTchi || "";
+                break;
+              default:
+                productAddOnName = matchProductAddonType.productNameTchi || "";
+                break;
             }
           }
         }
+      }
+      const packages = packagingMapping.find(
+        (packageItem) => packageItem.packagingTypeId === data.packageTypeId
+      );
 
-        const packages = packagingMapping.find(
-          (packageItem) => packageItem.packagingTypeId === item.packageTypeId
-        );
+      if (packages) {
+        if (i18n.language === Languages.ENUS)
+          data.packageName = packages.packagingNameEng;
+        if (i18n.language === Languages.ZHCH)
+          data.packageName = packages.packagingNameSchi;
+        if (i18n.language === Languages.ZHHK)
+          data.packageName = packages.packagingNameTchi;
+      }
 
-        if (packages) {
-          if (i18n.language === Languages.ENUS)
-            item.packageName = packages.packagingNameEng;
-          if (i18n.language === Languages.ZHCH)
-            item.packageName = packages.packagingNameSchi;
-          if (i18n.language === Languages.ZHHK)
-            item.packageName = packages.packagingNameTchi;
-        }
+      const dateInHK = dayjs.utc(data.createdAt).tz("Asia/Hong_Kong");
+      const createdAt = dateInHK.format(`${dateFormat} HH:mm`);
 
-        const dateInHK = dayjs.utc(item.createdAt).tz("Asia/Hong_Kong");
-        const createdAt = dateInHK.format(`${dateFormat} HH:mm`);
+      let selectedPico: PickupOrder[] = [];
 
-        let selectedPico: PickupOrder[] = [];
+      // item.inventoryDetail?.map((invDetail: InvDetails) => {
+      //   selectedPico = picoList.filter(
+      //     (pico) => pico.picoId == invDetail.sourcePicoId
+      //   )
+      // })
 
-        // item.inventoryDetail?.map((invDetail: InvDetails) => {
-        //   selectedPico = picoList.filter(
-        //     (pico) => pico.picoId == invDetail.sourcePicoId
-        //   )
-        // })
-
-        inventoryMapping.push(
-          createInventory(
-            item?.itemId,
-            item?.labelId,
-            item?.warehouseId,
-            item?.colId,
-            item?.recycTypeId,
-            item?.recycTypeId,
-            item?.recycSubTypeId,
-            item?.productTypeId,
-            item?.productSubTypeId,
-            item?.productSubTypeRemark,
-            item?.productAddonTypeId,
-            item?.productAddonTypeRemark,
-            recyName,
-            subName,
-            productName,
-            productSubName,
-            productAddOnName,
-            item?.packageTypeId,
-            item?.weight,
-            item?.unitId,
-            item?.status,
-            item?.updatedBy,
-            item?.createdBy,
-            item?.inventoryDetail || "-",
-            createdAt,
-            item?.updatedAt,
-            item?.location,
-            item?.packageName
-          )
-        );
-      });
+      inventoryMapping.push(
+        createGID(
+          data.labelId,
+          data.recycTypeId,
+          data.recycSubTypeId,
+          data.productTypeId,
+          data.productSubTypeId,
+          data.productSubTypeRemark,
+          data.productAddonTypeId,
+          data.productAddonTypeRemark,
+          recyName,
+          subName,
+          productName,
+          productSubName,
+          productAddOnName,
+          data.packageTypeId,
+          data.weight,
+          data.unitId,
+          data.updatedBy,
+          data.createdBy,
+          createdAt,
+          data.updatedAt,
+          data.gid,
+          data?.packageName
+        )
+      );
       setInventory(inventoryMapping);
       setFilteredInventory(inventoryMapping);
-      setTotalData(data.totalPages);
     }
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    console.log("name", inventoryList);
-    console.log("product", productItem);
-  }, [inventoryList, productItem]);
+  // useEffect(() => {
+  //   console.log("name", inventoryList);
+  //   console.log("product", productItem);
+  // }, [inventoryList, productItem]);
 
   const handleSubmit = async (type: string, msg: string) => {
     if (type === "success") {
@@ -697,55 +662,55 @@ const GlobalItemId: FunctionComponent = () => {
       width: 200,
       type: "string",
     },
-    {
-      field: "location",
-      headerName: t("inventory.inventoryLocation"),
-      width: 200,
-      type: "string",
-      valueGetter: (params) => {
-        // If warehouse, find warehouse name
-        if (params.row.warehouseId && params.row.warehouseId !== 0) {
-          const warehouse = warehouseDataList.find(
-            (warehouse) => warehouse.warehouseId === params.row.warehouseId
-          );
+    // {
+    //   field: "location",
+    //   headerName: t("inventory.inventoryLocation"),
+    //   width: 200,
+    //   type: "string",
+    //   valueGetter: (params) => {
+    //     // If warehouse, find warehouse name
+    //     if (params.row.warehouseId && params.row.warehouseId !== 0) {
+    //       const warehouse = warehouseDataList.find(
+    //         (warehouse) => warehouse.warehouseId === params.row.warehouseId
+    //       );
 
-          if (warehouse) {
-            switch (i18n.language) {
-              case Languages.ENUS:
-                return warehouse.warehouseNameEng || "-";
-              case Languages.ZHCH:
-                return warehouse.warehouseNameSchi || "-";
-              case Languages.ZHHK:
-                return warehouse.warehouseNameTchi || "-";
-              default:
-                return warehouse.warehouseNameTchi || "-";
-            }
-          }
-        }
+    //       if (warehouse) {
+    //         switch (i18n.language) {
+    //           case Languages.ENUS:
+    //             return warehouse.warehouseNameEng || "-";
+    //           case Languages.ZHCH:
+    //             return warehouse.warehouseNameSchi || "-";
+    //           case Languages.ZHHK:
+    //             return warehouse.warehouseNameTchi || "-";
+    //           default:
+    //             return warehouse.warehouseNameTchi || "-";
+    //         }
+    //       }
+    //     }
 
-        // If collection point, find collection point name
-        if (params.row.colId && params.row.colId !== 0) {
-          const collectionPoint = colList.find(
-            (col) => col.colId === params.row.colId
-          );
+    //     // If collection point, find collection point name
+    //     if (params.row.colId && params.row.colId !== 0) {
+    //       const collectionPoint = colList.find(
+    //         (col) => col.colId === params.row.colId
+    //       );
 
-          if (collectionPoint) {
-            switch (i18n.language) {
-              case Languages.ENUS:
-                return collectionPoint.colName || "-";
-              case Languages.ZHCH:
-                return collectionPoint.colName || "-";
-              case Languages.ZHHK:
-                return collectionPoint.colName || "-";
-              default:
-                return collectionPoint.colName || "-";
-            }
-          }
-        }
+    //       if (collectionPoint) {
+    //         switch (i18n.language) {
+    //           case Languages.ENUS:
+    //             return collectionPoint.colName || "-";
+    //           case Languages.ZHCH:
+    //             return collectionPoint.colName || "-";
+    //           case Languages.ZHHK:
+    //             return collectionPoint.colName || "-";
+    //           default:
+    //             return collectionPoint.colName || "-";
+    //         }
+    //       }
+    //     }
 
-        return "-";
-      },
-    },
+    //     return "-";
+    //   },
+    // },
     {
       field: "weight",
       headerName: t("inventory.weight"),
@@ -816,53 +781,6 @@ const GlobalItemId: FunctionComponent = () => {
     },
   ];
 
-  function getUniqueOptions(propertyName: keyof InventoryItem) {
-    const optionMap = new Map();
-
-    if (propertyName === "recyName") {
-      inventoryList.forEach((row) => {
-        if (row[propertyName]) {
-          optionMap.set(row["recycTypeId"], row.recyName);
-        }
-      });
-    } else if (propertyName === "subName") {
-      inventoryList.forEach((row) => {
-        if (row[propertyName]) {
-          optionMap.set(row["recycSubTypeId"], row.subName);
-        }
-      });
-    } else {
-      inventoryList.forEach((row) => {
-        optionMap.set(row[propertyName], row[propertyName]);
-      });
-    }
-
-    const options = Array.from(optionMap.entries()).map(([key, value]) => ({
-      value: key,
-      label: value,
-    }));
-
-    const cache: any = {};
-
-    for (let item of options) {
-      if (!(item.label in cache)) {
-        const newItem = item.label;
-        cache[newItem] = {
-          ...item,
-        };
-      }
-    }
-
-    const filter: Option[] = Object.values(cache);
-
-    filter.push({
-      value: "",
-      label: t("check_in.any"),
-    });
-
-    return filter;
-  }
-
   const handleSelectRow = (params: GridRowParams) => {
     const selectedInv: InventoryItem = inventoryList.find(
       (item) => item.itemId == params.row.itemId
@@ -875,16 +793,15 @@ const GlobalItemId: FunctionComponent = () => {
       if (pico) {
         selectedPicoList.push(pico);
       }
-      console.log("pico", pico);
     });
     setSelectedRow(selectedInv);
     setSelectedPico(selectedPicoList);
     setDrawerOpen(true);
   };
 
-  useEffect(() => {
-    console.log("row", selectedRow);
-  }, [selectedRow]);
+  // useEffect(() => {
+  //   console.log("row", selectedRow);
+  // }, [selectedRow]);
 
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
@@ -892,7 +809,7 @@ const GlobalItemId: FunctionComponent = () => {
     };
   }, []);
 
-  const updateQuery = (newQuery: Partial<InventoryQuery>) => {
+  const updateQuery = (newQuery: Partial<GIDQuery>) => {
     setQuery({ ...query, ...newQuery });
   };
 
@@ -910,7 +827,7 @@ const GlobalItemId: FunctionComponent = () => {
   // }
 
   const handleSearch = debounce((keyName, value) => {
-    if (value.trim() === "" && query.labelId == null) {
+    if (value.trim() === "" && query.gid == null) {
       return;
     }
     updateQuery({ [keyName]: value });
@@ -967,8 +884,27 @@ const GlobalItemId: FunctionComponent = () => {
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
-            {t("globalItemId.globalItemId")}
+            {t("inventory.recyclingInformation")}
           </Typography>
+          {realmApi !== "account" && (
+            <Button
+              onClick={() => {
+                setCreateDrawerOpen(true);
+              }}
+              sx={{
+                borderRadius: "20px",
+                backgroundColor: getPrimaryColor(),
+                "&.MuiButton-root:hover": { bgcolor: getPrimaryColor() },
+                width: "fit-content",
+                height: "40px",
+                marginLeft: "20px",
+              }}
+              variant="contained"
+              data-testId={"astd-pickup-order-new-button-5743"}
+            >
+              + {t("col.create")}
+            </Button>
+          )}
         </Box>
         <Stack direction="row" mt={3}>
           {searchfield.map((s, index) => (
@@ -990,7 +926,7 @@ const GlobalItemId: FunctionComponent = () => {
               <Box>
                 <DataGrid
                   rows={filteredInventory}
-                  getRowId={(row) => row.itemId}
+                  getRowId={(row) => row.gid}
                   hideFooter
                   columns={columns}
                   onRowClick={handleSelectRow}
@@ -1036,10 +972,18 @@ const GlobalItemId: FunctionComponent = () => {
               </Box>
             )}
           </Box>
+          <InventoryDetail
+            drawerOpen={drawerOpen}
+            handleDrawerClose={() => {
+              setDrawerOpen(false);
+              setSelectedRow(null);
+            }}
+            selectedRow={selectedRow}
+          />
         </div>
       </Box>
     </>
   );
 };
 
-export default GlobalItemId;
+export default Inventory;

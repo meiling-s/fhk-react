@@ -33,8 +33,33 @@ export type InventoryItem = {
   updatedAt: string
   location: string
   packageName?: string,
-  gid: number,
+  gid: string,
   gidLabel: string
+}
+
+export type GIDItem = {
+  labelId: string
+  recycTypeId: string
+  recycSubTypeId: string
+  productTypeId: string
+  productSubTypeId: string
+  productSubTypeRemark: string
+  productAddonTypeId: string
+  productAddonTypeRemark: string
+  recyName: string
+  subName: string
+  productName: string
+  productSubName: string
+  productAddOnName: string
+  packageTypeId: string
+  weight: number
+  unitId: string
+  updatedBy: string
+  createdBy: string
+  createdAt: string
+  updatedAt: string
+  gid: number
+  packageName?: string
 }
 
 export type InventoryQuery = {
@@ -43,6 +68,14 @@ export type InventoryQuery = {
   recycTypeId: string
   recycSubTypeId: string
   idleDays: number | null,
+}
+
+export type GIDQuery = {
+  gid: '',
+  warehouseId: null,
+  recycTypeId: "",
+  recycSubTypeId: "",
+  idleDays: null,
 }
 
 export type ProcessInOutEventDetail = {

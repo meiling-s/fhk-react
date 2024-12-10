@@ -22,14 +22,12 @@ interface InventoryDetailProps {
   drawerOpen: boolean;
   handleDrawerClose: () => void;
   selectedRow?: InventoryItem | null;
-  selectedPico?: PickupOrder[] | null;
 }
 
 const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   drawerOpen,
   handleDrawerClose,
   selectedRow,
-  selectedPico,
 }) => {
   const { t } = useTranslation();
   const [shippingData, setShippingData] = useState<InventoryTracking | null>(
@@ -37,18 +35,6 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   );
   const { decimalVal } = useContainer(CommonTypeContainer);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const getPicoDtl = (picoId: string, dtlId: number) => {
-    if (selectedPico) {
-      const pico = selectedPico.find((pico) => pico.picoId == picoId);
-      if (pico) {
-        const picoDetail = pico.pickupOrderDetail.find(
-          (dtl) => dtl.picoDtlId == dtlId
-        );
-        return picoDetail;
-      }
-    }
-    return null;
-  };
 
   const fieldItem = [
     {
@@ -101,15 +87,11 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
     setShippingData(null);
     if (selectedRow !== null && selectedRow !== undefined) {
       let result;
-      if (token.realmApiRoute === "account") {
-        // TODO document why this block is empty
-      } else {
-        result = await getItemTrackInventory(selectedRow.gid);
+      result = await getItemTrackInventory(selectedRow.gid);
 
-        if (result) {
-          const data = result.data;
-          setShippingData(data);
-        }
+      if (result) {
+        const data = result.data;
+        setShippingData(data);
       }
     }
     setIsLoading(false);

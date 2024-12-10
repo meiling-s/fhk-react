@@ -53,7 +53,7 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
   const [parsedEventDetails, setParsedEventDetails] =
     useState<InventoryTracking>();
 
-  const getGIDLabel = async (value: number) => {
+  const getGIDLabel = async (value: string) => {
     const result = await getItemTrackInventory(value);
     if (result) {
       const data = result.data;

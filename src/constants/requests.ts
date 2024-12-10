@@ -715,7 +715,7 @@ export const GET_INVENTORY = (
 })
 
 export const GET_ITEM_TRACK_INVENTORY = (
-  gid: number
+  gid: string
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/globalItemId/${gid}`

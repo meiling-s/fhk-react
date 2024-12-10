@@ -122,7 +122,7 @@ function createInventory(
   createdAt: string,
   updatedAt: string,
   location: string,
-  gid: number,
+  gid: string,
   gidLabel: string,
   packageName?: string
 ): InventoryItem {
@@ -1119,7 +1119,6 @@ const Inventory: FunctionComponent = () => {
               setSelectedRow(null);
             }}
             selectedRow={selectedRow}
-            selectedPico={selectedPico}
           />
           <CreateInventoryItem
             drawerOpen={createDrawerOpen}
