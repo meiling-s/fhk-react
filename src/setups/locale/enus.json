@@ -1560,7 +1560,7 @@
     "inventoryLocation": "Sender Location"
   },
   "compactor": {
-    "compactorTruckHandling": "Compression truck handling",
+    "compactorTruckHandling": "Compactor truck handling",
     "unloadRecord": "Unloading records",
     "processingDate": "Processing Date",
     "plateNumber": "license plate number",

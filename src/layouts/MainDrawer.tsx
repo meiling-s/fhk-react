@@ -26,7 +26,14 @@ import logo_company from '../logo_company.png'
 import { useNavigate } from 'react-router-dom'
 import React, { useState } from 'react'
 import { Collapse, createTheme } from '@mui/material'
-import { CalendarTodayOutlined, ExpandLess, ExpandMore, FmdGoodOutlined, Login, StarBorder } from '@mui/icons-material'
+import {
+  CalendarTodayOutlined,
+  ExpandLess,
+  ExpandMore,
+  FmdGoodOutlined,
+  Login,
+  StarBorder
+} from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -39,14 +46,14 @@ import {
 } from '../constants/constant'
 import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
-import VerticalAlignCenterRoundedIcon from '@mui/icons-material/VerticalAlignCenterRounded';
+import VerticalAlignCenterRoundedIcon from '@mui/icons-material/VerticalAlignCenterRounded'
 import InventoryIcon from '@mui/icons-material/Inventory'
-import RecyclingIcon from '@mui/icons-material/Recycling';
+import RecyclingIcon from '@mui/icons-material/Recycling'
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
 import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined'
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
-import ScreenRotationAltIcon from "@mui/icons-material/ScreenRotationAlt";
+import ScreenRotationAltIcon from '@mui/icons-material/ScreenRotationAlt'
 import BarChartIcon from '@mui/icons-material/BarChart'
 import { dynamicpath, returnApiToken, creatioPageList } from '../utils/utils'
 import { useContainer } from 'unstated-next'
@@ -209,13 +216,13 @@ function MainDrawer() {
         path: '/warehouse/checkout',
         functionName: 'Request checkout'
       },
-      "Internal transfer request": {
-        name: t("internalTransfer.internal_transfer_request"),
+      'Internal transfer request': {
+        name: t('internalTransfer.internal_transfer_request'),
         icon: <ScreenRotationAltIcon />,
-        onClick: () => navigate("/warehouse/InternalTransferRequest"),
+        onClick: () => navigate('/warehouse/InternalTransferRequest'),
         collapse: false,
-        path: "/warehouse/InternalTransferRequest",
-        functionName: "Internal transfer request"
+        path: '/warehouse/InternalTransferRequest',
+        functionName: 'Internal transfer request'
       },
       'Check-in and check-out': {
         name: t('checkinandcheckout.checkinandcheckout'),
@@ -292,13 +299,13 @@ function MainDrawer() {
         path: 'dashboard_recyclables.data',
         functionName: 'Dashboard'
       },
-      'Compactor Dashboard': {
+      'Compactor processing': {
         name: t('compactor.compactorTruckHandling'),
         icon: <VerticalAlignCenterRoundedIcon />,
         onClick: () => navigate(`/${realm}/compactorDashboard`),
         collapse: false,
         path: `/${realm}/compactorDashboard`,
-        functionName: 'Compactor Dashboard'
+        functionName: 'Compactor processing'
       }
     }
   ]
