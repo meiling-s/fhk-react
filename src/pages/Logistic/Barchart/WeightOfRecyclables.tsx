@@ -46,6 +46,7 @@ const WeightOfRecyclables: FunctionComponent = () => {
         {t("dashboard_weight_of_recyclables.record")}
       </Typography>
       <Dashboard
+        key={'0'}
         labels={labelsPick}
         dataset={datasetPick}
         onChangeFromDate={setFrmDatePick}
@@ -61,6 +62,7 @@ const WeightOfRecyclables: FunctionComponent = () => {
         typeChart="bar"
       />
       <Dashboard
+        key={'1'}
         labels={labels}
         dataset={dataset}
         onChangeFromDate={setFrmDate}

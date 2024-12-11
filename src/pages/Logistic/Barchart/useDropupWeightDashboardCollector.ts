@@ -34,6 +34,7 @@ const useDropupWeightDashboardWithIdRecycable = () => {
   const [categoryList, setCategoryList] = useState<categorys[]>([]);
   const [categoryType, setCategoryType] = useState<string>("0");
   const [vehicleId, setVehicleId] = useState<string>("");
+  const [plateNo, setPlateNo] = useState<string>("");
   const [productType, setProductType] = useState<Products[]>([]);
   const [vehicleList, setVehicleList] = useState<VehiclesData[]>([]);
   const navigate = useNavigate();
@@ -50,6 +51,7 @@ const useDropupWeightDashboardWithIdRecycable = () => {
           });
       });
       setVehicleId(String(vehicles[0].vehicleId));
+      setPlateNo(String(vehicles[0].plateNo));
       setVehicleList(vehicles);
     }
   };
@@ -114,6 +116,9 @@ const useDropupWeightDashboardWithIdRecycable = () => {
       });
       setDataSet(changeLang);
     }
+
+    const categoryList = getCategoryList(categoryType);
+    setCategoryList(categoryList);
   }, [i18n.language]);
 
   const getProductType = async () => {
@@ -151,12 +156,12 @@ const useDropupWeightDashboardWithIdRecycable = () => {
   };
 
   useEffect(() => {
-    getDropoffWeightData([], categoryType, vehicleId);
-  }, [vehicleId,categoryType, recycType, productType, frmDate, toDate]);
+    getDropoffWeightData([], categoryType, plateNo);
+  }, [plateNo, categoryType, recycType, productType, frmDate, toDate]);
   const getDropoffWeightData = async (
     idList: string[],
     cateType: string,
-    vehId: string
+    plateNo: string
   ) => {
     try {
       if (!recycType) return;
@@ -173,11 +178,12 @@ const useDropupWeightDashboardWithIdRecycable = () => {
       const params = {
         fromDate: frmDate.format("YYYY-MM-DD"),
         toDate: toDate.format("YYYY-MM-DD"),
-        recyclableType: cateType === "0" ? ids : [],
-        productType: cateType === "1" ? ids : []
+        plateNo: plateNo,
+        recycTypes: cateType === "0" ? ids : [],
+        productTypes: cateType === "1" ? ids : []
       };
-      if (ids && vehId) {
-        const response = await getDriverDropoffWeight(vehId, params);
+      if (ids && plateNo) {
+        const response = await getDriverDropoffWeight(params);
         const getDataWeights = (type: string, length: number): number[] => {
           const weights: number[] = [];
           if (!response) return weights;
@@ -186,7 +192,7 @@ const useDropupWeightDashboardWithIdRecycable = () => {
           for (let index = 0; index < length; index++) {
             const data: any = recyclables[index];
             if (data[type]) {
-              weights.push(Number(data[type]?.slice(0, -2)) ?? 0);
+              weights.push(Number(data[type]?.weight) ?? 0);
             } else {
               weights.push(0);
             }
@@ -212,7 +218,7 @@ const useDropupWeightDashboardWithIdRecycable = () => {
               datasets.push({
                 id: type.recyclableNameEng,
                 label: getLabel(type.recyclableNameEng),
-                data: getDataWeights(type.recyclableNameEng, labels.length),
+                data: getDataWeights(type.recycTypeId, labels.length),
                 backgroundColor: type?.backgroundColor
                   ? type?.backgroundColor
                   : randomBackgroundColor()
@@ -229,7 +235,7 @@ const useDropupWeightDashboardWithIdRecycable = () => {
               datasets.push({
                 id: type.productNameEng,
                 label: getLabelByProduct(type.productNameEng),
-                data: getDataWeights(type.productNameEng, labels.length),
+                data: getDataWeights(type.productTypeId, labels.length),
                 backgroundColor: randomBackgroundColor()
               });
             }
@@ -246,11 +252,11 @@ const useDropupWeightDashboardWithIdRecycable = () => {
       }
     }
   };
-  const onMultipleCategoryChange = (value: Dataset[] | []) => {
+  const onMultipleCategoryChange = (value: string[] | []) => {
     const categoryList = getCategoryList(categoryType);
     const ids: string[] = getNewCategory(categoryList, value, "ids", "");
     // setCategoryIds(ids);
-    getDropoffWeightData(ids, categoryType, vehicleId);
+    getDropoffWeightData(ids, categoryType, plateNo);
   };
   const onCategoryChange = (value: string | "") => {
     setCategoryType(value);
@@ -258,6 +264,8 @@ const useDropupWeightDashboardWithIdRecycable = () => {
   };
   const onVehicleNumberChange = (value: string | "") => {
     setVehicleId(value);
+    const vehiclePlateNo = vehicleList.find(val => String(val?.vehicleId) === value)?.plateNo
+    setPlateNo(vehiclePlateNo!);
   };
   const getNewCategory = (
     arr1: any[],
@@ -269,7 +277,7 @@ const useDropupWeightDashboardWithIdRecycable = () => {
       const newItem: string[] = [];
       arr1.forEach((item1) => {
         arr2.forEach((item2) => {
-          if (item1.label === item2.label) {
+          if (item1.label === item2) {
             newItem.push(item1.id);
           }
         });

@@ -76,7 +76,7 @@ export const getDriverDropOffPoint = async (
   }
 }
 
-export const getDriverPickupWeight = async (vehicleId: string, data: any) => {
+export const getDriverPickupWeight = async (data: any) => {
   try {
     const token = returnApiToken();
     const response = await axiosInstance({
@@ -84,7 +84,6 @@ export const getDriverPickupWeight = async (vehicleId: string, data: any) => {
       ...GET_DRIVER_PICKUP_WEIGHT(
         token.realmApiRoute,
         token.decodeKeycloack,
-        vehicleId
       ),
       data,
       headers: { AuthToken: token.authToken }
@@ -96,7 +95,7 @@ export const getDriverPickupWeight = async (vehicleId: string, data: any) => {
   }
 };
 
-export const getDriverDropoffWeight = async (vehicleId: string, data: any) => {
+export const getDriverDropoffWeight = async (data: any) => {
   try {
     console.log(window.baseURL.logistic);
 
@@ -105,8 +104,7 @@ export const getDriverDropoffWeight = async (vehicleId: string, data: any) => {
       baseURL: window.baseURL.logistic,
       ...GET_DRIVER_DROPOFF_WEIGHT(
         token.realmApiRoute,
-        token.decodeKeycloack,
-        vehicleId
+        token.decodeKeycloack
       ),
       data,
       headers: { AuthToken: token.authToken }

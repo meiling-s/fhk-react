@@ -12,9 +12,7 @@ import {
 import * as React from "react";
 import { Bar, Line } from "react-chartjs-2";
 import {
-  Autocomplete,
   Grid,
-  TextField,
   Typography,
   InputLabel,
   MenuItem,
@@ -22,7 +20,8 @@ import {
   Box,
   OutlinedInput,
   ListItemText,
-  Checkbox
+  Checkbox,
+  CircularProgress
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -30,7 +29,6 @@ import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 import { styles } from "../../constants/styles";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { Realm, localStorgeKeyName } from "../../constants/constant";
 import { useEffect, useState } from "react";
 import CommonTypeContainer from "../../contexts/CommonTypeContainer";
 import { useContainer } from "unstated-next";
@@ -70,7 +68,7 @@ type props = {
   frmDate: dayjs.Dayjs;
   toDate: dayjs.Dayjs;
   title: string;
-  onMultipleCategoryChange?: (value: Dataset[] | []) => void;
+  onMultipleCategoryChange?: (value: string[] | []) => void;
   onCategoryChange?: (value: string | "") => void;
   onVehicleNumberChange?: (value: string | "") => void;
   typeChart: string;
@@ -106,11 +104,11 @@ const ChartWeight = ({
 }: props) => {
   const { t } = useTranslation();
   const { dateFormat } = useContainer(CommonTypeContainer);
-  const realm = localStorage.getItem(localStorgeKeyName.realm);
   const [vehicleValue, setVehicleValue] = useState<string>("");
   const [newDataSet, setNewDataSet] = useState<Dataset[]>(dataset);
   const [mainCategoryName, setMainCategoryName] = useState<string[]>([]);
   const [category, setCategory] = useState<string>("0");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const plugin = {
     id: "customCanvasBackgroundColor",
     beforeDraw: (chart: any, args: any, options: any) => {
@@ -135,16 +133,43 @@ const ChartWeight = ({
       legend: {
         labels: {
           usePointStyle: true,
-          fontColor: "#717171"
+          fontColor: "#717171",
+          generateLabels: function (chart: any) {
+            const originalLabels = ChartJS.defaults.plugins.legend.labels.generateLabels(chart);
+            const maxWidth = 250; // Maximum width in pixels
+            return originalLabels.map((label) => {
+              const text = label.text;
+
+              // Wrap text or truncate
+              let wrappedText = "";
+              if (text.length > maxWidth / 10) {
+                wrappedText = text.slice(0, maxWidth / 10) + "..."; // Simple truncation
+              } else {
+                wrappedText = text; // No need for wrapping
+              }
+
+              return {
+                ...label,
+                text: wrappedText,
+              };
+            });
+          },
         },
         position: "right",
         align: "start",
         pointStyle: "circle",
-        usePointStyle: true
+        usePointStyle: true,
+        
       },
       customCanvasBackgroundColor: {
         color: ""
       }
+    },
+    layout: {
+      padding: {
+        left: 50,   // Add space on the left
+        right: 20,  // Add space on the right
+      },
     },
     responsive: true,
     maintainAspectRatio: false,
@@ -167,6 +192,7 @@ const ChartWeight = ({
     labels,
     datasets: newDataSet
   };
+
   let chart: JSX.Element = <div></div>;
   switch (typeChart) {
     case "bar":
@@ -192,6 +218,7 @@ const ChartWeight = ({
         mainName.push(data.label);
       });
       setMainCategoryName(mainName);
+      setIsLoading(false);
     }
   }, [dataset]);
   const handleVehicleNumberChange = (event: SelectChangeEvent) => {
@@ -199,6 +226,7 @@ const ChartWeight = ({
     setVehicleValue(value);
     if (onVehicleNumberChange) {
       onVehicleNumberChange(value);
+      setIsLoading(true);
     }
   };
   const handleCategoryChange = (event: SelectChangeEvent) => {
@@ -207,11 +235,13 @@ const ChartWeight = ({
     setCategory(value);
     if (onCategoryChange) {
       onCategoryChange(value);
+      setIsLoading(true);
     }
   };
   const handleMultipleCategoryClose = () => {
     if (onMultipleCategoryChange) {
-      onMultipleCategoryChange(newDataSet);
+      onMultipleCategoryChange(mainCategoryName);
+      setIsLoading(true);
     }
   };
   const handleMultipleCategoryChange = (
@@ -221,19 +251,15 @@ const ChartWeight = ({
       target: { value }
     } = event;
     setMainCategoryName(typeof value === "string" ? value.split(",") : value);
-    const newValue = typeof value === "string" ? value.split(",") : value;
-    setNewDataSet(removeLabels(newValue, dataset));
   };
-  const removeLabels = (arr1: String[], arr2: Dataset[]) => {
-    return arr2.filter((item) => arr1.includes(item.label));
-  };
+
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
         <Grid
           style={{
             width: "100%",
-            height: "518px",
+            height: "550px",
             padding: "38px, 55px, 38px, 55px",
             gap: "10px",
             backgroundColor: "#F4F5F7"
@@ -244,11 +270,11 @@ const ChartWeight = ({
               display: "flex",
               flexDirection: "column",
               width: "100%",
-              height: "465px",
               padding: "30px",
               gap: "10px",
               backgroundColor: "#FFFFFF",
-              borderRadius: "30px"
+              borderRadius: "30px",
+              position: 'relative',
             }}
           >
             <Typography
@@ -290,7 +316,10 @@ const ChartWeight = ({
                   sx={localstyles.datePicker}
                   maxDate={toDate}
                   onChange={(value) => {
-                    if (value) onChangeFromDate(value);
+                    if (value) {
+                      onChangeFromDate(value);
+                      setIsLoading(true);
+                    } 
                   }}
                   format={dateFormat}
                 />
@@ -302,7 +331,10 @@ const ChartWeight = ({
                   sx={localstyles.datePicker}
                   minDate={frmDate}
                   onChange={(value) => {
-                    if (value) onChangeToDate(value);
+                    if (value) {
+                      onChangeToDate(value);
+                      setIsLoading(true);
+                    } 
                   }}
                   format={dateFormat}
                 />
@@ -449,7 +481,12 @@ const ChartWeight = ({
                 </Box>
               </Grid>
             </Grid>
-            <Grid style={{ height: "295px", width: "1200px" }}>{chart}</Grid>
+            <Grid sx={localstyles.loader}>
+              {isLoading && <CircularProgress color="success" />}
+            </Grid>
+            <Grid style={{ height: "295px", width: "1430px" }}>
+              {chart}
+            </Grid>
           </Grid>
         </Grid>
       </LocalizationProvider>
@@ -464,7 +501,12 @@ const localstyles = {
     '.react-datepicker-wrapper input[type="text"]': {
       border: "none"
     }
-  })
+  }),
+  loader: {
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+  }
 };
 
 export default ChartWeight;

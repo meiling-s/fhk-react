@@ -34,17 +34,15 @@ export const GET_DRIVER_DROPOFF_POINT = (
 export const GET_DRIVER_PICKUP_WEIGHT = (
   realmApiRoute: string,
   tenantId: string,
-  vehicleId: string
 ): AxiosRequestConfig => ({
   method: 'post',
-  url: `api/v1/${realmApiRoute}/driver/pickup-weight/${tenantId}/${vehicleId}`
+  url: `api/v1/${realmApiRoute}/dashboard/pickupWeight/${tenantId}`
 })
 
 export const GET_DRIVER_DROPOFF_WEIGHT = (
   realmApiRoute: string,
   tenantId: string,
-  vehicleId: string
 ): AxiosRequestConfig => ({
   method: "post",
-  url: `api/v1/${realmApiRoute}/driver/dropoff-weight/${tenantId}/${vehicleId}`
+  url: `api/v1/${realmApiRoute}/dashboard/dropoffWeight/${tenantId}`
 });

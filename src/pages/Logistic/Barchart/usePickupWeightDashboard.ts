@@ -7,7 +7,6 @@ import { Languages, STATUS_CODE } from "../../../constants/constant";
 import { extractError, randomBackgroundColor } from "../../../utils/utils";
 import {
   getDriverPickupWeight,
-  getDriverDropoffWeight
 } from "../../../APICalls/Logistic/dashboard";
 import { useNavigate } from "react-router-dom";
 import { returnApiToken } from "../../../utils/utils";
@@ -40,6 +39,7 @@ const usePickupWeightDashboardWithIdRecycable = () => {
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [categoryType, setCategoryType] = useState<string>("0");
   const [vehicleId, setVehicleId] = useState<string>("");
+  const [plateNo, setPlateNo] = useState<string>("");
   const [productType, setProductType] = useState<Products[]>([]);
   const [vehicleList, setVehicleList] = useState<VehiclesData[]>([]);
   const navigate = useNavigate();
@@ -56,6 +56,7 @@ const usePickupWeightDashboardWithIdRecycable = () => {
           });
       });
       setVehicleId(String(vehicles[0].vehicleId));
+      setPlateNo(String(vehicles[0].plateNo));
       setVehicleList(vehicles);
     }
   };
@@ -120,6 +121,8 @@ const usePickupWeightDashboardWithIdRecycable = () => {
       });
       setDataSet(changeLang);
     }
+    const categoryList = getCategoryList(categoryType);
+    setCategoryList(categoryList);
   }, [i18n.language]);
 
   const getProductType = async () => {
@@ -157,13 +160,13 @@ const usePickupWeightDashboardWithIdRecycable = () => {
   };
 
   useEffect(() => {
-    getPickupWeightData([], categoryType, vehicleId);
-  }, [vehicleId, categoryType, recycType, productType, frmDate, toDate]);
+    getPickupWeightData([], categoryType, plateNo);
+  }, [plateNo, categoryType, recycType, productType, frmDate, toDate]);
 
   const getPickupWeightData = async (
     idList: string[],
     cateType: string,
-    vehId: string
+    plateNo: string
   ) => {
     try {
       if (!recycType) return;
@@ -180,12 +183,13 @@ const usePickupWeightDashboardWithIdRecycable = () => {
       const params = {
         fromDate: frmDate.format("YYYY-MM-DD"),
         toDate: toDate.format("YYYY-MM-DD"),
-        recyclableType: cateType === "0" ? ids : [],
-        productType: cateType === "1" ? ids : []
+        plateNo: plateNo,
+        recycTypes: cateType === "0" ? ids : [],
+        productTypes: cateType === "1" ? ids : []
       };
-      if (ids && vehId) {
-        const response = await getDriverPickupWeight(vehId, params);
 
+      if (ids && plateNo) {
+        const response = await getDriverPickupWeight(params);
         const getDataWeights = (type: string, length: number): number[] => {
           const weights: number[] = [];
           if (!response) return weights;
@@ -194,8 +198,9 @@ const usePickupWeightDashboardWithIdRecycable = () => {
           for (let index = 0; index < length; index++) {
             const data: any = recyclables[index];
             if (data[type]) {
-              weights.push(Number(data[type]?.slice(0, -2)) ?? 0);
+              weights.push(Number(data[type]?.weight) ?? 0);
             } else {
+              
               weights.push(0);
             }
           }
@@ -216,11 +221,12 @@ const usePickupWeightDashboardWithIdRecycable = () => {
               "newCategory",
               cateType
             );
+
             for (let type of recycTypeList) {
               datasets.push({
                 id: type.recyclableNameEng,
                 label: getLabel(type.recyclableNameEng),
-                data: getDataWeights(type.recyclableNameEng, labels.length),
+                data: getDataWeights(type.recycTypeId, labels.length),
                 backgroundColor: type?.backgroundColor
                   ? type?.backgroundColor
                   : randomBackgroundColor()
@@ -237,7 +243,7 @@ const usePickupWeightDashboardWithIdRecycable = () => {
               datasets.push({
                 id: type.productNameEng,
                 label: getLabelByProduct(type.productNameEng),
-                data: getDataWeights(type.productNameEng, labels.length),
+                data: getDataWeights(type.productTypeId, labels.length),
                 backgroundColor: randomBackgroundColor()
               });
             }
@@ -254,11 +260,11 @@ const usePickupWeightDashboardWithIdRecycable = () => {
       }
     }
   };
-  const onMultipleCategoryChange = (value: Dataset[] | []) => {
+  const onMultipleCategoryChange = (value: string[] | []) => {
     const categoryList = getCategoryList(categoryType);
     const ids: string[] = getNewCategory(categoryList, value, "ids", "");
     // setCategoryIds(ids);
-    getPickupWeightData(ids, categoryType, vehicleId);
+    getPickupWeightData(ids, categoryType, plateNo);
   };
   const onCategoryChange = (value: string | "") => {
     setCategoryType(value);
@@ -266,7 +272,10 @@ const usePickupWeightDashboardWithIdRecycable = () => {
   };
   const onVehicleNumberChange = (value: string | "") => {
     setVehicleId(value);
+    const vehiclePlateNo = vehicleList.find(val => String(val?.vehicleId) === value)?.plateNo
+    setPlateNo(vehiclePlateNo!);
   };
+
   const getNewCategory = (
     arr1: any[],
     arr2: any[] | [],
@@ -277,7 +286,7 @@ const usePickupWeightDashboardWithIdRecycable = () => {
       const newItem: string[] = [];
       arr1.forEach((item1) => {
         arr2.forEach((item2) => {
-          if (item1.label === item2.label) {
+          if (item1.label === item2) {
             newItem.push(item1.id);
           }
         });
