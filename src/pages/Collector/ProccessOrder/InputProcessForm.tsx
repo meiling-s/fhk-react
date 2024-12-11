@@ -45,6 +45,33 @@ import { getEstimateEndTime } from 'src/APICalls/processOrder'
 import dayjs from 'dayjs'
 import { formValidate } from 'src/interfaces/common'
 import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
+import CustomButton from 'src/components/FormComponents/CustomButton'
+import ConfirmModal from 'src/components/SpecializeComponents/ConfirmationModal'
+
+type ConfirmRemarksProps = {
+  open: boolean
+  onClose: () => void
+  onConfirm: () => void
+}
+
+const ConfirmRemarksModal: React.FC<ConfirmRemarksProps> = ({
+  open,
+  onClose,
+  onConfirm
+}) => {
+  const { t } = useTranslation()
+
+  return (
+    <ConfirmModal
+      isOpen={open}
+      message={t('pick_up_order.confirm_empty_remarks')}
+      onConfirm={async () => {
+        onConfirm()
+      }}
+      onCancel={() => onClose()}
+    />
+  )
+}
 
 const InputProcessForm = ({
   drawerOpen,
@@ -83,6 +110,7 @@ const InputProcessForm = ({
   const [warehouseOption, setWarehouseOption] = useState<il_item[]>([])
   const [processTypeList, setProcessTypeList] = useState<il_item[]>([])
   const [processTypeId, setProcessTypeId] = useState<string>('')
+  const [modalRemark, setModalRemarks] = useState<boolean>(false)
   const itemCategory = () => {
     const colList: il_item[] = [
       {
@@ -217,6 +245,7 @@ const InputProcessForm = ({
     setProcessTypeId('')
     setProcessOrderDetail(initDetail)
     setValidation([])
+    setModalRemarks(false)
   }
 
   useEffect(() => {
@@ -234,6 +263,7 @@ const InputProcessForm = ({
     }
   }, [drawerOpen, i18n.language])
 
+  //todo: move validation to utils
   useEffect(() => {
     const validate = async () => {
       const tempV: formValidate[] = []
@@ -244,52 +274,218 @@ const InputProcessForm = ({
           type: 'error'
         })
 
-      // validation rectype and product type type
-      //processIn
-      processOrderDetail[0].processIn.itemCategory === 'recycling'
-        ? processOrderDetail[0].processIn.processOrderDetailRecyc.length ===
-            0 &&
-          tempV.push({
-            field:
-              t('jobOrder.main_category') +
-              ' - ' +
-              t('processOrder.table.processIn'),
-            problem: formErr.empty,
-            type: 'error'
-          })
-        : processOrderDetail[0].processIn.processOrderDetailProduct.length ===
-            0 &&
-          tempV.push({
-            field:
-              t('pick_up_order.product_type.product') +
-              ' - ' +
-              t('processOrder.table.processIn'),
-            problem: formErr.empty,
-            type: 'error'
-          })
+      // 1. validation rectype and product type type
+      const productItemIn = processOrderDetail[0].processIn
+      const recyItemIn = processOrderDetail[0].processIn
+      const productItemOut = processOrderDetail[0].processOut
+      const recyItemOut = processOrderDetail[0].processOut
 
-      //processOut
-      processOrderDetail[0].processOut.itemCategory === 'recycling'
-        ? processOrderDetail[0].processOut.processOrderDetailRecyc.length ===
-            0 &&
-          tempV.push({
-            field:
-              t('jobOrder.main_category') +
-              ' - ' +
-              t('processOrder.table.processOut'),
-            problem: formErr.empty,
-            type: 'error'
-          })
-        : processOrderDetail[0].processOut.processOrderDetailProduct.length ===
-            0 &&
+      if (productItemIn.itemCategory === 'product') {
+        if (productItemIn.processOrderDetailProduct.length === 0) {
           tempV.push({
             field:
               t('pick_up_order.product_type.product') +
-              ' - ' +
+              '- ' +
+              t('processOrder.table.processIn'),
+
+            problem: formErr.empty,
+            type: 'error'
+          })
+        }
+      }
+
+      if (recyItemIn.itemCategory === 'recycling') {
+        if (recyItemIn.processOrderDetailRecyc.length === 0) {
+          tempV.push({
+            field:
+              t('jobOrder.main_category') +
+              '- ' +
+              t('processOrder.table.processIn'),
+            problem: formErr.empty,
+            type: 'error'
+          })
+        }
+      }
+
+      if (productItemOut.itemCategory === 'product') {
+        if (productItemOut.processOrderDetailProduct.length === 0) {
+          tempV.push({
+            field:
+              t('pick_up_order.product_type.product') +
+              '- ' +
               t('processOrder.table.processOut'),
             problem: formErr.empty,
             type: 'error'
           })
+        }
+      }
+
+      if (recyItemOut.itemCategory === 'recycling') {
+        if (recyItemOut.processOrderDetailRecyc.length === 0) {
+          tempV.push({
+            field:
+              t('jobOrder.main_category') +
+              '- ' +
+              t('processOrder.table.processOut'),
+            problem: formErr.empty,
+            type: 'error'
+          })
+        }
+      }
+
+      //2. validation rectype and product subtype required
+      if (recyItemIn.processOrderDetailRecyc.length > 0) {
+        const recyData = recyItemIn.processOrderDetailRecyc
+        recyData.forEach((item) => {
+          const selectedRecy = recycType?.find(
+            (src) => src.recycTypeId === item.recycTypeId
+          )
+
+          if (selectedRecy) {
+            if (
+              selectedRecy.recycSubType.length > 0 &&
+              item.recycSubTypeId === ''
+            ) {
+              tempV.push({
+                field:
+                  t('processOrder.create.recycling') +
+                  ' - ' +
+                  t('jobOrder.subcategory') +
+                  ' - ' +
+                  t('processOrder.table.processIn'),
+                problem: formErr.empty,
+                type: 'error'
+              })
+            }
+          }
+        })
+      }
+
+      if (productItemIn.processOrderDetailProduct.length > 0) {
+        const productData = productItemIn.processOrderDetailProduct
+        productData.forEach((item) => {
+          const selectedProduct = productType?.find(
+            (src) => src.productTypeId === item.productTypeId
+          )
+
+          if (selectedProduct) {
+            //check subproduct
+            if (
+              selectedProduct.productSubType!!.length > 0 &&
+              item.productSubTypeId === ''
+            ) {
+              tempV.push({
+                field:
+                  t('processOrder.create.product') +
+                  ' - ' +
+                  t('pick_up_order.product_type.subtype') +
+                  ' - ' +
+                  t('processOrder.table.processIn'),
+                problem: formErr.empty,
+                type: 'error'
+              })
+            }
+
+            //check addonproduct
+            const subProduct = selectedProduct.productSubType?.find(
+              (src) => src.productSubTypeId === item.productSubTypeId
+            )
+            if (subProduct) {
+              if (
+                subProduct.productAddonType!!.length > 0 &&
+                item.productAddonId === ''
+              ) {
+                tempV.push({
+                  field:
+                    t('processOrder.create.product') +
+                    ' - ' +
+                    t('pick_up_order.product_type.add-on') +
+                    ' - ' +
+                    t('processOrder.table.processIn'),
+                  problem: formErr.empty,
+                  type: 'error'
+                })
+              }
+            }
+          }
+        })
+      }
+
+      if (recyItemOut.processOrderDetailRecyc.length > 0) {
+        const recyData = recyItemOut.processOrderDetailRecyc
+        recyData.forEach((item) => {
+          const selectedRecy = recycType?.find(
+            (src) => src.recycTypeId === item.recycTypeId
+          )
+
+          if (selectedRecy) {
+            if (
+              selectedRecy.recycSubType.length > 0 &&
+              item.recycSubTypeId === ''
+            ) {
+              tempV.push({
+                field:
+                  t('processOrder.create.recycling') +
+                  ' - ' +
+                  t('jobOrder.subcategory') +
+                  ' - ' +
+                  t('processOrder.table.processOut'),
+                problem: formErr.empty,
+                type: 'error'
+              })
+            }
+          }
+        })
+      }
+
+      if (productItemOut.processOrderDetailProduct.length > 0) {
+        const productData = productItemOut.processOrderDetailProduct
+
+        productData.forEach((item) => {
+          const selectedProduct = productType?.find(
+            (src) => src.productTypeId === item.productTypeId
+          )
+
+          if (selectedProduct) {
+            //check subproduct
+            if (
+              selectedProduct.productSubType!!.length > 0 &&
+              item.productSubTypeId === ''
+            ) {
+              tempV.push({
+                field:
+                  t('processOrder.create.product') +
+                  ' - ' +
+                  t('pick_up_order.product_type.subtype') +
+                  ' - ' +
+                  t('processOrder.table.processOut'),
+                problem: formErr.empty,
+                type: 'error'
+              })
+            }
+
+            //check addonproduct
+            const subProduct = selectedProduct.productSubType?.find(
+              (src) => src.productSubTypeId === item.productSubTypeId
+            )
+            if (subProduct) {
+              if (
+                subProduct.productAddonType!!.length > 0 &&
+                item.productAddonId === ''
+              ) {
+                tempV.push({
+                  field:
+                    t('pick_up_order.product_type.add-on') +
+                    ' - ' +
+                    t('processOrder.table.processOut'),
+                  problem: formErr.empty,
+                  type: 'error'
+                })
+              }
+            }
+          }
+        })
+      }
 
       //warehouse validation
       processOrderDetail[0].processIn.processOrderDetailWarehouse.length ===
@@ -345,7 +541,7 @@ const InputProcessForm = ({
     validate()
   }, [
     processTypeId,
-    processOrderDetail[0],
+    processOrderDetail,
     processOrderDetail[0].processIn.estInWeight,
     processOrderDetail[0].processOut.estOutWeight
   ])
@@ -360,9 +556,6 @@ const InputProcessForm = ({
         [key]: {
           ...item[key],
           itemCategory: selectedItem
-          // ...(selectedItem === 'recycle'
-          //   ? { processOrderDetailRecyc: [] }
-          //   : { processOrderDetailProduct: [] })
         }
       }))
     )
@@ -482,6 +675,53 @@ const InputProcessForm = ({
     return plannedEndAt
   }
 
+  const checkingRemarks = () => {
+    const productItemIn = processOrderDetail[0].processIn
+    const productItemOut = processOrderDetail[0].processOut
+    //validate if others product showing
+    if (productItemIn.itemCategory === 'product') {
+      const productData = productItemIn.processOrderDetailProduct
+
+      for (const item of productData) {
+        if (
+          (item.isProductSubTypeOthers && !item.productSubTypeRemark) ||
+          (item.isProductAddonTypeOthers &&
+            !item.productAddonTypeRemark &&
+            !trySubmited)
+        ) {
+          setModalRemarks(true)
+          return true
+        }
+      }
+    }
+
+    if (productItemOut.itemCategory === 'product') {
+      const productData = productItemOut.processOrderDetailProduct
+      for (const item of productData) {
+        if (
+          (item.isProductSubTypeOthers && !item.productSubTypeRemark) ||
+          (item.isProductAddonTypeOthers &&
+            !item.productAddonTypeRemark &&
+            !trySubmited)
+        ) {
+          setModalRemarks(true)
+          return true
+        }
+      }
+    }
+
+    return false
+  }
+
+  const validateRemark = () => {
+    const modalTriggered = checkingRemarks()
+    if (modalTriggered) {
+      return
+    }
+
+    handleSaveItem()
+  }
+
   const handleSaveItem = async () => {
     if (validation.length !== 0) {
       setTrySubmited(true)
@@ -544,7 +784,6 @@ const InputProcessForm = ({
   }
 
   const getProductData = (key: string) => {
-    // if (action === 'edit') {
     const selectedProduct =
       key === 'processIn'
         ? processOrderDetail[0].processIn.processOrderDetailProduct[0]
@@ -555,12 +794,13 @@ const InputProcessForm = ({
         productTypeId: selectedProduct?.productTypeId,
         productSubTypeId: selectedProduct?.productSubTypeId,
         productAddonId: selectedProduct?.productAddonId,
-        productSubTypeRemark: '',
-        productAddonTypeRemark: ''
+        productSubTypeRemark: selectedProduct.productSubTypeRemark,
+        productAddonTypeRemark: selectedProduct?.productAddonTypeRemark,
+        isProductSubTypeOthers: selectedProduct?.isProductSubTypeOthers,
+        isProductAddonTypeOthers: selectedProduct?.isProductSubTypeOthers
       }
       return product
     }
-    // }
 
     return undefined
   }
@@ -596,7 +836,7 @@ const InputProcessForm = ({
             submitText: t('add_warehouse_page.save'),
             cancelText: t('common.cancel'),
             onCloseHeader: handleDrawerClose,
-            onSubmit: handleSaveItem,
+            onSubmit: validateRemark,
             onDelete: handleDrawerClose
           }}
         >
@@ -677,6 +917,7 @@ const InputProcessForm = ({
                                     : 'processOut'
                                 handleRecycChange(keyType, value)
                               }}
+                              subTypeRequired={true}
                               defaultRecycL={getDefaultRecy(key)}
                             />
                           </CustomField>
@@ -811,6 +1052,14 @@ const InputProcessForm = ({
                   ))}
               </Grid>
             </Grid>
+            <ConfirmRemarksModal
+              open={modalRemark}
+              onConfirm={() => {
+                handleSaveItem()
+                setModalRemarks(false)
+              }}
+              onClose={() => setModalRemarks(false)}
+            />
           </Box>
         </RightOverlayForm>
       </Box>

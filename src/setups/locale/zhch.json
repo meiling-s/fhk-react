@@ -450,7 +450,7 @@
       "download": "下载"
     },
     "create_pick_up_order": "建立",
-    "edit_pick_up_order": "编辑取件订单",
+    "edit_pick_up_order": "编辑订单",
     "shipping_info": "运输资料",
     "select_shipping_category": "请选择运输类别",
     "regular_shipping": "常规运输",
@@ -734,7 +734,7 @@
     "cancelled": "已取消",
     "overdue": "逾期",
     "processingRecords": "处理记录",
-    "userGroup": "帳號",
+    "userGroup": "帐号",
     "search": "搜索",
     "enterProcessingNumber": "输入处理编号",
     "processingName": "处理名称",
@@ -972,7 +972,13 @@
     "assign_driver": "指派司机",
     "shippingDateAndTime": "运输日期及时间",
     "success_assign": "成功分配工作订单",
-    "failed_assign": "分配作业订单失败"
+    "failed_assign": "分配作业订单失败",
+    "cancel_alert": "您确定要取消该工作订单吗？",
+    "cancel_reason": "取消原因",
+    "store_date": "更改日期成功",
+    "changedate_alert": "确认更改运输日期吗？",
+    "changedate_reason": "更改原因（可多选）",
+    "invalid_date": "选择的日期早于今天。"
   },
   "notification": {
     "notification_menu": "通知范本",
@@ -1251,23 +1257,23 @@
     "missing_arrived": "到达信息不能为空",
     "table": {
       "created_datetime": "建立日期",
-      "order_number": "訂單編號",
+      "order_number": "订单编号",
       "pico_id": "回收运单编号",
       "place_receipt": "收貨地點",
-      "receipt_date_time": "收貨日期及時間",
+      "receipt_date_time": "收货日期及时间",
       "status": "状态",
       "operation": "操作",
       "approve": "接受",
       "reject": "拒绝"
     },
     "detail": {
-      "order": "訂單",
-      "contact_info": "聯絡資料",
+      "order": "订单",
+      "contact_info": "联络资料",
       "receiving_company_name": "收件公司名稱",
-      "contact_number": "聯絡人號碼",
+      "contact_number": "联络人号码",
       "payment_method": "付款方式",
-      "order_info": "訂單資料",
-      "pico_id": "回收運單編號"
+      "order_info": "订单资料",
+      "pico_id": "回收运单编号"
     },
     "create": {
       "create_order": "建立订单",
