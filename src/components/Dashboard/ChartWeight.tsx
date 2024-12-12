@@ -109,6 +109,8 @@ const ChartWeight = ({
   const [mainCategoryName, setMainCategoryName] = useState<string[]>([]);
   const [category, setCategory] = useState<string>("0");
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isFrmDateError, setIsFrmDateError] = useState<boolean>(false);
+  const [isToDateError, setIsToDateError] = useState<boolean>(false);
   const plugin = {
     id: "customCanvasBackgroundColor",
     beforeDraw: (chart: any, args: any, options: any) => {
@@ -189,7 +191,7 @@ const ChartWeight = ({
     }
   };
   const data = {
-    labels,
+    labels: !isFrmDateError && !isToDateError ? labels : [],
     datasets: newDataSet
   };
 
@@ -211,13 +213,17 @@ const ChartWeight = ({
     }
   }, [vehicleList]);
   useEffect(() => {
-    if (dataset.length > 0) {
+    if (dataset.length > 0 && !isFrmDateError && !isToDateError) {
       setNewDataSet(dataset);
       const mainName: string[] = [];
       dataset.map((data) => {
         mainName.push(data.label);
       });
       setMainCategoryName(mainName);
+      setIsLoading(false);
+    } else if (isFrmDateError || isToDateError) {
+      setNewDataSet([]);
+      setMainCategoryName([]);
       setIsLoading(false);
     }
   }, [dataset]);
@@ -323,14 +329,13 @@ const ChartWeight = ({
                     slotProps={{ textField: { size: "small" } }}
                     sx={localstyles.datePicker}
                     maxDate={toDate}
-                    onError={() => {
-                      setNewDataSet([])
-                    }}
                     onChange={(value) => {
                       if (value && dayjs(value).isAfter(toDate) === false && dayjs(value).isAfter('1970-01-01')) {
                         onChangeFromDate(value);
                         setIsLoading(true);
+                        setIsFrmDateError(false);
                       } else {
+                        setIsFrmDateError(true);
                         setNewDataSet([])
                       }
                     }}
@@ -347,8 +352,10 @@ const ChartWeight = ({
                       if (value && dayjs(value).isBefore(frmDate) === false && dayjs(value).isAfter('1970-01-01')) {
                         onChangeToDate(value);
                         setIsLoading(true);
+                        setIsToDateError(false);
                       } else {
-                        setNewDataSet([])
+                        setIsToDateError(true);
+                        setNewDataSet([]);
                       }
                     }}
                     format={dateFormat}
