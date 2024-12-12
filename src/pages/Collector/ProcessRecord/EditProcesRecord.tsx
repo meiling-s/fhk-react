@@ -27,8 +27,8 @@ import { createProcessRecordItem,
   editProcessRecordItem, 
   deleteProcessOutItem, 
   getProcessRecordDetail,
-  getProcessIn,
-  getProcessInRecordDetail} from '../../../APICalls/Collector/processRecords'
+  getProcessInRecordDetail
+} from '../../../APICalls/Collector/processRecords'
 import { displayCreatedDate, extractError, formatWeight } from '../../../utils/utils'
 import { ToastContainer, toast } from 'react-toastify'
 import { ProcessType } from '../../../interfaces/common'
