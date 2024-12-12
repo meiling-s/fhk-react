@@ -381,6 +381,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   }
 
   useEffect(() => {
+    setRecycItemBefore([])
     setRecycItem([])
     const getDetail = async () => {
       try {
