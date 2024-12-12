@@ -26,7 +26,8 @@ import {
   getThemeCustomList,
   extractError,
   showErrorToast,
-  showSuccessToast
+  showSuccessToast,
+  returnErrorMsg
 } from '../../../utils/utils'
 
 import {
@@ -44,7 +45,11 @@ import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import RecyclablesListSingleSelect from '../../../components/SpecializeComponents/RecyclablesListSingleSelect'
 import { singleRecyclable } from '../../../interfaces/collectionPoint'
-import { localStorgeKeyName, STATUS_CODE } from 'src/constants/constant'
+import {
+  formErr,
+  localStorgeKeyName,
+  STATUS_CODE
+} from 'src/constants/constant'
 import ProductListSingleSelect, {
   singleProduct
 } from 'src/components/SpecializeComponents/ProductListSingleSelect'
@@ -65,6 +70,8 @@ import {
   mappingSubProductType,
   mappingAddonsType
 } from 'src/pages/Collector/ProccessOrder/utils'
+import { formValidate } from 'src/interfaces/common'
+import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
 
 type AddProcessCompactorProps = {
   chkInIds: number[]
@@ -92,6 +99,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
     singleProduct | undefined
   >()
   const [editedItem, setEditedItem] = useState<ProcessOutItem | null>(null)
+  const [validation, setValidation] = useState<formValidate[]>([])
 
   //data
   const [processOutItem, setProcessOutItem] = useState<ProcessOutItem[]>([])
@@ -137,7 +145,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
           })
         })
         setPackagingList(packageUnit)
-        if (packageUnit.length > 0 && editedItem)
+        if (packageUnit.length > 0 && !editedItem)
           setSelectedPackage(packageUnit[0].id)
       }
     } catch (error: any) {
@@ -151,6 +159,77 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
   const onImageChange = (imageList: ImageListType) => {
     setPictures(imageList)
   }
+
+  useEffect(() => {
+    const validate = async () => {
+      const tempV: formValidate[] = []
+
+      if (isRecylingCategory) {
+        selectedRecyc?.recycTypeId === '' &&
+          tempV.push({
+            field: t('jobOrder.main_category'),
+            problem: formErr.empty,
+            type: 'error'
+          })
+
+        const selectedRecy = recycType?.find(
+          (src) => src.recycTypeId === selectedRecyc?.recycTypeId
+        )
+        if (selectedRecy) {
+          if (
+            selectedRecy.recycSubType.length > 0 &&
+            selectedRecyc?.recycSubTypeId === ''
+          ) {
+            tempV.push({
+              field: t('jobOrder.subcategory'),
+              problem: formErr.empty,
+              type: 'error'
+            })
+          }
+        }
+      } else {
+        selectedProduct?.productTypeId === '' &&
+          tempV.push({
+            field: t('pick_up_order.product_type.product'),
+            problem: formErr.empty,
+            type: 'error'
+          })
+
+        const selectedProdItem = productType?.find(
+          (src) => src.productTypeId === selectedProduct?.productSubTypeId
+        )
+        if (selectedProdItem) {
+          if (
+            selectedProdItem.productSubType!!.length > 0 &&
+            selectedProduct?.productSubTypeId === ''
+          ) {
+            tempV.push({
+              field: t('pick_up_order.product_type.subtype'),
+              problem: formErr.empty,
+              type: 'error'
+            })
+          }
+        }
+      }
+
+      if (parseFloat(weight) <= 0)
+        tempV.push({
+          field: t('compactor.table.weight'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+
+      if (pictures.length === 0)
+        tempV.push({
+          field: t('report.picture'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+
+      setValidation(tempV)
+    }
+    validate()
+  }, [weight, pictures, selectedProduct, selectedRecyc])
 
   const editItemCompactor = (item: ProcessOutItem) => {
     setEditedItem(item)
@@ -191,6 +270,11 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
   }
 
   const addProcessItem = () => {
+    if (validation.length !== 0) {
+      setTrySubmited(true)
+      return
+    }
+
     const photosData = pictures.map((item) => item.data_url)
 
     const newItem: ProcessOutItem = {
@@ -440,7 +524,9 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                   <CustomField label={t('col.recycType')} mandatory>
                     <RecyclablesListSingleSelect
                       showError={
-                        isRecylingCategory && selectedRecyc?.recycTypeId != ''
+                        isRecylingCategory &&
+                        selectedRecyc?.recycTypeId != '' &&
+                        trySubmited
                       }
                       recycL={recycType ?? []}
                       setState={(values) => {
@@ -464,8 +550,9 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                   >
                     <ProductListSingleSelect
                       showError={
-                        isRecylingCategory &&
-                        selectedProduct?.productTypeId != ''
+                        !isRecylingCategory &&
+                        selectedProduct?.productTypeId != '' &&
+                        trySubmited
                       }
                       label={t('pick_up_order.product_type.product')}
                       options={productType ?? []}
@@ -603,10 +690,25 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                 <Grid item>
                   <Button
                     sx={{ ...styles.buttonFilledGreen, width: '200px' }}
+                    disabled={
+                      selectedRecyc?.recycTypeId === '' ||
+                      selectedProduct?.productTypeId === ''
+                    }
                     onClick={() => addProcessItem()}
                   >
                     {t('pick_up_order.finish')}
                   </Button>
+                </Grid>
+                <Grid item>
+                  {trySubmited &&
+                    validation.map((val, index) => (
+                      <FormErrorMsg
+                        key={index}
+                        field={t(val.field)}
+                        errorMsg={returnErrorMsg(val.problem, t)}
+                        type={val.type}
+                      />
+                    ))}
                 </Grid>
               </Grid>
             </Box>

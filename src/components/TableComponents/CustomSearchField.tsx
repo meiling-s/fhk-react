@@ -33,7 +33,8 @@ const CustomSearchField = ({
   inputType,
   numberOnly = false,
   dataTestId,
-  disableIcon
+  disableIcon,
+  isUseCurrDate = false
 }: {
   label: string
   width?: string
@@ -46,6 +47,7 @@ const CustomSearchField = ({
   numberOnly?: boolean
   dataTestId?: string
   disableIcon?: boolean
+  isUseCurrDate?: boolean
 }) => {
   const hasOptions = options && options.length > 0
   //const [selectedValue, setSelectedValue] = useState<string>("")
@@ -89,7 +91,7 @@ const CustomSearchField = ({
         {inputType === 'date' ? (
           <Box sx={{ ...localstyles.DateItem, width: width ? width : '250px' }}>
             <DatePicker
-              defaultValue={null}
+              defaultValue={isUseCurrDate ? dayjs() : null}
               label={label}
               format={format.dateFormat2}
               onChange={handleDateChange}

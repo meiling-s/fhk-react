@@ -40,6 +40,7 @@ import {
 import i18n from '../../../setups/i18n'
 import dayjs from 'dayjs'
 import { localStorgeKeyName } from 'src/constants/constant'
+import { formValidate } from 'src/interfaces/common'
 
 interface Option {
   value: string
@@ -223,7 +224,13 @@ const CompactorDashboard: FunctionComponent = () => {
   useEffect(() => {
     initLicensePlate()
     getProductType()
+    setCurrDate()
   }, [])
+
+  const setCurrDate = () => {
+    const currentDate = dayjs().format('YYYY-MM-DD')
+    setSelectedDate(currentDate)
+  }
 
   const initLicensePlate = async () => {
     const result = await getPlateNoList()
@@ -293,6 +300,7 @@ const CompactorDashboard: FunctionComponent = () => {
     } else {
       setSelectedPlate(value)
     }
+    console.log(value)
   }, 1000)
 
   const selectCard = (id: number) => {
@@ -301,7 +309,11 @@ const CompactorDashboard: FunctionComponent = () => {
         ? prevSelected.filter((item) => item !== id)
         : [...prevSelected, id]
 
-      if (updatedSelected.length > 0) getItemsCompactor(updatedSelected)
+      if (updatedSelected.length > 0) {
+        getItemsCompactor(updatedSelected)
+      } else {
+        setCompactorProcessInItem([])
+      }
 
       return updatedSelected
     })
@@ -360,6 +372,7 @@ const CompactorDashboard: FunctionComponent = () => {
                     label={s.label}
                     placeholder={s?.placeholder}
                     field={s.field}
+                    isUseCurrDate={true}
                     inputType={s.inputType}
                     options={s.options ?? []}
                     width="500px"
@@ -376,6 +389,7 @@ const CompactorDashboard: FunctionComponent = () => {
                     height: '40px'
                   }
                 ]}
+                disabled={selectedDate === ''}
                 onClick={() => {
                   getProcessInData()
                 }}
@@ -474,6 +488,7 @@ const CompactorDashboard: FunctionComponent = () => {
           <Box
             sx={{
               width: '100%',
+              maxWidth: '1280px',
               borderTopRightRadius: '12px',
               borderBottomRightRadius: '12px',
               borderBottomLeftRadius: '12px',
@@ -514,12 +529,13 @@ const CompactorDashboard: FunctionComponent = () => {
         {/* SECTION 3 */}
         {selectedCheckInIds.length > 0 && (
           <Box>
-            <div className="bg-[#7CE495] w-max px-[20px] py-[10px] text-white font-bold rounded-t-xl">
+            <div className="bg-[#7CE495] px-[20px] py-[10px] w-max text-white font-bold rounded-t-xl">
               {t('compactor.processCompress')}
             </div>
             <Box
               sx={{
                 width: '100%',
+                maxWidth: '1380px',
                 borderTopRightRadius: '12px',
                 borderBottomRightRadius: '12px',
                 borderBottomLeftRadius: '12px',
