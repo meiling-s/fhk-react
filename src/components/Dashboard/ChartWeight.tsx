@@ -191,7 +191,7 @@ const ChartWeight = ({
     }
   };
   const data = {
-    labels: !isFrmDateError && !isToDateError ? labels : [],
+    labels: !isFrmDateError && !isToDateError && newDataSet.length > 0 ? labels : [],
     datasets: newDataSet
   };
 
