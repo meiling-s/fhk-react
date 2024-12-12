@@ -450,7 +450,7 @@
       "download": "Download"
     },
     "create_pick_up_order": "Create",
-    "edit_pick_up_order": "Edit pickup Order",
+    "edit_pick_up_order": "Edit Order",
     "shipping_info": "Shipping Information",
     "select_shipping_category": "Please Select Pickup Order Type",
     "regular_shipping": "Regular shipping",

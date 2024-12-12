@@ -35,6 +35,7 @@ export type ProcessOrderDetailProduct = {
   productAddonId: string
   productSubTypeRemark: string
   productAddonTypeRemark: string
+  productAddonTypeId?: string
   isProductSubTypeOthers?: boolean
   isProductAddonTypeOthers?: boolean
 }

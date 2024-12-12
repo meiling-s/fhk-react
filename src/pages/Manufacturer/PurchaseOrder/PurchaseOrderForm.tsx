@@ -29,6 +29,7 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import { getManufacturerBasedLang } from './utils'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -56,7 +57,7 @@ const PurchaseOrderForm = ({
   const role = localStorage.getItem(localStorgeKeyName.role)
   const userRole = localStorage.getItem(localStorgeKeyName.role) || '';
   const rolesEnableCreatePO = [Roles.customerAdmin]
-  const {dateFormat} = useContainer(CommonTypeContainer)
+  const {dateFormat, manuList} = useContainer(CommonTypeContainer)
   const paymentTypes : PaymentType[] = [
     {
       paymentNameTchi: '現金',
@@ -260,7 +261,7 @@ const PurchaseOrderForm = ({
               (
                 <CustomField label={t('purchase_order_customer.table.recycling_plant')}>
                   <Typography sx={localstyles.typo_fieldContent}>
-                    {selectedPurchaseOrder?.senderName}
+                    {getManufacturerBasedLang(selectedPurchaseOrder?.senderName!, manuList)}
                   </Typography>
                 </CustomField>
               )
