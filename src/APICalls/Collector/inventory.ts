@@ -45,14 +45,12 @@ export const getAllInventory = async (
 }
 
 export const getItemTrackInventory = async (
-  realmApiRoute: string,
-  table: string,
-  itemId: number
+  gid: string
 ) => {
   try {
     const response = await axiosInstance({
-      baseURL: window.baseURL.collector,
-      ...GET_ITEM_TRACK_INVENTORY(realmApiRoute, table, itemId)
+      baseURL: window.baseURL.administrator,
+      ...GET_ITEM_TRACK_INVENTORY(gid)
     })
 
     return response

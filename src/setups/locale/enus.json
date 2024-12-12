@@ -723,7 +723,21 @@
     "weight": "Weight",
     "at": "at",
     "select_location": "select location",
-    "handover": "hand over"
+    "handover": "hand over",
+    "track": "Track",
+    "company": "Company",
+    "beforeProcessing": "Before Processing",
+    "afterProcessing": "After Processing",
+    "itemNumber": "Item Number",
+    "start_date": "Start Date and Time",
+    "warehouse": "Warehouse",
+    "factory": "Factory",
+    "shipping_receiver": "Shipping and Receiving Companies",
+    "delivery_to_warehouse": "Delivery to/from warehouse",
+    "delivery_location": "Delivery/Delivery Location",
+    "warehouse_recycling": "Warehouse/recycling point",
+    "internal_transfer": "Internal Transfer",
+    "process_out": "Process Out"
   },
   "processRecord": {
     "processing": "Processing",
@@ -1603,5 +1617,9 @@
     "factory": "Factory",
     "warehouse": "Warehouse",
     "introduction": "Introduction"
+  },
+  "globalItemId": {
+    "globalItemId": "Global Item ID",
+    "enterGlobalItemId": "Enter the Global Item ID"
   }
 }

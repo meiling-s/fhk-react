@@ -28,6 +28,13 @@ import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard'
 import BarChartIcon from '@mui/icons-material/BarChart'
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import FactoryOutlinedIcon from '@mui/icons-material/FactoryOutlined';
+import MemoryIcon from '@mui/icons-material/Memory';
+import InsertInvitationRoundedIcon from '@mui/icons-material/InsertInvitationRounded';
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
+import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined';
+import MonitorWeightOutlinedIcon from '@mui/icons-material/MonitorWeightOutlined';
+import CachedRoundedIcon from '@mui/icons-material/CachedRounded';
 
 export const PLACE_ICON = PlaceOutlinedIcon
 export const SHIPPING_CAR_ICON = LocalShippingOutlinedIcon
@@ -59,3 +66,10 @@ export const TEMPLATE_ICON = SpaceDashboardIcon
 export const STATISTIC_ICON = BarChartIcon
 export const PERSON_OUTLINE_ICON = PersonOutlineIcon
 export const ARRPW_FORWARD_ICON = ArrowForwardRoundedIcon
+export const COMPANY_ICON = FolderCopyOutlinedIcon
+export const FACTORY_ICON = FactoryOutlinedIcon
+export const MEMORY_ICON = MemoryIcon
+export const CALENDAR_ICON = InsertInvitationRoundedIcon
+export const INVENTORY_ICON = Inventory2OutlinedIcon
+export const WEIGHT_ICON = MonitorWeightOutlinedIcon
+export const CATEGORY_ICON = CachedRoundedIcon
