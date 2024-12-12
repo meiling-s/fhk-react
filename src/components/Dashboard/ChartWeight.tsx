@@ -108,7 +108,7 @@ const ChartWeight = ({
   const [newDataSet, setNewDataSet] = useState<Dataset[]>(dataset);
   const [mainCategoryName, setMainCategoryName] = useState<string[]>([]);
   const [category, setCategory] = useState<string>("0");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const plugin = {
     id: "customCanvasBackgroundColor",
     beforeDraw: (chart: any, args: any, options: any) => {
@@ -211,7 +211,7 @@ const ChartWeight = ({
     }
   }, [vehicleList]);
   useEffect(() => {
-    if (dataset) {
+    if (dataset.length > 0) {
       setNewDataSet(dataset);
       const mainName: string[] = [];
       dataset.map((data) => {
@@ -221,6 +221,11 @@ const ChartWeight = ({
       setIsLoading(false);
     }
   }, [dataset]);
+
+  useEffect(() => {
+    setIsLoading(true);
+  }, [])
+
   const handleVehicleNumberChange = (event: SelectChangeEvent) => {
     const value = event.target.value as string;
     setVehicleValue(value);
