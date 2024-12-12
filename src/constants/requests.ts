@@ -741,6 +741,15 @@ export const GET_PROCESS_IN_BY_ID = (
   url: `api/v1/${realmApiRoute}/processin/${table}/${processInId}`
 })
 
+export const GET_PROCESS_IN_DETAIL = (
+  table: string,
+  processInId: number,
+  realmApiRoute: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/processin/detail/searching/${table}/${processInId}`
+})
+
 export const GET_PROCESS_LIST: AxiosRequestConfig = {
   method: 'get',
   url: `api/v1/administrator/ProcessType`

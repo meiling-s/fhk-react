@@ -57,9 +57,10 @@ type createRecyclable = {
   version: number
 }
 
-type RecycItem = {
+type RecycItem = {  
   itemId: number
-  processOutDtlId: number
+  processOutDtlId?: number
+  processInDtlId?: number
   recycType: il_item
   recycSubtype: il_item
   productType: il_item
@@ -68,8 +69,10 @@ type RecycItem = {
   productAddonId :il_item
   productAddonRemark: string
   weight: number
-  images: string[]
+  images?: string[]
   unitId?: string
+  status?: string
+  packageTypeId: string
   version: number
 }
 interface EditProcessRecordProps {
@@ -165,7 +168,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
       setIsRecyc(Boolean(editedData.recycType?.id))
       setWeight(formatWeight(editedData.weight.toString(), decimalVal))
       
-      const imageList: any = editedData.images.map(
+      const imageList: any = editedData?.images?.map(
         (url: string, index: number) => {
           return {
             data_url: url, //url already imge bsae64
@@ -315,7 +318,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
     );
 
     const data: createRecyclable = {
-      itemId: editedData ? editedData.processOutDtlId : generateNumericId(),
+      itemId: editedData ? editedData.processOutDtlId! || editedData.processInDtlId! : generateNumericId(),
       recycTypeId: recycTypeId,
       recycSubTypeId: recycSubTypeId,
       productTypeId: productTypeId,
@@ -335,7 +338,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
 
     if (validation.length === 0) {
       action == 'add' ? 
-        onCreateRecycle(data) : onEditRecycle(data, editedData!!.processOutDtlId);
+        onCreateRecycle(data) : onEditRecycle(data, editedData?.processOutDtlId || editedData?.processInDtlId!);
       resetData();
       handleDrawerClose();
     } else {
@@ -404,7 +407,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
 
   const onHandleDelete = () => {
     if (editedData != null) {
-      onDeleteItem(editedData?.version ?? 0, editedData.processOutDtlId)
+      onDeleteItem(editedData?.version ?? 0, editedData.processOutDtlId || editedData.processInDtlId!)
       resetData()
       handleDrawerClose()
     }

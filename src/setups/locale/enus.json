@@ -747,6 +747,7 @@
     "handler": "Handled By",
     "status": "Status",
     "categoryWeight": "Category and Weight of Recyclables Before Processing",
+    "categoryWeight-after": "Category and Weight of Recyclables After Processing",
     "detail": {
       "processingData": "Processing Information",
       "recyclingInformation": "Recycling Information",
