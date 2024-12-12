@@ -1428,6 +1428,13 @@
     "collector": "Reyclables Dashboard",
     "capacity": "Capacity"
   },
+  "dashboard_weight_of_recyclables": {
+    "record": "Pickup and dropoff records",
+    "delivered_weight": "Pickup Items Weight",
+    "unloaded_weight": "Dropoff Items Weight",
+    "item_type": "Item Category",
+    "car_number":"Vehicle Plate No."
+  },
   "dashboard_manufacturer": {
     "data": "Data",
     "recycling_station": "Recycling weight at each recycling station",
