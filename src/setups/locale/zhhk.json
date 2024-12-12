@@ -721,7 +721,21 @@
     "weight": "重量",
     "at": "於",
     "select_location": "選擇位置",
-    "handover": "交給"
+    "handover": "交給",
+    "track": "追踪",
+    "company": "公司",
+    "beforeProcessing": "處理前",
+    "afterProcessing": "處理後",
+    "itemNumber": "物品編號",
+    "start_date": "開始日期及時間",
+    "warehouse": "貨倉",
+    "factory": "工場",
+    "shipping_receiver": "運輸和接收公司",
+    "delivery_to_warehouse": "送入/送出貨倉",
+    "delivery_location": "送入/送出貨倉地點",
+    "warehouse_recycling": "貨倉/回收點",
+    "internal_transfer": "內部運輸",
+    "process_out": "處理輸出"
   },
   "processRecord": {
     "processing": "處理中",
@@ -1590,5 +1604,9 @@
     "factory": "工場",
     "warehouse": "貨倉",
     "introduction": "簡介"
+  },
+  "globalItemId": {
+    "globalItemId": "物品編號",
+    "enterGlobalItemId": "輸入物品編號"
   }
 }
