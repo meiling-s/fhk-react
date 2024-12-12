@@ -12,7 +12,7 @@ import {
   InventoryDetail as InvDetails,
   InventoryTracking,
   EventTrackingData,
-  EventDetailTracking,
+  ProcessOutData,
 } from "../../interfaces/inventory";
 import { useTranslation } from "react-i18next";
 import {
@@ -37,7 +37,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 interface CompactorCardProps {
-  data: EventDetailTracking;
+  data: ProcessOutData;
 }
 
 const CompactorCard: FunctionComponent<CompactorCardProps> = ({ data }) => {
@@ -47,7 +47,7 @@ const CompactorCard: FunctionComponent<CompactorCardProps> = ({ data }) => {
     setExpanded((prev) => !prev);
   };
 
-  const getConditionalValue = (data: EventDetailTracking, type: string) => {
+  const getConditionalValue = (data: ProcessOutData, type: string) => {
     if (type === "title") {
       switch (i18n.language) {
         case "enus":

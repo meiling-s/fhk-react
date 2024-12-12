@@ -1,66 +1,47 @@
 import {
   Box,
-  Grid,
   Typography,
   Card,
   CardContent,
   IconButton,
   Collapse,
 } from "@mui/material";
-import React, { FunctionComponent, useEffect, useState } from "react";
-import {
-  InventoryDetail as InvDetails,
-  InventoryTracking,
-  EventTrackingData,
-  EventDetailTracking,
-} from "../../interfaces/inventory";
+import { FunctionComponent, useState } from "react";
+import { ProcessingRecordData } from "../../interfaces/inventory";
 import { useTranslation } from "react-i18next";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
-  AccountTree,
-  CalendarToday,
-  ExpandLess,
-  ExpandMore,
-  LocationOn,
-  Scale,
-} from "@mui/icons-material";
-import {
-  CALENDAR_ICON,
-  CATEGORY_ICON,
   COMPANY_ICON,
-  FACTORY_ICON,
-  FOLDER_ICON,
   INVENTORY_ICON,
   MEMORY_ICON,
   WEIGHT_ICON,
 } from "src/themes/icons";
-import { getItemTrackInventory } from "src/APICalls/Collector/inventory";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useContainer } from "unstated-next";
+import CommonTypeContainer from "src/contexts/CommonTypeContainer";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 interface ProcessingRecordCardProps {
-  data: EventDetailTracking;
+  data: ProcessingRecordData;
 }
 
 const ProcessingRecordCard: FunctionComponent<ProcessingRecordCardProps> = ({
   data,
 }) => {
   const { i18n, t } = useTranslation();
+  const { weightUnits, dateFormat } = useContainer(CommonTypeContainer);
   const [expanded, setExpanded] = useState(true);
+
   const handleToggle = () => {
     setExpanded((prev) => !prev);
   };
 
-  const getConditionalValue = (data: EventDetailTracking, type: string) => {
-    if (type === "title") {
-      switch (i18n.language) {
-        case "enus":
-          return data.process_type_en;
-        case "zhch":
-          return data.process_type_sc;
-        case "zhhk":
-          return data.process_type_tc;
-      }
-    } else if (type === "company") {
+  const getConditionalValue = (data: ProcessingRecordData, type: string) => {
+    if (type === "company") {
       switch (i18n.language) {
         case "enus":
           return data.company_name_en;
@@ -69,32 +50,37 @@ const ProcessingRecordCard: FunctionComponent<ProcessingRecordCardProps> = ({
         case "zhhk":
           return data.company_name_tc;
       }
-    } else if (type === "factory") {
+    } else if (type === "location") {
       switch (i18n.language) {
         case "enus":
-          return data.factory_name_en;
+          return data.location_en;
         case "zhch":
-          return data.factory_name_sc;
+          return data.location_sc;
         case "zhhk":
-          return data.factory_name_tc;
+          return data.location_tc;
       }
-    } else if (type === "processin_warehouse") {
-      switch (i18n.language) {
-        case "enus":
-          return data.process_in.warehouse_en;
-        case "zhch":
-          return data.process_in.warehouse_sc;
-        case "zhhk":
-          return data.process_in.warehouse_tc;
+    } else if (type === "weightUnit") {
+      const selectedWeight = weightUnits.find(
+        (value) => value.unitId === Number(data.unitId)
+      );
+      if (selectedWeight) {
+        switch (i18n.language) {
+          case "enus":
+            return selectedWeight.unitNameEng;
+          case "zhch":
+            return selectedWeight.unitNameSchi;
+          case "zhhk":
+            return selectedWeight.unitNameTchi;
+        }
       }
-    } else if (type === "processout_warehouse") {
+    } else if (type === "addr") {
       switch (i18n.language) {
         case "enus":
-          return data.process_out.warehouse_en;
+          return data.addr_en;
         case "zhch":
-          return data.process_out.warehouse_sc;
+          return data.addr_sc;
         case "zhhk":
-          return data.process_out.warehouse_tc;
+          return data.addr_tc;
       }
     }
   };
@@ -120,13 +106,18 @@ const ProcessingRecordCard: FunctionComponent<ProcessingRecordCardProps> = ({
             <ExpandMore sx={{ color: "#79CA25" }} />
           )}
         </IconButton>
-        <Typography variant="h6">Processing Record</Typography>
+        <Typography variant="h6">
+          {t("processRecord.processingRecords")}
+        </Typography>
         <Typography
           variant="body2"
           color="textSecondary"
           sx={{ marginLeft: "auto", marginRight: 10 }}
         >
-          Date
+          {dayjs
+            .utc(data.createdAt)
+            .tz("Asia/Hong_Kong")
+            .format(`${dateFormat} HH:mm A`)}
         </Typography>
       </Box>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -153,7 +144,7 @@ const ProcessingRecordCard: FunctionComponent<ProcessingRecordCardProps> = ({
                 color="textSecondary"
                 sx={{ color: "#535353" }}
               >
-                Company - Dummy
+                {getConditionalValue(data, "company")}
               </Typography>
             </Box>
           </Box>
@@ -179,7 +170,7 @@ const ProcessingRecordCard: FunctionComponent<ProcessingRecordCardProps> = ({
                 color="textSecondary"
                 sx={{ color: "#199BEC", cursor: "pointer" }}
               >
-                {data.process_out.gidLabel}
+                {data.gidLabel}
               </Typography>
             </Box>
           </Box>
@@ -205,7 +196,7 @@ const ProcessingRecordCard: FunctionComponent<ProcessingRecordCardProps> = ({
                 color="textSecondary"
                 sx={{ color: "#535353" }}
               >
-                Warehouse / Recycling - Dummy
+                {getConditionalValue(data, "location")}
               </Typography>
             </Box>
           </Box>
@@ -231,7 +222,7 @@ const ProcessingRecordCard: FunctionComponent<ProcessingRecordCardProps> = ({
                 color="textSecondary"
                 sx={{ color: "#535353" }}
               >
-                20kg - Dummy
+                {data.total_weight} {getConditionalValue(data, "weightUnit")}
               </Typography>
             </Box>
           </Box>

@@ -736,7 +736,8 @@
     "delivery_to_warehouse": "Delivery to/from warehouse",
     "delivery_location": "Delivery/Delivery Location",
     "warehouse_recycling": "Warehouse/recycling point",
-    "internal_transfer": "Internal Transfer"
+    "internal_transfer": "Internal Transfer",
+    "process_out": "Process Out"
   },
   "processRecord": {
     "processing": "Processing",

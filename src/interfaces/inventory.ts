@@ -88,7 +88,7 @@ export type ProcessInOutEventDetail = {
   gidLabel: string
 }
 
-export type EventDetailTracking = {
+export type ProcessOutData = {
   tenant_id: string,
   company_name_en: string
   company_name_sc: string
@@ -101,6 +101,40 @@ export type EventDetailTracking = {
   process_type_sc: string
   process_type_tc: string
   process_in: ProcessInOutEventDetail
+  createdAt: string
+}
+
+export type ProcessingRecordData = {
+  location_en: string
+  location_sc: string
+  location_tc: string
+  record_date: string
+  gid: number[],
+  company_name_en: string
+  company_name_sc: string
+  company_name_tc: string
+  addr_en: string
+  addr_sc: string
+  addr_tc: string
+  total_weight: number,
+  gidLabel: string,
+  unitId: string,
+  createdAt: string
+}
+
+export type CheckinData = {
+  addr_en: string
+  addr_sc: string
+  addr_tc: string
+  location_en: string
+  location_sc: string
+  location_tc: string
+  record_date: string
+  company_name_en: string
+  company_name_sc: string
+  company_name_tc: string
+  unitId: string
+  createdAt: string
 }
 
 export type EventTrackingData = {
@@ -108,7 +142,7 @@ export type EventTrackingData = {
   tenantId: string
   eventType: string
   eventDetail: string
-  details: EventDetailTracking
+  details: ProcessOutData | ProcessingRecordData | CheckinData
   remarks: string | null
   createdBy: string
   createdAt: string

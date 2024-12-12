@@ -7,38 +7,14 @@ import {
   IconButton,
   Collapse,
 } from "@mui/material";
-import React, { FunctionComponent, useEffect, useState } from "react";
-import {
-  InventoryDetail as InvDetails,
-  InventoryTracking,
-  EventTrackingData,
-  EventDetailTracking,
-} from "../../interfaces/inventory";
+import { FunctionComponent, useState } from "react";
+import { ProcessOutData } from "../../interfaces/inventory";
 import { useTranslation } from "react-i18next";
-import {
-  AccountTree,
-  CalendarToday,
-  ExpandLess,
-  ExpandMore,
-  LocationOn,
-  Scale,
-} from "@mui/icons-material";
-import {
-  CALENDAR_ICON,
-  CATEGORY_ICON,
-  COMPANY_ICON,
-  FACTORY_ICON,
-  FOLDER_ICON,
-  INVENTORY_ICON,
-  MEMORY_ICON,
-  WEIGHT_ICON,
-} from "src/themes/icons";
-import { getItemTrackInventory } from "src/APICalls/Collector/inventory";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { ExpandLess, ExpandMore, LocationOn } from "@mui/icons-material";
+import { CATEGORY_ICON, COMPANY_ICON, INVENTORY_ICON } from "src/themes/icons";
 
 interface StockAdjustmentCardProps {
-  data: EventDetailTracking;
+  data: ProcessOutData;
 }
 
 const StockAdjustmentCard: FunctionComponent<StockAdjustmentCardProps> = ({
@@ -50,7 +26,7 @@ const StockAdjustmentCard: FunctionComponent<StockAdjustmentCardProps> = ({
     setExpanded((prev) => !prev);
   };
 
-  const getConditionalValue = (data: EventDetailTracking, type: string) => {
+  const getConditionalValue = (data: ProcessOutData, type: string) => {
     if (type === "title") {
       switch (i18n.language) {
         case "enus":

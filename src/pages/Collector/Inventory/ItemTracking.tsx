@@ -12,7 +12,9 @@ import {
   InventoryDetail as InvDetails,
   InventoryTracking,
   EventTrackingData,
-  EventDetailTracking,
+  ProcessingRecordData,
+  CheckinData,
+  ProcessOutData,
 } from "../../../interfaces/inventory";
 import { useTranslation } from "react-i18next";
 import {
@@ -79,6 +81,20 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
                 details.process_out.gid.length > 0
                   ? await getGIDLabel(details.process_out.gid[0])
                   : "";
+              details.createdAt = value.createdAt;
+
+              return { ...value, details };
+            } else if (value.eventType === "processRecord") {
+              const details = JSON.parse(value.eventDetail);
+              details.gidLabel =
+                details.gid.length > 0 ? await getGIDLabel(details.gid[0]) : "";
+              details.unitId = shippingData.unitId;
+              details.createdAt = value.createdAt;
+              return { ...value, details };
+            } else if (value.eventType === "checkin") {
+              const details = JSON.parse(value.eventDetail);
+              details.unitId = shippingData.unitId;
+              details.createdAt = value.createdAt;
 
               return { ...value, details };
             }
@@ -95,68 +111,27 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
     }
   }, [shippingData]);
 
-  const getConditionalValue = (data: EventDetailTracking, type: string) => {
-    if (type === "title") {
-      switch (i18n.language) {
-        case "enus":
-          return data.process_type_en;
-        case "zhch":
-          return data.process_type_sc;
-        case "zhhk":
-          return data.process_type_tc;
-      }
-    } else if (type === "company") {
-      switch (i18n.language) {
-        case "enus":
-          return data.company_name_en;
-        case "zhch":
-          return data.company_name_sc;
-        case "zhhk":
-          return data.company_name_tc;
-      }
-    } else if (type === "factory") {
-      switch (i18n.language) {
-        case "enus":
-          return data.factory_name_en;
-        case "zhch":
-          return data.factory_name_sc;
-        case "zhhk":
-          return data.factory_name_tc;
-      }
-    } else if (type === "processin_warehouse") {
-      switch (i18n.language) {
-        case "enus":
-          return data.process_in.warehouse_en;
-        case "zhch":
-          return data.process_in.warehouse_sc;
-        case "zhhk":
-          return data.process_in.warehouse_tc;
-      }
-    } else if (type === "processout_warehouse") {
-      switch (i18n.language) {
-        case "enus":
-          return data.process_out.warehouse_en;
-        case "zhch":
-          return data.process_out.warehouse_sc;
-        case "zhhk":
-          return data.process_out.warehouse_tc;
-      }
-    }
-  };
-
   return (
     <Box marginTop={2}>
       {parsedEventDetails?.event.map((eventItem: EventTrackingData) => {
         return (
           <Box key={eventItem.gidEventId} sx={{ marginBottom: 4 }}>
-            {eventItem.eventType === "processout" && (
+            {/* {eventItem.eventType === "processout" && (
               <CompactorCard data={eventItem.details} />
+            )} */}
+            {/* {eventItem.eventType === "checkin" && (
+              <CheckinCard data={eventItem.details as CheckinData} />
+            )} */}
+            {/* <StockAdjustmentCard data={eventItem.details} /> */}
+            {/* {eventItem.eventType === "processout" && (
+              <ProcessOutCard data={eventItem.details as ProcessOutData} />
+            )} */}
+            {eventItem.eventType === "processRecord" && (
+              <ProcessingRecordCard
+                data={eventItem.details as ProcessingRecordData}
+              />
             )}
-            <CheckinCard data={eventItem.details} />
-            <StockAdjustmentCard data={eventItem.details} />
-            <ProcessOutCard data={eventItem.details} />
-            <ProcessingRecordCard data={eventItem.details} />
-            <InternalTransferCard data={eventItem.details} />
+            {/* <InternalTransferCard data={eventItem.details} /> */}
           </Box>
         );
       })}
