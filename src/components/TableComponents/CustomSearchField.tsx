@@ -33,7 +33,7 @@ const CustomSearchField = ({
   inputType,
   numberOnly = false,
   dataTestId,
-  disableIcon,
+  disableIcon
 }: {
   label: string
   width?: string
@@ -87,7 +87,7 @@ const CustomSearchField = ({
     <Box>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
         {inputType === 'date' ? (
-          <Box sx={{ ...localstyles.DateItem }}>
+          <Box sx={{ ...localstyles.DateItem, width: width ? width : '250px' }}>
             <DatePicker
               defaultValue={null}
               label={label}
@@ -136,7 +136,7 @@ const CustomSearchField = ({
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  {(!hasOptions) && (!disableIcon) && (
+                  {!hasOptions && !disableIcon && (
                     <IconButton
                       onClick={
                         handleSearch ? () => handleSearchClick() : undefined
@@ -203,8 +203,8 @@ let localstyles = {
     height: 'fit-content',
     alignItems: 'center',
     marginTop: '8px',
-    marginRight: '8px',
-    width: '250px'
+    marginRight: '8px'
+    // width: '250px'
   }
 }
 

@@ -1,3 +1,4 @@
+import qs from 'qs'
 import {
   GET_PLATE_NO_LIST,
   GET_COMPACTOR_PROCESS_IN,
@@ -6,13 +7,14 @@ import {
 } from '../constants/compactorProcess'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
+import { CompactorProcessOut } from 'src/interfaces/processCompactor'
 
 export const getPlateNoList = async () => {
   const token = returnApiToken()
   try {
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...GET_PLATE_NO_LIST(token.decodeKeycloack)
+      ...GET_PLATE_NO_LIST(token.decodeKeycloack, token.realmApiRoute)
     })
 
     return response
@@ -35,7 +37,7 @@ export const getCompactorProcessIn = async (
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...GET_COMPACTOR_PROCESS_IN(token.decodeKeycloack),
+      ...GET_COMPACTOR_PROCESS_IN(token.decodeKeycloack, token.realmApiRoute),
       params: params
     })
 
@@ -58,14 +60,21 @@ export const getCompactorProcessInItem = async (
       page: page,
       size: size
     }
+
     if (id && id.length > 0) {
       params.id = id
     }
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...GET_COMPACTOR_PROCESS_IN_ITEM(token.decodeKeycloack),
-      params: params
+      ...GET_COMPACTOR_PROCESS_IN_ITEM(
+        token.decodeKeycloack,
+        token.realmApiRoute
+      ),
+      params: params,
+      paramsSerializer: (params) => {
+        return qs.stringify(params, { arrayFormat: 'repeat' })
+      }
     })
 
     return response
@@ -75,13 +84,16 @@ export const getCompactorProcessInItem = async (
   }
 }
 
-export const createCompactorProcessOut = async (data: any) => {
+export const createCompactorProcessOut = async (data: CompactorProcessOut) => {
   try {
     const token = returnApiToken()
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...CREATE_COMPACTOR_PROCESS_OUT(token.decodeKeycloack),
+      ...CREATE_COMPACTOR_PROCESS_OUT(
+        token.decodeKeycloack,
+        token.realmApiRoute
+      ),
       data: data
     })
 

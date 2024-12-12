@@ -1555,6 +1555,7 @@
   },
   "compactor": {
     "compactorTruckHandling": "壓縮車處理",
+    "unloadTime": "卸貨時間",
     "unloadRecord": "卸貨紀錄",
     "processingDate": "處理日期",
     "plateNumber": "車牌號碼",

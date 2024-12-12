@@ -19,7 +19,15 @@ import CustomField from '../../../components/FormComponents/CustomField'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 
-import { onChangeWeight, formatWeight } from '../../../utils/utils'
+import {
+  onChangeWeight,
+  formatWeight,
+  getThemeColorRole,
+  getThemeCustomList,
+  extractError,
+  showErrorToast,
+  showSuccessToast
+} from '../../../utils/utils'
 
 import {
   ADD_CIRCLE_FILL_ICON_,
@@ -36,46 +44,134 @@ import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import RecyclablesListSingleSelect from '../../../components/SpecializeComponents/RecyclablesListSingleSelect'
 import { singleRecyclable } from '../../../interfaces/collectionPoint'
+import { localStorgeKeyName, STATUS_CODE } from 'src/constants/constant'
+import ProductListSingleSelect, {
+  singleProduct
+} from 'src/components/SpecializeComponents/ProductListSingleSelect'
+import { il_item } from 'src/components/FormComponents/CustomItemList'
+import i18n from 'src/setups/i18n'
+import { getAllPackagingUnit } from 'src/APICalls/Collector/packagingUnit'
+import { PackagingUnit } from 'src/interfaces/packagingUnit'
+import { useNavigate } from 'react-router-dom'
+import {
+  CompactorProcessOut,
+  ProcessOutItem
+} from 'src/interfaces/processCompactor'
+import { createCompactorProcessOut } from 'src/APICalls/compactorProcess'
+import {
+  mappingRecy,
+  mappingSubRecy,
+  mappingProductType,
+  mappingSubProductType,
+  mappingAddonsType
+} from 'src/pages/Collector/ProccessOrder/utils'
 
-type processInOutItem = {
-  id: number
-  package: string
-  categorytype: string
-  recycTypeId: string
-  recycSubTypeId: string
-  weight: string
-  image: ImageListType
+type AddProcessCompactorProps = {
+  chkInIds: number[]
+  inItemId: number[]
 }
 
-const AddProcessCompactor: FunctionComponent = () => {
+const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
+  chkInIds,
+  inItemId
+}) => {
   const { t } = useTranslation()
-  const { imgSettings, recycType, decimalVal } =
+  const navigate = useNavigate()
+  const { imgSettings, recycType, decimalVal, productType, getProductType } =
     useContainer(CommonTypeContainer)
   const [isShowForm, setShowForm] = useState<boolean>(false)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
-  const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
+  const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
+  const colorTheme: string = getThemeColorRole(role) || '#79CA25'
+  const customListTheme = getThemeCustomList(role) || '#E4F6DC'
+  const [packagingList, setPackagingList] = useState<il_item[]>([])
+  const [defaultRecyc, setDefaultRecyc] = useState<
+    singleRecyclable | undefined
+  >()
+  const [defaultProduct, setDefaultProduct] = useState<
+    singleProduct | undefined
+  >()
+  const [editedItem, setEditedItem] = useState<ProcessOutItem | null>(null)
 
   //data
-  const [itemProcessing, setItemProcessing] = useState<processInOutItem[]>([])
-  const [selectedPackage, setSelectedPackage] = useState<string>('1')
-  const [isRecylingCategory, setRecycleCategory] = useState<boolean>(true)
+  const [processOutItem, setProcessOutItem] = useState<ProcessOutItem[]>([])
+  const [selectedPackage, setSelectedPackage] = useState<string>('')
+  const [isRecylingCategory, setRecycleCategory] = useState<boolean>(true) //true => recyling, false => product
   const [weight, setWeight] = useState<string>('0')
-  const [recycTypeId, setRecycTypeId] = useState('')
-  const [recycSubTypeId, setRecycSubTypeId] = useState('')
+  const [selectedRecyc, setSelectedRecyc] = useState<
+    singleRecyclable | undefined
+  >(undefined)
+  const [selectedProduct, setSelectedProduct] = useState<
+    singleProduct | undefined
+  >(undefined)
   const [pictures, setPictures] = useState<ImageListType>([])
+  const [remark, setRemark] = useState<string>('')
 
-  const packageList = [
-    {
-      id: '1',
-      label: 'package 1'
-    },
-    {
-      id: '2',
-      label: 'package 2'
+  useEffect(() => {
+    initPackagingUnit()
+    getProductType()
+  }, [i18n.language])
+
+  useEffect(() => {
+    initPackagingUnit()
+    getProductType()
+  }, [editedItem])
+
+  const initPackagingUnit = async () => {
+    try {
+      const result = await getAllPackagingUnit(0, 1000)
+      const data = result?.data.content
+      if (data) {
+        let packageUnit: il_item[] = []
+        data?.forEach((item: PackagingUnit) => {
+          var name =
+            i18n.language === 'zhhk'
+              ? item.packagingNameTchi
+              : i18n.language === 'zhch'
+              ? item.packagingNameSchi
+              : item.packagingNameEng
+
+          packageUnit.push({
+            id: item.packagingTypeId,
+            name: name
+          })
+        })
+        setPackagingList(packageUnit)
+        if (packageUnit.length > 0 && editedItem)
+          setSelectedPackage(packageUnit[0].id)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-  ]
+  }
+
   const onImageChange = (imageList: ImageListType) => {
     setPictures(imageList)
+  }
+
+  const editItemCompactor = (item: ProcessOutItem) => {
+    setEditedItem(item)
+    const defRecyc: singleRecyclable = {
+      recycTypeId: item.recycTypeId,
+      recycSubTypeId: item.recycSubTypeId
+    }
+
+    const defProduct: singleProduct = {
+      productTypeId: item.productTypeId,
+      productSubTypeId: item.productSubTypeId,
+      productAddonId: item.productAddonTypeId,
+      productSubTypeRemark: item.productSubTypeRemark,
+      productAddonTypeRemark: item.productAddonTypeRemark
+    }
+    //mapping edited item
+    setSelectedPackage(item.packageTypeId)
+    setRecycleCategory(item.recycTypeId != '')
+    setDefaultRecyc(defRecyc)
+    setDefaultProduct(defProduct)
+    setWeight(item.weight.toString())
   }
 
   const removeImage = (index: number) => {
@@ -84,25 +180,79 @@ const AddProcessCompactor: FunctionComponent = () => {
     setPictures(newPictures)
   }
 
+  const resetForm = () => {
+    setRecycleCategory(true)
+    setSelectedProduct(undefined)
+    setSelectedRecyc(undefined)
+    setDefaultRecyc(undefined)
+    setWeight('0')
+    setPictures([])
+    setEditedItem(null)
+  }
+
   const addProcessItem = () => {
-    let idx = itemProcessing.length + 1
-    const newItem: processInOutItem = {
-      id: idx,
-      package: selectedPackage,
-      categorytype: isRecylingCategory.toString(),
-      recycTypeId: recycTypeId,
-      recycSubTypeId: recycSubTypeId,
-      weight: weight,
-      image: pictures
+    const photosData = pictures.map((item) => item.data_url)
+
+    const newItem: ProcessOutItem = {
+      id: editedItem?.id || processOutItem.length + 1, // Use `editedItem.id` if editing, otherwise assign a new ID
+      warehouseId: 0,
+      recycTypeId: selectedRecyc?.recycTypeId ?? '',
+      recycSubTypeId: selectedRecyc?.recycSubTypeId ?? '',
+      productTypeId: selectedProduct?.productTypeId ?? '',
+      productSubTypeId: selectedProduct?.productSubTypeId ?? '',
+      productSubTypeRemark: selectedProduct?.productSubTypeRemark ?? '',
+      productAddonTypeId: selectedProduct?.productAddonId ?? '',
+      productAddonTypeRemark: selectedProduct?.productAddonTypeRemark ?? '',
+      packageTypeId: selectedPackage,
+      weight: parseInt(weight),
+      unitId: 'kg',
+      photos: photosData
     }
-    setItemProcessing((prevItems) => [...prevItems, newItem])
-    console.log('additem', itemProcessing)
+
+    setProcessOutItem((prevItems) => {
+      const existingIndex = prevItems.findIndex(
+        (item) => item.id === newItem.id
+      )
+
+      if (existingIndex !== -1) {
+        // Edit existing item
+        const updatedItems = [...prevItems]
+        updatedItems[existingIndex] = newItem
+        return updatedItems
+      } else {
+        // Add new item
+        return [...prevItems, newItem]
+      }
+    })
+
+    resetForm()
   }
 
   const removeProcessItem = (idx: number) => {
-    const updatedItems = [...itemProcessing]
+    const updatedItems = [...processOutItem]
     updatedItems.splice(idx, 1)
-    setItemProcessing(updatedItems)
+    setProcessOutItem(updatedItems)
+  }
+
+  const submitProcessOut = async () => {
+    const formData: CompactorProcessOut = {
+      chkInIds: chkInIds,
+      inItemId: inItemId,
+      items: processOutItem,
+      createdBy: role,
+      remarks: remark,
+      processInDatetime: new Date().toISOString(),
+      processOutDatetime: new Date().toISOString()
+    }
+
+    const result = await createCompactorProcessOut(formData)
+
+    if (result) {
+      showSuccessToast(t('common.saveSuccessfully'))
+      resetForm()
+    } else {
+      showErrorToast(t('common.saveFailed'))
+    }
   }
 
   return (
@@ -119,36 +269,59 @@ const AddProcessCompactor: FunctionComponent = () => {
           >
             <Box>
               <div
-                className="p-8 border-[#AFE397] border-solid border-[1px] rounded-xl w-[300px] text-center cursor-pointer m-6
+                className="p-8 border-solid border-[1px] rounded-xl w-[300px] text-center cursor-pointer m-6
             "
+                style={{ borderColor: colorTheme }}
                 onClick={() => setShowForm(true)}
               >
                 <ADD_CIRCLE_FILL_ICON_
-                  sx={{ color: '#7FC738', fontSize: '30px' }}
+                  sx={{ color: colorTheme, fontSize: '30px' }}
                 />
                 <div className="text-base text-[#535353] font-bold">
                   {t('general_settings.new')}
                 </div>
               </div>
               <Box sx={{ height: '600px', overflowY: 'auto' }}>
-                {itemProcessing.map((item, idx) => (
+                {processOutItem.map((item, idx) => (
                   <div
                     key={item.id + idx}
                     className="flex justify-between px-8 py-4 border-[#D1D1D1] border-solid border-[1px] rounded-xl w-[300px] text-center cursor-pointer m-6"
                   >
                     <div className="recyle-type flex items-center gap-2">
                       <div className="category" style={categoryRecyle}>
-                        {item.recycTypeId.charAt(0)}
+                        {item.recycTypeId
+                          ? mappingRecy(item.recycTypeId, recycType).charAt(0)
+                          : mappingProductType(
+                              item.productTypeId,
+                              productType
+                            ).charAt(0)}
                       </div>
                       <div className="type-item text-justify">
                         <div className="type text-mini text-[#ACACAC] font-normal tracking-widest mb-2">
-                          {/* {item.recycTypeId} */}回收物
+                          {item.recycTypeId
+                            ? mappingRecy(item.recycTypeId, recycType)
+                            : mappingProductType(
+                                item.productTypeId,
+                                productType
+                              )}
                         </div>
                         <div className="sub-type text-xs text-black font-bold tracking-widest mb-2">
-                          {/* {item.recycSubTypeId} */}報紙
+                          {item.recycSubTypeId != ''
+                            ? mappingSubRecy(
+                                item.recycTypeId,
+                                item.recycSubTypeId,
+                                recycType
+                              )
+                            : mappingSubProductType(
+                                item.productTypeId,
+                                item.productSubTypeId,
+                                productType
+                              )}
                         </div>
                         <div className="type text-mini text-[#ACACAC] font-normal tracking-widest">
-                          {/* {item.package} */}廢紙
+                          {packagingList?.find(
+                            (it) => item.packageTypeId === it.id
+                          )?.name || '-'}
                         </div>
                       </div>
                     </div>
@@ -160,8 +333,7 @@ const AddProcessCompactor: FunctionComponent = () => {
                       <Box>
                         <DriveFileRenameOutlineOutlinedIcon
                           onClick={() => {
-                            // setSelectedItem(item)
-                            // setDrawerRecyclable(true)
+                            editItemCompactor(item)
                           }}
                           fontSize="small"
                           className="text-gray cursor-pointer"
@@ -179,15 +351,15 @@ const AddProcessCompactor: FunctionComponent = () => {
                 ))}
               </Box>
             </Box>
-            {itemProcessing.length > 0 && (
+            {processOutItem.length > 0 && (
               <Box sx={{ padding: 4 }}>
                 <CustomField label={t('common.remark')}>
                   <CustomTextField
                     id="monetary"
                     sx={{ width: '100%' }}
-                    value={''}
+                    value={remark}
                     placeholder={t('packaging_unit.remark_placeholder')}
-                    onChange={() => setWeight('0')}
+                    onChange={(event) => setRemark(event.target.value)}
                   />
                 </CustomField>
               </Box>
@@ -226,7 +398,7 @@ const AddProcessCompactor: FunctionComponent = () => {
                         borderRadius: '12px'
                       }}
                       onChange={(event: SelectChangeEvent<string>) => {
-                        const selectedValue = packageList.find(
+                        const selectedValue = packagingList.find(
                           (item) => item.id === event.target.value
                         )
                         if (selectedValue) {
@@ -234,14 +406,14 @@ const AddProcessCompactor: FunctionComponent = () => {
                         }
                       }}
                     >
-                      {!packageList ? (
+                      {!packagingList ? (
                         <MenuItem disabled value="">
                           <em>{t('common.noOptions')}</em>
                         </MenuItem>
                       ) : (
-                        packageList.map((item, index) => (
+                        packagingList.map((item, index) => (
                           <MenuItem key={index} value={item.id}>
-                            {item.label}
+                            {item.name}
                           </MenuItem>
                         ))
                       )}
@@ -249,17 +421,69 @@ const AddProcessCompactor: FunctionComponent = () => {
                   </FormControl>
                 </Grid>
                 <Grid item>
-                  <CustomField label={t('compactor.table.itemCategory')}>
+                  <CustomField
+                    label={t('pick_up_order.recyclForm.item_category')}
+                  >
                     <Switcher
-                      onText={t('add_warehouse_page.yes')}
-                      offText={t('add_warehouse_page.no')}
+                      onText={t('recyclables')}
+                      offText={t('product')}
                       defaultValue={isRecylingCategory}
                       setState={(newValue) => {
                         setRecycleCategory(newValue)
+                        setSelectedProduct(undefined)
+                        setSelectedRecyc(undefined)
                       }}
                     />
                   </CustomField>
                 </Grid>
+                {isRecylingCategory ? (
+                  <CustomField label={t('col.recycType')} mandatory>
+                    <RecyclablesListSingleSelect
+                      showError={
+                        isRecylingCategory && selectedRecyc?.recycTypeId != ''
+                      }
+                      recycL={recycType ?? []}
+                      setState={(values) => {
+                        setSelectedRecyc(values)
+                      }}
+                      itemColor={{
+                        bgColor: customListTheme
+                          ? customListTheme.bgColor
+                          : '#E4F6DC',
+                        borderColor: customListTheme
+                          ? customListTheme.border
+                          : '79CA25'
+                      }}
+                      defaultRecycL={defaultRecyc}
+                    />
+                  </CustomField>
+                ) : (
+                  <CustomField
+                    label={t('pick_up_order.product_type.product')}
+                    mandatory
+                  >
+                    <ProductListSingleSelect
+                      showError={
+                        isRecylingCategory &&
+                        selectedProduct?.productTypeId != ''
+                      }
+                      label={t('pick_up_order.product_type.product')}
+                      options={productType ?? []}
+                      setState={(values) => {
+                        setSelectedProduct(values)
+                      }}
+                      itemColor={{
+                        bgColor: customListTheme
+                          ? customListTheme.bgColor
+                          : '#E4F6DC',
+                        borderColor: customListTheme
+                          ? customListTheme.border
+                          : '79CA25'
+                      }}
+                      defaultProduct={defaultProduct}
+                    />
+                  </CustomField>
+                )}
                 <Grid item>
                   <CustomField label={t('compactor.table.weight')}>
                     <CustomTextField
@@ -287,18 +511,6 @@ const AddProcessCompactor: FunctionComponent = () => {
                         <InputAdornment position="end">kg</InputAdornment>
                       }
                     ></CustomTextField>
-                  </CustomField>
-                </Grid>
-                <Grid item>
-                  <CustomField label={t('col.recycType')} mandatory>
-                    <RecyclablesListSingleSelect
-                      recycL={recycType ?? []}
-                      setState={(values) => {
-                        setRecycTypeId(values?.recycTypeId)
-                        setRecycSubTypeId(values?.recycSubTypeId)
-                      }}
-                      defaultRecycL={defaultRecyc}
-                    />
                   </CustomField>
                 </Grid>
                 <Grid item>
@@ -354,7 +566,7 @@ const AddProcessCompactor: FunctionComponent = () => {
                               )}
                             </div>
                           )}
-                          <ImageList sx={localstyles.imagesContainer} cols={4}>
+                          <ImageList sx={localstyles.imagesContainer} cols={6}>
                             {imageList.map((image, index) => (
                               <ImageListItem
                                 key={image['file']?.name}
@@ -402,8 +614,12 @@ const AddProcessCompactor: FunctionComponent = () => {
         </Box>
         <Divider></Divider>
         <Box sx={{ padding: 4 }}>
-          <Button sx={{ ...styles.buttonFilledGreen, width: '100%' }}>
-            {t('compactor.ask')}
+          <Button
+            sx={{ ...styles.buttonFilledGreen, width: '100%' }}
+            disabled={processOutItem.length === 0}
+            onClick={submitProcessOut}
+          >
+            {t('common.submit')}
           </Button>
         </Box>
       </Box>

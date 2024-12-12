@@ -1561,6 +1561,7 @@
   },
   "compactor": {
     "compactorTruckHandling": "压缩车处理",
+    "unloadTime": "卸货时间",
     "unloadRecord": "卸货记录",
     "processingDate": "处理日期",
     "plateNumber": "车牌号码",
@@ -1577,8 +1578,8 @@
       "inStock": "库存",
       "weight": "重量"
     },
-    "selectedItems":"Items selected for compression",
-    "processCompress":"Processed compressed material",
+    "selectedItems": "Items selected for compression",
+    "processCompress": "Processed compressed material",
     "ask": "请求",
     "clickToAddItem": "按新增为压缩品输入资料"
   },

@@ -1561,6 +1561,7 @@
   },
   "compactor": {
     "compactorTruckHandling": "Compactor truck handling",
+    "unloadTime": "Unloading time",
     "unloadRecord": "Unloading records",
     "processingDate": "Processing Date",
     "plateNumber": "license plate number",
@@ -1568,8 +1569,8 @@
     "table": {
       "date": "Date",
       "itemCategory": "Item Category",
-      "mainCategory": "main category",
-      "subcategory": "subcategory",
+      "mainCategory": "Main category",
+      "subcategory": "Subcategory",
       "addCategory": "Add category",
       "package": "Package",
       "itemNumber": "Item number",
