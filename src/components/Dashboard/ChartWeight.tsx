@@ -255,7 +255,10 @@ const ChartWeight = ({
     const {
       target: { value }
     } = event;
-    setMainCategoryName(typeof value === "string" ? value.split(",") : value);
+    const mainCatVal = typeof value === "string" ? value.split(",") : value;
+    if(mainCatVal.length > 0) {
+      setMainCategoryName(typeof value === "string" ? value.split(",") : value);
+    }
   };
 
   return (
@@ -304,47 +307,54 @@ const ChartWeight = ({
               >
                 {t("dashboard_recyclables.date_range")}
               </Grid>
-
-              <Grid
-                item
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: 1
-                }}
-              >
-                <DatePicker
-                  value={frmDate}
-                  disableOpenPicker
-                  slotProps={{ textField: { size: "small" } }}
-                  sx={localstyles.datePicker}
-                  maxDate={toDate}
-                  onChange={(value) => {
-                    if (value) {
-                      onChangeFromDate(value);
-                      setIsLoading(true);
-                    } 
+              <Grid>
+                <Grid
+                  item
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 1
                   }}
-                  format={dateFormat}
-                />
-                <Typography>-</Typography>
-                <DatePicker
-                  value={toDate}
-                  disableOpenPicker
-                  slotProps={{ textField: { size: "small" } }}
-                  sx={localstyles.datePicker}
-                  minDate={frmDate}
-                  onChange={(value) => {
-                    if (value) {
-                      onChangeToDate(value);
-                      setIsLoading(true);
-                    } 
-                  }}
-                  format={dateFormat}
-                />
+                >
+                  <DatePicker
+                    value={frmDate}
+                    disableOpenPicker
+                    slotProps={{ textField: { size: "small" } }}
+                    sx={localstyles.datePicker}
+                    maxDate={toDate}
+                    onError={() => {
+                      setNewDataSet([])
+                    }}
+                    onChange={(value) => {
+                      if (value && dayjs(value).isAfter(toDate) === false && dayjs(value).isAfter('1970-01-01')) {
+                        onChangeFromDate(value);
+                        setIsLoading(true);
+                      } else {
+                        setNewDataSet([])
+                      }
+                    }}
+                    format={dateFormat}
+                  />
+                  <Typography>-</Typography>
+                  <DatePicker
+                    value={toDate}
+                    disableOpenPicker
+                    slotProps={{ textField: { size: "small" } }}
+                    sx={localstyles.datePicker}
+                    minDate={frmDate}
+                    onChange={(value) => {
+                      if (value && dayjs(value).isBefore(frmDate) === false && dayjs(value).isAfter('1970-01-01')) {
+                        onChangeToDate(value);
+                        setIsLoading(true);
+                      } else {
+                        setNewDataSet([])
+                      }
+                    }}
+                    format={dateFormat}
+                  />
+                </Grid>
               </Grid>
-
               <Grid
                 item
                 style={{
