@@ -450,7 +450,7 @@
       "download": "下载"
     },
     "create_pick_up_order": "建立",
-    "edit_pick_up_order": "编辑取件订单",
+    "edit_pick_up_order": "编辑订单",
     "shipping_info": "运输资料",
     "select_shipping_category": "请选择运输类别",
     "regular_shipping": "常规运输",
@@ -723,7 +723,21 @@
     "weight": "重量",
     "at": "于",
     "select_location": "选择位置",
-    "handover": "交给"
+    "handover": "交给",
+    "track": "追踪",
+    "company": "公司",
+    "beforeProcessing": "處理前",
+    "afterProcessing": "處理後",
+    "itemNumber": "物品編號",
+    "start_date": "開始日期及時間",
+    "warehouse": "货仓",
+    "factory": "工场",
+    "shipping_receiver": "寄件及收件公司",
+    "delivery_to_warehouse": "送入/送出货仓",
+    "delivery_location": "送入/送出货仓地点",
+    "warehouse_recycling": "货仓/回收点",
+    "internal_transfer": "内部运输",
+    "process_out": "处理输出"
   },
   "processRecord": {
     "processing": "处理中",
@@ -734,7 +748,7 @@
     "cancelled": "已取消",
     "overdue": "逾期",
     "processingRecords": "处理记录",
-    "userGroup": "帳號",
+    "userGroup": "帐号",
     "search": "搜索",
     "enterProcessingNumber": "输入处理编号",
     "processingName": "处理名称",
@@ -1257,23 +1271,23 @@
     "missing_arrived": "到达信息不能为空",
     "table": {
       "created_datetime": "建立日期",
-      "order_number": "訂單編號",
+      "order_number": "订单编号",
       "pico_id": "回收运单编号",
       "place_receipt": "收貨地點",
-      "receipt_date_time": "收貨日期及時間",
+      "receipt_date_time": "收货日期及时间",
       "status": "状态",
       "operation": "操作",
       "approve": "接受",
       "reject": "拒绝"
     },
     "detail": {
-      "order": "訂單",
-      "contact_info": "聯絡資料",
+      "order": "订单",
+      "contact_info": "联络资料",
       "receiving_company_name": "收件公司名稱",
-      "contact_number": "聯絡人號碼",
+      "contact_number": "联络人号码",
       "payment_method": "付款方式",
-      "order_info": "訂單資料",
-      "pico_id": "回收運單編號"
+      "order_info": "订单资料",
+      "pico_id": "回收运单编号"
     },
     "create": {
       "create_order": "建立订单",
@@ -1620,5 +1634,9 @@
     "factory": "工场",
     "warehouse": "貨倉",
     "introduction": "簡介"
+  },
+  "globalItemId": {
+    "globalItemId": "物品编号",
+    "enterGlobalItemId": "输入物品编号"
   }
 }

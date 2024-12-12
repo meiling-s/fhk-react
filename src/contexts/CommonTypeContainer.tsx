@@ -402,7 +402,7 @@ const CommonType = () => {
   const getProductType = async () => {
     const response = await getProductTypeList();
     const data = response.data;
-  
+
     if (data) {
       setProductType(data);
     }

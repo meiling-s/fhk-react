@@ -1,56 +1,56 @@
-import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import MainLayout from './layouts/MainLayout'
-import Login from './pages/Auth/Login'
-import ResetPassword from './pages/Auth/ResetPassword'
-import ConfirmResetPassword from './pages/Auth/ConfirmResetPassword'
-import ChangePassword from './pages/Auth/ChangePassword'
+import MainLayout from "./layouts/MainLayout";
+import Login from "./pages/Auth/Login";
+import ResetPassword from "./pages/Auth/ResetPassword";
+import ConfirmResetPassword from "./pages/Auth/ConfirmResetPassword";
+import ChangePassword from "./pages/Auth/ChangePassword";
 //ASTD admin
-import CompanyManage from './pages/ASTD/CompanyManage'
-import AstdVehicleDashboard from './pages/Logistic/Dashboard/dashboard'
+import CompanyManage from "./pages/ASTD/CompanyManage";
+import AstdVehicleDashboard from "./pages/Logistic/Dashboard/dashboard";
 
 //collection point
-import CollectionPoint from './pages/Collector/CollectionPoint/CollectionPoint/CollectionPoint'
-import CreateCollectionPoint from './pages/Collector/CollectionPoint/CreateCollectionPoint/CreateCollectionPoint'
-import EditCollectionPoint from './pages/Collector/CollectionPoint/EditCollectionPoint/EditCollectionPoint'
+import CollectionPoint from "./pages/Collector/CollectionPoint/CollectionPoint/CollectionPoint";
+import CreateCollectionPoint from "./pages/Collector/CollectionPoint/CreateCollectionPoint/CreateCollectionPoint";
+import EditCollectionPoint from "./pages/Collector/CollectionPoint/EditCollectionPoint/EditCollectionPoint";
 //warehouse
-import Overview from './pages/Collector/Manage/CheckoutRequest'
-import Settings from './pages/Collector/Warehouse/Settings'
-import Vehicles from './pages/Collector/Vehicles/Vechicles'
-import WarehouseDashboard from './pages/Collector/Warehouse/WarehouseDashboard'
-import InternalTransferRequest from './pages/Collector/InternalTransferRequest/internal_transfer_request'
+import Overview from "./pages/Collector/Manage/CheckoutRequest";
+import Settings from "./pages/Collector/Warehouse/Settings";
+import Vehicles from "./pages/Collector/Vehicles/Vechicles";
+import WarehouseDashboard from "./pages/Collector/Warehouse/WarehouseDashboard";
+import InternalTransferRequest from "./pages/Collector/InternalTransferRequest/internal_transfer_request";
 //Tenant Register
 // import CompanyDetails from "./pages/TenantRegister/CompanyDetails";
 // import CompanyContact from "./pages/TenantRegister/CompanyContact";
-import RegisterResult from './pages/TenantRegister/RegisterResult'
+import RegisterResult from "./pages/TenantRegister/RegisterResult";
 //new tenantpage
-import TenantRegister from './pages/TenantRegister/Register'
+import TenantRegister from "./pages/TenantRegister/Register";
 // import RegisterStepOne from "./pages/TenantRegister/RegisterStepOne";
 // import RegisterStepTwo from "./pages/TenantRegister/RegisterStepTwo";
 
 //general
-import Staff from './pages/Collector/Staff'
+import Staff from "./pages/Collector/Staff";
 //import Report from "./pages/Collector/Report";
-import Report from './pages/GeneralModule/Report/Report'
-import RecycleShipment from './pages/Collector/RecycleShipment'
-import ProcessOrder from './pages/Collector/ProccessOrder/ProcessOrder'
-import CreateProcessOrder from './pages/Collector/ProccessOrder/CreateProcessOrder'
+import Report from "./pages/GeneralModule/Report/Report";
+import RecycleShipment from "./pages/Collector/RecycleShipment";
+import ProcessOrder from "./pages/Collector/ProccessOrder/ProcessOrder";
+import CreateProcessOrder from "./pages/Collector/ProccessOrder/CreateProcessOrder";
 
 //import ProcessRecord from "./pages/Collector/Manage/ProcessRecord";
-import ProcessRecord from './pages/Collector/ProcessRecord/ProcessRecord'
-import PickupOrder from './pages/Collector/PickupOrder/PickupOrder'
-import CreatePickupOrder from './pages/Collector/PickupOrder/CreatePickupOrder'
-import EditPickupOrder from './pages/Collector/PickupOrder/EditPickupOrder'
-import Inventory from './pages/Collector/Inventory/Inventory'
-import StaffManagement from './pages/Collector/StaffManagement/StaffParent'
+import ProcessRecord from "./pages/Collector/ProcessRecord/ProcessRecord";
+import PickupOrder from "./pages/Collector/PickupOrder/PickupOrder";
+import CreatePickupOrder from "./pages/Collector/PickupOrder/CreatePickupOrder";
+import EditPickupOrder from "./pages/Collector/PickupOrder/EditPickupOrder";
+import Inventory from "./pages/Collector/Inventory/Inventory";
+import StaffManagement from "./pages/Collector/StaffManagement/StaffParent";
 
 // import AuthGuard from "./components/Guards/AuthGuard";
 // import AutoLogout from "./components/AutoLogout";
 
-import CheckoutRequest from './pages/Collector/Manage/CheckoutRequest'
-import UserGroup from './pages/Collector/UserGroup/UserGroup'
-import { CheckInAndCheckOut } from './pages/Collector/CheckInAndCheckOut'
+import CheckoutRequest from "./pages/Collector/Manage/CheckoutRequest";
+import UserGroup from "./pages/Collector/UserGroup/UserGroup";
+import { CheckInAndCheckOut } from "./pages/Collector/CheckInAndCheckOut";
 
 //logistic
 import JobOrder from './pages/Logistic/JobOrder/JobOrder'
@@ -64,21 +64,22 @@ import LogisticVehicleDashboard from './pages/Logistic/Dashboard/dashboard'
 import CompactorDashboard from './pages/GeneralModule/CompactorDashboard/CompactorDashboard'
 
 //manufacturer
-import PurchaseOrder from './pages/Manufacturer/PurchaseOrder/PurchaseOrder'
-import CustomerAccount from './pages/Logistic/Account'
-import CreatePurchaseOrder from './pages/Manufacturer/PurchaseOrder/CreatePurchaseOrder'
-import EditPurchaseOrder from './pages/Manufacturer/PurchaseOrder/EditPurchaseOrder'
-import PickupPurchaseOrder from './pages/Manufacturer/PurchaseOrder/PickupPurchaseOrder'
-import DashboardRecyclables from './pages/Collector/Dashboard/Recyclables'
-import ManufacturerDashboard from './pages/Manufacturer/Dashboard/Dashboard'
-import RecyclablesAstd from './pages/ASTD/Dashboard/RecyclablesAstd'
-import PageNotFound from './pages/Common/PageNotFound'
-import MaintenancePage from './pages/Common/MaintenancePage'
-import AuthCheck from './components/AuthCheck'
+import PurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PurchaseOrder";
+import CustomerAccount from "./pages/Logistic/Account";
+import CreatePurchaseOrder from "./pages/Manufacturer/PurchaseOrder/CreatePurchaseOrder";
+import EditPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/EditPurchaseOrder";
+import PickupPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PickupPurchaseOrder";
+import DashboardRecyclables from "./pages/Collector/Dashboard/Recyclables";
+import ManufacturerDashboard from "./pages/Manufacturer/Dashboard/Dashboard";
+import RecyclablesAstd from "./pages/ASTD/Dashboard/RecyclablesAstd";
+import PageNotFound from "./pages/Common/PageNotFound";
+import MaintenancePage from "./pages/Common/MaintenancePage";
+import AuthCheck from "./components/AuthCheck";
 
-import LoadingPage from './pages/GeneralModule/LoadingPage'
-import VehicleRouteTracker from './pages/Logistic/VehicleRouteTracker/VehicleRouteTracker'
-import JobOrderScheduleBoard from './pages/Logistic/JobOrderScheduleBoard/JobOrderScheduleBoard'
+import LoadingPage from "./pages/GeneralModule/LoadingPage";
+import VehicleRouteTracker from "./pages/Logistic/VehicleRouteTracker/VehicleRouteTracker";
+import JobOrderScheduleBoard from "./pages/Logistic/JobOrderScheduleBoard/JobOrderScheduleBoard";
+import GlobalItemId from "./pages/ASTD/GlobalItemId/GlobalItemId";
 
 const Router = () => {
   return (
@@ -195,6 +196,7 @@ const Router = () => {
               path="/astd/vehicleDashboard"
               element={<AstdVehicleDashboard />}
             />
+            <Route path="/astd/globalItemId" element={<GlobalItemId />} />
           </Route>
 
           <Route element={<MainLayout />}>
@@ -215,8 +217,14 @@ const Router = () => {
           <Route element={<MainLayout />}>
             <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
             <Route path="/logistic/jobOrder" element={<JobOrder />} />
-            <Route path="/logistic/vehicleRouteTracker" element={<VehicleRouteTracker />} />
-            <Route path="/logistic/jobOrderScheduleBoard" element={<JobOrderScheduleBoard />} />
+            <Route
+              path="/logistic/vehicleRouteTracker"
+              element={<VehicleRouteTracker />}
+            />
+            <Route
+              path="/logistic/jobOrderScheduleBoard"
+              element={<JobOrderScheduleBoard />}
+            />
             <Route
               path="/logistic/createJobOrder/:picoId"
               element={<CreateOrUpdateJobOrder />}
@@ -327,7 +335,7 @@ const Router = () => {
         </Routes>
       </AuthCheck>
     </BrowserRouter>
-  )
-}
+  );
+};
 
-export default Router
+export default Router;

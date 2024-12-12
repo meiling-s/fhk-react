@@ -47,6 +47,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
+import { getManufacturerBasedLang } from "./utils";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -377,7 +378,7 @@ const PurchaseOrder = () => {
     ];
   }
 
-  const { recycType, dateFormat } = useContainer(CommonTypeContainer);
+  const { recycType, dateFormat, manuList } = useContainer(CommonTypeContainer);
   const [recycItem, setRecycItem] = useState<il_item[]>([]);
   const location = useLocation();
   const action: string = location.state;
@@ -605,6 +606,7 @@ const PurchaseOrder = () => {
           .tz("Asia/Hong_Kong")
           .format(`${dateFormat} HH:mm`),
         status: item.status,
+        senderName: getManufacturerBasedLang(item?.senderName, manuList),
         recyType: item.purchaseOrderDetail.map((item) => {
           return item.recycTypeId;
         }),
@@ -612,7 +614,7 @@ const PurchaseOrder = () => {
     ).filter((item) => item.status !== "CLOSED");
     setRows(tempRows);
     setFilteredPico(tempRows);
-  }, [purchaseOrder]);
+  }, [purchaseOrder, i18n.language]);
 
   interface Row {
     id: number;
