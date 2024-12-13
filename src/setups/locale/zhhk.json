@@ -735,7 +735,8 @@
     "delivery_location": "送入/送出貨倉地點",
     "warehouse_recycling": "貨倉/回收點",
     "internal_transfer": "內部運輸",
-    "process_out": "處理輸出"
+    "process_out": "處理輸出",
+    "pickup_order_record": "回收運單紀錄"
   },
   "processRecord": {
     "processing": "處理中",

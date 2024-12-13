@@ -7,93 +7,79 @@ import {
   IconButton,
   Collapse,
 } from "@mui/material";
-import React, { FunctionComponent, useEffect, useState } from "react";
-import {
-  InventoryDetail as InvDetails,
-  InventoryTracking,
-  EventTrackingData,
-  ProcessOutData,
-} from "../../interfaces/inventory";
+import { FunctionComponent, useState } from "react";
+import { InternalTransferData } from "../../interfaces/inventory";
 import { useTranslation } from "react-i18next";
-import {
-  AccountTree,
-  CalendarToday,
-  ExpandLess,
-  ExpandMore,
-  LocationOn,
-  Scale,
-} from "@mui/icons-material";
-import {
-  CALENDAR_ICON,
-  COMPANY_ICON,
-  FACTORY_ICON,
-  FOLDER_ICON,
-  INVENTORY_ICON,
-  MEMORY_ICON,
-  WEIGHT_ICON,
-} from "src/themes/icons";
-import { getItemTrackInventory } from "src/APICalls/Collector/inventory";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { ExpandLess, ExpandMore, LocationOn } from "@mui/icons-material";
+import { INVENTORY_ICON, WEIGHT_ICON } from "src/themes/icons";
+import CommonTypeContainer from "src/contexts/CommonTypeContainer";
+import { useContainer } from "unstated-next";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 interface InternalTransferCardProps {
-  data: ProcessOutData;
+  data: InternalTransferData;
 }
 
 const InternalTransferCard: FunctionComponent<InternalTransferCardProps> = ({
   data,
 }) => {
   const { i18n, t } = useTranslation();
+  const { dateFormat } = useContainer(CommonTypeContainer);
   const [expanded, setExpanded] = useState(true);
   const handleToggle = () => {
     setExpanded((prev) => !prev);
   };
 
-  const getConditionalValue = (data: ProcessOutData, type: string) => {
-    if (type === "title") {
-      switch (i18n.language) {
-        case "enus":
-          return data.process_type_en;
-        case "zhch":
-          return data.process_type_sc;
-        case "zhhk":
-          return data.process_type_tc;
-      }
-    } else if (type === "company") {
+  const getConditionalValue = (data: InternalTransferData, type: string) => {
+    if (type === "company") {
       switch (i18n.language) {
         case "enus":
           return data.company_name_en;
-        case "zhch":
-          return data.company_name_sc;
         case "zhhk":
           return data.company_name_tc;
+        case "zhch":
+          return data.company_name_sc;
       }
-    } else if (type === "factory") {
+    } else if (type === "senderCompany") {
       switch (i18n.language) {
         case "enus":
-          return data.factory_name_en;
+          return data.from_location_en;
         case "zhch":
-          return data.factory_name_sc;
+          return data.from_location_sc;
         case "zhhk":
-          return data.factory_name_tc;
+          return data.from_location_tc;
       }
-    } else if (type === "processin_warehouse") {
+    } else if (type === "receiverCompany") {
       switch (i18n.language) {
         case "enus":
-          return data.process_in.warehouse_en;
+          return data.to_location_en;
         case "zhch":
-          return data.process_in.warehouse_sc;
+          return data.to_location_sc;
         case "zhhk":
-          return data.process_in.warehouse_tc;
+          return data.to_location_tc;
       }
-    } else if (type === "processout_warehouse") {
+    } else if (type === "fromAddr") {
       switch (i18n.language) {
         case "enus":
-          return data.process_out.warehouse_en;
+          return data.from_addr_en;
         case "zhch":
-          return data.process_out.warehouse_sc;
+          return data.from_addr_sc;
         case "zhhk":
-          return data.process_out.warehouse_tc;
+          return data.from_addr_tc;
+      }
+    } else if (type === "toAddr") {
+      switch (i18n.language) {
+        case "enus":
+          return data.to_addr_en;
+        case "zhch":
+          return data.to_addr_sc;
+        case "zhhk":
+          return data.to_addr_tc;
       }
     }
   };
@@ -101,147 +87,157 @@ const InternalTransferCard: FunctionComponent<InternalTransferCardProps> = ({
   const getApprovedText = () => {
     switch (i18n.language) {
       case "enus":
-        return "Approved by [UserID] at 2023/09/20 18:00";
+        return `Approved by [${data.username}] at ${dayjs
+          .utc(data.request_date_time)
+          .tz("Asia/Hong_Kong")
+          .format(`${dateFormat} HH:mm`)}`;
       case "zhhk":
-        return "於 2023/09/20 18:00 由【UserID】核準";
+        return `於 ${dayjs
+          .utc(data.request_date_time)
+          .tz("Asia/Hong_Kong")
+          .format(`${dateFormat} HH:mm`)} 由【${data.username}】核準`;
       case "zhch":
-        return "于 2023/09/20 18:00 由【UserID】核准";
+        return `于 ${dayjs
+          .utc(data.request_date_time)
+          .tz("Asia/Hong_Kong")
+          .format(`${dateFormat} HH:mm`)} 由【${data.username}】核准`;
     }
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
-      <Card variant="outlined" sx={{ marginBottom: 2, borderRadius: 3 }}>
-        <Box display="flex" alignItems="center">
-          <IconButton onClick={handleToggle}>
-            {expanded ? (
-              <ExpandLess sx={{ color: "#79CA25" }} />
-            ) : (
-              <ExpandMore sx={{ color: "#79CA25" }} />
-            )}
-          </IconButton>
-          <Typography variant="h6">
-            {t("inventory.internal_transfer")}
-          </Typography>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            sx={{ marginLeft: "auto", marginRight: 10 }}
-          >
-            Date
-          </Typography>
-        </Box>
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <CardContent sx={{ padding: 0, marginLeft: 3, marginTop: 1 }}>
-            <Box display="flex" alignItems="center" sx={{ marginBottom: 1 }}>
-              <Grid item xs={12}>
-                <Box display="flex" alignItems="center">
-                  <Box width="30%">
-                    <Box display="flex" alignItems="center">
-                      <WEIGHT_ICON
-                        fontSize="small"
-                        sx={{ marginRight: 1, color: "#ACACAC" }}
-                      />
-                      <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        sx={{ color: "#ACACAC" }}
-                      >
-                        {t("inventory.company")}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <Box width="70%">
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      sx={{ color: "#535353" }}
-                    >
-                      Company - Dummy
-                    </Typography>
-                  </Box>
-                </Box>
-              </Grid>
-            </Box>
-            <Box display="flex" alignItems="center" sx={{ marginBottom: 1 }}>
-              <Grid item xs={12}>
-                <Box display="flex" alignItems="center">
-                  <Box width="30%">
-                    <Box display="flex" alignItems="center">
-                      <INVENTORY_ICON
-                        fontSize="small"
-                        sx={{ marginRight: 1, color: "#ACACAC" }}
-                      />
-                      <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        sx={{ color: "#ACACAC" }}
-                      >
-                        {t("inventory.shipping_receiver")}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <Box width="70%">
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      sx={{ color: "#535353" }}
-                    >
-                      SenderName {"->"} ReceiverName
-                    </Typography>
-                  </Box>
-                </Box>
-              </Grid>
-            </Box>
-            <Box display="flex" alignItems="center" sx={{ marginBottom: 1 }}>
-              <Grid item xs={12}>
-                <Box display="flex" alignItems="center">
-                  <Box width="30%">
-                    <Box display="flex" alignItems="center">
-                      <LocationOn
-                        fontSize="small"
-                        sx={{ marginRight: 1, color: "#ACACAC" }}
-                      />
-                      <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        sx={{ color: "#ACACAC" }}
-                      >
-                        {t("jobOrder.delivery_and_arrival_locations")}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <Box width="70%">
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      sx={{ color: "#535353" }}
-                    >
-                      SenderAddr {"->"} ReceiverAddr
-                    </Typography>
-                  </Box>
-                </Box>
-              </Grid>
-            </Box>
+    <Card variant="outlined" sx={{ marginBottom: 2, borderRadius: 3 }}>
+      <Box display="flex" alignItems="center">
+        <IconButton onClick={handleToggle}>
+          {expanded ? (
+            <ExpandLess sx={{ color: "#79CA25" }} />
+          ) : (
+            <ExpandMore sx={{ color: "#79CA25" }} />
+          )}
+        </IconButton>
+        <Typography variant="h6">{t("inventory.internal_transfer")}</Typography>
+        <Typography
+          variant="body2"
+          color="textSecondary"
+          sx={{ marginLeft: "auto", marginRight: 10 }}
+        >
+          {dayjs
+            .utc(data.createdAt)
+            .tz("Asia/Hong_Kong")
+            .format(`${dateFormat} HH:mm A`)}
+        </Typography>
+      </Box>
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <CardContent sx={{ padding: 0, marginLeft: 3, marginTop: 1 }}>
+          <Box display="flex" alignItems="center" sx={{ marginBottom: 1 }}>
             <Grid item xs={12}>
               <Box display="flex" alignItems="center">
-                <Box width="100%" bgcolor={"#F4F4F4"} p={1} borderRadius={2}>
+                <Box width="30%">
                   <Box display="flex" alignItems="center">
+                    <WEIGHT_ICON
+                      fontSize="small"
+                      sx={{ marginRight: 1, color: "#ACACAC" }}
+                    />
                     <Typography
                       variant="body2"
                       color="textSecondary"
-                      sx={{ color: "#79CA25" }}
+                      sx={{ color: "#ACACAC" }}
                     >
-                      {getApprovedText()}
+                      {t("inventory.company")}
                     </Typography>
                   </Box>
+                </Box>
+                <Box width="70%">
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ color: "#535353" }}
+                  >
+                    {getConditionalValue(data, "company")}
+                  </Typography>
                 </Box>
               </Box>
             </Grid>
-          </CardContent>
-        </Collapse>
-      </Card>
-    </LocalizationProvider>
+          </Box>
+          <Box display="flex" alignItems="center" sx={{ marginBottom: 1 }}>
+            <Grid item xs={12}>
+              <Box display="flex" alignItems="center">
+                <Box width="30%">
+                  <Box display="flex" alignItems="center">
+                    <INVENTORY_ICON
+                      fontSize="small"
+                      sx={{ marginRight: 1, color: "#ACACAC" }}
+                    />
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      sx={{ color: "#ACACAC" }}
+                    >
+                      {t("inventory.shipping_receiver")}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box width="70%">
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ color: "#535353" }}
+                  >
+                    {getConditionalValue(data, "senderCompany")} {"->"}{" "}
+                    {getConditionalValue(data, "receiverCompany")}
+                  </Typography>
+                </Box>
+              </Box>
+            </Grid>
+          </Box>
+          <Box display="flex" alignItems="center" sx={{ marginBottom: 1 }}>
+            <Grid item xs={12}>
+              <Box display="flex" alignItems="center">
+                <Box width="30%">
+                  <Box display="flex" alignItems="center">
+                    <LocationOn
+                      fontSize="small"
+                      sx={{ marginRight: 1, color: "#ACACAC" }}
+                    />
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      sx={{ color: "#ACACAC" }}
+                    >
+                      {t("jobOrder.delivery_and_arrival_locations")}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box width="70%">
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ color: "#535353" }}
+                  >
+                    {getConditionalValue(data, "fromAddr")} {"->"}{" "}
+                    {getConditionalValue(data, "toAddr")}
+                  </Typography>
+                </Box>
+              </Box>
+            </Grid>
+          </Box>
+          <Grid item xs={12}>
+            <Box display="flex" alignItems="center">
+              <Box width="100%" bgcolor={"#F4F4F4"} p={1} borderRadius={2}>
+                <Box display="flex" alignItems="center">
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ color: "#79CA25" }}
+                  >
+                    {getApprovedText()}
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Grid>
+        </CardContent>
+      </Collapse>
+    </Card>
   );
 };
 

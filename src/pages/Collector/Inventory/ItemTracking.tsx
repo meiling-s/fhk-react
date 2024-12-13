@@ -16,6 +16,7 @@ import {
   CheckinData,
   ProcessOutData,
   StockAdjustmentData,
+  InternalTransferData,
 } from "../../../interfaces/inventory";
 import { useTranslation } from "react-i18next";
 import {
@@ -95,6 +96,7 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
               const details = JSON.parse(value.eventDetail);
               details.unitId = shippingData.unitId;
               details.createdAt = value.createdAt;
+              details.createdBy = value.createdBy;
 
               return { ...value, details };
             } else if (value.eventType === "checkin_stockAdjustment") {
@@ -102,6 +104,11 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
               details.createdAt = value.createdAt;
               details.createdBy = value.createdBy;
               details.eventType = value.eventType;
+
+              return { ...value, details };
+            } else if (value.eventType === "internalTransfer") {
+              const details = JSON.parse(value.eventDetail);
+              details.createdAt = value.createdAt;
 
               return { ...value, details };
             }
@@ -126,9 +133,9 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
             {/* {eventItem.eventType === "processout" && (
               <CompactorCard data={eventItem.details} />
             )} */}
-            {/* {eventItem.eventType === "checkin" && (
+            {eventItem.eventType === "checkin" && (
               <CheckinCard data={eventItem.details as CheckinData} />
-            )} */}
+            )}
             {eventItem.eventType === "checkin_stockAdjustment" && (
               <StockAdjustmentCard
                 data={eventItem.details as StockAdjustmentData}
@@ -142,7 +149,11 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
                 data={eventItem.details as ProcessingRecordData}
               />
             )}
-            {/* <InternalTransferCard data={eventItem.details} /> */}
+            {eventItem.eventType === "internalTransfer" && (
+              <InternalTransferCard
+                data={eventItem.details as InternalTransferData}
+              />
+            )}
           </Box>
         );
       })}

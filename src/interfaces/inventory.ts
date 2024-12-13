@@ -123,17 +123,51 @@ export type ProcessingRecordData = {
 }
 
 export type CheckinData = {
-  addr_en: string
-  addr_sc: string
-  addr_tc: string
-  location_en: string
-  location_sc: string
-  location_tc: string
-  record_date: string
+  car_plate_no: string
+  checkin_date_time: string
+  driver_name_en: string
+  driver_name_sc: string
+  driver_name_tc: string
+  from_addr_en: string
+  from_addr_sc: string
+  from_addr_tc: string
+  pickup_date_time: string
+  pico_id: string
+  receiver_company_name_en: string
+  receiver_company_name_sc: string
+  receiver_company_name_tc: string
+  sender_company_name_en: string
+  sender_company_name_sc: string
+  sender_company_name_tc: string
+  to_addr_en: string
+  to_addr_sc: string
+  to_addr_tc: string
+  total_weight: number
+  unitId: string
+  createdAt: string
+  createdBy: string
+}
+
+export type InternalTransferData = {
   company_name_en: string
   company_name_sc: string
   company_name_tc: string
-  unitId: string
+  from_addr_en: string
+  from_addr_sc: string
+  from_addr_tc: string
+  from_location_en: string
+  from_location_sc: string
+  from_location_tc: string
+  internal_transfer_request_id: number
+  request_date_time: string
+  tenant_id: number
+  to_addr_en: string
+  to_addr_sc: string
+  to_addr_tc: string
+  to_location_en: string
+  to_location_sc: string
+  to_location_tc: string
+  username: string
   createdAt: string
 }
 
@@ -158,7 +192,7 @@ export type EventTrackingData = {
   tenantId: string
   eventType: string
   eventDetail: string
-  details: ProcessOutData | ProcessingRecordData | CheckinData | StockAdjustmentData
+  details: ProcessOutData | ProcessingRecordData | CheckinData | StockAdjustmentData | InternalTransferData
   remarks: string | null
   createdBy: string
   createdAt: string

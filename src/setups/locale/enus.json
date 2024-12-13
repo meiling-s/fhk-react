@@ -737,7 +737,8 @@
     "delivery_location": "Delivery/Delivery Location",
     "warehouse_recycling": "Warehouse/recycling point",
     "internal_transfer": "Internal Transfer",
-    "process_out": "Process Out"
+    "process_out": "Process Out",
+    "pickup_order_record": "Pickup Order Record"
   },
   "processRecord": {
     "processing": "Processing",
