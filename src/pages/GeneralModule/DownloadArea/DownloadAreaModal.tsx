@@ -114,19 +114,17 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   }, [selectedItem?.id, i18n.language]);
 
   useEffect(() => {
-    setFormulaList(
-      [
-        {
-          id: 1,
-          label: t("generate_report.formula_check_out"),
-        },
-        {
-          id: 0,
-          label: t("generate_report.formula_check_in"),
-        },
-      ]
-    )
-  }, [i18n.language])
+    setFormulaList([
+      {
+        id: 1,
+        label: t("generate_report.formula_check_out"),
+      },
+      {
+        id: 0,
+        label: t("generate_report.formula_check_in"),
+      },
+    ]);
+  }, [i18n.language]);
 
   const isValidDayjsISODate = (date: Dayjs): boolean => {
     if (!date.isValid()) {
@@ -606,30 +604,34 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
             {validation.length === 0 &&
               selectedItem?.manualTenantId &&
               tenant.length === 6 &&
-              downloads.map((item) => (
-                <DownloadItem
-                  key={item.url}
-                  date={item.date}
-                  url={item.url}
-                  typeFile={selectedItem?.typeFile}
-                  validation={validation}
-                  dataTestId={"astd-download-area-download-button-6751"}
-                />
-              ))}
+              downloads.map((item) => {
+                return (
+                  <DownloadItem
+                    key={item.url}
+                    date={item.date}
+                    url={item.url}
+                    typeFile={selectedItem?.typeFile}
+                    validation={validation}
+                    dataTestId={"astd-download-area-download-button-6751"}
+                  />
+                );
+              })}
 
             {validation.length === 0 &&
               !selectedItem?.manualTenantId &&
-              downloads.map((item) => (
-                <DownloadItem
-                  key={item.url}
-                  date={item.date}
-                  url={item.url}
-                  typeFile={selectedItem?.typeFile}
-                  validation={validation}
-                  reportName={selectedItem?.report_name}
-                  dataTestId={"astd-download-area-download-button-6759"}
-                />
-              ))}
+              downloads.map((item) => {
+                return (
+                  <DownloadItem
+                    key={item.url}
+                    date={item.date}
+                    url={item.url}
+                    typeFile={selectedItem?.typeFile}
+                    validation={validation}
+                    reportName={selectedItem?.report_name}
+                    dataTestId={"astd-download-area-download-button-6759"}
+                  />
+                );
+              })}
           </Grid>
           <Grid item>
             {trySubmited &&
