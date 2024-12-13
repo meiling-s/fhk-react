@@ -15,6 +15,7 @@ import {
   ProcessingRecordData,
   CheckinData,
   ProcessOutData,
+  StockAdjustmentData,
 } from "../../../interfaces/inventory";
 import { useTranslation } from "react-i18next";
 import {
@@ -97,6 +98,12 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
               details.createdAt = value.createdAt;
 
               return { ...value, details };
+            } else if (value.eventType === "checkin_stockAdjustment") {
+              const details = JSON.parse(value.eventDetail);
+              details.createdAt = value.createdAt;
+              details.createdBy = value.createdBy;
+
+              return { ...value, details };
             }
 
             return value;
@@ -122,7 +129,11 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
             {/* {eventItem.eventType === "checkin" && (
               <CheckinCard data={eventItem.details as CheckinData} />
             )} */}
-            {/* <StockAdjustmentCard data={eventItem.details} /> */}
+            {eventItem.eventType === "checkin_stockAdjustment" && (
+              <StockAdjustmentCard
+                data={eventItem.details as StockAdjustmentData}
+              />
+            )}
             {/* {eventItem.eventType === "processout" && (
               <ProcessOutCard data={eventItem.details as ProcessOutData} />
             )} */}
