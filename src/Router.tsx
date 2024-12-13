@@ -53,14 +53,15 @@ import UserGroup from "./pages/Collector/UserGroup/UserGroup";
 import { CheckInAndCheckOut } from "./pages/Collector/CheckInAndCheckOut";
 
 //logistic
-import JobOrder from './pages/Logistic/JobOrder/JobOrder'
-import CreateOrUpdateJobOrder from './pages/Logistic/JobOrder/CreateOrUpdateJobOrder'
-import LogisticAccount from './pages/Logistic/Account'
-import Driver from './pages/Logistic/Driver'
-import Notice from './pages/ASTD/Notice/Index'
-import UpdateTemplate from './pages/ASTD/Notice/UpdateTemplate'
-import StaffEnquiry from './pages/Collector/StaffEnquiry/StaffEnquiry'
-import LogisticVehicleDashboard from './pages/Logistic/Dashboard/dashboard'
+import JobOrder from "./pages/Logistic/JobOrder/JobOrder";
+import CreateOrUpdateJobOrder from "./pages/Logistic/JobOrder/CreateOrUpdateJobOrder";
+import LogisticAccount from "./pages/Logistic/Account";
+import Driver from "./pages/Logistic/Driver";
+import Notice from "./pages/ASTD/Notice/Index";
+import UpdateTemplate from "./pages/ASTD/Notice/UpdateTemplate";
+import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
+import LogisticVehicleDashboard from "./pages/Logistic/Dashboard/dashboard";
+import WeightOfRecyclables from "./pages/Logistic/Barchart/WeightOfRecyclables";
 import CompactorDashboard from './pages/GeneralModule/CompactorDashboard/CompactorDashboard'
 
 //manufacturer
@@ -248,6 +249,10 @@ const Router = () => {
             <Route
               path="/logistic/vehicleDashboard"
               element={<LogisticVehicleDashboard />}
+            />
+            <Route
+              path="/logistic/weightOfRecyclables"
+              element={<WeightOfRecyclables />}
             />
             <Route path="/logistic/report" element={<Report />} />
           </Route>
