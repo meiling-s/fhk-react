@@ -1574,6 +1574,29 @@
     "shippingCompany": "狀態",
     "inventoryLocation": "送出地點"
   },
+  "compactor": {
+    "compactorTruckHandling": "壓縮車處理",
+    "unloadTime": "卸貨時間",
+    "unloadRecord": "卸貨紀錄",
+    "processingDate": "處理日期",
+    "plateNumber": "車牌號碼",
+    "show": "顯示",
+    "table": {
+      "date": "顯示",
+      "itemCategory": "日期",
+      "mainCategory": "物品類別",
+      "subcategory": "主類別",
+      "addCategory": "追加類別",
+      "package": "包裝",
+      "itemNumber": "物品編號",
+      "inStock": "庫存",
+      "weight": "重量"
+    },
+    "selectedItems":"已選擇壓縮的物品",
+    "processCompress":"處理後的壓縮物",
+    "ask": "請求",
+    "clickToAddItem": "按新增為壓縮品輸入資料"
+  },
   "processOrder": {
     "title": "處理訂單",
     "processOrder": "處理訂單",
