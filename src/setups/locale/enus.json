@@ -1428,6 +1428,13 @@
     "collector": "Reyclables Dashboard",
     "capacity": "Capacity"
   },
+  "dashboard_weight_of_recyclables": {
+    "record": "Pickup and dropoff records",
+    "delivered_weight": "Pickup Items Weight",
+    "unloaded_weight": "Dropoff Items Weight",
+    "item_type": "Item Category",
+    "car_number":"Vehicle Plate No."
+  },
   "dashboard_manufacturer": {
     "data": "Data",
     "recycling_station": "Recycling weight at each recycling station",
@@ -1572,6 +1579,29 @@
     "createdAt": "Checkout/in Datetime",
     "shippingCompany": "Sender Company",
     "inventoryLocation": "Sender Location"
+  },
+  "compactor": {
+    "compactorTruckHandling": "Compactor truck handling",
+    "unloadTime": "Unloading time",
+    "unloadRecord": "Unloading records",
+    "processingDate": "Processing Date",
+    "plateNumber": "license plate number",
+    "show": "Show",
+    "table": {
+      "date": "Date",
+      "itemCategory": "Item Category",
+      "mainCategory": "Main category",
+      "subcategory": "Subcategory",
+      "addCategory": "Add category",
+      "package": "Package",
+      "itemNumber": "Item number",
+      "inStock": "in stock",
+      "weight": "weight"
+    },
+    "selectedItems":"Items selected for compression",
+    "processCompress":"Processed compressed material",
+    "ask": "Ask",
+    "clickToAddItem": "Click Add to enter data for the compressed product"
   },
   "processOrder": {
     "title": "Process Order",
