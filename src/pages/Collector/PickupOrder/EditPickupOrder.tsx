@@ -91,7 +91,6 @@ const EditPickupOrder = () => {
       rejectedBy: "string",
       contractNo: "",
       updatedBy: loginId,
-      refPicoId: "",
       updatePicoDetail: [],
       version: 0,
       specificDates: [],
