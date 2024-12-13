@@ -91,8 +91,7 @@ const CreatePickupOrder = () => {
       createdBy: 'Admin',
       updatedBy: 'Admin',
       createPicoDetail: [],
-      specificDates: [],
-      refPicoId: ''
+      specificDates: []
     },
 
     // validationSchema: validateSchema,
