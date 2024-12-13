@@ -144,6 +144,13 @@ export type StockAdjustmentData = {
   company_name_tc: string
   createdAt: string
   createdBy: string
+  eventType: string
+  location_en: string
+  location_sc: string
+  location_tc: string
+  addr_en: string
+  addr_sc: string
+  addr_tc: string
 }
 
 export type EventTrackingData = {

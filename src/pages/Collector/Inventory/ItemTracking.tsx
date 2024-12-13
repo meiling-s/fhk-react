@@ -52,7 +52,6 @@ interface ItemTrackingProps {
 const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
   shippingData,
 }) => {
-  const { i18n, t } = useTranslation();
   const [parsedEventDetails, setParsedEventDetails] =
     useState<InventoryTracking>();
 
@@ -102,6 +101,7 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
               const details = JSON.parse(value.eventDetail);
               details.createdAt = value.createdAt;
               details.createdBy = value.createdBy;
+              details.eventType = value.eventType;
 
               return { ...value, details };
             }
