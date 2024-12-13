@@ -129,11 +129,11 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
             {/* {eventItem.eventType === "checkin" && (
               <CheckinCard data={eventItem.details as CheckinData} />
             )} */}
-            {eventItem.eventType === "checkin_stockAdjustment" && (
+            {/* {eventItem.eventType === "checkin_stockAdjustment" && (
               <StockAdjustmentCard
                 data={eventItem.details as StockAdjustmentData}
               />
-            )}
+            )} */}
             {/* {eventItem.eventType === "processout" && (
               <ProcessOutCard data={eventItem.details as ProcessOutData} />
             )} */}
