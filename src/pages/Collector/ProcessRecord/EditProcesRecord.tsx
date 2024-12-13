@@ -45,6 +45,7 @@ type RecycItem = {
   images: string[]
   unitId?: string
   status?: string
+  packageTypeId: string
   version: number
 }
 
@@ -60,7 +61,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   selectedRow
 }) => {
   const { t, i18n} = useTranslation()
-  const { recycType, decimalVal, processType, dateFormat, weightUnits, productType } = useContainer(CommonTypeContainer)
+  const { recycType, decimalVal, processType, dateFormat, weightUnits, productType, processTypeListData, packagingList } = useContainer(CommonTypeContainer)
   const [drawerRecyclable, setDrawerRecyclable] = useState(false)
   const [action, setAction] = useState<
     'none' | 'add' | 'edit' | 'delete' | undefined
@@ -77,8 +78,8 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   }
 
   const mappingProcessName = (processTypeId: string) => {
-    
-    const  matchingProcess = processType?.find((item: ProcessType)=> item.processTypeId == processTypeId)
+    const combinedProcessType = [...processType || [], ...processTypeListData || []]
+    const matchingProcess = combinedProcessType?.find((item: ProcessType)=> item.processTypeId === processTypeId)
 
     if(matchingProcess) {
     var name = ""
@@ -323,6 +324,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                 id: detail.productAddonTypeId
               } : emptyList,
               productAddonRemark: detail.productAddonTypeId,
+              packageTypeId: detail?.packageTypeId,
               weight: detail.weight,
               images: detail.processoutDetailPhoto.map((item) => {
                 if (item.photo.startsWith('data:image/jpeg;base64,')) {
@@ -510,6 +512,13 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                   {recycItem?.map((item, index) => {
                     const weightType = weightUnits && weightUnits.find((value) => value.unitId === Number(item.unitId))
                     const weightUnit = i18n.language === 'enus' ? weightType?.unitNameEng : i18n.language === 'zhch' ? weightType?.unitNameSchi : weightType?.unitNameTchi
+
+                    const packagingName = packagingList.find(value => value.packagingTypeId === item.packageTypeId)
+                    const selectedPackaging = 
+                      i18n.language === 'enus' ? packagingName?.packagingNameEng : 
+                        i18n.language === 'zhch' ? packagingName?.packagingNameSchi : 
+                          packagingName?.packagingNameTchi
+
                     return (
                       <div
                         key={index}
@@ -518,9 +527,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                         <div className="detail flex justify-between items-center">
                           <div className="recyle-type flex items-center gap-2">
                             <div className="category" style={categoryRecyle}>
-                            {item.recycType?.name 
-                              ? item.recycType.name.charAt(0) 
-                              : item.productType?.name?.charAt(0) || '?'}
+                              {selectedPackaging ?? item.packageTypeId}
                             </div>
                             {item.recycType?.name && (
                               <div>

@@ -42,25 +42,26 @@ import {
   MAINTENANCE_STATUS,
   Realm,
   Roles,
-  localStorgeKeyName,
-} from "../constants/constant";
-import LoginIcon from "@mui/icons-material/Login";
-import LogoutIcon from "@mui/icons-material/Logout";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import RecyclingIcon from "@mui/icons-material/Recycling";
-import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
-import ViewQuiltOutlinedIcon from "@mui/icons-material/ViewQuiltOutlined";
-import FolderCopyOutlinedIcon from "@mui/icons-material/FolderCopyOutlined";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import ScreenRotationAltIcon from "@mui/icons-material/ScreenRotationAlt";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import { dynamicpath, returnApiToken, creatioPageList } from "../utils/utils";
-import { useContainer } from "unstated-next";
-import NotifContainer from "../contexts/NotifContainer";
-import { createUserActivity } from "../APICalls/userAccount";
-import axios from "axios";
-import { UserActivity } from "../interfaces/common";
-import ConfirmModal from "../components/SpecializeComponents/ConfirmationModal";
+  localStorgeKeyName
+} from '../constants/constant'
+import LoginIcon from '@mui/icons-material/Login'
+import LogoutIcon from '@mui/icons-material/Logout'
+import VerticalAlignCenterRoundedIcon from '@mui/icons-material/VerticalAlignCenterRounded'
+import InventoryIcon from '@mui/icons-material/Inventory'
+import RecyclingIcon from '@mui/icons-material/Recycling'
+import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
+import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined'
+import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined'
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
+import ScreenRotationAltIcon from '@mui/icons-material/ScreenRotationAlt'
+import BarChartIcon from '@mui/icons-material/BarChart'
+import { dynamicpath, returnApiToken, creatioPageList } from '../utils/utils'
+import { useContainer } from 'unstated-next'
+import NotifContainer from '../contexts/NotifContainer'
+import { createUserActivity } from '../APICalls/userAccount'
+import axios from 'axios'
+import { UserActivity } from '../interfaces/common'
+import ConfirmModal from '../components/SpecializeComponents/ConfirmationModal'
 
 type MainDrawer = {
   role: string;
@@ -215,10 +216,10 @@ function MainDrawer() {
         path: "/warehouse/checkout",
         functionName: "Request checkout",
       },
-      "Internal transfer request": {
-        name: t("internalTransfer.internal_transfer_request"),
+      'Internal transfer request': {
+        name: t('internalTransfer.internal_transfer_request'),
         icon: <ScreenRotationAltIcon />,
-        onClick: () => navigate("/warehouse/InternalTransferRequest"),
+        onClick: () => navigate('/warehouse/InternalTransferRequest'),
         collapse: false,
         path: "/warehouse/InternalTransferRequest",
         functionName: "Internal transfer request",
@@ -295,11 +296,19 @@ function MainDrawer() {
         onClick: () => setDashboardGroup((prev) => !prev),
         collapse: true,
         collapseGroup: dashboardGroup,
-        path: "dashboard_recyclables.data",
-        functionName: "Dashboard",
+        path: 'dashboard_recyclables.data',
+        functionName: 'Dashboard'
       },
-    },
-  ];
+      'Compactor processing': {
+        name: t('compactor.compactorTruckHandling'),
+        icon: <VerticalAlignCenterRoundedIcon />,
+        onClick: () => navigate(`/${realm}/compactorDashboard`),
+        collapse: false,
+        path: `/${realm}/compactorDashboard`,
+        functionName: 'Compactor processing'
+      }
+    }
+  ]
   // 20240129 add function list daniel keung end
   // 20240129 add function list daniel keung start
   var drawerMenus;
@@ -374,6 +383,12 @@ function MainDrawer() {
         path: `/${realm}/vehicleDashboard`,
         functionName: "vehicleDashboard",
       },
+      {
+        name: "weightOfRecyclables",
+        value: t("dashboard_weight_of_recyclables.record"),
+        path: `/logistic/weightOfRecyclables`,
+        functionName: "weightOfRecyclables"
+      }
     ];
   }
 

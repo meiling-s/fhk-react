@@ -2,7 +2,9 @@ import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs'
 import {
   GET_DRIVER_DETAIL,
   GET_DRIVER_PICKUP_POINT,
-  GET_DRIVER_DROPOFF_POINT
+  GET_DRIVER_DROPOFF_POINT,
+  GET_DRIVER_PICKUP_WEIGHT,
+  GET_DRIVER_DROPOFF_WEIGHT
 } from '../../constants/requestsLogistic'
 import { returnApiToken } from '../../utils/utils'
 import axiosInstance from '../../constants/axiosInstance'
@@ -73,3 +75,43 @@ export const getDriverDropOffPoint = async (
     return null
   }
 }
+
+export const getDriverPickupWeight = async (data: any) => {
+  try {
+    const token = returnApiToken();
+    const response = await axiosInstance({
+      baseURL: window.baseURL.logistic,
+      ...GET_DRIVER_PICKUP_WEIGHT(
+        token.realmApiRoute,
+        token.decodeKeycloack,
+      ),
+      data,
+      headers: { AuthToken: token.authToken }
+    });
+    return response;
+  } catch (e) {
+    console.error("Get driver pick up weight failed:", e);
+    return null;
+  }
+};
+
+export const getDriverDropoffWeight = async (data: any) => {
+  try {
+    console.log(window.baseURL.logistic);
+
+    const token = returnApiToken();
+    const response = await axiosInstance({
+      baseURL: window.baseURL.logistic,
+      ...GET_DRIVER_DROPOFF_WEIGHT(
+        token.realmApiRoute,
+        token.decodeKeycloack
+      ),
+      data,
+      headers: { AuthToken: token.authToken }
+    });
+    return response;
+  } catch (e) {
+    console.error("Get driver drop off weight failed:", e);
+    return null;
+  }
+};

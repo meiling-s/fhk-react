@@ -1430,6 +1430,13 @@
     "collector": "回收物仪表盘",
     "capacity": "容量"
   },
+  "dashboard_weight_of_recyclables": {
+    "record": "提货卸货记录",
+    "delivered_weight": "提货物品重量",
+    "unloaded_weight": "卸货物品重量",
+    "item_type": "物品种类",
+    "car_number": "车牌号码"
+  },
   "dashboard_manufacturer": {
     "data": "数据",
     "recycling_station": "各个回收站的回收物重量",
@@ -1572,6 +1579,30 @@
     "createdAt": "送出入日期及时间",
     "shippingCompany": "状态",
     "inventoryLocation": "送出地点"
+  },
+  "compactor": {
+    "compactorTruckHandling": "压缩车处理",
+    "unloadTime": "卸货时间",
+    "unloadRecord": "卸货记录",
+    "processingDate": "处理日期",
+    "plateNumber": "车牌号码",
+    "show": "顯示",
+    "card": "",
+    "table": {
+      "date": "日期",
+      "itemCategory": "物品类别",
+      "mainCategory": "主类别",
+      "subcategory": "次类别",
+      "addCategory": "追加类别",
+      "package": "包装",
+      "itemNumber": "物品编号",
+      "inStock": "库存",
+      "weight": "重量"
+    },
+    "selectedItems": "Items selected for compression",
+    "processCompress": "Processed compressed material",
+    "ask": "请求",
+    "clickToAddItem": "按新增为压缩品输入资料"
   },
   "processOrder": {
     "title": "处理订单",

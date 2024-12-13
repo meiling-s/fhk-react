@@ -81,7 +81,7 @@ props) => {
     vehicleId: false
   })
   const currentLang = i18n.language
-  const { recycType, dateFormat} = useContainer(CommonTypeContainer)
+  const { recycType, dateFormat } = useContainer(CommonTypeContainer)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
 
@@ -223,11 +223,14 @@ props) => {
 
   const autoCompleteDriverName = () => {
     if (currentLang === 'enus') {
-      return driverList.find(value => value.driverId === assignField.driverId)?.driverNameEng
+      return driverList.find((value) => value.driverId === assignField.driverId)
+        ?.driverNameEng
     } else if (currentLang === 'zhch') {
-      return driverList.find(value => value.driverId === assignField.driverId)?.driverNameSchi
+      return driverList.find((value) => value.driverId === assignField.driverId)
+        ?.driverNameSchi
     } else {
-      return driverList.find(value => value.driverId === assignField.driverId)?.driverNameTchi
+      return driverList.find((value) => value.driverId === assignField.driverId)
+        ?.driverNameTchi
     }
   }
 
@@ -321,7 +324,13 @@ props) => {
                               </label>
                             </div>
                             <p className="flex-1 font-semibold text-[#535353]">
-                              {item.driverId == '' ? dayjs(new Date).format(`${dateFormat} ${item.pickupAt}`) : dayjs(item.pickupAt).format(`${dateFormat} HH:mm`)}
+                              {item.driverId == ''
+                                ? dayjs(new Date()).format(
+                                    `${dateFormat} ${item.pickupAt}`
+                                  )
+                                : dayjs(item.pickupAt).format(
+                                    `${dateFormat} HH:mm`
+                                  )}
                             </p>
                           </div>
                           <div className="flex items-center">
@@ -406,7 +415,9 @@ props) => {
                               driverId: assignField.driverId,
                               driverName: autoCompleteDriverName()
                             }}
-                            getOptionLabel={(option) => option?.driverName ?? ''}
+                            getOptionLabel={(option) =>
+                              option?.driverName ?? ''
+                            }
                             options={driverList.map((driver) => {
                               if (currentLang === 'enus') {
                                 return {
@@ -420,7 +431,7 @@ props) => {
                                 }
                               } else {
                                 return {
-                                  driverId:  driver.driverId,
+                                  driverId: driver.driverId,
                                   driverName: driver.driverNameTchi
                                 }
                               }

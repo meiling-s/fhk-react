@@ -61,6 +61,8 @@ import Notice from "./pages/ASTD/Notice/Index";
 import UpdateTemplate from "./pages/ASTD/Notice/UpdateTemplate";
 import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
 import LogisticVehicleDashboard from "./pages/Logistic/Dashboard/dashboard";
+import WeightOfRecyclables from "./pages/Logistic/Barchart/WeightOfRecyclables";
+import CompactorDashboard from './pages/GeneralModule/CompactorDashboard/CompactorDashboard'
 
 //manufacturer
 import PurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PurchaseOrder";
@@ -162,6 +164,7 @@ const Router = () => {
               path="/collector/createProcessOrder"
               element={<CreateProcessOrder />}
             />
+               <Route path="/collector/compactorDashboard" element={<CompactorDashboard />} />
           </Route>
 
           <Route element={<MainLayout />}>
@@ -247,6 +250,10 @@ const Router = () => {
               path="/logistic/vehicleDashboard"
               element={<LogisticVehicleDashboard />}
             />
+            <Route
+              path="/logistic/weightOfRecyclables"
+              element={<WeightOfRecyclables />}
+            />
             <Route path="/logistic/report" element={<Report />} />
           </Route>
 
@@ -306,6 +313,7 @@ const Router = () => {
               path="/manufacturer/createProcessOrder"
               element={<CreateProcessOrder />}
             />
+              <Route path="/manufacturer/compactorDashboard" element={<CompactorDashboard />} />
           </Route>
 
           <Route element={<MainLayout />}>
