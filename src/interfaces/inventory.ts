@@ -137,12 +137,21 @@ export type CheckinData = {
   createdAt: string
 }
 
+export type StockAdjustmentData = {
+  record_date: string
+  company_name_en: string
+  company_name_sc: string
+  company_name_tc: string
+  createdAt: string
+  createdBy: string
+}
+
 export type EventTrackingData = {
   gidEventId: number
   tenantId: string
   eventType: string
   eventDetail: string
-  details: ProcessOutData | ProcessingRecordData | CheckinData
+  details: ProcessOutData | ProcessingRecordData | CheckinData | StockAdjustmentData
   remarks: string | null
   createdBy: string
   createdAt: string

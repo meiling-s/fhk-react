@@ -8,35 +8,38 @@ import {
   Collapse,
 } from "@mui/material";
 import { FunctionComponent, useState } from "react";
-import { ProcessOutData } from "../../interfaces/inventory";
+import {
+  ProcessOutData,
+  StockAdjustmentData,
+} from "../../interfaces/inventory";
 import { useTranslation } from "react-i18next";
 import { ExpandLess, ExpandMore, LocationOn } from "@mui/icons-material";
 import { CATEGORY_ICON, COMPANY_ICON, INVENTORY_ICON } from "src/themes/icons";
+import { useContainer } from "unstated-next";
+import CommonTypeContainer from "src/contexts/CommonTypeContainer";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 interface StockAdjustmentCardProps {
-  data: ProcessOutData;
+  data: StockAdjustmentData;
 }
 
 const StockAdjustmentCard: FunctionComponent<StockAdjustmentCardProps> = ({
   data,
 }) => {
   const { i18n, t } = useTranslation();
+  const { dateFormat } = useContainer(CommonTypeContainer);
   const [expanded, setExpanded] = useState(true);
   const handleToggle = () => {
     setExpanded((prev) => !prev);
   };
 
-  const getConditionalValue = (data: ProcessOutData, type: string) => {
-    if (type === "title") {
-      switch (i18n.language) {
-        case "enus":
-          return data.process_type_en;
-        case "zhch":
-          return data.process_type_sc;
-        case "zhhk":
-          return data.process_type_tc;
-      }
-    } else if (type === "company") {
+  const getConditionalValue = (data: StockAdjustmentData, type: string) => {
+    if (type === "company") {
       switch (i18n.language) {
         case "enus":
           return data.company_name_en;
@@ -45,40 +48,16 @@ const StockAdjustmentCard: FunctionComponent<StockAdjustmentCardProps> = ({
         case "zhhk":
           return data.company_name_tc;
       }
-    } else if (type === "factory") {
-      switch (i18n.language) {
-        case "enus":
-          return data.factory_name_en;
-        case "zhch":
-          return data.factory_name_sc;
-        case "zhhk":
-          return data.factory_name_tc;
-      }
-    } else if (type === "processin_warehouse") {
-      switch (i18n.language) {
-        case "enus":
-          return data.process_in.warehouse_en;
-        case "zhch":
-          return data.process_in.warehouse_sc;
-        case "zhhk":
-          return data.process_in.warehouse_tc;
-      }
-    } else if (type === "processout_warehouse") {
-      switch (i18n.language) {
-        case "enus":
-          return data.process_out.warehouse_en;
-        case "zhch":
-          return data.process_out.warehouse_sc;
-        case "zhhk":
-          return data.process_out.warehouse_tc;
-      }
     }
   };
 
   const getApprovedText = () => {
     switch (i18n.language) {
       case "enus":
-        return "Approved by [UserID] at 2023/09/20 18:00";
+        return `Approved by [${data.createdBy}] at ${dayjs
+          .utc(data.record_date)
+          .tz("Asia/Hong_Kong")
+          .format(`${dateFormat} HH:mm`)}`;
       case "zhhk":
         return "於 2023/09/20 18:00 由【UserID】核準";
       case "zhch":
@@ -96,13 +75,16 @@ const StockAdjustmentCard: FunctionComponent<StockAdjustmentCardProps> = ({
             <ExpandMore sx={{ color: "#79CA25" }} />
           )}
         </IconButton>
-        <Typography variant="h6">Stock Adjustment</Typography>
+        <Typography variant="h6">{t("check_in.stock_adjustment")}</Typography>
         <Typography
           variant="body2"
           color="textSecondary"
           sx={{ marginLeft: "auto", marginRight: 10 }}
         >
-          Date
+          {dayjs
+            .utc(data.record_date)
+            .tz("Asia/Hong_Kong")
+            .format(`${dateFormat} HH:mm A`)}
         </Typography>
       </Box>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -159,7 +141,7 @@ const StockAdjustmentCard: FunctionComponent<StockAdjustmentCardProps> = ({
                 color="textSecondary"
                 sx={{ color: "#535353" }}
               >
-                Company - Dummy
+                {getConditionalValue(data, "company")}
               </Typography>
             </Box>
           </Box>
