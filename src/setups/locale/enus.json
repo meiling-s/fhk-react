@@ -450,7 +450,7 @@
       "download": "Download"
     },
     "create_pick_up_order": "Create",
-    "edit_pick_up_order": "Edit pickup Order",
+    "edit_pick_up_order": "Edit Order",
     "shipping_info": "Shipping Information",
     "select_shipping_category": "Please Select Pickup Order Type",
     "regular_shipping": "Regular shipping",
@@ -723,7 +723,21 @@
     "weight": "Weight",
     "at": "at",
     "select_location": "select location",
-    "handover": "hand over"
+    "handover": "hand over",
+    "track": "Track",
+    "company": "Company",
+    "beforeProcessing": "Before Processing",
+    "afterProcessing": "After Processing",
+    "itemNumber": "Item Number",
+    "start_date": "Start Date and Time",
+    "warehouse": "Warehouse",
+    "factory": "Factory",
+    "shipping_receiver": "Shipping and Receiving Companies",
+    "delivery_to_warehouse": "Delivery to/from warehouse",
+    "delivery_location": "Delivery/Delivery Location",
+    "warehouse_recycling": "Warehouse/recycling point",
+    "internal_transfer": "Internal Transfer",
+    "process_out": "Process Out"
   },
   "processRecord": {
     "processing": "Processing",
@@ -972,7 +986,13 @@
     "assign_driver": "Assign a driver",
     "shippingDateAndTime": "Shipping Datetime",
     "success_assign": "Success Assign Job Order",
-    "failed_assign": "Failed Assign Job Order"
+    "failed_assign": "Failed Assign Job Order",
+    "cancel_alert": "Are you sure to cancel the Job Order?",
+    "cancel_reason": "Cancel reason(s)",
+    "store_date": "Change Date Successfully",
+    "changedate_alert": "Are you sure you want to change the shipping date?",
+    "changedate_reason": "Reason for change (multiple choices available)",
+    "invalid_date": "Selected date is earlier than today."
   },
   "notification": {
     "notification_menu": "Notice Template",
@@ -1408,6 +1428,13 @@
     "collector": "Reyclables Dashboard",
     "capacity": "Capacity"
   },
+  "dashboard_weight_of_recyclables": {
+    "record": "Pickup and dropoff records",
+    "delivered_weight": "Pickup Items Weight",
+    "unloaded_weight": "Dropoff Items Weight",
+    "item_type": "Item Category",
+    "car_number":"Vehicle Plate No."
+  },
   "dashboard_manufacturer": {
     "data": "Data",
     "recycling_station": "Recycling weight at each recycling station",
@@ -1553,6 +1580,29 @@
     "shippingCompany": "Sender Company",
     "inventoryLocation": "Sender Location"
   },
+  "compactor": {
+    "compactorTruckHandling": "Compactor truck handling",
+    "unloadTime": "Unloading time",
+    "unloadRecord": "Unloading records",
+    "processingDate": "Processing Date",
+    "plateNumber": "license plate number",
+    "show": "Show",
+    "table": {
+      "date": "Date",
+      "itemCategory": "Item Category",
+      "mainCategory": "Main category",
+      "subcategory": "Subcategory",
+      "addCategory": "Add category",
+      "package": "Package",
+      "itemNumber": "Item number",
+      "inStock": "in stock",
+      "weight": "weight"
+    },
+    "selectedItems":"Items selected for compression",
+    "processCompress":"Processed compressed material",
+    "ask": "Ask",
+    "clickToAddItem": "Click Add to enter data for the compressed product"
+  },
   "processOrder": {
     "title": "Process Order",
     "processOrder": "Process an order",
@@ -1590,5 +1640,9 @@
     "factory": "Factory",
     "warehouse": "Warehouse",
     "introduction": "Introduction"
+  },
+  "globalItemId": {
+    "globalItemId": "Global Item ID",
+    "enterGlobalItemId": "Enter the Global Item ID"
   }
 }

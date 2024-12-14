@@ -715,12 +715,10 @@ export const GET_INVENTORY = (
 })
 
 export const GET_ITEM_TRACK_INVENTORY = (
-  realmApiRoute: string,
-  table: string,
-  itemId: number
+  gid: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/inventory/trackingV2/${table}/${itemId}`
+  url: `api/v1/administrator/globalItemId/${gid}`
 })
 
 //process records
@@ -1794,4 +1792,9 @@ export const CREATE_PROCESS_OUT = (
 ): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/${realmApiRoute}/processout/${table}/header`
+})
+
+export const GET_PUJO_DATA = (realmApiRoute: string, table: string, joId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/pu/jo/${table}/${joId}`
 })

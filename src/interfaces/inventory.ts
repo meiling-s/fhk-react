@@ -33,6 +33,33 @@ export type InventoryItem = {
   updatedAt: string
   location: string
   packageName?: string,
+  gid: string,
+  gidLabel: string
+}
+
+export type GIDItem = {
+  labelId: string
+  recycTypeId: string
+  recycSubTypeId: string
+  productTypeId: string
+  productSubTypeId: string
+  productSubTypeRemark: string
+  productAddonTypeId: string
+  productAddonTypeRemark: string
+  recyName: string
+  subName: string
+  productName: string
+  productSubName: string
+  productAddOnName: string
+  packageTypeId: string
+  weight: number
+  unitId: string
+  updatedBy: string
+  createdBy: string
+  createdAt: string
+  updatedAt: string
+  gid: number
+  packageName?: string
 }
 
 export type InventoryQuery = {
@@ -41,6 +68,106 @@ export type InventoryQuery = {
   recycTypeId: string
   recycSubTypeId: string
   idleDays: number | null,
+}
+
+export type GIDQuery = {
+  gid: '',
+  warehouseId: null,
+  recycTypeId: "",
+  recycSubTypeId: "",
+  idleDays: null,
+}
+
+export type ProcessInOutEventDetail = {
+  gid: number[],
+  warehouse_tc: string
+  warehouse_sc: string
+  start_date_time: string
+  warehouse_en: string
+  total_weight: string
+  gidLabel: string
+}
+
+export type ProcessOutData = {
+  tenant_id: string,
+  company_name_en: string
+  company_name_sc: string
+  company_name_tc: string
+  factory_name_en: string
+  factory_name_sc: string
+  factory_name_tc: string
+  process_out: ProcessInOutEventDetail,
+  process_type_en: string
+  process_type_sc: string
+  process_type_tc: string
+  process_in: ProcessInOutEventDetail
+  createdAt: string
+}
+
+export type ProcessingRecordData = {
+  location_en: string
+  location_sc: string
+  location_tc: string
+  record_date: string
+  gid: number[],
+  company_name_en: string
+  company_name_sc: string
+  company_name_tc: string
+  addr_en: string
+  addr_sc: string
+  addr_tc: string
+  total_weight: number,
+  gidLabel: string,
+  unitId: string,
+  createdAt: string
+}
+
+export type CheckinData = {
+  addr_en: string
+  addr_sc: string
+  addr_tc: string
+  location_en: string
+  location_sc: string
+  location_tc: string
+  record_date: string
+  company_name_en: string
+  company_name_sc: string
+  company_name_tc: string
+  unitId: string
+  createdAt: string
+}
+
+export type EventTrackingData = {
+  gidEventId: number
+  tenantId: string
+  eventType: string
+  eventDetail: string
+  details: ProcessOutData | ProcessingRecordData | CheckinData
+  remarks: string | null
+  createdBy: string
+  createdAt: string
+}
+
+export type InventoryTracking = {
+  gid: number[]
+  labelId: string
+  parentIds: number[]
+  childrenIds: number[]
+  recycTypeId: string
+  recycSubTypeId: string
+  productTypeId: string
+  productSubTypeId: string
+  productSubTypeRemark: string
+  productAddonTypeId: string
+  productAddonTypeRemark: string
+  packageTypeId: string
+  weight: number
+  unitId: string
+  createdBy: string
+  updatedBy: string
+  createdAt: string
+  updatedAt: string
+  event: EventTrackingData[]
 }
 
 export interface ProcessInType {

@@ -56,6 +56,7 @@ import {
   getProductSubTypeFromDataRow,
   getProductTypeFromDataRow,
 } from "src/pages/Collector/PickupOrder/utils";
+import { getManufacturerBasedLang } from "src/pages/Manufacturer/PurchaseOrder/utils";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -1083,8 +1084,8 @@ const PurchaseOrderCreateForm = ({
                     disablePortal
                     id="senderName"
                     sx={{ width: 400 }}
-                    defaultValue={formik.values.senderName}
-                    value={formik.values.senderName}
+                    defaultValue={getManufacturerBasedLang(formik.values.senderName, manuList)}
+                    value={getManufacturerBasedLang(formik.values.senderName, manuList)}
                     options={
                       manuList?.map((option) => {
                         if (i18n.language === Languages.ENUS) {

@@ -604,6 +604,23 @@ const CreateProcessOrder = ({}: {}) => {
     }
 
     const processedDetailsPair = processOrderDetailTemp(processOrderDtlSource)
+
+    // temporary solution since the productAddonId type field is used on many components and changes it directly might cause bugs
+    for (const value of processedDetailsPair) {
+      if (value.processIn.processOrderDetailProduct.length > 0) {
+        value.processIn.processOrderDetailProduct.map(item => {
+          item.productAddonTypeId = item.productAddonId
+          return item
+        })
+      }
+      if (value.processOut.processOrderDetailProduct.length > 0) {
+        value.processOut.processOrderDetailProduct.map(item => {
+          item.productAddonTypeId = item.productAddonId
+          return item
+        })
+      }
+    }
+
     const formData: CreatePorForm = {
       factoryId: selectedFactory ? parseInt(selectedFactory.id) : null,
       processStartAt: formattedDate(processStartAt),
