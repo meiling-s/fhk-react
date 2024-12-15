@@ -10,7 +10,7 @@ import CustomItemListRecyble from '../FormComponents/CustomItemListRecyble'
 import { Collapse } from '@mui/material'
 import CustomField from '../FormComponents/CustomField'
 import { useTranslation } from 'react-i18next'
-import { add } from 'date-fns'
+import { add, set } from 'date-fns'
 import CustomTextField from '../FormComponents/CustomTextField'
 
 export type singleProduct = {
@@ -36,7 +36,7 @@ type productSubTypeItem = {
   productAddon: productAddonItem[]
 }
 
-type productItem = {
+export type productItem = {
   productType: il_item
   productSubType: productSubTypeItem[]
 }
@@ -105,14 +105,19 @@ export default function ProductListMultiSelect({
 
   useEffect(() => {
     if (defaultProduct) {
-      setProductType(productList_getProductType(defaultProduct))
-      setProductSubType(recyclables_getSubTypes(defaultProduct))
-      setProductAddon(recyclables_getAddon(defaultProduct))
+      const types = product_getProductType(defaultProduct)
+      const subTypes = product_getSubTypes(defaultProduct)
+      const addons = product_getAddon(defaultProduct)
+
+      setProductType(types)
+      setProductSubType(subTypes)
+      setProductAddon(addons)
+      setState(toProduct())
     }
   }, [])
 
   useEffect(() => {
-    setState(toRecyclables())
+    setState(toProduct())
   }, [productType, productSubType, productAddon, options])
 
   useEffect(() => {
@@ -124,7 +129,6 @@ export default function ProductListMultiSelect({
       .map((item) => item.productType.id)
     setProductWithNoSubItems(noSubItems)
 
-    console.log('productTypes', productTypes)
     //set sub-product with no add-on
     const subTypeIdsWithNoAddons = productTypes.flatMap((item) =>
       item.productSubType
@@ -135,7 +139,7 @@ export default function ProductListMultiSelect({
     setSubProductWithNoAddonItems(subTypeIdsWithNoAddons)
   }, [options, i18n.language])
 
-  const toRecyclables = () => {
+  const toProduct = () => {
     var productS: productsVal[] = []
     productType.map((prod) => {
       const prodType = options.find((p) => p.productTypeId === prod)
@@ -280,10 +284,10 @@ export default function ProductListMultiSelect({
   }
 
   const returnProducts = (productS: productItem[]) => {
-    //transforming recyclables to string array with main items name only
     const productList: il_item[] = productS.map((product) => {
       return product.productType
     })
+
     return productList
   }
 
@@ -298,6 +302,21 @@ export default function ProductListMultiSelect({
       })
     }
     return subTypesId
+  }
+
+  const returnAddonTypesId = (prodId: string, subProdId: string) => {
+    var addonTypesId: string[] = []
+    const re = returnProductTypes().find((prod) => {
+      return prod.productType.id == prodId
+    })
+    if (re) {
+      re.productSubType.map((sub) => {
+        sub.productAddon.map((addOn) => {
+          addonTypesId.push(addOn.productAddon.id)
+        })
+      })
+    }
+    return addonTypesId
   }
 
   const selectProduct = (str: string[]) => {
@@ -326,22 +345,26 @@ export default function ProductListMultiSelect({
     productType.map((prod) => {
       const subId = returnSubTypesId(prod)
       subId.map((sub) => {
-        if (productSubType.includes(sub)) {
-          withSubItem.push(prod)
-        }
+        const addonIds = returnAddonTypesId(prod, sub)
+        addonIds.map((addonIds) => {
+          if (productAddon.includes(addonIds)) {
+            withSubItem.push(prod)
+          }
+        })
       })
     })
     return withSubItem
   }
 
-  const productList_getProductType = (productS: productItem[]) => {
+  const product_getProductType = (productS: productItem[]) => {
     const productType: string[] = productS.map((prod) => {
       return prod.productType.id
     })
+
     return productType
   }
 
-  const recyclables_getSubTypes = (productS: productItem[]) => {
+  const product_getSubTypes = (productS: productItem[]) => {
     var subTypes: string[] = []
     productS.map((prod) => {
       prod.productSubType.map((sub) => {
@@ -352,7 +375,7 @@ export default function ProductListMultiSelect({
     return subTypes
   }
 
-  const recyclables_getAddon = (productS: productItem[]) => {
+  const product_getAddon = (productS: productItem[]) => {
     var addonTypes: string[] = []
     productS.map((prod) => {
       prod.productSubType.map((sub) => {
@@ -366,20 +389,32 @@ export default function ProductListMultiSelect({
   }
 
   const returnSubProduct = (productId: string) => {
+    const selectedProductId = productId
+      ? productId
+      : productType[productType.length - 1] || ''
+
     const item = returnProductTypes().find(
-      (productType) => productType.productType.id === productId
+      (productType) => productType.productType.id === selectedProductId
     )
     return item ? item.productSubType.map((it) => it.productSubType) : []
   }
 
   const returnAddonList = (subProductId: string) => {
+    const selectedProductId = curProduct
+      ? curProduct
+      : productType[productType.length - 1] || ''
+
     const item = returnProductTypes().find(
-      (productType) => productType.productType.id === curProduct
+      (productType) => productType.productType.id === selectedProductId
     )
+
+    const selectedSubId = subProductId
+      ? subProductId
+      : productSubType[productSubType.length - 1] || ''
 
     if (item) {
       const subItem = item.productSubType.find(
-        (sub) => sub.productSubType.id === subProductId
+        (sub) => sub.productSubType.id === selectedSubId
       )
 
       return subItem ? subItem.productAddon.map((it) => it.productAddon) : []
@@ -433,8 +468,6 @@ export default function ProductListMultiSelect({
   }
 
   const selectSubProduct = (selectedSubType: string[]) => {
-    console.log('selectedSubType', selectedSubType)
-
     const lastSubId = selectedSubType[selectedSubType.length - 1] || ''
     const currProduct = options.find(
       (item) => item.productTypeId === curProduct
@@ -452,8 +485,28 @@ export default function ProductListMultiSelect({
     setProductSubType(selectedSubType)
   }
 
-  const selectAddon = (selectedSubType: string[]) => {
-    setProductAddon(selectedSubType)
+  const selectAddon = (selectedAddOn: string[]) => {
+    const lastAddonId = selectedAddOn[selectedAddOn.length - 1] || ''
+    const currProduct = options.find(
+      (item) => item.productTypeId === curProduct
+    )
+
+    console.log('selectAddon', lastAddonId)
+
+    if (currProduct) {
+      const subItem = currProduct.productSubType?.find(
+        (item) =>
+          item.productSubTypeId === choosenProductSubType?.productSubTypeId
+      )
+      if (subItem) {
+        const addOnItem = subItem.productAddonType?.find(
+          (item) => item.productAddonTypeId === lastAddonId
+        )
+        console.log('addOnItem')
+        if (addOnItem) setChoosenProductAddon(addOnItem)
+      }
+    }
+    setProductAddon(selectedAddOn)
   }
 
   return (
@@ -465,19 +518,20 @@ export default function ProductListMultiSelect({
         setLastSelect={setCurProduct}
         error={showError && productType.length == 0}
         defaultSelected={
-          defaultProduct ? productList_getProductType(defaultProduct) : []
+          defaultProduct ? product_getProductType(defaultProduct) : []
         }
         noSubItems={productWithNoSubItems}
       />
       {curProduct != ' ' && !productWithNoSubItems.includes(curProduct) && (
         <Collapse sx={{ mt: 1 }} in={productType.length > 0} unmountOnExit>
           <CustomField
-            label={getNameFromProductId(curProduct) + t('col.category')}
+            label={
+              getNameFromProductId(curProduct) + t('common.subProductType')
+            }
             mandatory
           >
             <CustomItemListRecyble
               items={returnSubProduct(curProduct)}
-              //withSubItems={returnWithSubItem()}
               multiSelect={selectSubProduct}
               setLastSelect={setCurSubProduct}
               defaultSelected={productSubType}
@@ -510,7 +564,6 @@ export default function ProductListMultiSelect({
                   setChoosenProductAddon(null)
                 }}
                 value={productSubTypeRemark}
-                dataTestId="astd-create-edit-pickup-order-product-subtype-remark"
               />
             </CustomField>
           )}
@@ -533,6 +586,35 @@ export default function ProductListMultiSelect({
                 defaultSelected={productAddon}
               />
             </CustomField>
+            {choosenProductAddon?.productNameEng === 'Others' && (
+              <CustomField
+                label={
+                  getNameFromSubId(curSubProduct) +
+                  ' ' +
+                  t('pick_up_order.product_type.subtype') +
+                  ' ' +
+                  t('general_settings.remark')
+                }
+                mandatory={false}
+                style={{ my: '1rem' }}
+              >
+                <CustomTextField
+                  id="subtype-remark"
+                  placeholder={
+                    getNameFromSubId(curSubProduct) +
+                    ' ' +
+                    t('pick_up_order.product_type.add-on') +
+                    ' ' +
+                    t('general_settings.remark')
+                  }
+                  onChange={(event) => {
+                    setProductAddonRemark(event.target.value)
+                    setChoosenProductAddon(null)
+                  }}
+                  value={productAddonTypeRemark}
+                />
+              </CustomField>
+            )}
           </Collapse>
         )}
     </>
