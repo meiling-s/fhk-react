@@ -55,7 +55,9 @@
     "filledIdleDays": "輸入空閒天數",
     "pageUnderConstruction": "頁面正在建設中",
     "vehicleRouteTracker": "車輛追蹤",
-    "jobOrderScheduleBoard": "司機日程"
+    "jobOrderScheduleBoard": "司機日程",
+    "productType": "產品類型（點選類型可顯示子類型，雙擊可取消選擇）",
+    "subProductType": "子類型產品（單擊類型可顯示插件類型，雙擊可取消選擇）"
   },
   "col": {
     "createCP": "建立回收點",
@@ -761,6 +763,7 @@
     "handler": "經手人",
     "status": "狀態",
     "categoryWeight": "處理前的回收物类别及重量",
+    "categoryWeight-after": "處理後的物品類別及重量",
     "detail": {
       "processingData": "處理資料",
       "recyclingInformation": "回收物資料",
@@ -1594,9 +1597,10 @@
       "inStock": "庫存",
       "weight": "重量"
     },
-    "selectedItems":"已選擇壓縮的物品",
-    "processCompress":"處理後的壓縮物",
+    "selectedItems": "已選擇壓縮的物品",
+    "processCompress": "處理後的壓縮物",
     "ask": "請求",
+    "new": "新增",
     "clickToAddItem": "按新增為壓縮品輸入資料"
   },
   "processOrder": {
@@ -1614,7 +1618,7 @@
       "package": "包裝",
       "itemToProcessIn": "預計待處理物品",
       "itemToProcessOut": "預計處理後物品",
-      "itemCategory": "物品類別 (按一下類別顯示子類別，按兩下取消選擇)",
+      "itemCategory": "物品類別 (按一下類別顯示子類別)",
       "recycling": "回收物",
       "product": "產品",
       "warehouse": "貨倉"

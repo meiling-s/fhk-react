@@ -47,6 +47,10 @@ import { formValidate } from 'src/interfaces/common'
 import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
 import CustomButton from 'src/components/FormComponents/CustomButton'
 import ConfirmModal from 'src/components/SpecializeComponents/ConfirmationModal'
+import ProductListMultiSelect, {
+  productsVal
+} from 'src/components/SpecializeComponents/ProductListMultiSelect'
+import { transformData } from './utils'
 
 type ConfirmRemarksProps = {
   open: boolean
@@ -561,22 +565,75 @@ const InputProcessForm = ({
     )
   }
 
-  //to do : change to multiple product select
-  const handleProductChange = (type: string, value: singleProduct) => {
-    let tempProduct: any[] = []
-    if (value.productTypeId) tempProduct.push(value)
+  const transformToSingleProducts = (
+    products: productsVal[]
+  ): singleProduct[] => {
+    const singleProducts: singleProduct[] = []
 
+    products.forEach((product) => {
+      if (product.productSubType && product.productSubType.length > 0) {
+        product.productSubType.forEach((subType) => {
+          subType.productAddon.forEach((addon) => {
+            singleProducts.push({
+              productTypeId: product.productTypeId,
+              productSubTypeId: subType.productSubTypeId,
+              productAddonId: addon.productAddonId,
+              productSubTypeRemark: subType.productSubTypeRemark,
+              productAddonTypeRemark: addon.productAddonTypeRemark,
+              isProductSubTypeOthers: subType.isProductSubTypeOthers,
+              isProductAddonTypeOthers: addon.isProductAddonTypeOthers
+            })
+          })
+
+          if (subType.productAddon.length === 0) {
+            singleProducts.push({
+              productTypeId: product.productTypeId,
+              productSubTypeId: subType.productSubTypeId,
+              productAddonId: '', // No addon
+              productSubTypeRemark: subType.productSubTypeRemark,
+              productAddonTypeRemark: '', // No addon remark
+              isProductSubTypeOthers: subType.isProductSubTypeOthers,
+              isProductAddonTypeOthers: false // No addon
+            })
+          }
+        })
+      } else {
+        // Handle cases where productSubType is null or empty
+        singleProducts.push({
+          productTypeId: product.productTypeId,
+          productSubTypeId: '', // No subtype
+          productAddonId: '', // No addon
+          productSubTypeRemark: '', // No subtype remark
+          productAddonTypeRemark: '', // No addon remark
+          isProductSubTypeOthers: false, // Default to false
+          isProductAddonTypeOthers: false // Default to false
+        })
+      }
+    })
+
+    console.log('singleProducts', singleProducts)
+    return singleProducts
+  }
+
+  //to do : change to multiple product select
+  const handleProductChange = (type: string, value: productsVal[]) => {
+    console.log('val', value)
+    // let tempProduct: any[] = []
+    //if (value.productTypeId) tempProduct.push(value)
+
+    const singleProducts: singleProduct[] = transformToSingleProducts(value)
+    console.log('handleProductChange', singleProducts)
     setProcessOrderDetail((prevDetails) =>
       prevDetails.map((detail) => ({
         ...detail,
         [type]: {
           ...detail[type as keyof CreateProcessOrderDetailPairs],
-          processOrderDetailProduct: tempProduct
+          processOrderDetailProduct: singleProducts
         }
       }))
     )
 
-    console.log('handleProductChange', processOrderDetail)
+    console.log('product', processOrderDetail[0])
   }
 
   const handleRecycChange = (type: string, value: recyclable[]) => {
@@ -723,6 +780,7 @@ const InputProcessForm = ({
   }
 
   const handleSaveItem = async () => {
+    console.log('handleSaveItem', processOrderDetail[0].processIn)
     if (validation.length !== 0) {
       setTrySubmited(true)
       return
@@ -783,26 +841,20 @@ const InputProcessForm = ({
     }
   }
 
-  const getProductData = (key: string) => {
+  const getDefaultProduct = (key: string) => {
     const selectedProduct =
       key === 'processIn'
-        ? processOrderDetail[0].processIn.processOrderDetailProduct[0]
-        : processOrderDetail[0].processOut.processOrderDetailProduct[0]
+        ? processOrderDetail[0].processIn.processOrderDetailProduct
+        : processOrderDetail[0].processOut.processOrderDetailProduct
 
-    if (selectedProduct) {
-      const product: singleProduct = {
-        productTypeId: selectedProduct?.productTypeId,
-        productSubTypeId: selectedProduct?.productSubTypeId,
-        productAddonId: selectedProduct?.productAddonId,
-        productSubTypeRemark: selectedProduct.productSubTypeRemark,
-        productAddonTypeRemark: selectedProduct?.productAddonTypeRemark,
-        isProductSubTypeOthers: selectedProduct?.isProductSubTypeOthers,
-        isProductAddonTypeOthers: selectedProduct?.isProductSubTypeOthers
-      }
+    if (selectedProduct.length > 0) {
+      const product = transformData(selectedProduct, productType)
+
+      console.log('getDefaultProduct', product)
       return product
     }
 
-    return undefined
+    return []
   }
 
   const getDefaultRecy = (key: string) => {
@@ -917,23 +969,26 @@ const InputProcessForm = ({
                                     : 'processOut'
                                 handleRecycChange(keyType, value)
                               }}
+                              showError={
+                                (key === 'processIn'
+                                  ? processOrderDetail?.[0]?.processIn
+                                  : processOrderDetail?.[0]?.processOut
+                                )?.processOrderDetailRecyc?.length === 0 &&
+                                trySubmited
+                              }
                               subTypeRequired={true}
                               defaultRecycL={getDefaultRecy(key)}
                             />
                           </CustomField>
                         </Grid>
                       ) : value.itemCategory === 'product' ? (
-                        <CustomField
-                          label={t('pick_up_order.product_type.product')}
-                          mandatory
-                        >
-                          <ProductListSingleSelect
-                            label={t('pick_up_order.product_type.product')}
-                            options={productType ?? []}
-                            setState={(values) => {
+                        <CustomField label={t('common.productType')} mandatory>
+                          <ProductListMultiSelect
+                            options={productType || []}
+                            setState={(value) => {
                               const keyType =
                                 key === 'processIn' ? 'processIn' : 'processOut'
-                              handleProductChange(keyType, values)
+                              handleProductChange(keyType, value)
                             }}
                             itemColor={{
                               bgColor: customListTheme
@@ -943,7 +998,14 @@ const InputProcessForm = ({
                                 ? customListTheme.border
                                 : '79CA25'
                             }}
-                            defaultProduct={getProductData(key)}
+                            showError={
+                              (key === 'processIn'
+                                ? processOrderDetail?.[0]?.processIn
+                                : processOrderDetail?.[0]?.processOut
+                              )?.processOrderDetailProduct?.length === 0 &&
+                              trySubmited
+                            }
+                            defaultProduct={getDefaultProduct(key)}
                           />
                         </CustomField>
                       ) : (
