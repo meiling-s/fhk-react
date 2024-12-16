@@ -763,6 +763,7 @@
     "handler": "经手人",
     "status": "状态",
     "categoryWeight": "处理前的回收物类别及重量",
+    "categoryWeight-after": "处理后的物品类别及重量",
     "detail": {
       "processingData": "处理资料",
       "recyclingInformation": "回收物资料",

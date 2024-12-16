@@ -22,6 +22,26 @@ export type processOutImage = {
     updatedBy: string
     version: number
   }
+
+  export type ProcessInItem = {
+    status: string | undefined
+    productTypeId: any
+    productAddonTypeId: any
+    productAddonTypeRemark: any
+    productSubTypeId: any
+    productSubTypeRemark: any
+    processInDtlId: number
+    recycTypeId: string
+    recycSubTypeId: string
+    packageTypeId: string
+    weight: number
+    unitId: string
+    processinDetailPhoto: processOutImage[]
+    itemId: number
+    createdBy: string
+    updatedBy: string
+    version: number
+  }
   
   export type ProcessOut = {
     processOutId: number
