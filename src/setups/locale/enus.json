@@ -55,7 +55,9 @@
     "filledIdleDays": "Enter the number of idle days",
     "pageUnderConstruction": "Page Under Construction",
     "vehicleRouteTracker": "Vehicle Route Tracker",
-    "jobOrderScheduleBoard": "Job Order Schedule Board"
+    "jobOrderScheduleBoard": "Job Order Schedule Board",
+    "productType": "Product type(s) (Click on the type to show subtype(s), double-click to unselect)",
+    "subProductType": " Sub-type product(s) (Click on the type to show addon type(s), double-click to unselect)"
   },
   "col": {
     "createCP": "Create Collection Point",
@@ -761,6 +763,7 @@
     "handler": "Handled By",
     "status": "Status",
     "categoryWeight": "Category and Weight of Recyclables Before Processing",
+    "categoryWeight-after": "Category and Weight of Recyclables After Processing",
     "detail": {
       "processingData": "Processing Information",
       "recyclingInformation": "Recycling Information",
@@ -904,7 +907,7 @@
     "sender_warehouse": "Sender Warehouse",
     "receiver_warehouse": "Receiver Warehouse",
     "item_information": "Item information",
-    "date_time":"Date and Time",
+    "date_time": "Date and Time",
     "others": "Others",
     "confirm_reject": "Are you sure to reject the request?"
   },
@@ -1433,7 +1436,7 @@
     "delivered_weight": "Pickup Items Weight",
     "unloaded_weight": "Dropoff Items Weight",
     "item_type": "Item Category",
-    "car_number":"Vehicle Plate No."
+    "car_number": "Vehicle Plate No."
   },
   "dashboard_manufacturer": {
     "data": "Data",
@@ -1598,9 +1601,10 @@
       "inStock": "in stock",
       "weight": "weight"
     },
-    "selectedItems":"Items selected for compression",
-    "processCompress":"Processed compressed material",
+    "selectedItems": "Items selected for compression",
+    "processCompress": "Processed compressed material",
     "ask": "Ask",
+    "new": "New",
     "clickToAddItem": "Click Add to enter data for the compressed product"
   },
   "processOrder": {
@@ -1618,7 +1622,7 @@
       "package": "Package",
       "itemToProcessIn": "Expected process in items",
       "itemToProcessOut": "Expected process out items",
-      "itemCategory": "Item category (click a category to display subcategories, double-click",
+      "itemCategory": "Item category (click a category to display subcategories",
       "recycling": "Recyclable",
       "product": "Product",
       "warehouse": "Warehouse"

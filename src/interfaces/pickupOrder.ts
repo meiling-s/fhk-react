@@ -69,7 +69,7 @@ export interface PickupOrder {
     updatedBy:         string;
     updatedAt:         string;
     createdAt:         string;
-    refPicoId:         string;
+    refPicoId?:         string;
     pickupOrderDetail: PickupOrderDetail[];
     version?: number;
 }
@@ -187,7 +187,7 @@ export interface Row {
     rejectedBy:    string;
     contractNo:    string;
     updatedBy:     string;
-    refPicoId:     string ;
+    refPicoId?:     string ;
     updatePicoDetail: CreatePicoDetail[]
     version?: number;
     specificDates: string[];
