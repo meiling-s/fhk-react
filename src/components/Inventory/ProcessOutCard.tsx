@@ -8,7 +8,7 @@ import {
   Collapse,
 } from "@mui/material";
 import { FunctionComponent, useState } from "react";
-import { ProcessOutData } from "../../interfaces/inventory";
+import { GIDValue, ProcessOutData } from "../../interfaces/inventory";
 import { useTranslation } from "react-i18next";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
@@ -32,17 +32,19 @@ dayjs.extend(timezone);
 
 interface ProcessOutCardProps {
   data: ProcessOutData;
+  handleClickGIDLabel: (gidValue: GIDValue) => void;
 }
 
-const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({ data }) => {
+const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
+  data,
+  handleClickGIDLabel,
+}) => {
   const { weightUnits, dateFormat } = useContainer(CommonTypeContainer);
   const { i18n, t } = useTranslation();
   const [expanded, setExpanded] = useState(true);
   const handleToggle = () => {
     setExpanded((prev) => !prev);
   };
-
-  console.log(data, "data");
 
   const getConditionalValue = (data: ProcessOutData, type: string) => {
     if (type === "company") {
@@ -117,7 +119,11 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({ data }) => {
             <ExpandMore sx={{ color: "#79CA25" }} />
           )}
         </IconButton>
-        <Typography variant="h6">{t("inventory.process_out")}</Typography>
+        <Typography variant="h6">
+          {data.eventType === "processout"
+            ? t("inventory.process_out")
+            : t("inventory.process_in")}
+        </Typography>
         <Typography
           variant="body2"
           color="textSecondary"
@@ -248,6 +254,13 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({ data }) => {
                     variant="body2"
                     color="textSecondary"
                     sx={{ color: "#199BEC", cursor: "pointer" }}
+                    onClick={() => {
+                      const gidValue = {
+                        gid: data.process_in.gid[0],
+                        gidLabel: data.process_in.gidLabel,
+                      };
+                      handleClickGIDLabel(gidValue);
+                    }}
                   >
                     {data.process_in.gidLabel}
                   </Typography>
@@ -376,6 +389,13 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({ data }) => {
                     variant="body2"
                     color="textSecondary"
                     sx={{ color: "#199BEC", cursor: "pointer" }}
+                    onClick={() => {
+                      const gidValue = {
+                        gid: data.process_out.gid[0],
+                        gidLabel: data.process_out.gidLabel,
+                      };
+                      handleClickGIDLabel(gidValue);
+                    }}
                   >
                     {data.process_out.gidLabel}
                   </Typography>

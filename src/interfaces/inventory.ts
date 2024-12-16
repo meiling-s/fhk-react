@@ -59,6 +59,7 @@ export type GIDItem = {
   createdAt: string
   updatedAt: string
   gid: number
+  location?: string
   packageName?: string
 }
 
@@ -103,6 +104,7 @@ export type ProcessOutData = {
   process_in: ProcessInOutEventDetail
   createdAt: string
   unitId: string
+  eventType: string
 }
 
 export type ProcessingRecordData = {
@@ -200,7 +202,7 @@ export type EventTrackingData = {
 }
 
 export type InventoryTracking = {
-  gid: number[]
+  gid: number[] | number
   labelId: string
   parentIds: number[]
   childrenIds: number[]
@@ -280,4 +282,9 @@ export interface ProcessOutDetailType {
 export interface ProcessDetailPhotoType {
   sid: number;
   photo: string;
+}
+
+export interface GIDValue {
+  gid: number;
+  gidLabel: string;
 }

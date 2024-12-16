@@ -1,15 +1,6 @@
+import { Box } from "@mui/material";
+import { FunctionComponent, useEffect, useState } from "react";
 import {
-  Box,
-  Grid,
-  Typography,
-  Card,
-  CardContent,
-  IconButton,
-  Collapse,
-} from "@mui/material";
-import React, { FunctionComponent, useEffect, useState } from "react";
-import {
-  InventoryDetail as InvDetails,
   InventoryTracking,
   EventTrackingData,
   ProcessingRecordData,
@@ -17,30 +8,10 @@ import {
   ProcessOutData,
   StockAdjustmentData,
   InternalTransferData,
+  GIDValue,
 } from "../../../interfaces/inventory";
-import { useTranslation } from "react-i18next";
-import {
-  AccountTree,
-  CalendarToday,
-  ExpandLess,
-  ExpandMore,
-  LocationOn,
-  Scale,
-} from "@mui/icons-material";
-import {
-  CALENDAR_ICON,
-  COMPANY_ICON,
-  FACTORY_ICON,
-  FOLDER_ICON,
-  INVENTORY_ICON,
-  MEMORY_ICON,
-  WEIGHT_ICON,
-} from "src/themes/icons";
 import { getItemTrackInventory } from "src/APICalls/Collector/inventory";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import CheckinCard from "src/components/Inventory/CheckinCard";
-import CompactorCard from "src/components/Inventory/CompactorCard";
 import StockAdjustmentCard from "src/components/Inventory/StockAdjustmentCard";
 import ProcessOutCard from "src/components/Inventory/ProcessOutCard";
 import ProcessingRecordCard from "../../../components/Inventory/ProcessingRecord";
@@ -48,10 +19,12 @@ import InternalTransferCard from "src/components/Inventory/InternalTransfer";
 
 interface ItemTrackingProps {
   shippingData: InventoryTracking;
+  handleGetHyperlinkData: (gidValue: GIDValue) => void;
 }
 
 const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
   shippingData,
+  handleGetHyperlinkData,
 }) => {
   const [parsedEventDetails, setParsedEventDetails] =
     useState<InventoryTracking>();
@@ -66,13 +39,22 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
     return "";
   };
 
+  const handleClickGIDLabel = (gidValue: GIDValue) => {
+    if (shippingData.gid !== gidValue.gid) {
+      handleGetHyperlinkData(gidValue);
+    }
+  };
+
   useEffect(() => {
     if (shippingData.event.length > 0) {
       const processedData: InventoryTracking = { ...shippingData };
       const processEventDetails = async () => {
         const updatedEvents = await Promise.all(
           shippingData.event.map(async (value: EventTrackingData) => {
-            if (value.eventType === "processout") {
+            if (
+              value.eventType === "processout" ||
+              value.eventType === "processin"
+            ) {
               const details = JSON.parse(value.eventDetail);
               details.process_in.gidLabel =
                 details.process_in.gid.length > 0
@@ -84,6 +66,7 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
                   : "";
               details.createdAt = value.createdAt;
               details.unitId = shippingData.unitId;
+              details.eventType = value.eventType;
 
               return { ...value, details };
             } else if (value.eventType === "processRecord") {
@@ -142,9 +125,13 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
                 data={eventItem.details as StockAdjustmentData}
               />
             )}
-            {eventItem.eventType === "processout" && (
-              <ProcessOutCard data={eventItem.details as ProcessOutData} />
-            )}
+            {eventItem.eventType === "processout" ||
+            eventItem.eventType === "processin" ? (
+              <ProcessOutCard
+                data={eventItem.details as ProcessOutData}
+                handleClickGIDLabel={handleClickGIDLabel}
+              />
+            ) : null}
             {eventItem.eventType === "processRecord" && (
               <ProcessingRecordCard
                 data={eventItem.details as ProcessingRecordData}

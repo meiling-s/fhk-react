@@ -738,6 +738,7 @@
     "warehouse_recycling": "货仓/回收点",
     "internal_transfer": "内部运输",
     "process_out": "处理输出",
+    "process_in": "处理输入",
     "pickup_order_record": "回收运单纪录"
   },
   "processRecord": {

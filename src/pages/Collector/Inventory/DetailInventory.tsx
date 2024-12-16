@@ -6,28 +6,29 @@ import CustomField from "../../../components/FormComponents/CustomField";
 import CircularLoading from "../../../components/CircularLoading";
 import {
   InventoryItem,
-  InventoryDetail as InvDetails,
   InventoryTracking,
+  GIDValue,
 } from "../../../interfaces/inventory";
 import { useTranslation } from "react-i18next";
-import { PickupOrder } from "../../../interfaces/pickupOrder";
 import { returnApiToken, formatWeight } from "../../../utils/utils";
 import { getItemTrackInventory } from "../../../APICalls/Collector/inventory";
-import InventoryShippingCard from "../../../components/InventoryShippingCard";
 import { useContainer } from "unstated-next";
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import ItemTracking from "./ItemTracking";
+import { useLocation } from "react-router-dom";
 
 interface InventoryDetailProps {
   drawerOpen: boolean;
   handleDrawerClose: () => void;
   selectedRow?: InventoryItem | null;
+  handleGetHyperlinkData: (gidValue: GIDValue) => void;
 }
 
 const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   drawerOpen,
   handleDrawerClose,
   selectedRow,
+  handleGetHyperlinkData,
 }) => {
   const { t } = useTranslation();
   const [shippingData, setShippingData] = useState<InventoryTracking | null>(
@@ -35,6 +36,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   );
   const { decimalVal } = useContainer(CommonTypeContainer);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const location = useLocation();
 
   const fieldItem = [
     {
@@ -76,6 +78,16 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
       value: `${formatWeight(selectedRow?.weight || 0, decimalVal)} kg`,
     },
   ];
+
+  const filteredFieldItem = fieldItem.filter((item) => {
+    if (
+      location.pathname === "/astd/globalItemID" &&
+      item.label === t("inventory.inventoryLocation")
+    ) {
+      return false;
+    }
+    return true;
+  });
 
   useEffect(() => {
     initItemTrackInventory();
@@ -134,15 +146,17 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
                 </Typography>
               </Box>
             </Grid>
-            {fieldItem.map((item, index) => (
-              <Grid item key={index}>
-                <CustomField label={item.label}>
-                  <Typography sx={localStyle.textField}>
-                    {item.value}
-                  </Typography>
-                </CustomField>
-              </Grid>
-            ))}
+            {filteredFieldItem.map((item, index) => {
+              return (
+                <Grid item key={index}>
+                  <CustomField label={item.label}>
+                    <Typography sx={localStyle.textField}>
+                      {item.value}
+                    </Typography>
+                  </CustomField>
+                </Grid>
+              );
+            })}
             {isLoading ? (
               <CircularLoading />
             ) : (
@@ -153,7 +167,10 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
                       {t("inventory.track")}
                     </Typography>
                     {/* <InventoryShippingCard shippingData={shippingData} /> */}
-                    <ItemTracking shippingData={shippingData} />
+                    <ItemTracking
+                      shippingData={shippingData}
+                      handleGetHyperlinkData={handleGetHyperlinkData}
+                    />
                   </Grid>
                 )}
               </Grid>
