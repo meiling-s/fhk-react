@@ -1604,6 +1604,7 @@
     "selectedItems": "Items selected for compression",
     "processCompress": "Processed compressed material",
     "ask": "Ask",
+    "new": "New",
     "clickToAddItem": "Click Add to enter data for the compressed product"
   },
   "processOrder": {
