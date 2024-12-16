@@ -26,11 +26,14 @@ import { useContainer } from "unstated-next";
 import {
   InventoryItem,
   InventoryDetail as InvDetails,
+  GIDValue,
+  GIDItem,
 } from "../../../interfaces/inventory";
 import { il_item } from "../../../components/FormComponents/CustomItemList";
 import {
   astdGetAllInventory,
   getAllInventory,
+  getItemTrackInventory,
 } from "../../../APICalls/Collector/inventory";
 import {
   format,
@@ -160,6 +163,58 @@ function createInventory(
   };
 }
 
+function createGID(
+  labelId: string,
+  recycTypeId: string,
+  recycSubTypeId: string,
+  productTypeId: string,
+  productSubTypeId: string,
+  productSubTypeRemark: string,
+  productAddonTypeId: string,
+  productAddonTypeRemark: string,
+  recyName: string,
+  subName: string,
+  productName: string,
+  productSubName: string,
+  productAddOnName: string,
+  packageTypeId: string,
+  weight: number,
+  unitId: string,
+  updatedBy: string,
+  createdBy: string,
+  createdAt: string,
+  updatedAt: string,
+  gid: number,
+  location: string,
+  packageName: string
+): GIDItem {
+  return {
+    labelId,
+    recycTypeId,
+    recycSubTypeId,
+    productTypeId,
+    productSubTypeId,
+    productSubTypeRemark,
+    productAddonTypeId,
+    productAddonTypeRemark,
+    recyName,
+    subName,
+    productName,
+    productSubName,
+    productAddOnName,
+    packageTypeId,
+    weight,
+    unitId,
+    updatedBy,
+    createdBy,
+    createdAt,
+    updatedAt,
+    gid,
+    location,
+    packageName,
+  };
+}
+
 const Inventory: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -203,6 +258,7 @@ const Inventory: FunctionComponent = () => {
     FactoryWarehouseData[]
   >([]);
   const [productItem, setProductItem] = useState<productItem[]>([]);
+  const [isPressGID, setPressGID] = useState<boolean>(false);
 
   async function initCollectionPoint() {
     setIsLoading(true);
@@ -637,11 +693,6 @@ const Inventory: FunctionComponent = () => {
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    console.log("name", inventoryList);
-    console.log("product", productItem);
-  }, [inventoryList, productItem]);
-
   const handleSubmit = async (type: string, msg: string) => {
     if (type === "success") {
       showSuccessToast(msg);
@@ -965,6 +1016,170 @@ const Inventory: FunctionComponent = () => {
     }
   };
 
+  const handleGetHyperlinkData = async (gidValue: GIDValue) => {
+    setPressGID(true);
+    var inventoryMapping: GIDItem[] = [];
+    let result;
+    result = await getItemTrackInventory(gidValue.gid.toString());
+    const data = result?.data;
+    // setInventoryData(data?.content || []);
+    if (data) {
+      // const picoData = await getAllPickUpOrder()
+      let recyName: string = "-";
+      let subName: string = "-";
+      let productName = "-";
+      let productSubName = "-";
+      let productAddOnName = "-";
+      data.packageName = data.packageTypeId;
+      const recyclables = recycType?.find(
+        (re) => re.recycTypeId === data.recycTypeId
+      );
+      if (recyclables) {
+        if (i18n.language === Languages.ENUS)
+          recyName = recyclables.recyclableNameEng;
+        if (i18n.language === Languages.ZHCH)
+          recyName = recyclables.recyclableNameSchi;
+        if (i18n.language === Languages.ZHHK)
+          recyName = recyclables.recyclableNameTchi;
+        const subs = recyclables.recycSubType.find(
+          (sub) => sub.recycSubTypeId === data.recycSubTypeId
+        );
+        if (subs) {
+          if (i18n.language === Languages.ENUS)
+            subName = subs.recyclableNameEng;
+          if (i18n.language === Languages.ZHCH)
+            subName = subs.recyclableNameSchi;
+          if (i18n.language === Languages.ZHHK)
+            subName = subs.recyclableNameTchi;
+        }
+      }
+      const product = productType?.find(
+        (re) => re.productTypeId === data.productTypeId
+      );
+
+      if (product) {
+        const matchingProductType = productType?.find(
+          (product) => product.productTypeId === data.productTypeId
+        );
+
+        if (matchingProductType) {
+          // Product Type Name
+          switch (i18n.language) {
+            case Languages.ENUS:
+              productName = matchingProductType.productNameEng || "";
+              break;
+            case Languages.ZHCH:
+              productName = matchingProductType.productNameSchi || "";
+              break;
+            case Languages.ZHHK:
+              productName = matchingProductType.productNameTchi || "";
+              break;
+            default:
+              productName = matchingProductType.productNameTchi || "";
+              break;
+          }
+
+          // Product Subtype
+          const matchProductSubType = matchingProductType.productSubType?.find(
+            (subtype) => subtype.productSubTypeId === data.productSubTypeId
+          );
+
+          if (matchProductSubType) {
+            switch (i18n.language) {
+              case Languages.ENUS:
+                productSubName = matchProductSubType.productNameEng || "";
+                break;
+              case Languages.ZHCH:
+                productSubName = matchProductSubType.productNameSchi || "";
+                break;
+              case Languages.ZHHK:
+                productSubName = matchProductSubType.productNameTchi || "";
+                break;
+              default:
+                productSubName = matchProductSubType.productNameTchi || "";
+                break;
+            }
+          }
+
+          // Product Addon Type
+          const matchProductAddonType =
+            matchProductSubType?.productAddonType?.find(
+              (addon) => addon.productAddonTypeId === data.productAddonTypeId
+            );
+
+          if (matchProductAddonType) {
+            switch (i18n.language) {
+              case Languages.ENUS:
+                productAddOnName = matchProductAddonType.productNameEng || "";
+                break;
+              case Languages.ZHCH:
+                productAddOnName = matchProductAddonType.productNameSchi || "";
+                break;
+              case Languages.ZHHK:
+                productAddOnName = matchProductAddonType.productNameTchi || "";
+                break;
+              default:
+                productAddOnName = matchProductAddonType.productNameTchi || "";
+                break;
+            }
+          }
+        }
+      }
+      const packages = packagingMapping.find(
+        (packageItem) => packageItem.packagingTypeId === data.packageTypeId
+      );
+
+      if (packages) {
+        if (i18n.language === Languages.ENUS)
+          data.packageName = packages.packagingNameEng;
+        if (i18n.language === Languages.ZHCH)
+          data.packageName = packages.packagingNameSchi;
+        if (i18n.language === Languages.ZHHK)
+          data.packageName = packages.packagingNameTchi;
+      }
+
+      const dateInHK = dayjs.utc(data.createdAt).tz("Asia/Hong_Kong");
+      const createdAt = dateInHK.format(`${dateFormat} HH:mm`);
+
+      let selectedPico: PickupOrder[] = [];
+
+      // item.inventoryDetail?.map((invDetail: InvDetails) => {
+      //   selectedPico = picoList.filter(
+      //     (pico) => pico.picoId == invDetail.sourcePicoId
+      //   )
+      // })
+
+      inventoryMapping.push(
+        createGID(
+          data.labelId,
+          data.recycTypeId,
+          data.recycSubTypeId,
+          data.productTypeId,
+          data.productSubTypeId,
+          data.productSubTypeRemark,
+          data.productAddonTypeId,
+          data.productAddonTypeRemark,
+          recyName,
+          subName,
+          productName,
+          productSubName,
+          productAddOnName,
+          data.packageTypeId,
+          data.weight,
+          data.unitId,
+          data.updatedBy,
+          data.createdBy,
+          createdAt,
+          data.updatedAt,
+          data.gid,
+          "Not available",
+          data?.packageName
+        )
+      );
+      setSelectedRow(inventoryMapping[0]);
+    }
+  };
+
   useEffect(() => {
     if (debouncedSearchValue) {
       setInventory([]);
@@ -1117,8 +1332,11 @@ const Inventory: FunctionComponent = () => {
             handleDrawerClose={() => {
               setDrawerOpen(false);
               setSelectedRow(null);
+              setPressGID(false);
             }}
             selectedRow={selectedRow}
+            handleGetHyperlinkData={handleGetHyperlinkData}
+            isPressGID={isPressGID}
           />
           <CreateInventoryItem
             drawerOpen={createDrawerOpen}

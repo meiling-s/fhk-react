@@ -48,6 +48,24 @@ const StockAdjustmentCard: FunctionComponent<StockAdjustmentCardProps> = ({
         case "zhhk":
           return data.company_name_tc;
       }
+    } else if (type === "warehouse") {
+      switch (i18n.language) {
+        case "enus":
+          return data.location_en;
+        case "zhch":
+          return data.location_sc;
+        case "zhhk":
+          return data.location_tc;
+      }
+    } else if (type === "addr") {
+      switch (i18n.language) {
+        case "enus":
+          return data.addr_en;
+        case "zhch":
+          return data.addr_sc;
+        case "zhhk":
+          return data.addr_tc;
+      }
     }
   };
 
@@ -59,9 +77,15 @@ const StockAdjustmentCard: FunctionComponent<StockAdjustmentCardProps> = ({
           .tz("Asia/Hong_Kong")
           .format(`${dateFormat} HH:mm`)}`;
       case "zhhk":
-        return "於 2023/09/20 18:00 由【UserID】核準";
+        return `於 ${dayjs
+          .utc(data.record_date)
+          .tz("Asia/Hong_Kong")
+          .format(`${dateFormat} HH:mm`)} 由【${data.createdBy}】核準`;
       case "zhch":
-        return "于 2023/09/20 18:00 由【UserID】核准";
+        return `于 ${dayjs
+          .utc(data.record_date)
+          .tz("Asia/Hong_Kong")
+          .format(`${dateFormat} HH:mm`)} 由【${data.createdBy}】核准`;
     }
   };
 
@@ -113,7 +137,9 @@ const StockAdjustmentCard: FunctionComponent<StockAdjustmentCardProps> = ({
                     color="textSecondary"
                     sx={{ color: "#535353" }}
                   >
-                    Category - Dummy
+                    {data.eventType === "checkin_stockAdjustment"
+                      ? t("generate_report.formula_check_in")
+                      : t("generate_report.formula_check_out")}
                   </Typography>
                 </Box>
               </Box>
@@ -168,7 +194,7 @@ const StockAdjustmentCard: FunctionComponent<StockAdjustmentCardProps> = ({
                   color="textSecondary"
                   sx={{ color: "#535353" }}
                 >
-                  Warehouse Name - Dummy
+                  {getConditionalValue(data, "warehouse")}
                 </Typography>
               </Box>
             </Box>
@@ -196,7 +222,7 @@ const StockAdjustmentCard: FunctionComponent<StockAdjustmentCardProps> = ({
                   color="textSecondary"
                   sx={{ color: "#535353" }}
                 >
-                  Warehouse Address - Dummy
+                  {getConditionalValue(data, "addr")}
                 </Typography>
               </Box>
             </Box>
