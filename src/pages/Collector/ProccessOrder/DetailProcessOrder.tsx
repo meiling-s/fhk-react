@@ -42,8 +42,14 @@ import {
   DenialReasonCollectors
 } from 'src/interfaces/denialReason'
 import { formErr, localStorgeKeyName } from 'src/constants/constant'
-import { getDenialReasonByFunctionIdCollectors, getDenialReasonCollectors } from 'src/APICalls/Collector/denialReasonCollectors'
-import { getAllDenialReason, getAllDenialReasonByFunctionId } from 'src/APICalls/Collector/denialReason'
+import {
+  getDenialReasonByFunctionIdCollectors,
+  getDenialReasonCollectors
+} from 'src/APICalls/Collector/denialReasonCollectors'
+import {
+  getAllDenialReason,
+  getAllDenialReasonByFunctionId
+} from 'src/APICalls/Collector/denialReason'
 import { deleteProcessOrder } from 'src/APICalls/processOrder'
 import { il_item } from 'src/components/FormComponents/CustomItemListRecyble'
 import i18n from 'src/setups/i18n'
@@ -76,7 +82,6 @@ const CancelModal: React.FC<CancelForm> = ({
   const [showRemark, setShowRemark] = useState<boolean>(false)
   const [remarkVal, setRemarkVal] = useState<string>('')
 
-  console.log(version)
   const initDenialReasonList = async () => {
     let result = null
     if (isCollectors()) {
@@ -470,7 +475,7 @@ const DetailProcessOrder = ({
           open={drawerOpen}
           onClose={handleDrawerClose}
           anchor={'right'}
-          action={selectedRow?.status === 'CANCELLED' ? 'none' : 'edit'}
+          action={selectedRow?.status === 'CREATED' ? 'edit' : 'none'}
           headerProps={{
             title: t('processOrder.details.oderDetail'),
             subTitle: selectedRow?.labelId,
