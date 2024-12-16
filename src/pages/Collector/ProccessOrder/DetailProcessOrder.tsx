@@ -42,8 +42,8 @@ import {
   DenialReasonCollectors
 } from 'src/interfaces/denialReason'
 import { formErr, localStorgeKeyName } from 'src/constants/constant'
-import { getDenialReasonCollectors } from 'src/APICalls/Collector/denialReasonCollectors'
-import { getAllDenialReason } from 'src/APICalls/Collector/denialReason'
+import { getDenialReasonByFunctionIdCollectors, getDenialReasonCollectors } from 'src/APICalls/Collector/denialReasonCollectors'
+import { getAllDenialReason, getAllDenialReasonByFunctionId } from 'src/APICalls/Collector/denialReason'
 import { deleteProcessOrder } from 'src/APICalls/processOrder'
 import { il_item } from 'src/components/FormComponents/CustomItemListRecyble'
 import i18n from 'src/setups/i18n'
@@ -80,9 +80,9 @@ const CancelModal: React.FC<CancelForm> = ({
   const initDenialReasonList = async () => {
     let result = null
     if (isCollectors()) {
-      result = await getDenialReasonCollectors(0, 1000)
+      result = await getDenialReasonByFunctionIdCollectors(0, 1000, 73)
     } else {
-      result = await getAllDenialReason(0, 1000)
+      result = await getAllDenialReasonByFunctionId(0, 1000, 73)
     }
     const data = result?.data
     if (data.content.length > 0) {
