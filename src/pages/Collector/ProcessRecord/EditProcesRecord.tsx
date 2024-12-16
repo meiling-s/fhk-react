@@ -65,7 +65,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   selectedRow
 }) => {
   const { t, i18n} = useTranslation()
-  const { recycType, decimalVal, processType, dateFormat, weightUnits, productType, processTypeListData, packagingList } = useContainer(CommonTypeContainer)
+  const { recycType, decimalVal, dateFormat, weightUnits, productType, processTypeListData, packagingList } = useContainer(CommonTypeContainer)
   const [drawerRecyclable, setDrawerRecyclable] = useState(false)
   const [action, setAction] = useState<
     'none' | 'add' | 'edit' | 'delete' | undefined
@@ -84,8 +84,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   }
 
   const mappingProcessName = (processTypeId: string) => {
-    const combinedProcessType = [...processType || [], ...processTypeListData || []]
-    const matchingProcess = combinedProcessType?.find((item: ProcessType)=> item.processTypeId === processTypeId)
+    const matchingProcess = processTypeListData?.find((item: ProcessType)=> item.processTypeId === processTypeId)
 
     if(matchingProcess) {
     var name = ""
@@ -104,6 +103,8 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
         break
       }
       return name
+    } else {
+      return 'N/A'
     }
   }
 
