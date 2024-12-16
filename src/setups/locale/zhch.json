@@ -1602,6 +1602,7 @@
     "selectedItems": "Items selected for compression",
     "processCompress": "Processed compressed material",
     "ask": "请求",
+    "new": "新增",
     "clickToAddItem": "按新增为压缩品输入资料"
   },
   "processOrder": {

@@ -1595,6 +1595,7 @@
     "selectedItems":"已選擇壓縮的物品",
     "processCompress":"處理後的壓縮物",
     "ask": "請求",
+    "new": "新增",
     "clickToAddItem": "按新增為壓縮品輸入資料"
   },
   "processOrder": {

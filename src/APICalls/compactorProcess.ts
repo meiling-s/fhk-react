@@ -9,12 +9,16 @@ import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
 import { CompactorProcessOut } from 'src/interfaces/processCompactor'
 
-export const getPlateNoList = async () => {
+export const getPlateNoList = async (date?: string) => {
   const token = returnApiToken()
+  const params: any = {}
+  if (date) params.date = date
+
   try {
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...GET_PLATE_NO_LIST(token.decodeKeycloack, token.realmApiRoute)
+      ...GET_PLATE_NO_LIST(token.decodeKeycloack, token.realmApiRoute),
+      params: params
     })
 
     return response
@@ -32,8 +36,8 @@ export const getCompactorProcessIn = async (
     const token = returnApiToken()
 
     const params: any = {}
-    if (date) params.labelId = date
-    if (plateNo) params.frmCreatedDate = plateNo
+    if (date) params.date = date
+    if (plateNo) params.plateNo = plateNo
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
