@@ -95,6 +95,12 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
               details.createdAt = value.createdAt;
 
               return { ...value, details };
+            } else if (value.eventType === "checkin_stockAdjustment") {
+              const details = JSON.parse(value.eventDetail);
+              details.createdAt = value.createdAt;
+              details.createdBy = value.createdBy;
+
+              return { ...value, details };
             }
 
             return value;

@@ -81,7 +81,7 @@ const ItemCategoryRow: React.FC<Props> = ({
   setHasErrors,
   validation,
 }) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [errors, setErrors] = useState<{
     productAddonTypeId?: boolean;
     recycSubTypeId?: boolean;
@@ -269,8 +269,12 @@ const ItemCategoryRow: React.FC<Props> = ({
               )
             }
           >
-            <MenuItem value="recyclable">Recyclable</MenuItem>
-            <MenuItem value="product">Product</MenuItem>
+            <MenuItem value="recyclable">
+              {t("processOrder.create.recycling")}
+            </MenuItem>
+            <MenuItem value="product">
+              {t("processOrder.create.product")}
+            </MenuItem>
           </Select>
         </FormControl>
       </Grid>
