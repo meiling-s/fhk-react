@@ -362,7 +362,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                   sx={{ color: colorTheme, fontSize: '30px' }}
                 />
                 <div className="text-base text-[#535353] font-bold">
-                  {t('general_settings.new')}
+                  {t('compactor.new')}
                 </div>
               </div>
               <Box sx={{ height: '600px', overflowY: 'auto' }}>

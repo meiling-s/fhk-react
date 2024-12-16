@@ -536,7 +536,7 @@ const CompactorDashboard: FunctionComponent = () => {
           </Box>
         </Box>
         {/* SECTION 3 */}
-        {selectedCheckInIds.length === 0 && (
+        {selectedCheckInIds.length > 0 && (
           <Box>
             <div className="bg-[#7CE495] px-[20px] py-[10px] w-max text-white font-bold rounded-t-xl">
               {t('compactor.processCompress')}
