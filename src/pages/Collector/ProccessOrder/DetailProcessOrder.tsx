@@ -300,13 +300,14 @@ const DetailProcessOrder = ({
             ? item.warehouseNameTchi
             : i18n.language === 'zhch'
             ? item.warehouseNameSchi
-            : item.warehouseNameTchi
+            : item.warehouseNameEng
 
         warehouse.push({
           id: item.warehouseId.toString(),
           name: warehouseName
         })
       })
+      console.log('initWarehouse', warehouse)
       setWarehouseList(warehouse)
       mappingDetail()
     }
@@ -350,13 +351,13 @@ const DetailProcessOrder = ({
       [key: string | number]: DetailPORItem[]
     } = {}
     selectedRow?.processOrderDetail.map((it) => {
-      console.log('processOrderDetail', it.plannedStartAt)
       //set warehouse data
       let warehouseListName: string | undefined = ''
       let warehouseIds: string[] = []
       warehouseIds = it.processOrderDetailWarehouse.map((w) =>
         w.warehouseId.toString()
       )
+      console.log('warehouseList', warehouseList)
       warehouseListName = warehouseIds
         ?.map((id: string) => {
           const warehouse = warehouseList.find((it) => it.id === id.toString())
@@ -423,7 +424,13 @@ const DetailProcessOrder = ({
     ) {
       mappingDetail()
     }
-  }, [warehouseList, processTypeList, selectedRow, factoriesSource])
+  }, [
+    warehouseList,
+    processTypeList,
+    selectedRow,
+    factoriesSource,
+    i18n.language
+  ])
 
   const onDeleteReason = () => {
     handleDrawerClose()
