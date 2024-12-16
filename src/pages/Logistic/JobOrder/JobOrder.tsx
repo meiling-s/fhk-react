@@ -142,6 +142,12 @@ const SelectReasonModal: React.FC<ReasonForm> = ({
     }
   }, [rejectReasonId]);
 
+  useEffect(() => {
+    if (open === false) {
+      setIsUsingOtherRemark(false);
+    }
+  }, [open]);
+
   const handleSubmitRequest = async (rejectReasonId: string[]) => {
     const auth = returnApiToken();
     const rejectReason = rejectReasonId.map((id) => {
@@ -352,6 +358,12 @@ const RejectModal: React.FC<RejectForm> = ({
       setIsUsingOtherRemark(true);
     }
   }, [rejectReasonId]);
+
+  useEffect(() => {
+    if (open === false) {
+      setIsUsingOtherRemark(false);
+    }
+  }, [open]);
 
   const handleRejectRequest = async (rejectReasonId: string[]) => {
     const rejectReason = rejectReasonId.map((id) => {
