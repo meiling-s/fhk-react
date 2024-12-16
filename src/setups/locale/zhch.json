@@ -55,7 +55,9 @@
     "filledIdleDays": "输入闲置天数",
     "pageUnderConstruction": "页面正在建设中",
     "vehicleRouteTracker": "车辆追踪",
-    "jobOrderScheduleBoard": "司机日程"
+    "jobOrderScheduleBoard": "司机日程",
+    "productType": "产品类型（单击类型可显示子类型，双击可取消选择），",
+    "subProductType": " 子类型产品（单击类型可显示插件类型，双击可取消选择）"
   },
   "col": {
     "createCP": "建立回收点",
@@ -761,6 +763,7 @@
     "handler": "经手人",
     "status": "状态",
     "categoryWeight": "处理前的回收物类别及重量",
+    "categoryWeight-after": "处理后的物品类别及重量",
     "detail": {
       "processingData": "处理资料",
       "recyclingInformation": "回收物资料",
@@ -1620,7 +1623,7 @@
       "package": "包装",
       "itemToProcessIn": "预计待处理物品",
       "itemToProcessOut": "预计处理后物品",
-      "itemCategory": "物品类别（点选类别显示子类别，双击取消选择）",
+      "itemCategory": "物品类别（点选类别显示子类别）",
       "recycling": "回收",
       "product": "产品",
       "warehouse": "仓库"

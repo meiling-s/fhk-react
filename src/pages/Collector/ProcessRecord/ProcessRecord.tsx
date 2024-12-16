@@ -89,7 +89,7 @@ const ProcessRecord: FunctionComponent = () => {
   )
   const [selectedRow, setSelectedRow] = useState<ProcessOut | null>(null)
   const [selectedProcessOutId, setProcessOutId] = useState<number>(1)
-  const { processType, dateFormat, processTypeListData } = useContainer(CommonTypeContainer)
+  const {dateFormat, processTypeListData } = useContainer(CommonTypeContainer)
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
@@ -170,8 +170,7 @@ const ProcessRecord: FunctionComponent = () => {
   }
 
   const mappingProcessName = (processTypeId: string) => {
-    const combinedProcessType = [...processType!, ...processTypeListData!]
-    const matchingProcess = combinedProcessType?.find(
+    const matchingProcess = processTypeListData?.find(
       (item: ProcessType) => item.processTypeId === processTypeId
     )
 
@@ -192,6 +191,8 @@ const ProcessRecord: FunctionComponent = () => {
           break
       }
       return name
+    } else {
+      return 'N/A'
     }
   }
 

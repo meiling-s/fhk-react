@@ -1,4 +1,4 @@
-import { Box, Grid, Divider, Typography, Button } from '@mui/material'
+import { Box, Grid, Divider, Typography, Button, CircularProgress } from '@mui/material'
 import React, { FunctionComponent, useEffect, useState } from 'react'
 import { styles } from '../../../constants/styles'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
@@ -13,6 +13,7 @@ import {
   processOutImage,
   ProcessOutItem,
   CreateRecyclable,
+  ProcessInItem,
 } from '../../../interfaces/processRecords'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import dayjs from 'dayjs'
@@ -25,7 +26,9 @@ import { localStorgeKeyName } from '../../../constants/constant'
 import { createProcessRecordItem, 
   editProcessRecordItem, 
   deleteProcessOutItem, 
-  getProcessRecordDetail} from '../../../APICalls/Collector/processRecords'
+  getProcessRecordDetail,
+  getProcessInRecordDetail
+} from '../../../APICalls/Collector/processRecords'
 import { displayCreatedDate, extractError, formatWeight } from '../../../utils/utils'
 import { ToastContainer, toast } from 'react-toastify'
 import { ProcessType } from '../../../interfaces/common'
@@ -33,7 +36,8 @@ import { useNavigate } from 'react-router-dom'
 
 type RecycItem = {  
   itemId: number
-  processOutDtlId: number
+  processOutDtlId?: number
+  processInDtlId?: number
   recycType: il_item
   recycSubtype: il_item
   productType: il_item
@@ -42,7 +46,7 @@ type RecycItem = {
   productAddonId :il_item
   productAddonRemark: string
   weight: number
-  images: string[]
+  images?: string[]
   unitId?: string
   status?: string
   packageTypeId: string
@@ -61,7 +65,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   selectedRow
 }) => {
   const { t, i18n} = useTranslation()
-  const { recycType, decimalVal, processType, dateFormat, weightUnits, productType, processTypeListData, packagingList } = useContainer(CommonTypeContainer)
+  const { recycType, decimalVal, dateFormat, weightUnits, productType, processTypeListData, packagingList } = useContainer(CommonTypeContainer)
   const [drawerRecyclable, setDrawerRecyclable] = useState(false)
   const [action, setAction] = useState<
     'none' | 'add' | 'edit' | 'delete' | undefined
@@ -70,7 +74,9 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const [reloadData, setReloadData] = useState(false);
   const [recycItem, setRecycItem] = useState<RecycItem[]>([])
+  const [recycItemBefore, setRecycItemBefore] = useState<RecycItem[]>([])
   const [selectedItem, setSelectedItem] = useState<RecycItem | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const navigate = useNavigate()
   const emptyList= {
     name: '',
@@ -78,8 +84,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   }
 
   const mappingProcessName = (processTypeId: string) => {
-    const combinedProcessType = [...processType || [], ...processTypeListData || []]
-    const matchingProcess = combinedProcessType?.find((item: ProcessType)=> item.processTypeId === processTypeId)
+    const matchingProcess = processTypeListData?.find((item: ProcessType)=> item.processTypeId === processTypeId)
 
     if(matchingProcess) {
     var name = ""
@@ -98,6 +103,8 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
         break
       }
       return name
+    } else {
+      return 'N/A'
     }
   }
 
@@ -268,7 +275,18 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     })
   }
 
-  const getProcessDetail = async () => {
+  const getProcessDetailBefore = async () => {
+    if(selectedRow){
+      const result = await getProcessInRecordDetail(selectedRow?.processInId)
+      if(result) {
+        return result.data
+      } else {
+        return null
+      }
+    }
+  }
+
+  const getProcessDetailAfter = async () => {
     if(selectedRow ){
       const result = await getProcessRecordDetail(selectedRow?.processOutId)
       if(result) {
@@ -279,67 +297,112 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     }
   }
 
-  useEffect(() => {
-    setRecycItem([])
-    const getDetail = async () => {
-        const processOut = await getProcessDetail();
-      if (selectedRow && processOut ) {
-      
-        const recycItems: RecycItem[] = []
-  
-        processOut.forEach((detail: ProcessOutItem) => {
-          if (detail.status === 'ACTIVE') {
-            const recycResult = mappingRecyName(
-              detail.recycTypeId,
-              detail.recycSubTypeId
-            )
-            const productResult = mappingProductName(
-              detail.productTypeId,
-              detail.productSubTypeId,
-              detail.productAddonTypeId
-            )
-            
-            recycItems.push({
-              itemId: detail.itemId,
-              processOutDtlId: detail.processOutDtlId,
-              recycType: detail.recycTypeId ? {
-                name: recycResult?.name || '',
-                id: detail.recycTypeId
-              } : emptyList,
-              recycSubtype: detail.recycSubTypeId ? {
-                name: recycResult?.subName || '',
-                id: detail.recycSubTypeId
-              } : emptyList,
-              productType: detail.productTypeId ? {
-                name: productResult?.productTypeName || '',
-                id: detail.productTypeId
-              } : emptyList,
-              productSubtype: detail.productSubTypeId ? {
-                name: productResult?.productSubTypeName || '',
-                id: detail.productSubTypeId
-              } : emptyList,
-              productSubtypeRemark: detail.productSubTypeRemark,
-              productAddonId :detail.productAddonTypeId ? {
-                name: productResult?.productAddonTypeName || '',
-                id: detail.productAddonTypeId
-              } : emptyList,
-              productAddonRemark: detail.productAddonTypeId,
-              packageTypeId: detail?.packageTypeId,
-              weight: detail.weight,
-              images: detail.processoutDetailPhoto.map((item) => {
+  const constructProcessInOutData = (processInOut: ProcessInItem[] | ProcessOutItem[], type: 'in' | 'out'): RecycItem[] => {
+    try {
+      const recycItems: RecycItem[] = []
+      const arr = type === 'in' 
+      ? (processInOut as ProcessInItem[]) 
+      : (processInOut as ProcessOutItem[]);
+    
+      arr.forEach((detail) => {
+        if (detail.status === 'ACTIVE' || type === 'in') {
+          const recycResult = mappingRecyName(
+            detail.recycTypeId,
+            detail.recycSubTypeId
+          )
+          const productResult = mappingProductName(
+            detail.productTypeId,
+            detail.productSubTypeId,
+            detail.productAddonTypeId
+          )
+          var obj = {}
+
+          if (type === 'in') {
+            const processInDetail = detail as ProcessInItem;
+            obj = {
+              processInDtlId: processInDetail.processInDtlId,
+              images: processInDetail.processinDetailPhoto.map((item) => {
                 if (item.photo.startsWith('data:image/jpeg;base64,')) {
                   return item.photo;
                 }
                 return `data:image/jpeg;base64,${item.photo}`;
               }),
-              unitId: detail.unitId,
-              version: detail.version,
-              status: detail.status
-            })
+            }
+          } else {
+            const processOutDetail = detail as ProcessOutItem;
+            obj = {
+              processOutDtlId: processOutDetail.processOutDtlId,
+              images: processOutDetail.processoutDetailPhoto.map((item) => {
+                if (item.photo.startsWith('data:image/jpeg;base64,')) {
+                  return item.photo;
+                }
+                return `data:image/jpeg;base64,${item.photo}`;
+              }),
+            }
           }
-        })
-        setRecycItem(recycItems)
+        
+          recycItems.push({
+            ...obj,
+            itemId: detail.itemId,
+            recycType: detail.recycTypeId ? {
+              name: recycResult?.name || '',
+              id: detail.recycTypeId
+            } : emptyList,
+            recycSubtype: detail.recycSubTypeId ? {
+              name: recycResult?.subName || '',
+              id: detail.recycSubTypeId
+            } : emptyList,
+            productType: detail.productTypeId ? {
+              name: productResult?.productTypeName || '',
+              id: detail.productTypeId
+            } : emptyList,
+            productSubtype: detail.productSubTypeId ? {
+              name: productResult?.productSubTypeName || '',
+              id: detail.productSubTypeId
+            } : emptyList,
+            productSubtypeRemark: detail.productSubTypeRemark,
+            productAddonId :detail.productAddonTypeId ? {
+              name: productResult?.productAddonTypeName || '',
+              id: detail.productAddonTypeId
+            } : emptyList,
+            productAddonRemark: detail.productAddonTypeId,
+            packageTypeId: detail?.packageTypeId,
+            weight: detail.weight,
+            unitId: detail.unitId,
+            version: detail.version,
+            status: detail.status
+          })
+        }
+      })
+      return recycItems;
+    } catch (err) {
+      console.log('err', err)
+      return []
+    }
+  }
+
+  useEffect(() => {
+    setRecycItemBefore([])
+    setRecycItem([])
+    const getDetail = async () => {
+      try {
+        setIsLoading(true);
+        const processIn = await getProcessDetailBefore();
+        const processOut = await getProcessDetailAfter();
+
+        if (selectedRow && processIn) {
+          const recycItems: RecycItem[] = constructProcessInOutData(processIn, 'in');
+          setRecycItemBefore(recycItems);
+        }
+
+        if (selectedRow && processOut) {
+          const recycItems: RecycItem[] = constructProcessInOutData(processOut, 'out');
+          setRecycItem(recycItems);
+        }
         setReloadData(false);
+        setIsLoading(false);
+      } catch (err) {
+        setIsLoading(false);
       }
     };
     getDetail();
@@ -504,11 +567,97 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                   </Typography>
                 </Box>
               </Grid>
+
               <Grid item>
                 <Box>
                   <div className="recyle-type-weight text-[13px] text-[#ACACAC] font-normal tracking-widest mb-4">
                     {t('processRecord.categoryWeight')}
                   </div>
+                  {isLoading && <CircularProgress color="success" />}
+                  {recycItemBefore?.map((item, index) => {
+                    const weightType = weightUnits && weightUnits.find((value) => value.unitId === Number(item.unitId))
+                    const weightUnit = i18n.language === 'enus' ? weightType?.unitNameEng : i18n.language === 'zhch' ? weightType?.unitNameSchi : weightType?.unitNameTchi
+
+                    const packagingName = packagingList.find(value => value.packagingTypeId === item.packageTypeId)
+                    const selectedPackaging = 
+                      i18n.language === 'enus' ? packagingName?.packagingNameEng : 
+                        i18n.language === 'zhch' ? packagingName?.packagingNameSchi : 
+                          packagingName?.packagingNameTchi
+
+                    return (
+                      <div
+                        key={index}
+                        className="recyle-item px-4 py-2 rounded-xl border border-solid border-[#E2E2E2] mt-4"
+                      >
+                        <div className="detail flex justify-between items-center">
+                          <div className="recyle-type flex items-center gap-2">
+                            <div className="category" style={categoryRecyle}>
+                              {selectedPackaging ?? item.packageTypeId}
+                            </div>
+                            {item.recycType?.name && (
+                              <div>
+                                <div className="sub-type text-s text-black font-bold tracking-widest">
+                                  {item.recycType.name}
+                                </div>
+                                {item.recycSubtype?.name && (
+                                  <div className="type text-xs text-[#ACACAC] font-normal tracking-widest mb-2">
+                                    {item.recycSubtype.name}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {!item.recycType?.name && (
+                              <div>
+                                <div className="sub-type text-s text-black font-bold tracking-widest">
+                                  {item.productType.name}
+                                </div>
+                                {item.productSubtype?.name && (
+                                  <div className="type text-xs text-[#9CA3AF] font-normal tracking-widest">
+                                    {item.productSubtype.name}
+                                  </div>
+                                )}
+                                {item.productAddonId?.name && (
+                                  <div className="type text-xs text-[#9CA3AF] font-normal tracking-widest">
+                                    {item.productAddonId.name}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          <div className="right action flex items-center gap-2">
+                            <div className="weight font-bold font-base">
+                              {formatWeight(item.weight, decimalVal)}{weightUnit}
+                            </div>
+                            {/* )} */}
+                          </div>
+                        </div>
+                        {item?.images?.length != 0 && (
+                          <div className="images mt-3 grid lg:grid-cols-4 sm:rid grid-cols-2 gap-4">
+                            {item?.images?.map((img, index) => {
+                              return (
+                                <img
+                                  src={img}
+                                  alt=""
+                                  key={index}
+                                  className="lg:w-[100px] h-[100px] object-cover sm:w-16"
+                                />
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </Box>
+              </Grid>
+
+              <Grid item>
+                <Box>
+                  <div className="recyle-type-weight text-[13px] text-[#ACACAC] font-normal tracking-widest mb-4">
+                    {t('processRecord.categoryWeight-after')}
+                  </div>
+                  {isLoading && <CircularProgress color="success" />}
                   {recycItem?.map((item, index) => {
                     const weightType = weightUnits && weightUnits.find((value) => value.unitId === Number(item.unitId))
                     const weightUnit = i18n.language === 'enus' ? weightType?.unitNameEng : i18n.language === 'zhch' ? weightType?.unitNameSchi : weightType?.unitNameTchi
@@ -587,9 +736,9 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                             {/* )} */}
                           </div>
                         </div>
-                        {item.images.length != 0 && (
+                        {item?.images?.length != 0 && (
                           <div className="images mt-3 grid lg:grid-cols-4 sm:rid grid-cols-2 gap-4">
-                            {item.images.map((img, index) => {
+                            {item?.images?.map((img, index) => {
                               return (
                                 <img
                                   src={img}
@@ -606,29 +755,6 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                   })}
                 </Box>
               </Grid>
-              {/* <Grid item>
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    setDrawerRecyclable(true)
-                    setAction('add')
-                  }}
-                  sx={{
-                    padding: '32px',
-                    width: '100%',
-                    borderColor: theme.palette.primary.main,
-                    color: 'black',
-                    borderRadius: '10px'
-                  }}
-                >
-                  <div className="inline-grid">
-                    <AddCircleIcon
-                      sx={{ ...styles.endAdornmentIcon, pl: '3px' }}
-                    />
-                    {t('pick_up_order.new')}
-                  </div>
-                </Button>
-              </Grid> */}
             </Grid>
           </Box>
           <EditRecyclableForm

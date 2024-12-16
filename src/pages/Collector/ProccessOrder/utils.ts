@@ -1,3 +1,5 @@
+import { productItem } from 'src/components/SpecializeComponents/ProductListMultiSelect'
+import { singleProduct } from 'src/components/SpecializeComponents/ProductListSingleSelect'
 import { recycType } from 'src/interfaces/common'
 import { Products } from 'src/interfaces/productType'
 import i18n from 'src/setups/i18n'
@@ -130,4 +132,104 @@ export const mappingAddonsType = (
     }
   }
   return '-'
+}
+
+export function transformData(
+  data: singleProduct[],
+  productType: Products[]
+): productItem[] {
+  // Group data by productTypeId
+  const productMap = new Map<string, productItem>()
+
+  data.forEach((item) => {
+    const {
+      productTypeId,
+      productSubTypeId,
+      productAddonId,
+      productSubTypeRemark,
+      productAddonTypeRemark,
+      isProductSubTypeOthers,
+      isProductAddonTypeOthers
+    } = item
+
+    // Find or create productType
+    if (!productMap.has(productTypeId)) {
+      const selectedProd = productType.find(
+        (it) => it.productTypeId === productTypeId
+      )
+
+      const name =
+        i18n.language === 'zhhk'
+          ? selectedProd?.productNameTchi
+          : i18n.language === 'zhch'
+          ? selectedProd?.productNameSchi
+          : selectedProd?.productNameEng
+
+      productMap.set(productTypeId, {
+        productType: { id: productTypeId, name: name || 'Unknown' },
+        productSubType: []
+      })
+    }
+    const product = productMap.get(productTypeId)!
+
+    // Find or create productSubType
+    let subType = product.productSubType.find(
+      (st) => st.productSubType.id === productSubTypeId
+    )
+
+    if (!subType) {
+      // Fetch the subtype name from the productType source
+      const subTypeItem = productType
+        .find((it) => it.productTypeId === productTypeId)
+        ?.productSubType?.find(
+          (sub) => sub.productSubTypeId === productSubTypeId
+        )
+
+      const subTypeName =
+        i18n.language === 'zhhk'
+          ? subTypeItem?.productNameTchi
+          : i18n.language === 'zhch'
+          ? subTypeItem?.productNameSchi
+          : subTypeItem?.productNameEng
+
+      subType = {
+        productSubType: {
+          id: productSubTypeId,
+          name: subTypeName || '-'
+        },
+        productSubTypeRemark,
+        isProductSubTypeOthers,
+        productAddon: []
+      }
+      product.productSubType.push(subType)
+    }
+
+    // Add productAddon to productSubType
+    if (productAddonId || productAddonTypeRemark) {
+      // Fetch the addon name from the productType source
+      const addonItem = productType
+        .find((it) => it.productTypeId === productTypeId)
+        ?.productSubType?.find(
+          (sub) => sub.productSubTypeId === productSubTypeId
+        )
+        ?.productAddonType?.find(
+          (addon) => addon.productAddonTypeId === productAddonId
+        )
+
+      const addonName =
+        i18n.language === 'zhhk'
+          ? addonItem?.productNameTchi
+          : i18n.language === 'zhch'
+          ? addonItem?.productNameSchi
+          : addonItem?.productNameEng
+
+      subType.productAddon.push({
+        productAddon: { id: productAddonId, name: addonName || '-' },
+        isProductAddonTypeOthers,
+        productAddonTypeRemark
+      })
+    }
+  })
+
+  return Array.from(productMap.values())
 }
