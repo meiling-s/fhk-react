@@ -258,6 +258,7 @@ const Inventory: FunctionComponent = () => {
     FactoryWarehouseData[]
   >([]);
   const [productItem, setProductItem] = useState<productItem[]>([]);
+  const [isPressGID, setPressGID] = useState<boolean>(false);
 
   async function initCollectionPoint() {
     setIsLoading(true);
@@ -692,11 +693,6 @@ const Inventory: FunctionComponent = () => {
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    console.log("name", inventoryList);
-    console.log("product", productItem);
-  }, [inventoryList, productItem]);
-
   const handleSubmit = async (type: string, msg: string) => {
     if (type === "success") {
       showSuccessToast(msg);
@@ -1021,6 +1017,7 @@ const Inventory: FunctionComponent = () => {
   };
 
   const handleGetHyperlinkData = async (gidValue: GIDValue) => {
+    setPressGID(true);
     var inventoryMapping: GIDItem[] = [];
     let result;
     result = await getItemTrackInventory(gidValue.gid.toString());
@@ -1335,9 +1332,11 @@ const Inventory: FunctionComponent = () => {
             handleDrawerClose={() => {
               setDrawerOpen(false);
               setSelectedRow(null);
+              setPressGID(false);
             }}
             selectedRow={selectedRow}
             handleGetHyperlinkData={handleGetHyperlinkData}
+            isPressGID={isPressGID}
           />
           <CreateInventoryItem
             drawerOpen={createDrawerOpen}

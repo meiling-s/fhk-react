@@ -21,6 +21,7 @@ interface InventoryDetailProps {
   drawerOpen: boolean;
   handleDrawerClose: () => void;
   selectedRow?: InventoryItem | null;
+  isPressGID?: boolean;
   handleGetHyperlinkData: (gidValue: GIDValue) => void;
 }
 
@@ -28,6 +29,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   drawerOpen,
   handleDrawerClose,
   selectedRow,
+  isPressGID,
   handleGetHyperlinkData,
 }) => {
   const { t } = useTranslation();
@@ -82,6 +84,12 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   const filteredFieldItem = fieldItem.filter((item) => {
     if (
       location.pathname === "/astd/globalItemID" &&
+      item.label === t("inventory.inventoryLocation")
+    ) {
+      return false;
+    }
+    if (
+      isPressGID === true &&
       item.label === t("inventory.inventoryLocation")
     ) {
       return false;
