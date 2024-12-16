@@ -6,7 +6,8 @@ import {
   CREATE_PROCESS_OUT_ITEM,
   EDIT_PROCESS_OUT_DETAIL_ITEM,
   DELETE_PROCESS_OUT_DETAIL_ITEM,
-  DELETE_PROCESS_OUT_RECORD
+  DELETE_PROCESS_OUT_RECORD,
+  GET_PROCESS_IN_DETAIL
 } from '../../constants/requests'
 import { returnApiToken } from '../../utils/utils'
 import axiosInstance from '../../constants/axiosInstance'
@@ -45,6 +46,24 @@ export const getProcessRecordDetail = async (processOutId: number) => {
     const response = await axiosInstance({
         baseURL: window.baseURL.collector,
       ...GET_PROCESS_OUT_DETAIL(token.decodeKeycloack, processOutId, token.realmApiRoute )
+      
+    })
+
+    return response
+  } catch (e) {
+    console.error('Get process record detail failed:', e)
+    return null
+  }
+}
+
+
+export const getProcessInRecordDetail = async (processOutId: number) => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+        baseURL: window.baseURL.collector,
+      ...GET_PROCESS_IN_DETAIL(token.decodeKeycloack, processOutId, token.realmApiRoute )
       
     })
 
