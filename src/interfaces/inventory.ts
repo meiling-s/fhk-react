@@ -102,6 +102,7 @@ export type ProcessOutData = {
   process_type_tc: string
   process_in: ProcessInOutEventDetail
   createdAt: string
+  unitId: string
 }
 
 export type ProcessingRecordData = {

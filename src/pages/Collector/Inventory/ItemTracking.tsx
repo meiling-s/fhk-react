@@ -83,6 +83,7 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
                   ? await getGIDLabel(details.process_out.gid[0])
                   : "";
               details.createdAt = value.createdAt;
+              details.unitId = shippingData.unitId;
 
               return { ...value, details };
             } else if (value.eventType === "processRecord") {
@@ -141,9 +142,9 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
                 data={eventItem.details as StockAdjustmentData}
               />
             )}
-            {/* {eventItem.eventType === "processout" && (
+            {eventItem.eventType === "processout" && (
               <ProcessOutCard data={eventItem.details as ProcessOutData} />
-            )} */}
+            )}
             {eventItem.eventType === "processRecord" && (
               <ProcessingRecordCard
                 data={eventItem.details as ProcessingRecordData}

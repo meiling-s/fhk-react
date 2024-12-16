@@ -90,6 +90,20 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({ data }) => {
         case "zhhk":
           return data.process_type_tc;
       }
+    } else if (type === "weightUnit") {
+      const selectedWeight = weightUnits.find(
+        (value) => value.unitId === Number(data.unitId)
+      );
+      if (selectedWeight) {
+        switch (i18n.language) {
+          case "enus":
+            return selectedWeight.unitNameEng;
+          case "zhch":
+            return selectedWeight.unitNameSchi;
+          case "zhhk":
+            return selectedWeight.unitNameTchi;
+        }
+      }
     }
   };
 
@@ -323,7 +337,8 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({ data }) => {
                     color="textSecondary"
                     sx={{ color: "#535353" }}
                   >
-                    {data.process_in.total_weight || "-"}
+                    {data.process_in.total_weight}{" "}
+                    {getConditionalValue(data, "weightUnit")}
                   </Typography>
                 </Box>
               </Box>
@@ -450,7 +465,8 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({ data }) => {
                     color="textSecondary"
                     sx={{ color: "#535353" }}
                   >
-                    {data.process_out.total_weight || "-"}
+                    {data.process_out.total_weight}{" "}
+                    {getConditionalValue(data, "weightUnit")}
                   </Typography>
                 </Box>
               </Box>
