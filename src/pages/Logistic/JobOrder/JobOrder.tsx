@@ -142,6 +142,12 @@ const SelectReasonModal: React.FC<ReasonForm> = ({
     }
   }, [rejectReasonId]);
 
+  useEffect(() => {
+    if (open === false) {
+      setIsUsingOtherRemark(false);
+    }
+  }, [open]);
+
   const handleSubmitRequest = async (rejectReasonId: string[]) => {
     const auth = returnApiToken();
     const rejectReason = rejectReasonId.map((id) => {
@@ -339,6 +345,25 @@ const RejectModal: React.FC<RejectForm> = ({
 }) => {
   const { t } = useTranslation();
   const [rejectReasonId, setRejectReasonId] = useState<string[]>([]);
+  const [otherRemark, setOtherRemark] = useState<string>("");
+  const [isUsingOtherRemark, setIsUsingOtherRemark] = useState<boolean>(false);
+
+  useEffect(() => {
+    console.log(rejectReasonId);
+    const selectedReason = rejectReasonId.find((value) => value == "43");
+    if (!selectedReason) {
+      setOtherRemark("");
+      setIsUsingOtherRemark(false);
+    } else {
+      setIsUsingOtherRemark(true);
+    }
+  }, [rejectReasonId]);
+
+  useEffect(() => {
+    if (open === false) {
+      setIsUsingOtherRemark(false);
+    }
+  }, [open]);
 
   const handleRejectRequest = async (rejectReasonId: string[]) => {
     const rejectReason = rejectReasonId.map((id) => {
@@ -348,10 +373,11 @@ const RejectModal: React.FC<RejectForm> = ({
       return reasonItem ? reasonItem.name : "";
     });
     const loginId = localStorage.getItem(localStorgeKeyName.username) || "";
-    const updateJOStatus: JoStatus = {
+    const updateJOStatus = {
       status: "CANCELLED",
       reason: rejectReason,
       updatedBy: loginId,
+      remark: isUsingOtherRemark ? otherRemark : "",
     };
     try {
       if (selectedRow) {
@@ -408,7 +434,18 @@ const RejectModal: React.FC<RejectForm> = ({
               itemColor={{ bgColor: "#F0F9FF", borderColor: getPrimaryColor() }}
             />
           </Box>
-
+          {isUsingOtherRemark && (
+            <Grid item>
+              <CustomField label={t("tenant.detail.remark")}>
+                <CustomTextField
+                  id="otherRemark"
+                  value={otherRemark}
+                  placeholder={t("tenant.detail.remark")}
+                  onChange={(event) => setOtherRemark(event.target.value)}
+                />
+              </CustomField>
+            </Grid>
+          )}
           <Box sx={{ alignSelf: "center" }}>
             <CustomButton
               text={t("check_in.confirm")}
