@@ -83,7 +83,10 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
               details.createdBy = value.createdBy;
 
               return { ...value, details };
-            } else if (value.eventType === "checkin_stockAdjustment") {
+            } else if (
+              value.eventType === "checkin_stockAdjustment" ||
+              value.eventType === "checkout_stockAdjustment"
+            ) {
               const details = JSON.parse(value.eventDetail);
               details.createdAt = value.createdAt;
               details.createdBy = value.createdBy;
@@ -126,11 +129,12 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
             {eventItem.eventType === "checkin" && (
               <CheckinCard data={eventItem.details as CheckinData} />
             )}
-            {eventItem.eventType === "checkin_stockAdjustment" && (
+            {eventItem.eventType === "checkin_stockAdjustment" ||
+            eventItem.eventType === "checkout_stockAdjustment" ? (
               <StockAdjustmentCard
                 data={eventItem.details as StockAdjustmentData}
               />
-            )}
+            ) : null}
             {eventItem.eventType === "processout" ||
             eventItem.eventType === "processin" ? (
               <ProcessOutCard

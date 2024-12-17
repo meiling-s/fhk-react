@@ -84,26 +84,44 @@ const CheckinCard: FunctionComponent<CheckinCardProps> = ({ data }) => {
         case "zhhk":
           return data.to_addr_tc;
       }
+    } else if (type === "driver") {
+      switch (i18n.language) {
+        case "enus":
+          return data.driver_name_en;
+        case "zhch":
+          return data.driver_name_sc;
+        case "zhhk":
+          return data.driver_name_tc;
+      }
     }
   };
 
   const getApprovedText = () => {
     switch (i18n.language) {
       case "enus":
-        return `Approved by [${data.createdBy}] at ${dayjs
+        return `${dayjs
           .utc(data.createdAt)
           .tz("Asia/Hong_Kong")
-          .format(`${dateFormat} HH:mm`)}`;
+          .format(`${dateFormat} HH:mm`)} delivered to [${getConditionalValue(
+          data,
+          "driver"
+        )}, ${data.car_plate_no}]`;
       case "zhhk":
         return `於 ${dayjs
           .utc(data.createdAt)
           .tz("Asia/Hong_Kong")
-          .format(`${dateFormat} HH:mm`)} 由【${data.createdBy}】核準`;
+          .format(`${dateFormat} HH:mm`)} 交給 [${getConditionalValue(
+          data,
+          "driver"
+        )}, ${data.car_plate_no}]`;
       case "zhch":
-        return `于 ${dayjs
+        return `於 ${dayjs
           .utc(data.createdAt)
           .tz("Asia/Hong_Kong")
-          .format(`${dateFormat} HH:mm`)} 由【${data.createdBy}】核准`;
+          .format(`${dateFormat} HH:mm`)} 交給 [${getConditionalValue(
+          data,
+          "driver"
+        )}, ${data.car_plate_no}]`;
     }
   };
 
