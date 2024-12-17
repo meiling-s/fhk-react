@@ -87,7 +87,7 @@ const CancelModal: React.FC<CancelForm> = ({
     if (isCollectors()) {
       result = await getDenialReasonByFunctionIdCollectors(0, 1000, 73)
     } else {
-      result = await getAllDenialReasonByFunctionId(0, 1000, 73)
+      result = await getAllDenialReasonByFunctionId(0, 1000, 74)
     }
     const data = result?.data
     if (data.content.length > 0) {
