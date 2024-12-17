@@ -33,26 +33,24 @@ const CheckinCard: FunctionComponent<CheckinCardProps> = ({ data }) => {
     setExpanded((prev) => !prev);
   };
 
-  console.log(data, "data");
-
   const getConditionalValue = (data: CheckinData, type: string) => {
-    if (type === "company") {
+    if (type === "senderCompany") {
       switch (i18n.language) {
         case "enus":
-          return data.company_name_en;
+          return data.sender_company_name_en;
         case "zhch":
-          return data.company_name_sc;
+          return data.sender_company_name_sc;
         case "zhhk":
-          return data.company_name_tc;
+          return data.sender_company_name_tc;
       }
-    } else if (type === "location") {
+    } else if (type === "receiverCompany") {
       switch (i18n.language) {
         case "enus":
-          return data.location_en;
+          return data.receiver_company_name_en;
         case "zhch":
-          return data.location_sc;
+          return data.receiver_company_name_sc;
         case "zhhk":
-          return data.location_tc;
+          return data.receiver_company_name_tc;
       }
     } else if (type === "weightUnit") {
       const selectedWeight = weightUnits.find(
@@ -68,14 +66,23 @@ const CheckinCard: FunctionComponent<CheckinCardProps> = ({ data }) => {
             return selectedWeight.unitNameTchi;
         }
       }
-    } else if (type === "addr") {
+    } else if (type === "fromAddr") {
       switch (i18n.language) {
         case "enus":
-          return data.addr_en;
+          return data.from_addr_en;
         case "zhch":
-          return data.addr_sc;
+          return data.from_addr_sc;
         case "zhhk":
-          return data.addr_tc;
+          return data.from_addr_tc;
+      }
+    } else if (type === "toAddr") {
+      switch (i18n.language) {
+        case "enus":
+          return data.to_addr_en;
+        case "zhch":
+          return data.to_addr_sc;
+        case "zhhk":
+          return data.to_addr_tc;
       }
     }
   };
@@ -83,11 +90,20 @@ const CheckinCard: FunctionComponent<CheckinCardProps> = ({ data }) => {
   const getApprovedText = () => {
     switch (i18n.language) {
       case "enus":
-        return "Approved by [UserID] at 2023/09/20 18:00";
+        return `Approved by [${data.createdBy}] at ${dayjs
+          .utc(data.createdAt)
+          .tz("Asia/Hong_Kong")
+          .format(`${dateFormat} HH:mm`)}`;
       case "zhhk":
-        return "於 2023/09/20 18:00 由【UserID】核準";
+        return `於 ${dayjs
+          .utc(data.createdAt)
+          .tz("Asia/Hong_Kong")
+          .format(`${dateFormat} HH:mm`)} 由【${data.createdBy}】核準`;
       case "zhch":
-        return "于 2023/09/20 18:00 由【UserID】核准";
+        return `于 ${dayjs
+          .utc(data.createdAt)
+          .tz("Asia/Hong_Kong")
+          .format(`${dateFormat} HH:mm`)} 由【${data.createdBy}】核准`;
     }
   };
 
@@ -101,14 +117,16 @@ const CheckinCard: FunctionComponent<CheckinCardProps> = ({ data }) => {
             <ExpandMore sx={{ color: "#79CA25" }} />
           )}
         </IconButton>
-        <Typography variant="h6">{t("dashboardOverview.checkin")}</Typography>
+        <Typography variant="h6">
+          {t("inventory.pickup_order_record")}
+        </Typography>
         <Typography
           variant="body2"
           color="textSecondary"
           sx={{ marginLeft: "auto", marginRight: 10 }}
         >
           {dayjs
-            .utc(data.record_date)
+            .utc(data.checkin_date_time)
             .tz("Asia/Hong_Kong")
             .format(`${dateFormat} HH:mm A`)}
         </Typography>
@@ -139,7 +157,8 @@ const CheckinCard: FunctionComponent<CheckinCardProps> = ({ data }) => {
                     color="textSecondary"
                     sx={{ color: "#535353" }}
                   >
-                    0kg - dummy
+                    {data.total_weight}{" "}
+                    {getConditionalValue(data, "weightUnit")}
                   </Typography>
                 </Box>
               </Box>
@@ -169,7 +188,8 @@ const CheckinCard: FunctionComponent<CheckinCardProps> = ({ data }) => {
                     color="textSecondary"
                     sx={{ color: "#535353" }}
                   >
-                    SenderName {"->"} ReceiverName
+                    {getConditionalValue(data, "senderCompany")} {"->"}{" "}
+                    {getConditionalValue(data, "receiverCompany")}
                   </Typography>
                 </Box>
               </Box>
@@ -199,7 +219,8 @@ const CheckinCard: FunctionComponent<CheckinCardProps> = ({ data }) => {
                     color="textSecondary"
                     sx={{ color: "#535353" }}
                   >
-                    SenderAddr {"->"} ReceiverAddr
+                    {getConditionalValue(data, "fromAddr")} {"->"}{" "}
+                    {getConditionalValue(data, "toAddr")}
                   </Typography>
                 </Box>
               </Box>

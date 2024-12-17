@@ -739,7 +739,9 @@
     "delivery_location": "Delivery/Delivery Location",
     "warehouse_recycling": "Warehouse/recycling point",
     "internal_transfer": "Internal Transfer",
-    "process_out": "Process Out"
+    "process_out": "Process Out",
+    "process_in": "Process In",
+    "pickup_order_record": "Pickup Order Record"
   },
   "processRecord": {
     "processing": "Processing",
@@ -1604,6 +1606,7 @@
     "selectedItems": "Items selected for compression",
     "processCompress": "Processed compressed material",
     "ask": "Ask",
+    "new": "New",
     "clickToAddItem": "Click Add to enter data for the compressed product"
   },
   "processOrder": {

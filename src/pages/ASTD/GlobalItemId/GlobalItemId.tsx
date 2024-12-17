@@ -26,6 +26,7 @@ import {
   InventoryDetail as InvDetails,
   GIDQuery,
   GIDItem,
+  GIDValue,
 } from "../../../interfaces/inventory";
 import { il_item } from "../../../components/FormComponents/CustomItemList";
 import {
@@ -427,14 +428,15 @@ const Inventory: FunctionComponent = () => {
     }
   };
 
-  const initInventory = async () => {
+  const initInventory = async (GIDString?: string) => {
     var inventoryMapping: GIDItem[] = [];
     setIsLoading(true);
-    setFilteredInventory([]);
+    if (!GIDString) {
+      setFilteredInventory([]);
+    }
     let result;
-    result = await getItemTrackInventory(query.gid);
+    result = await getItemTrackInventory(GIDString ? GIDString : query.gid);
     const data = result?.data;
-    console.log(data, "data");
     // setInventoryData(data?.content || []);
     if (data) {
       // const picoData = await getAllPickUpOrder()
@@ -588,8 +590,12 @@ const Inventory: FunctionComponent = () => {
           data?.packageName
         )
       );
-      setInventory(inventoryMapping);
-      setFilteredInventory(inventoryMapping);
+      if (!GIDString) {
+        setInventory(inventoryMapping);
+        setFilteredInventory(inventoryMapping);
+      } else {
+        setSelectedRow(inventoryMapping[0]);
+      }
     }
     setIsLoading(false);
   };
@@ -794,6 +800,7 @@ const Inventory: FunctionComponent = () => {
         selectedPicoList.push(pico);
       }
     });
+
     setSelectedRow(selectedInv);
     setSelectedPico(selectedPicoList);
     setDrawerOpen(true);
@@ -850,6 +857,10 @@ const Inventory: FunctionComponent = () => {
     }
   };
 
+  const handleGetHyperlinkData = async (gidValue: GIDValue) => {
+    initInventory(gidValue.gid.toString());
+  };
+
   useEffect(() => {
     if (debouncedSearchValue) {
       setInventory([]);
@@ -884,7 +895,7 @@ const Inventory: FunctionComponent = () => {
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
-            {t("inventory.recyclingInformation")}
+            {t("globalItemId.globalItemId")}
           </Typography>
           {realmApi !== "account" && (
             <Button
@@ -979,6 +990,7 @@ const Inventory: FunctionComponent = () => {
               setSelectedRow(null);
             }}
             selectedRow={selectedRow}
+            handleGetHyperlinkData={handleGetHyperlinkData}
           />
         </div>
       </Box>

@@ -737,7 +737,9 @@
     "delivery_location": "送入/送出貨倉地點",
     "warehouse_recycling": "貨倉/回收點",
     "internal_transfer": "內部運輸",
-    "process_out": "處理輸出"
+    "process_out": "處理輸出",
+    "process_in": "處理輸入",
+    "pickup_order_record": "回收運單紀錄"
   },
   "processRecord": {
     "processing": "處理中",
@@ -1598,6 +1600,7 @@
     "selectedItems": "已選擇壓縮的物品",
     "processCompress": "處理後的壓縮物",
     "ask": "請求",
+    "new": "新增",
     "clickToAddItem": "按新增為壓縮品輸入資料"
   },
   "processOrder": {

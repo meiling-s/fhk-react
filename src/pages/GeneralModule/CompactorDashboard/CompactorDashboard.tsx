@@ -41,6 +41,7 @@ import i18n from '../../../setups/i18n'
 import dayjs from 'dayjs'
 import { localStorgeKeyName } from 'src/constants/constant'
 import { formValidate } from 'src/interfaces/common'
+import CircularLoading from 'src/components/CircularLoading'
 
 interface Option {
   value: string
@@ -87,6 +88,7 @@ const CompactorDashboard: FunctionComponent = () => {
   const { t } = useTranslation()
   const { recycType, productType, getProductType } =
     useContainer(CommonTypeContainer)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [licensePlate, setLicensePlate] = useState<string[]>([])
   const [selectedCheckInIds, setSelectedItem] = useState<number[]>([])
   const [selectedDate, setSelectedDate] = useState<string>('')
@@ -227,24 +229,31 @@ const CompactorDashboard: FunctionComponent = () => {
     setCurrDate()
   }, [])
 
+  useEffect(() => {
+    initLicensePlate()
+  }, [selectedDate])
+
   const setCurrDate = () => {
     const currentDate = dayjs().format('YYYY-MM-DD')
     setSelectedDate(currentDate)
   }
 
   const initLicensePlate = async () => {
-    const result = await getPlateNoList()
+    setSelectedPlate('')
+    const result = await getPlateNoList(selectedDate)
     if (result.data) {
       setLicensePlate(result.data)
     }
   }
 
   const getProcessInData = async () => {
+    setIsLoading(true)
     const result = await getCompactorProcessIn(selectedDate, selectedPlate)
 
     if (result.data.length > 0) {
       setCompactorProcessIn(result.data)
     }
+    setIsLoading(false)
   }
 
   const getItemsCompactor = async (ids?: number[]) => {
@@ -271,10 +280,7 @@ const CompactorDashboard: FunctionComponent = () => {
       value: option,
       label: option
     }))
-    options.push({
-      value: '',
-      label: t('localizedTexts.filterValueAny')
-    })
+
     return options
   }
 
@@ -300,7 +306,6 @@ const CompactorDashboard: FunctionComponent = () => {
     } else {
       setSelectedPlate(value)
     }
-    console.log(value)
   }, 1000)
 
   const selectCard = (id: number) => {
@@ -389,7 +394,7 @@ const CompactorDashboard: FunctionComponent = () => {
                     height: '40px'
                   }
                 ]}
-                disabled={selectedDate === ''}
+                disabled={selectedDate === '' || selectedPlate === ''}
                 onClick={() => {
                   getProcessInData()
                 }}
@@ -398,85 +403,89 @@ const CompactorDashboard: FunctionComponent = () => {
               </Button>
             </Box>
             <Divider></Divider>
-            <Box sx={{ paddingY: '24px', paddingX: '40px' }}>
-              <div className="grid grid-cols-2 gap-4 justify-items-start w-full max-w-[980px]">
-                {compactorProcessIn.map((item) => (
-                  <div
-                    className={`relative card-wrapper col-span-1 max-w-[450px] w-full flex items-center space-x-6 py-4 px-4 rounded-lg border-solid cursor-pointer ${
-                      selectedCheckInIds.includes(item.chkInId)
-                        ? 'border-[2px] border-[#79CA25]'
-                        : 'border-[1px] border-[#C6C6C6]'
-                    }`}
-                    onClick={() => selectCard(item.chkInId)}
-                  >
-                    <div className="text-left">
-                      <div className="mb-2 text-[#717171] text-xs font-medium">
-                        {t('compactor.unloadTime')}
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box sx={{ paddingY: '24px', paddingX: '40px' }}>
+                <div className="grid grid-cols-2 gap-4 justify-items-start w-full max-w-[980px]">
+                  {compactorProcessIn.map((item) => (
+                    <div
+                      className={`relative card-wrapper col-span-1 max-w-[450px] w-full flex items-center space-x-6 py-4 px-4 rounded-lg border-solid cursor-pointer ${
+                        selectedCheckInIds.includes(item.chkInId)
+                          ? 'border-[2px] border-[#79CA25]'
+                          : 'border-[1px] border-[#C6C6C6]'
+                      }`}
+                      onClick={() => selectCard(item.chkInId)}
+                    >
+                      <div className="text-left">
+                        <div className="mb-2 text-[#717171] text-xs font-medium">
+                          {t('compactor.unloadTime')}
+                        </div>
+                        <div className="mb-2 text-black font-bold text-base">
+                          {formattedTime(item.dropoffAt)}
+                        </div>
+                        <div className="mb-2 text-[#717171] text-sm font-medium">
+                          {item.picoId}
+                        </div>
                       </div>
-                      <div className="mb-2 text-black font-bold text-base">
-                        {formattedTime(item.dropoffAt)}
+                      <div className="flex flex-col border-l border-[#E2E2E2]">
+                        <div className="flex items-center mb-2">
+                          <PersonOutlineOutlinedIcon
+                            fontSize="small"
+                            className=" text-[#ACACAC] text-sm mr-1"
+                          />
+                          <div className="text-[#ACACAC] text-sm font-medium">
+                            {t('driver.tabs.driver')}
+                          </div>
+                        </div>
+                        <div className="flex items-center mb-2">
+                          <Inventory2OutlinedIcon
+                            fontSize="small"
+                            className=" text-[#ACACAC] text-sm mr-1"
+                          />
+                          <div className="text-[#ACACAC] text-sm font-medium">
+                            {t('pick_up_order.card_detail.shipping_receiver')}
+                          </div>
+                        </div>
+                        <div className="flex items-center mb-2">
+                          <LocationOnOutlinedIcon
+                            fontSize="small"
+                            className=" text-[#ACACAC] text-sm mr-1"
+                          />
+                          <div className="text-[#ACACAC] text-sm font-medium">
+                            {t('pick_up_order.card_detail.deliver_location')}
+                          </div>
+                        </div>
                       </div>
-                      <div className="mb-2 text-[#717171] text-sm font-medium">
-                        {item.picoId}
+                      <div>
+                        <div className="mb-2 text-[#535353] text-sm font-medium">
+                          {i18n.language === 'zhhk'
+                            ? item.driverNameTchi
+                            : i18n.language === 'zhch'
+                            ? item.driverNameSchi
+                            : item.driverNameEng}
+                        </div>
+                        <div className="mb-2">
+                          <div className="text-[#535353] text-sm font-medium">
+                            {item.senderName ?? 'N/A'} ➔{' '}
+                            {item.receiverName ?? 'N/A'}
+                          </div>
+                        </div>
+                        <div className="mb-2">
+                          <div className="text-[#535353] text-sm font-medium">
+                            {item.senderAddr ?? 'N/A'} ➔{' '}
+                            {item.receiverAddr ?? 'N/A'}
+                          </div>
+                        </div>
                       </div>
+                      {selectedCheckInIds.includes(item.chkInId) && (
+                        <CheckCircleIcon className="absolute top-[-8px] right-[-8px] text-[#79CA25] w-6 h-6" />
+                      )}
                     </div>
-                    <div className="flex flex-col border-l border-[#E2E2E2]">
-                      <div className="flex items-center mb-2">
-                        <PersonOutlineOutlinedIcon
-                          fontSize="small"
-                          className=" text-[#ACACAC] text-sm mr-1"
-                        />
-                        <div className="text-[#ACACAC] text-sm font-medium">
-                          {t('driver.tabs.driver')}
-                        </div>
-                      </div>
-                      <div className="flex items-center mb-2">
-                        <Inventory2OutlinedIcon
-                          fontSize="small"
-                          className=" text-[#ACACAC] text-sm mr-1"
-                        />
-                        <div className="text-[#ACACAC] text-sm font-medium">
-                          {t('pick_up_order.card_detail.shipping_receiver')}
-                        </div>
-                      </div>
-                      <div className="flex items-center mb-2">
-                        <LocationOnOutlinedIcon
-                          fontSize="small"
-                          className=" text-[#ACACAC] text-sm mr-1"
-                        />
-                        <div className="text-[#ACACAC] text-sm font-medium">
-                          {t('pick_up_order.card_detail.deliver_location')}
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="mb-2 text-[#535353] text-sm font-medium">
-                        {i18n.language === 'zhhk'
-                          ? item.driverNameTchi
-                          : i18n.language === 'zhch'
-                          ? item.driverNameSchi
-                          : item.driverNameEng}
-                      </div>
-                      <div className="mb-2">
-                        <div className="text-[#535353] text-sm font-medium">
-                          {item.senderName ?? 'N/A'} ➔{' '}
-                          {item.receiverName ?? 'N/A'}
-                        </div>
-                      </div>
-                      <div className="mb-2">
-                        <div className="text-[#535353] text-sm font-medium">
-                          {item.senderAddr ?? 'N/A'} ➔{' '}
-                          {item.receiverAddr ?? 'N/A'}
-                        </div>
-                      </div>
-                    </div>
-                    {selectedCheckInIds.includes(item.chkInId) && (
-                      <CheckCircleIcon className="absolute top-[-8px] right-[-8px] text-[#79CA25] w-6 h-6" />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </Box>
+                  ))}
+                </div>
+              </Box>
+            )}
           </Box>
         </Box>
         {/* SECTION 2 */}
