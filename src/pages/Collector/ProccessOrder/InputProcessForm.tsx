@@ -611,7 +611,7 @@ const InputProcessForm = ({
       }
     })
 
-    console.log('singleProducts', singleProducts)
+    //console.log('singleProducts', singleProducts)
     return singleProducts
   }
 
@@ -622,7 +622,7 @@ const InputProcessForm = ({
     //if (value.productTypeId) tempProduct.push(value)
 
     const singleProducts: singleProduct[] = transformToSingleProducts(value)
-    console.log('handleProductChange', singleProducts)
+    //console.log('handleProductChange', singleProducts)
     setProcessOrderDetail((prevDetails) =>
       prevDetails.map((detail) => ({
         ...detail,
@@ -633,7 +633,7 @@ const InputProcessForm = ({
       }))
     )
 
-    console.log('product', processOrderDetail[0])
+    //console.log('product', processOrderDetail[0])
   }
 
   const handleRecycChange = (type: string, value: recyclable[]) => {
@@ -780,7 +780,7 @@ const InputProcessForm = ({
   }
 
   const handleSaveItem = async () => {
-    console.log('handleSaveItem', processOrderDetail[0].processIn)
+    //console.log('handleSaveItem', processOrderDetail[0].processIn)
     if (validation.length !== 0) {
       setTrySubmited(true)
       return
@@ -850,7 +850,7 @@ const InputProcessForm = ({
     if (selectedProduct.length > 0) {
       const product = transformData(selectedProduct, productType)
 
-      console.log('getDefaultProduct', product)
+      //console.log('getDefaultProduct', product)
       return product
     }
 

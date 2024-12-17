@@ -113,11 +113,18 @@ export default function ProductListMultiSelect({
       setProductSubType(subTypes)
       setProductAddon(addons)
       setState(toProduct())
+
+      setCurProduct(types.at(-1)!!)
+      //console.log('cuuprooo', curProduct)
+      let tempCurrProduct = types.at(-1)!!
+      selectSubProduct(subTypes, tempCurrProduct)
+      selectAddon(addons, tempCurrProduct, subTypes.at(-1))
     }
   }, [])
 
   useEffect(() => {
     setState(toProduct())
+    console.log("option", options)
   }, [productType, productSubType, productAddon, options])
 
   useEffect(() => {
@@ -338,6 +345,10 @@ export default function ProductListMultiSelect({
       }
       setProductType(str)
     }
+
+    //set curr
+    // setChoosenSubProductType(null)
+    // setChoosenProductAddon(null)
   }
 
   const returnWithSubItem = () => {
@@ -467,10 +478,14 @@ export default function ProductListMultiSelect({
     return ''
   }
 
-  const selectSubProduct = (selectedSubType: string[]) => {
+  const selectSubProduct = (
+    selectedSubType: string[],
+    tempCurrProduct?: string
+  ) => {
     const lastSubId = selectedSubType[selectedSubType.length - 1] || ''
     const currProduct = options.find(
-      (item) => item.productTypeId === curProduct
+      (item) =>
+        item.productTypeId === (curProduct ? curProduct : tempCurrProduct)
     )
 
     if (currProduct && lastSubId) {
@@ -485,24 +500,31 @@ export default function ProductListMultiSelect({
     setProductSubType(selectedSubType)
   }
 
-  const selectAddon = (selectedAddOn: string[]) => {
+  const selectAddon = (
+    selectedAddOn: string[],
+    tempCurrProduct?: string,
+    tempSubProduct?: string
+  ) => {
     const lastAddonId = selectedAddOn[selectedAddOn.length - 1] || ''
     const currProduct = options.find(
-      (item) => item.productTypeId === curProduct
+      (item) =>
+        item.productTypeId === (curProduct ? curProduct : tempCurrProduct)
     )
-
-    console.log('selectAddon', lastAddonId)
 
     if (currProduct) {
       const subItem = currProduct.productSubType?.find(
         (item) =>
-          item.productSubTypeId === choosenProductSubType?.productSubTypeId
+          item.productSubTypeId ===
+          (choosenProductSubType?.productSubTypeId || tempSubProduct)
       )
+      console.log('subItemmmm', subItem)
       if (subItem) {
         const addOnItem = subItem.productAddonType?.find(
           (item) => item.productAddonTypeId === lastAddonId
         )
-        console.log('addOnItem')
+
+        console.log('addOnItemvv', subItem)
+
         if (addOnItem) setChoosenProductAddon(addOnItem)
       }
     }
@@ -515,7 +537,7 @@ export default function ProductListMultiSelect({
         items={returnProducts(returnProductTypes())}
         withSubItems={returnWithSubItem()}
         multiSelect={selectProduct}
-        setLastSelect={setCurProduct}
+        setLastSelect={(s: string) => setCurProduct(s)}
         error={showError && productType.length == 0}
         defaultSelected={
           defaultProduct ? product_getProductType(defaultProduct) : []
@@ -533,7 +555,7 @@ export default function ProductListMultiSelect({
             <CustomItemListRecyble
               items={returnSubProduct(curProduct)}
               multiSelect={selectSubProduct}
-              setLastSelect={setCurSubProduct}
+              setLastSelect={(s: string) => setCurSubProduct(s)}
               defaultSelected={productSubType}
               noSubItems={subProductWithNoAddonItems}
             />
@@ -561,7 +583,6 @@ export default function ProductListMultiSelect({
                 }
                 onChange={(event) => {
                   setProductSubTypeRemark(event.target.value)
-                  setChoosenProductAddon(null)
                 }}
                 value={productSubTypeRemark}
               />
@@ -569,7 +590,7 @@ export default function ProductListMultiSelect({
           )}
         </Collapse>
       )}
-      {curSubProduct != ' ' &&
+      {choosenProductSubType &&
         !subProductWithNoAddonItems.includes(curSubProduct) && (
           <Collapse sx={{ mt: 1 }} in={productSubType.length > 0} unmountOnExit>
             <CustomField
@@ -609,7 +630,6 @@ export default function ProductListMultiSelect({
                   }
                   onChange={(event) => {
                     setProductAddonRemark(event.target.value)
-                    setChoosenProductAddon(null)
                   }}
                   value={productAddonTypeRemark}
                 />
