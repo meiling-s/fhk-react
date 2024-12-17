@@ -7,40 +7,39 @@ import {
   IconButton,
   Collapse,
 } from "@mui/material";
-import React, { FunctionComponent, useEffect, useState } from "react";
-import {
-  InventoryDetail as InvDetails,
-  InventoryTracking,
-  EventTrackingData,
-  ProcessOutData,
-} from "../../interfaces/inventory";
+import { FunctionComponent, useState } from "react";
+import { GIDValue, ProcessOutData } from "../../interfaces/inventory";
 import { useTranslation } from "react-i18next";
-import {
-  AccountTree,
-  CalendarToday,
-  ExpandLess,
-  ExpandMore,
-  LocationOn,
-  Scale,
-} from "@mui/icons-material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   CALENDAR_ICON,
+  CATEGORY_ICON,
   COMPANY_ICON,
   FACTORY_ICON,
-  FOLDER_ICON,
   INVENTORY_ICON,
   MEMORY_ICON,
   WEIGHT_ICON,
 } from "src/themes/icons";
-import { getItemTrackInventory } from "src/APICalls/Collector/inventory";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import { useContainer } from "unstated-next";
+import CommonTypeContainer from "src/contexts/CommonTypeContainer";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 interface CompactorCardProps {
   data: ProcessOutData;
+  handleClickGIDLabel: (gidValue: GIDValue) => void;
 }
 
-const CompactorCard: FunctionComponent<CompactorCardProps> = ({ data }) => {
+const CompactorCard: FunctionComponent<CompactorCardProps> = ({
+  data,
+  handleClickGIDLabel,
+}) => {
+  const { weightUnits, dateFormat } = useContainer(CommonTypeContainer);
   const { i18n, t } = useTranslation();
   const [expanded, setExpanded] = useState(true);
   const handleToggle = () => {
@@ -48,16 +47,7 @@ const CompactorCard: FunctionComponent<CompactorCardProps> = ({ data }) => {
   };
 
   const getConditionalValue = (data: ProcessOutData, type: string) => {
-    if (type === "title") {
-      switch (i18n.language) {
-        case "enus":
-          return data.process_type_en;
-        case "zhch":
-          return data.process_type_sc;
-        case "zhhk":
-          return data.process_type_tc;
-      }
-    } else if (type === "company") {
+    if (type === "company") {
       switch (i18n.language) {
         case "enus":
           return data.company_name_en;
@@ -93,6 +83,29 @@ const CompactorCard: FunctionComponent<CompactorCardProps> = ({ data }) => {
         case "zhhk":
           return data.process_out.warehouse_tc;
       }
+    } else if (type === "category") {
+      switch (i18n.language) {
+        case "enus":
+          return data.process_type_en;
+        case "zhch":
+          return data.process_type_sc;
+        case "zhhk":
+          return data.process_type_tc;
+      }
+    } else if (type === "weightUnit") {
+      const selectedWeight = weightUnits.find(
+        (value) => value.unitId === Number(data.unitId)
+      );
+      if (selectedWeight) {
+        switch (i18n.language) {
+          case "enus":
+            return selectedWeight.unitNameEng;
+          case "zhch":
+            return selectedWeight.unitNameSchi;
+          case "zhhk":
+            return selectedWeight.unitNameTchi;
+        }
+      }
     }
   };
 
@@ -106,15 +119,16 @@ const CompactorCard: FunctionComponent<CompactorCardProps> = ({ data }) => {
             <ExpandMore sx={{ color: "#79CA25" }} />
           )}
         </IconButton>
-        <Typography variant="h6">
-          {getConditionalValue(data, "title")}
-        </Typography>
+        <Typography variant="h6">{t("inventory.compactor")}</Typography>
         <Typography
           variant="body2"
           color="textSecondary"
           sx={{ marginLeft: "auto", marginRight: 10 }}
         >
-          Date
+          {dayjs
+            .utc(data.createdAt)
+            .tz("Asia/Hong_Kong")
+            .format(`${dateFormat} HH:mm A`)}
         </Typography>
       </Box>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -180,8 +194,15 @@ const CompactorCard: FunctionComponent<CompactorCardProps> = ({ data }) => {
                     variant="body2"
                     color="textSecondary"
                     sx={{ color: "#199BEC", cursor: "pointer" }}
+                    onClick={() => {
+                      const gidValue = {
+                        gid: data.process_in.gid[0],
+                        gidLabel: data.process_in.gidLabel,
+                      };
+                      handleClickGIDLabel(gidValue);
+                    }}
                   >
-                    {data.process_out.gidLabel}
+                    {data.process_in.gidLabel}
                   </Typography>
                 </Box>
               </Box>
@@ -199,7 +220,7 @@ const CompactorCard: FunctionComponent<CompactorCardProps> = ({ data }) => {
                       color="textSecondary"
                       sx={{ color: "#ACACAC" }}
                     >
-                      Start Date & Time
+                      {t("inventory.start_date")}
                     </Typography>
                   </Box>
                 </Box>
@@ -209,11 +230,10 @@ const CompactorCard: FunctionComponent<CompactorCardProps> = ({ data }) => {
                     color="textSecondary"
                     sx={{ color: "#535353" }}
                   >
-                    {data.process_in.start_date_time
-                      ? new Date(
-                          data.process_in.start_date_time
-                        ).toLocaleString()
-                      : "-"}
+                    {dayjs
+                      .utc(data.process_in.start_date_time)
+                      .tz("Asia/Hong_Kong")
+                      .format(`${dateFormat} HH:mm A`)}
                   </Typography>
                 </Box>
               </Box>
@@ -259,7 +279,7 @@ const CompactorCard: FunctionComponent<CompactorCardProps> = ({ data }) => {
                       color="textSecondary"
                       sx={{ color: "#ACACAC" }}
                     >
-                      Weight
+                      {t("inventory.weight")}
                     </Typography>
                   </Box>
                 </Box>
@@ -269,7 +289,8 @@ const CompactorCard: FunctionComponent<CompactorCardProps> = ({ data }) => {
                     color="textSecondary"
                     sx={{ color: "#535353" }}
                   >
-                    {data.process_in.total_weight || "-"}
+                    {data.process_in.total_weight}{" "}
+                    {getConditionalValue(data, "weightUnit")}
                   </Typography>
                 </Box>
               </Box>
@@ -307,8 +328,15 @@ const CompactorCard: FunctionComponent<CompactorCardProps> = ({ data }) => {
                     variant="body2"
                     color="textSecondary"
                     sx={{ color: "#199BEC", cursor: "pointer" }}
+                    onClick={() => {
+                      const gidValue = {
+                        gid: data.process_out.gid[0],
+                        gidLabel: data.process_out.gidLabel,
+                      };
+                      handleClickGIDLabel(gidValue);
+                    }}
                   >
-                    {data.process_in.gidLabel}
+                    {data.process_out.gidLabel}
                   </Typography>
                 </Box>
               </Box>
@@ -336,11 +364,10 @@ const CompactorCard: FunctionComponent<CompactorCardProps> = ({ data }) => {
                     color="textSecondary"
                     sx={{ color: "#535353" }}
                   >
-                    {data.process_out.start_date_time
-                      ? new Date(
-                          data.process_out.start_date_time
-                        ).toLocaleString()
-                      : "-"}
+                    {dayjs
+                      .utc(data.process_out.start_date_time)
+                      .tz("Asia/Hong_Kong")
+                      .format(`${dateFormat} HH:mm A`)}
                   </Typography>
                 </Box>
               </Box>
@@ -386,7 +413,7 @@ const CompactorCard: FunctionComponent<CompactorCardProps> = ({ data }) => {
                       color="textSecondary"
                       sx={{ color: "#ACACAC" }}
                     >
-                      Weight
+                      {t("inventory.weight")}
                     </Typography>
                   </Box>
                 </Box>
@@ -396,7 +423,8 @@ const CompactorCard: FunctionComponent<CompactorCardProps> = ({ data }) => {
                     color="textSecondary"
                     sx={{ color: "#535353" }}
                   >
-                    {data.process_out.total_weight || "-"}
+                    {data.process_out.total_weight}{" "}
+                    {getConditionalValue(data, "weightUnit")}
                   </Typography>
                 </Box>
               </Box>
