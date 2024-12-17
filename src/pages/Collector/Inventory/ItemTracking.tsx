@@ -16,6 +16,7 @@ import StockAdjustmentCard from "src/components/Inventory/StockAdjustmentCard";
 import ProcessOutCard from "src/components/Inventory/ProcessOutCard";
 import ProcessingRecordCard from "../../../components/Inventory/ProcessingRecord";
 import InternalTransferCard from "src/components/Inventory/InternalTransfer";
+import CompactorCard from "src/components/Inventory/CompactorCard";
 
 interface ItemTrackingProps {
   shippingData: InventoryTracking;
@@ -53,7 +54,8 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
           shippingData.event.map(async (value: EventTrackingData) => {
             if (
               value.eventType === "processout" ||
-              value.eventType === "processin"
+              value.eventType === "processin" ||
+              value.eventType === "compactorProcessout"
             ) {
               const details = JSON.parse(value.eventDetail);
               details.process_in.gidLabel =
@@ -123,9 +125,12 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
       {parsedEventDetails?.event.map((eventItem: EventTrackingData) => {
         return (
           <Box key={eventItem.gidEventId} sx={{ marginBottom: 4 }}>
-            {/* {eventItem.eventType === "processout" && (
-              <CompactorCard data={eventItem.details} />
-            )} */}
+            {eventItem.eventType === "compactorProcessout" && (
+              <CompactorCard
+                data={eventItem.details as ProcessOutData}
+                handleClickGIDLabel={handleClickGIDLabel}
+              />
+            )}
             {eventItem.eventType === "checkin" && (
               <CheckinCard data={eventItem.details as CheckinData} />
             )}
