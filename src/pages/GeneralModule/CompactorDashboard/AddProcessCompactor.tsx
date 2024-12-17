@@ -289,7 +289,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
       productAddonTypeRemark: selectedProduct?.productAddonTypeRemark ?? '',
       packageTypeId: selectedPackage,
       weight: parseInt(weight),
-      unitId: 'kg',
+      unitId: '12',
       photos: photosData
     }
 
@@ -333,6 +333,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
 
     if (result) {
       showSuccessToast(t('common.saveSuccessfully'))
+      setProcessOutItem([])
       resetForm()
     } else {
       showErrorToast(t('common.saveFailed'))

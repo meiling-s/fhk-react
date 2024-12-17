@@ -702,7 +702,7 @@ const PickupOrderCreateForm = ({
             status: value?.status,
             weight: `${value?.weight}`,
             id: state.length + index + 1000,
-            picoDtlId: value?.picoDtlId,
+            refPicoDtlId: value?.picoDtlId,
             recycType: value?.recycType,
             recycSubType: value?.recycSubType,
             productType: value?.productType,

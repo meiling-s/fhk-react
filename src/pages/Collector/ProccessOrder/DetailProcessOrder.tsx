@@ -42,8 +42,14 @@ import {
   DenialReasonCollectors
 } from 'src/interfaces/denialReason'
 import { formErr, localStorgeKeyName } from 'src/constants/constant'
-import { getDenialReasonCollectors } from 'src/APICalls/Collector/denialReasonCollectors'
-import { getAllDenialReason } from 'src/APICalls/Collector/denialReason'
+import {
+  getDenialReasonByFunctionIdCollectors,
+  getDenialReasonCollectors
+} from 'src/APICalls/Collector/denialReasonCollectors'
+import {
+  getAllDenialReason,
+  getAllDenialReasonByFunctionId
+} from 'src/APICalls/Collector/denialReason'
 import { deleteProcessOrder } from 'src/APICalls/processOrder'
 import { il_item } from 'src/components/FormComponents/CustomItemListRecyble'
 import i18n from 'src/setups/i18n'
@@ -76,13 +82,12 @@ const CancelModal: React.FC<CancelForm> = ({
   const [showRemark, setShowRemark] = useState<boolean>(false)
   const [remarkVal, setRemarkVal] = useState<string>('')
 
-  console.log(version)
   const initDenialReasonList = async () => {
     let result = null
     if (isCollectors()) {
-      result = await getDenialReasonCollectors(0, 1000)
+      result = await getDenialReasonByFunctionIdCollectors(0, 1000, 73)
     } else {
-      result = await getAllDenialReason(0, 1000)
+      result = await getAllDenialReasonByFunctionId(0, 1000, 74)
     }
     const data = result?.data
     if (data.content.length > 0) {
@@ -295,13 +300,14 @@ const DetailProcessOrder = ({
             ? item.warehouseNameTchi
             : i18n.language === 'zhch'
             ? item.warehouseNameSchi
-            : item.warehouseNameTchi
+            : item.warehouseNameEng
 
         warehouse.push({
           id: item.warehouseId.toString(),
           name: warehouseName
         })
       })
+      console.log('initWarehouse', warehouse)
       setWarehouseList(warehouse)
       mappingDetail()
     }
@@ -345,13 +351,13 @@ const DetailProcessOrder = ({
       [key: string | number]: DetailPORItem[]
     } = {}
     selectedRow?.processOrderDetail.map((it) => {
-      console.log('processOrderDetail', it.plannedStartAt)
       //set warehouse data
       let warehouseListName: string | undefined = ''
       let warehouseIds: string[] = []
       warehouseIds = it.processOrderDetailWarehouse.map((w) =>
         w.warehouseId.toString()
       )
+      console.log('warehouseList', warehouseList)
       warehouseListName = warehouseIds
         ?.map((id: string) => {
           const warehouse = warehouseList.find((it) => it.id === id.toString())
@@ -418,7 +424,13 @@ const DetailProcessOrder = ({
     ) {
       mappingDetail()
     }
-  }, [warehouseList, processTypeList, selectedRow, factoriesSource])
+  }, [
+    warehouseList,
+    processTypeList,
+    selectedRow,
+    factoriesSource,
+    i18n.language
+  ])
 
   const onDeleteReason = () => {
     handleDrawerClose()
@@ -470,7 +482,7 @@ const DetailProcessOrder = ({
           open={drawerOpen}
           onClose={handleDrawerClose}
           anchor={'right'}
-          action={selectedRow?.status === 'CANCELLED' ? 'none' : 'edit'}
+          action={selectedRow?.status === 'CREATED' ? 'edit' : 'none'}
           headerProps={{
             title: t('processOrder.details.oderDetail'),
             subTitle: selectedRow?.labelId,
