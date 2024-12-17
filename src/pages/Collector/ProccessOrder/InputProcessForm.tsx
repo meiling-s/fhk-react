@@ -983,7 +983,7 @@ const InputProcessForm = ({
                           </CustomField>
                         </Grid>
                       ) : value.itemCategory === 'product' ? (
-                        <CustomField label={t('common.productType')} mandatory>
+                        <CustomField label={t('pick_up_order.product_type.product')} mandatory>
                           <ProductListMultiSelect
                             options={productType || []}
                             setState={(value) => {

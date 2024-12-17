@@ -82,7 +82,7 @@
     "open": "开放",
     "close": "关闭",
     "colRecycType": "回收物资料",
-    "recycType": "可回收物类别 (按一下类別显示子类別，按兩下取消选择)",
+    "recycType": "可回收物类别",
     "category": "类别 (按一下类别选择/取消选择)",
     "staffInfo": "员工资料",
     "numOfStaff": "员工数量",
@@ -1625,7 +1625,7 @@
       "package": "包装",
       "itemToProcessIn": "预计待处理物品",
       "itemToProcessOut": "预计处理后物品",
-      "itemCategory": "物品类别（点选类别显示子类别）",
+      "itemCategory": "物品类别 (按一下类別显示子类別，按兩下取消选择)",
       "recycling": "回收",
       "product": "产品",
       "warehouse": "仓库"
