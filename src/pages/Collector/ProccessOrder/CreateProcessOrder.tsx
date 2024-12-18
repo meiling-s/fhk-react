@@ -187,7 +187,8 @@ const CreateProcessOrder = ({}: {}) => {
     {
       field: 'warehouse',
       headerName: t('processOrder.create.warehouse'),
-      width: 150,
+      width: 400,
+      cellClassName: 'wrapText',
       renderCell: (params) => {
         let warehouseListName = ''
         if (params.row.warehouse != '') {
@@ -206,7 +207,19 @@ const CreateProcessOrder = ({}: {}) => {
           }
         }
 
-        return warehouseListName
+        return (
+          <div
+            style={{
+              whiteSpace: 'normal',
+              wordBreak: 'break-word',
+              maxWidth: '400px',
+              overflow: 'auto',
+              padding: '8px'
+            }}
+          >
+            {warehouseListName}
+          </div>
+        )
       }
     },
     { field: 'weight', headerName: t('inventory.weight'), width: 100 },
@@ -447,7 +460,6 @@ const CreateProcessOrder = ({}: {}) => {
       Object.entries(item).map(([key, value]) => {
         // constract product
         value.processOrderDetailProduct.map((val1, idx1) => {
-         
           if (processNameFirst !== value.processAction) {
             processNameFirst = value.processAction
             rowData.push({
@@ -488,7 +500,6 @@ const CreateProcessOrder = ({}: {}) => {
 
         // constract recylcling
         value.processOrderDetailRecyc.map((val1, idx1) => {
-         
           if (processNameFirst !== value.processAction) {
             processNameFirst = value.processAction
             rowData.push({
@@ -608,13 +619,13 @@ const CreateProcessOrder = ({}: {}) => {
     // temporary solution since the productAddonId type field is used on many components and changes it directly might cause bugs
     for (const value of processedDetailsPair) {
       if (value.processIn.processOrderDetailProduct.length > 0) {
-        value.processIn.processOrderDetailProduct.map(item => {
+        value.processIn.processOrderDetailProduct.map((item) => {
           item.productAddonTypeId = item.productAddonId
           return item
         })
       }
       if (value.processOut.processOrderDetailProduct.length > 0) {
-        value.processOut.processOrderDetailProduct.map(item => {
+        value.processOut.processOrderDetailProduct.map((item) => {
           item.productAddonTypeId = item.productAddonId
           return item
         })

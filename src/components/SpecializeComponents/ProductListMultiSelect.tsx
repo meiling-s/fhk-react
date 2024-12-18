@@ -526,7 +526,9 @@ export default function ProductListMultiSelect({
         <Collapse sx={{ mt: 1 }} in={productType.length > 0} unmountOnExit>
           <CustomField
             label={
-              getNameFromProductId(curProduct) + t('common.subProductType')
+              getNameFromProductId(curProduct) +
+              ' - ' +
+              t('pick_up_order.product_type.subtype')
             }
             mandatory
           >
@@ -575,6 +577,7 @@ export default function ProductListMultiSelect({
             <CustomField
               label={
                 getNameFromSubId(curSubProduct) +
+                ' - ' +
                 t('pick_up_order.product_type.add-on')
               }
               mandatory
