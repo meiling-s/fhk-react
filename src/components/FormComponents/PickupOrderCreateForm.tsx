@@ -699,7 +699,7 @@ const PickupOrderCreateForm = ({
             senderAddrGps: value?.senderAddrGps,
             senderId: value?.senderId,
             senderName: value?.senderName,
-            status: value?.status,
+            status: 'CREATED',
             weight: `${value?.weight}`,
             id: state.length + index + 1000,
             refPicoDtlId: value?.picoDtlId,
