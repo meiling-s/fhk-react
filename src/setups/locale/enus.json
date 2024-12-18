@@ -741,7 +741,8 @@
     "internal_transfer": "Internal Transfer",
     "process_out": "Process Out",
     "process_in": "Process In",
-    "pickup_order_record": "Pickup Order Record"
+    "pickup_order_record": "Pickup Order Record",
+    "compactor": "Compression Car Record"
   },
   "processRecord": {
     "processing": "Processing",

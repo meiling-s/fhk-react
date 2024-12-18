@@ -741,7 +741,8 @@
     "internal_transfer": "内部运输",
     "process_out": "处理输出",
     "process_in": "处理输入",
-    "pickup_order_record": "回收运单纪录"
+    "pickup_order_record": "回收运单纪录",
+    "compactor": "压缩车纪录"
   },
   "processRecord": {
     "processing": "处理中",
