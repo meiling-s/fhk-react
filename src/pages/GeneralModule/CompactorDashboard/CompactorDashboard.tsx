@@ -325,8 +325,9 @@ const CompactorDashboard: FunctionComponent = () => {
   }
 
   const formattedTime = (value: string) => {
-    const dateObject = dayjs(value)
-    return dateObject.format('HH:mm')
+    const dateObject = dayjs.utc(value).tz('Asia/Hong_Kong').format(`HH:mm`)
+
+    return dateObject
   }
 
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
