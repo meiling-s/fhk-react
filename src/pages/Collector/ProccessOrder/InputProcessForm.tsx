@@ -688,6 +688,7 @@ const InputProcessForm = ({
     field: 'estInWeight' | 'estOutWeight',
     idx: number
   ) => {
+    console.log('handleWeightChange', value)
     setProcessOrderDetail((prevState) => {
       const newState = [...prevState]
 
@@ -982,7 +983,7 @@ const InputProcessForm = ({
                           </CustomField>
                         </Grid>
                       ) : value.itemCategory === 'product' ? (
-                        <CustomField label={t('common.productType')} mandatory>
+                        <CustomField label={t('pick_up_order.product_type.product')} mandatory>
                           <ProductListMultiSelect
                             options={productType || []}
                             setState={(value) => {
@@ -1083,12 +1084,17 @@ const InputProcessForm = ({
                                 : processOrderDetail[0].processOut.estOutWeight
                             }
                             error={
-                              trySubmited &&
-                              (key === 'processIn'
-                                ? processOrderDetail[0].processIn
-                                    .estInWeight === '0'
-                                : processOrderDetail[0].processOut
-                                    .estOutWeight === '0')
+                              (!trySubmited &&
+                                (key === 'processOut'
+                                  ? parseFloat(
+                                      processOrderDetail[0].processOut
+                                        .estOutWeight as string
+                                    ) === 0
+                                  : parseFloat(
+                                      processOrderDetail[0].processIn
+                                        .estInWeight as string
+                                    ) === 0)) ||
+                              undefined
                             }
                             sx={{ width: '100%' }}
                             endAdornment={

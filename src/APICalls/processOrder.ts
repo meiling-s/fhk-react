@@ -126,7 +126,7 @@ export const getFactories = async (page: number, size: number) => {
   try {
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...GET_FACTORIES_LIST(parseInt(token.tenantId)),
+      ...GET_FACTORIES_LIST(token.tenantId),
       params: {
         page: page,
         size: size

@@ -267,7 +267,7 @@ export default function RecyclablesList({
       {curRecyc != ' ' && !recyWithNoSubItems.includes(curRecyc) && (
         <Collapse sx={{ mt: 1 }} in={recycTypeList.length > 0} unmountOnExit>
           <CustomField
-            label={getNameFromRecycId(curRecyc) + t('col.category')}
+            label={getNameFromRecycId(curRecyc)}
             mandatory={subTypeRequired}
           >
             <CustomItemListRecyble
