@@ -75,12 +75,14 @@ import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
 
 type AddProcessCompactorProps = {
   chkInIds: number[]
-  inItemId: number[]
+  inItemId: number[],
+  onSubmit: () => void
 }
 
 const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
   chkInIds,
-  inItemId
+  inItemId,
+  onSubmit
 }) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -335,6 +337,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
       showSuccessToast(t('common.saveSuccessfully'))
       setProcessOutItem([])
       resetForm()
+      onSubmit()
     } else {
       showErrorToast(t('common.saveFailed'))
     }
