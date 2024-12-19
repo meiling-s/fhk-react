@@ -979,7 +979,7 @@ function CompanyManage() {
           "namec": companyData?.cName,
           "names": companyData?.sName,
           "namee": companyData?.eName,
-          "tenantId": `${tenantId}`
+          "tenantId": `${tenantId.toString().padStart(6, '0')}`
       }
       await createNewTenant(payload)
     } catch (error) {
