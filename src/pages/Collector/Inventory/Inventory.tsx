@@ -993,9 +993,6 @@ const Inventory: FunctionComponent = () => {
   // }
 
   const handleSearch = debounce((keyName, value) => {
-    if (value.trim() === "" && query.labelId == null) {
-      return;
-    }
     updateQuery({ [keyName]: value });
     setPage(1);
   }, 500);
@@ -1270,6 +1267,7 @@ const Inventory: FunctionComponent = () => {
               disableIcon={s.disableIcon}
               options={s.options || []}
               onChange={handleSearch}
+              numberOnly={s.label === t("common.idleDays")}
             />
           ))}
         </Stack>
