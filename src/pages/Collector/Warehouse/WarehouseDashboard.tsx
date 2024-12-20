@@ -3,9 +3,9 @@ import {
   useCallback,
   ReactNode,
   useState,
-  useEffect
-} from 'react'
-import { useNavigate } from 'react-router-dom'
+  useEffect,
+} from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -16,30 +16,30 @@ import {
   TextField,
   InputAdornment,
   IconButton,
-  CircularProgress
-} from '@mui/material'
-import { SelectChangeEvent } from '@mui/material/Select'
+  CircularProgress,
+} from "@mui/material";
+import { SelectChangeEvent } from "@mui/material/Select";
 import {
   DataGrid,
   GridColDef,
   GridRowParams,
-  GridRowSpacingParams
-} from '@mui/x-data-grid'
-import LoginIcon from '@mui/icons-material/Login'
-import LogoutIcon from '@mui/icons-material/Logout'
-import CheckIcon from '@mui/icons-material/Check'
-import CloseIcon from '@mui/icons-material/Close'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import ProgressLine from '../../../components/ProgressLine'
-import StatusCard from '../../../components/StatusCard'
-import { il_item } from '../../../components/FormComponents/CustomItemList'
+  GridRowSpacingParams,
+} from "@mui/x-data-grid";
+import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ProgressLine from "../../../components/ProgressLine";
+import StatusCard from "../../../components/StatusCard";
+import { il_item } from "../../../components/FormComponents/CustomItemList";
 
 import {
   STATUS_CODE,
   format,
   localStorgeKeyName,
-  Languages
-} from '../../../constants/constant'
+  Languages,
+} from "../../../constants/constant";
 
 import {
   getCapacityWarehouse,
@@ -47,35 +47,35 @@ import {
   getCheckInWarehouse,
   getCheckOutWarehouse,
   getCheckInOutWarehouse,
-  getRecycSubTypeWeight
-} from '../../../APICalls/warehouseDashboard'
+  getRecycSubTypeWeight,
+} from "../../../APICalls/warehouseDashboard";
 import {
   astdSearchWarehouse,
   getAllWarehouse,
   getWarehouseById,
-  manufacturerGetAllWarehouse
-} from '../../../APICalls/warehouseManage'
-import { CheckInOutWarehouse } from '../../../interfaces/warehouse'
+  manufacturerGetAllWarehouse,
+} from "../../../APICalls/warehouseManage";
+import { CheckInOutWarehouse } from "../../../interfaces/warehouse";
 
-import { useTranslation } from 'react-i18next'
-import i18n from '../../../setups/i18n'
-import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { useContainer } from 'unstated-next'
-import { styles } from '../../../constants/styles'
-import { SEARCH_ICON } from '../../../themes/icons'
-import useDebounce from '../../../hooks/useDebounce'
+import { useTranslation } from "react-i18next";
+import i18n from "../../../setups/i18n";
+import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
+import { useContainer } from "unstated-next";
+import { styles } from "../../../constants/styles";
+import { SEARCH_ICON } from "../../../themes/icons";
+import useDebounce from "../../../hooks/useDebounce";
 import {
   extractError,
   getPrimaryColor,
-  returnApiToken
-} from '../../../utils/utils'
+  returnApiToken,
+} from "../../../utils/utils";
 
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
-import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
-dayjs.extend(utc)
-dayjs.extend(timezone)
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 function createCheckInOutWarehouse(
   id: number,
@@ -103,401 +103,469 @@ function createCheckInOutWarehouse(
     adjustmentFlg,
     logisticName,
     senderAddr,
-    receiverAddr
-  }
+    receiverAddr,
+  };
 }
 
 interface warehouseSubtype {
-  subTypeId: string
-  subtypeName: string
-  weight: number
-  capacity: number
+  subTypeId: string;
+  subtypeName: string;
+  weight: number;
+  capacity: number;
 }
 
 const WarehouseDashboard: FunctionComponent = () => {
-  const navigate = useNavigate()
-  const { t } = useTranslation()
-  const { recycType, dateFormat, companies } = useContainer(CommonTypeContainer)
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const { recycType, dateFormat, companies, productType } =
+    useContainer(CommonTypeContainer);
 
-  const [currentCapacity, setCurrentCapacity] = useState<number>(0)
-  const [totalCapacity, setTotalCapacity] = useState<number>(1000)
-  const [warehouseList, setWarehouseList] = useState<il_item[]>([])
-  const [checkIn, setCheckIn] = useState<number>(0)
-  const [checkOut, setCheckOut] = useState<number>(0)
+  const [currentCapacity, setCurrentCapacity] = useState<number>(0);
+  const [totalCapacity, setTotalCapacity] = useState<number>(1000);
+  const [warehouseList, setWarehouseList] = useState<il_item[]>([]);
+  const [checkIn, setCheckIn] = useState<number>(0);
+  const [checkOut, setCheckOut] = useState<number>(0);
   const [selectedWarehouse, setSelectedWarehouse] = useState<il_item | null>(
     null
-  )
+  );
   const [warehouseSubtype, setWarehouseSubtype] = useState<warehouseSubtype[]>(
     []
-  )
-  const [checkInOut, setCheckInOut] = useState<CheckInOutWarehouse[]>([])
-  const [searchText, setSearchText] = useState<string>('')
-  const realmApi = localStorage.getItem(localStorgeKeyName.realmApiRoute)
-  const role = localStorage.getItem(localStorgeKeyName.role)
-  const debouncedSearchValue: string = useDebounce(searchText, 1000)
-  const { localeTextDataGrid } = useLocaleTextDataGrid()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  );
+  const [checkInOut, setCheckInOut] = useState<CheckInOutWarehouse[]>([]);
+  const [searchText, setSearchText] = useState<string>("");
+  const realmApi = localStorage.getItem(localStorgeKeyName.realmApiRoute);
+  const role = localStorage.getItem(localStorgeKeyName.role);
+  const debouncedSearchValue: string = useDebounce(searchText, 1000);
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoadingCheckInCheckOut, setIsLoadingCheckInCheckOut] =
-    useState<boolean>(false)
+    useState<boolean>(false);
 
   useEffect(() => {
-    if (realmApi !== 'account') {
-      initWarehouse()
+    if (realmApi !== "account") {
+      initWarehouse();
     }
-  }, [i18n.language, realmApi])
+  }, [i18n.language, realmApi]);
 
   useEffect(() => {
-    initCapacity()
-    initCheckIn()
-    initCheckOut()
-    initWarehouseSubType()
-    initCheckInOut()
-  }, [selectedWarehouse, i18n.language])
+    initCapacity();
+    initCheckIn();
+    initCheckOut();
+    initWarehouseSubType();
+    initCheckInOut();
+  }, [selectedWarehouse, i18n.language]);
 
   const initWarehouse = async () => {
     try {
-      let result
-      if (realmApi === 'account') {
-        result = await astdSearchWarehouse(0, 1000, searchText)
+      let result;
+      if (realmApi === "account") {
+        result = await astdSearchWarehouse(0, 1000, searchText);
       } else {
-        result = await getAllWarehouse(0, 1000)
+        result = await getAllWarehouse(0, 1000);
       }
       if (result) {
-        let capacityTotal = 0
-        let warehouse: il_item[] = []
-        const data = result.data.content
+        let capacityTotal = 0;
+        let warehouse: il_item[] = [];
+        const data = result.data.content;
         data.forEach((item: any) => {
           item.warehouseRecyc?.forEach((recy: any) => {
-            capacityTotal += recy.recycSubTypeCapacity
-          })
-          var warehouseName = ''
+            capacityTotal += recy.recycSubTypeCapacity;
+          });
+          var warehouseName = "";
           switch (i18n.language) {
-            case 'zhhk':
-              warehouseName = item.warehouseNameTchi
-              break
-            case 'zhch':
-              warehouseName = item.warehouseNameSchi
-              break
-            case 'enus':
-              warehouseName = item.warehouseNameEng
-              break
+            case "zhhk":
+              warehouseName = item.warehouseNameTchi;
+              break;
+            case "zhch":
+              warehouseName = item.warehouseNameSchi;
+              break;
+            case "enus":
+              warehouseName = item.warehouseNameEng;
+              break;
             default:
-              warehouseName = item.warehouseNameTchi
-              break
+              warehouseName = item.warehouseNameTchi;
+              break;
           }
           warehouse.push({
             id: item.warehouseId,
-            name: warehouseName
-          })
-        })
-        setWarehouseList(warehouse)
-        if (warehouse.length > 0) setSelectedWarehouse(warehouse[0])
-        setTotalCapacity(capacityTotal)
+            name: warehouseName,
+          });
+        });
+        setWarehouseList(warehouse);
+        if (warehouse.length > 0) setSelectedWarehouse(warehouse[0]);
+        setTotalCapacity(capacityTotal);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-  }
+  };
 
   const getWeightSubtypeWarehouse = async () => {
     //init weight for each subtype also calculate current subtype
-    const token = returnApiToken()
+    const token = returnApiToken();
     if (selectedWarehouse) {
-      let result
-      if (realmApi === 'account') {
+      let result;
+      if (realmApi === "account") {
         result = await getWeightbySubtype(
           parseInt(selectedWarehouse.id),
           debouncedSearchValue
-        )
+        );
       } else {
         result = await getWeightbySubtype(
           parseInt(selectedWarehouse.id),
           token.decodeKeycloack
-        )
+        );
       }
       if (result) {
-        const data = result.data
+        const data = result.data;
         //get weigt subtype
         //set current capacity warehouse
-        var currCapacityWarehouse = 0
+        var currCapacityWarehouse = 0;
         Object.keys(data).forEach((item) => {
-          currCapacityWarehouse += data[item]
-        })
-        setCurrentCapacity(Math.ceil(currCapacityWarehouse * 1000) / 1000)
-        return result.data
+          currCapacityWarehouse += data[item];
+        });
+        setCurrentCapacity(Math.ceil(currCapacityWarehouse * 1000) / 1000);
+        return result.data;
       }
     }
-  }
+  };
 
   const initCapacity = async () => {
     try {
-      const token = returnApiToken()
+      const token = returnApiToken();
       if (selectedWarehouse) {
-        let result
-        if (realmApi === 'account') {
+        let result;
+        if (realmApi === "account") {
           result = await getCapacityWarehouse(
             parseInt(selectedWarehouse.id),
             debouncedSearchValue
-          )
+          );
         } else {
           result = await getCapacityWarehouse(
             parseInt(selectedWarehouse.id),
             token.decodeKeycloack
-          )
+          );
         }
-        if (result) setTotalCapacity(result.data)
+        if (result) setTotalCapacity(result.data);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-  }
+  };
 
   const initCheckIn = async () => {
     try {
-      const token = returnApiToken()
+      const token = returnApiToken();
       if (selectedWarehouse) {
-        let result
-        if (realmApi === 'account') {
+        let result;
+        if (realmApi === "account") {
           result = await getCheckInWarehouse(
             parseInt(selectedWarehouse.id),
             debouncedSearchValue
-          )
+          );
         } else {
           result = await getCheckInWarehouse(
             parseInt(selectedWarehouse.id),
             token.decodeKeycloack
-          )
+          );
         }
-        if (result) setCheckIn(result.data)
+        if (result) setCheckIn(result.data);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-  }
+  };
 
   const initCheckOut = async () => {
     try {
-      const token = returnApiToken()
+      const token = returnApiToken();
       if (selectedWarehouse) {
-        let result
-        if (realmApi === 'account') {
+        let result;
+        if (realmApi === "account") {
           result = await getCheckOutWarehouse(
             parseInt(selectedWarehouse.id),
             debouncedSearchValue
-          )
+          );
         } else {
           result = await getCheckOutWarehouse(
             parseInt(selectedWarehouse.id),
             token.decodeKeycloack
-          )
+          );
         }
-        if (result) setCheckOut(result.data)
+        if (result) setCheckOut(result.data);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-  }
+  };
 
   const mappingRecyName = (recycTypeId: string, recycSubTypeId: string) => {
     const matchingRecycType = recycType?.find(
       (recyc) => recycTypeId === recyc.recycTypeId
-    )
+    );
 
     if (matchingRecycType) {
       const matchRecycSubType = matchingRecycType.recycSubType?.find(
         (subtype) => subtype.recycSubTypeId === recycSubTypeId
-      )
-      var name = ''
+      );
+      var name = "";
       switch (i18n.language) {
-        case 'enus':
-          name = matchingRecycType.recyclableNameEng
-          break
-        case 'zhch':
-          name = matchingRecycType.recyclableNameSchi
-          break
-        case 'zhhk':
-          name = matchingRecycType.recyclableNameTchi
-          break
+        case "enus":
+          name = matchingRecycType.recyclableNameEng;
+          break;
+        case "zhch":
+          name = matchingRecycType.recyclableNameSchi;
+          break;
+        case "zhhk":
+          name = matchingRecycType.recyclableNameTchi;
+          break;
         default:
-          name = matchingRecycType.recyclableNameTchi
-          break
+          name = matchingRecycType.recyclableNameTchi;
+          break;
       }
-      var subName = ''
+      var subName = "";
       switch (i18n.language) {
-        case 'enus':
-          subName = matchRecycSubType?.recyclableNameEng ?? ''
-          break
-        case 'zhch':
-          subName = matchRecycSubType?.recyclableNameSchi ?? ''
-          break
-        case 'zhhk':
-          subName = matchRecycSubType?.recyclableNameTchi ?? ''
-          break
+        case "enus":
+          subName = matchRecycSubType?.recyclableNameEng ?? "";
+          break;
+        case "zhch":
+          subName = matchRecycSubType?.recyclableNameSchi ?? "";
+          break;
+        case "zhhk":
+          subName = matchRecycSubType?.recyclableNameTchi ?? "";
+          break;
         default:
-          subName = matchRecycSubType?.recyclableNameTchi ?? '' //default fallback language is zhhk
-          break
+          subName = matchRecycSubType?.recyclableNameTchi ?? ""; //default fallback language is zhhk
+          break;
       }
 
-      return { name, subName }
+      return { name, subName };
     }
-  }
+  };
+
+  const mappingProductName = (
+    productTypeId: string,
+    productSubTypeId: string
+  ) => {
+    const matchingProductType = productType?.find(
+      (prod) => productTypeId === prod.productTypeId
+    );
+
+    if (matchingProductType) {
+      const matchProductSubType = matchingProductType.productSubType?.find(
+        (subtype) => subtype.productSubTypeId === productSubTypeId
+      );
+      var name = "";
+      switch (i18n.language) {
+        case "enus":
+          name = matchingProductType.productNameEng;
+          break;
+        case "zhch":
+          name = matchingProductType.productNameSchi;
+          break;
+        case "zhhk":
+          name = matchingProductType.productNameTchi;
+          break;
+        default:
+          name = matchingProductType.productNameTchi;
+          break;
+      }
+      var subName = "";
+      switch (i18n.language) {
+        case "enus":
+          subName = matchProductSubType?.productNameEng ?? "";
+          break;
+        case "zhch":
+          subName = matchProductSubType?.productNameSchi ?? "";
+          break;
+        case "zhhk":
+          subName = matchProductSubType?.productNameTchi ?? "";
+          break;
+        default:
+          subName = matchProductSubType?.productNameTchi ?? "";
+          break;
+      }
+
+      return { name, subName };
+    }
+  };
 
   const initWarehouseSubType = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     if (selectedWarehouse) {
-      if (realmApi === 'account') {
-        const weightSubtype = await initGetRecycSubTypeWeight()
-        const result = await astdSearchWarehouse(0, 1000, debouncedSearchValue)
+      if (realmApi === "account") {
+        const weightSubtype = await initGetRecycSubTypeWeight();
+        const result = await astdSearchWarehouse(0, 1000, debouncedSearchValue);
         if (result) {
-          const data = result.data.content
+          const data = result.data.content;
           if (data.length > 0) {
             const filteredWarehouse = data.filter(
               (value: { warehouseId: string }) =>
                 value.warehouseId === selectedWarehouse.id
-            )[0]
+            )[0];
             if (filteredWarehouse) {
-              const chosenWarehouseRecyc = filteredWarehouse.warehouseRecyc
-              console.log(chosenWarehouseRecyc, 'chosenWarehouseRecyc')
-              let subtypeWarehouse: warehouseSubtype[] = []
+              const chosenWarehouseRecyc = filteredWarehouse.warehouseRecyc;
+              console.log(chosenWarehouseRecyc, "chosenWarehouseRecyc");
+              let subtypeWarehouse: warehouseSubtype[] = [];
 
               chosenWarehouseRecyc.forEach((item: any) => {
                 const recyItem = mappingRecyName(
                   item.recycTypeId,
                   item.recycSubTypeId
-                )
-                const recycSubTypeId = item.recycSubTypeId
+                );
+                const recycSubTypeId = item.recycSubTypeId;
                 let subTypeWeight = weightSubtype[recycSubTypeId]
                   ? weightSubtype[recycSubTypeId]
-                  : 0
+                  : 0;
 
                 subtypeWarehouse.push({
                   subTypeId: item.recycSubTypeId,
-                  subtypeName: recyItem ? recyItem.subName : '-',
+                  subtypeName: recyItem ? recyItem.subName : "-",
                   weight: subTypeWeight,
-                  capacity: item.recycSubTypeCapacity
-                })
-              })
+                  capacity: item.recycSubTypeCapacity,
+                });
+              });
 
-              setWarehouseSubtype(subtypeWarehouse)
+              setWarehouseSubtype(subtypeWarehouse);
             }
           }
         }
       } else {
-        const weightSubtype = await getWeightSubtypeWarehouse()
-        console.log(weightSubtype, 'weightSubType')
-        const result = await getWarehouseById(parseInt(selectedWarehouse.id))
-        console.log('weightSubtype', weightSubtype)
+        const weightSubtype = await getWeightSubtypeWarehouse();
+        console.log(weightSubtype, "weightSubType");
+        const result = await getWarehouseById(parseInt(selectedWarehouse.id));
+        console.log("weightSubtype", weightSubtype);
 
         if (result) {
-          const data = result.data
-          let subtypeWarehouse: warehouseSubtype[] = []
+          const data = result.data;
+          console.log(data, "dataaa");
+          let subtypeWarehouse: warehouseSubtype[] = [];
+          let subtypeProduct: warehouseSubtype[] = [];
 
           // var subTypeWeight = 0;
           data?.warehouseRecyc.forEach((item: any) => {
             const recyItem = mappingRecyName(
               item.recycTypeId,
               item.recycSubTypeId
-            )
-            const recycSubTypeId = item.recycSubTypeId
+            );
+            const recycSubTypeId = item.recycSubTypeId;
             let subTypeWeight = weightSubtype[recycSubTypeId]
               ? weightSubtype[recycSubTypeId]
-              : 0
+              : 0;
 
             subtypeWarehouse.push({
               subTypeId: item.recycSubTypeId,
-              subtypeName: recyItem ? recyItem.subName : '-',
+              subtypeName: recyItem ? recyItem.subName : "-",
               weight: subTypeWeight,
-              capacity: item.recycSubTypeCapacity
-            })
-          })
+              capacity: item.recycSubTypeCapacity,
+            });
+          });
 
-          setWarehouseSubtype(subtypeWarehouse)
+          data?.warehouseProduct.forEach((item: any) => {
+            const prodItem = mappingProductName(
+              item.productTypeId,
+              item.productSubTypeId
+            );
+            const prodSubTypeId = item.productSubTypeId;
+            let subTypeWeight = weightSubtype[prodSubTypeId]
+              ? weightSubtype[prodSubTypeId]
+              : 0;
+
+            subtypeWarehouse.push({
+              subTypeId: item.productSubTypeId,
+              subtypeName: prodItem ? prodItem.subName : "-",
+              weight: subTypeWeight,
+              capacity: item.productSubTypeCapacity,
+            });
+          });
+
+          setWarehouseSubtype(subtypeWarehouse);
         }
       }
-      setIsLoading(false)
+      setIsLoading(false);
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   const initCheckInOut = async () => {
-    setIsLoadingCheckInCheckOut(true)
+    setIsLoadingCheckInCheckOut(true);
     try {
-      const token = returnApiToken()
+      const token = returnApiToken();
       if (selectedWarehouse) {
-        let result
-        if (realmApi === 'account') {
+        let result;
+        if (realmApi === "account") {
           result = await getCheckInOutWarehouse(
             parseInt(selectedWarehouse.id),
             debouncedSearchValue
-          )
+          );
         } else {
           result = await getCheckInOutWarehouse(
             parseInt(selectedWarehouse.id),
             token.decodeKeycloack
-          )
+          );
         }
         if (result) {
-          const data = result.data
-          let checkinoutMapping: CheckInOutWarehouse[] = []
+          const data = result.data;
+          let checkinoutMapping: CheckInOutWarehouse[] = [];
           data.map((item: any, index: number) => {
-            const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
-            const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
+            const dateInHK = dayjs.utc(item.createdAt).tz("Asia/Hong_Kong");
+            const createdAt = dateInHK.format(`${dateFormat} HH:mm`);
 
             if (item.logisticId) {
               const logistic = companies.find(
                 (company) => company.id == item.logisticId
-              )
-              console.log('logisticId', logistic)
+              );
+              console.log("logisticId", logistic);
               if (logistic) {
                 if (i18n.language === Languages.ENUS)
-                  item.logisticName = logistic.nameEng
+                  item.logisticName = logistic.nameEng;
                 if (i18n.language === Languages.ZHCH)
-                  item.logisticName = logistic.nameSchi
+                  item.logisticName = logistic.nameSchi;
                 if (i18n.language === Languages.ZHHK)
-                  item.logisticName = logistic.nameTchi
+                  item.logisticName = logistic.nameTchi;
               }
             }
 
             if (item.receiverId) {
               const receiverName = companies.find(
                 (company) => company.id == item.receiverId
-              )
-              console.log('receiverName', receiverName)
+              );
+              console.log("receiverName", receiverName);
               if (receiverName) {
                 if (i18n.language === Languages.ENUS)
-                  item.receiverName = receiverName.nameEng
+                  item.receiverName = receiverName.nameEng;
                 if (i18n.language === Languages.ZHCH)
-                  item.receiverName = receiverName.nameSchi
+                  item.receiverName = receiverName.nameSchi;
                 if (i18n.language === Languages.ZHHK)
-                  item.receiverName = receiverName.nameTchi
+                  item.receiverName = receiverName.nameTchi;
               }
             }
 
             if (item.senderId) {
               const senderName = companies.find(
                 (company) => company.id == item.senderId
-              )
+              );
 
-              console.log('senderName', senderName)
+              console.log("senderName", senderName);
               if (senderName) {
                 if (i18n.language === Languages.ENUS)
-                  item.senderName = senderName.nameEng
+                  item.senderName = senderName.nameEng;
                 if (i18n.language === Languages.ZHCH)
-                  item.senderName = senderName.nameSchi
+                  item.senderName = senderName.nameSchi;
                 if (i18n.language === Languages.ZHHK)
-                  item.senderName = senderName.nameTchi
+                  item.senderName = senderName.nameTchi;
               }
             }
 
@@ -516,199 +584,199 @@ const WarehouseDashboard: FunctionComponent = () => {
                 item?.senderAddr,
                 item?.receiverAddr
               )
-            )
-          })
+            );
+          });
 
-          setCheckInOut(checkinoutMapping)
+          setCheckInOut(checkinoutMapping);
         }
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-    setIsLoadingCheckInCheckOut(false)
-  }
+    setIsLoadingCheckInCheckOut(false);
+  };
 
   const initGetRecycSubTypeWeight = async () => {
-    const token = returnApiToken()
+    const token = returnApiToken();
     if (selectedWarehouse) {
       const result = await getRecycSubTypeWeight(
         parseInt(selectedWarehouse.id),
         debouncedSearchValue
-      )
+      );
       if (result) {
-        const data = result.data
-        var currCapacityWarehouse = 0
+        const data = result.data;
+        var currCapacityWarehouse = 0;
         Object.keys(data).forEach((item) => {
-          currCapacityWarehouse += data[item]
-        })
-        setCurrentCapacity(currCapacityWarehouse)
-        return result.data
+          currCapacityWarehouse += data[item];
+        });
+        setCurrentCapacity(currCapacityWarehouse);
+        return result.data;
       }
     }
-  }
+  };
 
   const columns: GridColDef[] = [
     {
-      field: 'createdAt',
-      headerName: t('dashboardOverview.createdAt'),
+      field: "createdAt",
+      headerName: t("dashboardOverview.createdAt"),
       width: 150,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'status',
-      headerName: t('col.status'),
+      field: "status",
+      headerName: t("col.status"),
       width: 150,
-      type: 'string',
+      type: "string",
       renderCell: (params) => {
-        return <StatusCard status={params.row.status} />
-      }
+        return <StatusCard status={params.row.status} />;
+      },
     },
     {
-      field: '',
-      headerName: t('notification.menu_staff.type'),
+      field: "",
+      headerName: t("notification.menu_staff.type"),
       width: 150,
-      type: 'string',
+      type: "string",
       renderCell: (params) => {
         return params.row.chkInId || params.row.chkOutId ? (
           <div>
             {params.row.chkInId
-              ? t('dashboardOverview.checkin')
-              : t('dashboardOverview.checkout')}
+              ? t("dashboardOverview.checkin")
+              : t("dashboardOverview.checkout")}
           </div>
-        ) : null
-      }
+        ) : null;
+      },
     },
     {
-      field: 'senderName',
-      headerName: t('dashboardOverview.shippingCompany'),
+      field: "senderName",
+      headerName: t("dashboardOverview.shippingCompany"),
       width: 200,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'receiverName',
-      headerName: t('check_in.receiver_company'),
+      field: "receiverName",
+      headerName: t("check_in.receiver_company"),
       width: 200,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'picoId',
-      headerName: t('check_out.pickup_order_no'),
+      field: "picoId",
+      headerName: t("check_out.pickup_order_no"),
       width: 200,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'adjustmentFlg',
-      headerName: t('check_out.stock_adjustment'),
+      field: "adjustmentFlg",
+      headerName: t("check_out.stock_adjustment"),
       width: 100,
-      type: 'string',
+      type: "string",
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: "flex", gap: "8px" }}>
             {params.row.adjustmentFlg ? (
               <CheckIcon className="text-green-primary" />
             ) : (
               <CloseIcon className="text-red" />
             )}
           </div>
-        )
-      }
+        );
+      },
     },
     {
-      field: 'senderAddr',
-      headerName: t('dashboardOverview.inventoryLocation'),
+      field: "senderAddr",
+      headerName: t("dashboardOverview.inventoryLocation"),
       width: 150,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'logisticName',
-      headerName: t('check_out.logistic_company'),
+      field: "logisticName",
+      headerName: t("check_out.logistic_company"),
       width: 200,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'receiverAddr',
-      headerName: t('check_out.arrival_location'),
+      field: "receiverAddr",
+      headerName: t("check_out.arrival_location"),
       width: 200,
-      type: 'string'
-    }
-  ]
+      type: "string",
+    },
+  ];
 
   const onChangeWarehouse = (event: SelectChangeEvent) => {
-    const warehouseId = event.target.value
+    const warehouseId = event.target.value;
     const selectedWarehouse = warehouseList.find(
       (item) => item.id == warehouseId
-    )
+    );
     if (selectedWarehouse) {
-      setSelectedWarehouse(selectedWarehouse)
+      setSelectedWarehouse(selectedWarehouse);
     }
-  }
+  };
 
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
-      top: params.isFirstVisible ? 0 : 10
-    }
-  }, [])
+      top: params.isFirstVisible ? 0 : 10,
+    };
+  }, []);
 
   const generateRandomPastelColor = () => {
-    const r = Math.floor(Math.random() * 156) + 100 // Red component (100-255)
-    const g = Math.floor(Math.random() * 156) + 100 // Green component (100-255)
-    const b = Math.floor(Math.random() * 156) + 100 // Blue component (100-255)
-    const color = `#${r.toString(16)}${g.toString(16)}${b.toString(16)}`
+    const r = Math.floor(Math.random() * 156) + 100; // Red component (100-255)
+    const g = Math.floor(Math.random() * 156) + 100; // Green component (100-255)
+    const b = Math.floor(Math.random() * 156) + 100; // Blue component (100-255)
+    const color = `#${r.toString(16)}${g.toString(16)}${b.toString(16)}`;
 
-    return color
-  }
+    return color;
+  };
 
   const handleSearchByTenantId = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    console.log('event.target.value', event.target.value)
-    if (event.target.value === '') {
-      resetData()
+    console.log("event.target.value", event.target.value);
+    if (event.target.value === "") {
+      resetData();
     }
 
-    const numericValue = event.target.value.replace(/\D/g, '')
-    event.target.value = numericValue
+    const numericValue = event.target.value.replace(/\D/g, "");
+    event.target.value = numericValue;
 
     if (numericValue.length === 6) {
-      setSearchText(`company${numericValue}`)
+      setSearchText(`company${numericValue}`);
     }
-  }
+  };
 
   const resetData = () => {
-    setWarehouseList([])
-    setCurrentCapacity(0)
-    setTotalCapacity(0)
-    setCheckIn(0)
-    setCheckOut(0)
-    setSelectedWarehouse(null)
-    setWarehouseSubtype([])
-    setCheckInOut([])
-  }
+    setWarehouseList([]);
+    setCurrentCapacity(0);
+    setTotalCapacity(0);
+    setCheckIn(0);
+    setCheckOut(0);
+    setSelectedWarehouse(null);
+    setWarehouseSubtype([]);
+    setCheckInOut([]);
+  };
 
   useEffect(() => {
     if (debouncedSearchValue) {
-      resetData()
-      initWarehouse()
+      resetData();
+      initWarehouse();
     }
-  }, [debouncedSearchValue, i18n.language])
+  }, [debouncedSearchValue, i18n.language]);
 
   return (
     <Box className="container-wrapper w-full mt-4">
       <Box sx={{ marginBottom: 2 }}>
-        {realmApi === 'account' && (
+        {realmApi === "account" && (
           <TextField
             id="search-tenantId-warehouse"
             onChange={handleSearchByTenantId}
             sx={styles.inputStyle}
-            label={t('tenant.invite_form.company_number')}
-            placeholder={t('tenant.enter_company_number')}
+            label={t("tenant.invite_form.company_number")}
+            placeholder={t("tenant.enter_company_number")}
             inputProps={{
-              inputMode: 'numeric',
-              pattern: '[0-9]*',
-              maxLength: 6
+              inputMode: "numeric",
+              pattern: "[0-9]*",
+              maxLength: 6,
             }}
             InputProps={{
               endAdornment: (
@@ -717,7 +785,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                     <SEARCH_ICON style={{ color: getPrimaryColor() }} />
                   </IconButton>
                 </InputAdornment>
-              )
+              ),
             }}
           />
         )}
@@ -725,8 +793,8 @@ const WarehouseDashboard: FunctionComponent = () => {
           <Select
             id="warehouse"
             placeholder="Select warehouse"
-            value={selectedWarehouse?.id || ''}
-            label={t('check_out.any')}
+            value={selectedWarehouse?.id || ""}
+            label={t("check_out.any")}
             onChange={onChangeWarehouse}
           >
             {warehouseList?.length > 0 ? (
@@ -737,7 +805,7 @@ const WarehouseDashboard: FunctionComponent = () => {
               ))
             ) : (
               <MenuItem disabled value="">
-                <em>{t('common.noOptions')}</em>
+                <em>{t("common.noOptions")}</em>
               </MenuItem>
             )}
           </Select>
@@ -745,12 +813,12 @@ const WarehouseDashboard: FunctionComponent = () => {
       </Box>
       <Box className="capacity-section">
         {isLoading ? (
-          <Box sx={{ textAlign: 'center', paddingY: 12, width: '100%' }}>
+          <Box sx={{ textAlign: "center", paddingY: 12, width: "100%" }}>
             <CircularProgress
               color={
-                role === 'manufacturer' || role === 'customer'
-                  ? 'primary'
-                  : 'success'
+                role === "manufacturer" || role === "customer"
+                  ? "primary"
+                  : "success"
               }
             />
           </Box>
@@ -758,19 +826,19 @@ const WarehouseDashboard: FunctionComponent = () => {
           <Card
             sx={{
               borderRadius: 2,
-              backgroundColor: 'white',
+              backgroundColor: "white",
               padding: 2,
-              boxShadow: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 2
+              boxShadow: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
             }}
           >
-            <Box className={'total-capacity'} sx={{ flexGrow: 1 }}>
+            <Box className={"total-capacity"} sx={{ flexGrow: 1 }}>
               <Typography fontSize={16} color="gray" fontWeight="light">
-                {t('warehouseDashboard.currentCapacity')}
+                {t("warehouseDashboard.currentCapacity")}
               </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
+              <Box sx={{ display: "flex", alignItems: "baseline" }}>
                 <Typography fontSize={22} color="black" fontWeight="bold">
                   {currentCapacity}
                 </Typography>
@@ -789,73 +857,73 @@ const WarehouseDashboard: FunctionComponent = () => {
               <Typography
                 fontSize={14}
                 color={
-                  (currentCapacity / totalCapacity) * 100 > 70 ? 'red' : 'green'
+                  (currentCapacity / totalCapacity) * 100 > 70 ? "red" : "green"
                 }
                 fontWeight="light"
               >
                 {(currentCapacity / totalCapacity) * 100 < 70
-                  ? t('warehouseDashboard.thereStillEnoughSpace')
-                  : t('warehouseDashboard.noMoreRoom')}
+                  ? t("warehouseDashboard.thereStillEnoughSpace")
+                  : t("warehouseDashboard.noMoreRoom")}
               </Typography>
             </Box>
-            {realmApi !== 'account' && (
+            {realmApi !== "account" && (
               <Box
-                className={'checkin-checkout'}
-                sx={{ display: 'flex', gap: '12px' }}
+                className={"checkin-checkout"}
+                sx={{ display: "flex", gap: "12px" }}
               >
                 <Card
                   sx={{
                     borderRadius: 2,
-                    backgroundColor: '#A7D676',
+                    backgroundColor: "#A7D676",
                     padding: 2,
-                    boxShadow: 'none',
-                    color: 'white',
-                    width: '84px',
-                    cursor: 'pointer'
+                    boxShadow: "none",
+                    color: "white",
+                    width: "84px",
+                    cursor: "pointer",
                   }}
-                  onClick={() => navigate('/warehouse/shipment')}
+                  onClick={() => navigate("/warehouse/shipment")}
                 >
                   <LoginIcon
                     fontSize="small"
                     className="bg-[#7FC738] rounded-[50%] p-1"
                   />
                   <div className="text-sm font-bold mb-4">
-                    {t('warehouseDashboard.check-in')}
+                    {t("warehouseDashboard.check-in")}
                   </div>
                   <div className="flex gap-1 items-baseline">
                     <Typography fontSize={22} color="white" fontWeight="bold">
                       {checkIn}
                     </Typography>
                     <Typography fontSize={11} color="white" fontWeight="bold">
-                      {t('warehouseDashboard.toBeConfirmed')}
+                      {t("warehouseDashboard.toBeConfirmed")}
                     </Typography>
                   </div>
                 </Card>
                 <Card
                   sx={{
                     borderRadius: 2,
-                    backgroundColor: '#7ADFF1',
+                    backgroundColor: "#7ADFF1",
                     padding: 2,
-                    boxShadow: 'none',
-                    color: 'white',
-                    width: '84px',
-                    cursor: 'pointer'
+                    boxShadow: "none",
+                    color: "white",
+                    width: "84px",
+                    cursor: "pointer",
                   }}
-                  onClick={() => navigate('/warehouse/checkout')}
+                  onClick={() => navigate("/warehouse/checkout")}
                 >
                   <LogoutIcon
                     fontSize="small"
                     className="bg-[#6BC7FF] rounded-[50%] p-1"
                   />
                   <div className="text-sm font-bold mb-4">
-                    {t('warehouseDashboard.check-out')}
+                    {t("warehouseDashboard.check-out")}
                   </div>
                   <div className="flex gap-1 items-baseline">
                     <Typography fontSize={22} color="white" fontWeight="bold">
                       {checkOut}
                     </Typography>
                     <Typography fontSize={11} color="white" fontWeight="bold">
-                      {t('warehouseDashboard.toBeConfirmed')}
+                      {t("warehouseDashboard.toBeConfirmed")}
                     </Typography>
                   </div>
                 </Card>
@@ -867,24 +935,24 @@ const WarehouseDashboard: FunctionComponent = () => {
       <Box className="capacity-item" sx={{ marginY: 6 }}>
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginBottom: 2
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: 2,
           }}
         >
           <Typography fontSize={16} color="#535353" fontWeight="bold">
-            {t('warehouseDashboard.recyclingInformation')}
+            {t("warehouseDashboard.recyclingInformation")}
           </Typography>
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              cursor: 'pointer'
+              display: "flex",
+              alignItems: "center",
+              cursor: "pointer",
             }}
             onClick={() => navigate(`/${role}/inventory`)}
           >
             <Typography fontSize={13} color="gray" fontWeight="light">
-              {t('warehouseDashboard.all')}
+              {t("warehouseDashboard.all")}
             </Typography>
             <ChevronRightIcon
               fontSize="small"
@@ -893,37 +961,37 @@ const WarehouseDashboard: FunctionComponent = () => {
           </Box>
         </Box>
         {isLoading ? (
-          <Box sx={{ textAlign: 'center', paddingY: 12 }}>
+          <Box sx={{ textAlign: "center", paddingY: 12 }}>
             <CircularProgress
               color={
-                role === 'manufacturer' || role === 'customer'
-                  ? 'primary'
-                  : 'success'
+                role === "manufacturer" || role === "customer"
+                  ? "primary"
+                  : "success"
               }
             />
           </Box>
         ) : (
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box sx={{ display: "flex", gap: 2 }}>
             {warehouseSubtype.length > 0 ? (
               warehouseSubtype.map((item) => (
                 <Card
                   key={item.subTypeId}
                   sx={{
                     borderRadius: 2,
-                    backgroundColor: 'white',
+                    backgroundColor: "white",
                     padding: 2,
-                    boxShadow: 'none',
-                    color: 'white',
-                    width: '110px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between'
+                    boxShadow: "none",
+                    color: "white",
+                    width: "110px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
                   }}
                 >
                   <div
                     className="circle-color w-[30px] h-[30px] rounded-[50px]"
                     style={{
-                      background: generateRandomPastelColor()
+                      background: generateRandomPastelColor(),
                     }}
                   ></div>
                   <div className="text-sm font-bold text-black mt-2 mb-10 min-h-12">
@@ -948,14 +1016,14 @@ const WarehouseDashboard: FunctionComponent = () => {
             ) : (
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '100%',
-                  marginTop: '24px'
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  marginTop: "24px",
                 }}
               >
-                {t('common.noData')}
+                {t("common.noData")}
               </Box>
             )}
           </Box>
@@ -964,24 +1032,24 @@ const WarehouseDashboard: FunctionComponent = () => {
       <Box className="table-checkin-out">
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginBottom: 2
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: 2,
           }}
         >
           <Typography fontSize={16} color="#535353" fontWeight="bold">
-            {t('warehouseDashboard.recentEntryAndExitRecords')}
+            {t("warehouseDashboard.recentEntryAndExitRecords")}
           </Typography>
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              cursor: 'pointer'
+              display: "flex",
+              alignItems: "center",
+              cursor: "pointer",
             }}
             onClick={() => navigate(`/${role}/checkInAndCheckout`)}
           >
             <Typography fontSize={13} color="gray" fontWeight="light">
-              {t('warehouseDashboard.all')}
+              {t("warehouseDashboard.all")}
             </Typography>
             <ChevronRightIcon
               fontSize="small"
@@ -990,12 +1058,12 @@ const WarehouseDashboard: FunctionComponent = () => {
           </Box>
         </Box>
         {isLoadingCheckInCheckOut ? (
-          <Box sx={{ textAlign: 'center', paddingY: 12, width: '100%' }}>
+          <Box sx={{ textAlign: "center", paddingY: 12, width: "100%" }}>
             <CircularProgress
               color={
-                role === 'manufacturer' || role === 'customer'
-                  ? 'primary'
-                  : 'success'
+                role === "manufacturer" || role === "customer"
+                  ? "primary"
+                  : "success"
               }
             />
           </Box>
@@ -1009,52 +1077,52 @@ const WarehouseDashboard: FunctionComponent = () => {
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
               sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
+                border: "none",
+                "& .MuiDataGrid-cell": {
+                  border: "none",
                 },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
+                "& .MuiDataGrid-row": {
+                  bgcolor: "white",
+                  borderRadius: "10px",
                 },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
-                  }
+                "&>.MuiDataGrid-main": {
+                  "&>.MuiDataGrid-columnHeaders": {
+                    borderBottom: "none",
+                  },
                 },
-                '& .MuiDataGrid-virtualScroller': {
-                  height: '300px'
-                }
+                "& .MuiDataGrid-virtualScroller": {
+                  height: "300px",
+                },
               }}
             />
           </Box>
         )}
       </Box>
     </Box>
-  )
-}
+  );
+};
 
 let dropDownStyle = {
   mt: 3,
-  borderRadius: '10px',
-  width: 'max-content',
-  bgcolor: 'transparent',
-  '& .MuiOutlinedInput-root': {
-    borderRadius: '10px',
-    '& fieldset': {
-      borderColor: 'transparent'
+  borderRadius: "10px",
+  width: "max-content",
+  bgcolor: "transparent",
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "10px",
+    "& fieldset": {
+      borderColor: "transparent",
     },
-    '&:hover fieldset': {
-      borderColor: 'transparent'
+    "&:hover fieldset": {
+      borderColor: "transparent",
     },
-    '&.Mui-focused fieldset': {
-      borderColor: 'transparent'
+    "&.Mui-focused fieldset": {
+      borderColor: "transparent",
     },
-    '.MuiSelect-select': {
+    ".MuiSelect-select": {
       fontSize: 22,
-      fontWeight: 'bold'
-    }
-  }
-}
+      fontWeight: "bold",
+    },
+  },
+};
 
-export default WarehouseDashboard
+export default WarehouseDashboard;
