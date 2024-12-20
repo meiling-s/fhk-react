@@ -7,7 +7,7 @@ import {
   Collapse,
 } from "@mui/material";
 import { FunctionComponent, useState } from "react";
-import { ProcessingRecordData } from "../../interfaces/inventory";
+import { GIDValue, ProcessingRecordData } from "../../interfaces/inventory";
 import { useTranslation } from "react-i18next";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
@@ -27,10 +27,12 @@ dayjs.extend(timezone);
 
 interface ProcessingRecordCardProps {
   data: ProcessingRecordData;
+  handleClickGIDLabel: (gidValue: GIDValue) => void;
 }
 
 const ProcessingRecordCard: FunctionComponent<ProcessingRecordCardProps> = ({
   data,
+  handleClickGIDLabel,
 }) => {
   const { i18n, t } = useTranslation();
   const { weightUnits, dateFormat } = useContainer(CommonTypeContainer);
@@ -170,7 +172,32 @@ const ProcessingRecordCard: FunctionComponent<ProcessingRecordCardProps> = ({
                 color="textSecondary"
                 sx={{ color: "#199BEC", cursor: "pointer" }}
               >
-                {data.gidLabel}
+                {data.gidLabel.length > 0 &&
+                  data.gidLabel.map((item: string, index: number) => {
+                    const last = data.gidLabel[data.gidLabel.length - 1];
+                    return (
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        sx={{
+                          color: "#199BEC",
+                          cursor: "pointer",
+                          marginRight: item === last ? 0 : 1,
+                        }}
+                        key={index}
+                        onClick={() => {
+                          const indexItem = data.gidLabel.indexOf(item);
+                          const gidValue = {
+                            gid: data.gid[indexItem],
+                            gidLabel: item,
+                          };
+                          handleClickGIDLabel(gidValue);
+                        }}
+                      >
+                        {item}
+                      </Typography>
+                    );
+                  })}
               </Typography>
             </Box>
           </Box>

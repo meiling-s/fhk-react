@@ -109,6 +109,17 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
     }
   };
 
+  const getMoreText = () => {
+    switch (i18n.language) {
+      case "enus":
+        return "(more than 1)";
+      case "zhch":
+        return "(或多於一個)";
+      case "zhhk":
+        return "(或多於一個)";
+    }
+  };
+
   return (
     <Card variant="outlined" sx={{ marginBottom: 2, borderRadius: 3 }}>
       <Box display="flex" alignItems="center">
@@ -249,21 +260,44 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                     </Typography>
                   </Box>
                 </Box>
-                <Box width="70%">
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    sx={{ color: "#199BEC", cursor: "pointer" }}
-                    onClick={() => {
-                      const gidValue = {
-                        gid: data.process_in.gid[0],
-                        gidLabel: data.process_in.gidLabel,
-                      };
-                      handleClickGIDLabel(gidValue);
-                    }}
-                  >
-                    {data.process_in.gidLabel}
-                  </Typography>
+                <Box
+                  width="70%"
+                  display={"flex"}
+                  flexDirection={"row"}
+                  flexWrap={"wrap"}
+                >
+                  {data.process_in.gidLabel.length > 0 &&
+                    data.process_in.gidLabel.map(
+                      (item: string, index: number) => {
+                        const last =
+                          data.process_in.gidLabel[
+                            data.process_in.gidLabel.length - 1
+                          ];
+                        return (
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            sx={{
+                              color: "#199BEC",
+                              cursor: "pointer",
+                              marginRight: item === last ? 0 : 1,
+                            }}
+                            key={index}
+                            onClick={() => {
+                              const indexItem =
+                                data.process_in.gidLabel.indexOf(item);
+                              const gidValue = {
+                                gid: data.process_in.gid[indexItem],
+                                gidLabel: item,
+                              };
+                              handleClickGIDLabel(gidValue);
+                            }}
+                          >
+                            {item}
+                          </Typography>
+                        );
+                      }
+                    )}
                 </Box>
               </Box>
             </Grid>
@@ -322,7 +356,8 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                     color="textSecondary"
                     sx={{ color: "#535353" }}
                   >
-                    {getConditionalValue(data, "processin_warehouse")}
+                    {getConditionalValue(data, "processin_warehouse")}{" "}
+                    {data.process_in.gidLabel.length > 1 ? getMoreText() : null}
                   </Typography>
                 </Box>
               </Box>
@@ -384,21 +419,44 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                     </Typography>
                   </Box>
                 </Box>
-                <Box width="70%">
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    sx={{ color: "#199BEC", cursor: "pointer" }}
-                    onClick={() => {
-                      const gidValue = {
-                        gid: data.process_out.gid[0],
-                        gidLabel: data.process_out.gidLabel,
-                      };
-                      handleClickGIDLabel(gidValue);
-                    }}
-                  >
-                    {data.process_out.gidLabel}
-                  </Typography>
+                <Box
+                  width="70%"
+                  display={"flex"}
+                  flexDirection={"row"}
+                  flexWrap={"wrap"}
+                >
+                  {data.process_out.gidLabel.length > 0 &&
+                    data.process_out.gidLabel.map(
+                      (item: string, index: number) => {
+                        const last =
+                          data.process_out.gidLabel[
+                            data.process_out.gidLabel.length - 1
+                          ];
+                        return (
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            sx={{
+                              color: "#199BEC",
+                              cursor: "pointer",
+                              marginRight: item === last ? 0 : 1,
+                            }}
+                            key={index}
+                            onClick={() => {
+                              const indexItem =
+                                data.process_out.gidLabel.indexOf(item);
+                              const gidValue = {
+                                gid: data.process_out.gid[indexItem],
+                                gidLabel: item,
+                              };
+                              handleClickGIDLabel(gidValue);
+                            }}
+                          >
+                            {item}
+                          </Typography>
+                        );
+                      }
+                    )}
                 </Box>
               </Box>
             </Grid>
@@ -457,7 +515,10 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                     color="textSecondary"
                     sx={{ color: "#535353" }}
                   >
-                    {getConditionalValue(data, "processout_warehouse")}
+                    {getConditionalValue(data, "processout_warehouse")}{" "}
+                    {data.process_out.gidLabel.length > 1
+                      ? getMoreText()
+                      : null}
                   </Typography>
                 </Box>
               </Box>

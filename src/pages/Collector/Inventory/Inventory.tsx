@@ -764,6 +764,7 @@ const Inventory: FunctionComponent = () => {
       type: "string",
       valueGetter: (params) => {
         // If warehouse, find warehouse name
+        console.log(realmApi, "realm");
         if (realmApi === "account") {
           return params.row.location;
         } else {
