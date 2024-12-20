@@ -36,6 +36,7 @@ import { useNavigate } from 'react-router-dom'
 
 type RecycItem = {  
   itemId: number
+  itemType: 'GENERAL' | 'LEFTOVER' | 'WASTE' | string
   processOutDtlId?: number
   processInDtlId?: number
   recycType: il_item
@@ -163,7 +164,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
           subName = matchRecycSubType?.recyclableNameTchi ?? ''
           break
         default:
-          subName = matchRecycSubType?.recyclableNameTchi ?? '' //default fallback language is zhhk
+          subName = matchRecycSubType?.recyclableNameTchi ?? '' 
           break
       }
 
@@ -344,6 +345,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
           recycItems.push({
             ...obj,
             itemId: detail.itemId,
+            itemType: detail.itemType,
             recycType: detail.recycTypeId ? {
               name: recycResult?.name || '',
               id: detail.recycTypeId
@@ -361,7 +363,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
               id: detail.productSubTypeId
             } : emptyList,
             productSubtypeRemark: detail.productSubTypeRemark,
-            productAddonId :detail.productAddonTypeId ? {
+            productAddonId: detail.productAddonTypeId ? {
               name: productResult?.productAddonTypeName || '',
               id: detail.productAddonTypeId
             } : emptyList,
@@ -370,7 +372,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
             weight: detail.weight,
             unitId: detail.unitId,
             version: detail.version,
-            status: detail.status
+            status: detail.status,
           })
         }
       })
@@ -426,6 +428,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
 
     const createItemsProcessOut: CreateRecyclable = {
       itemId: data.itemId,
+      itemType: data.itemType,
       recycTypeId: data.recycTypeId,
       recycSubTypeId: data.recycSubTypeId,
       productTypeId: data.productTypeId,
