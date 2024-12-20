@@ -1650,7 +1650,7 @@
     "introduction": "簡介"
   },
   "globalItemId": {
-    "globalItemId": "物品编号",
+    "globalItemId": "搜寻物品编号",
     "enterGlobalItemId": "输入物品编号"
   }
 }
