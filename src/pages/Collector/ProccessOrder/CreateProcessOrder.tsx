@@ -6,7 +6,9 @@ import {
   Typography,
   FormControl,
   MenuItem,
-  Divider
+  Divider,
+  Stack,
+  Modal
 } from '@mui/material'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import {
@@ -83,6 +85,62 @@ type ProcessInDtlData = {
   rows: rowPorDtl[]
 }
 
+type DeleteModalProps = {
+  open: boolean
+  selectedItem: ProcessInDtlData | null
+  onClose: () => void
+  onDelete: (item: ProcessInDtlData) => void
+}
+
+const DeleteModal: React.FC<DeleteModalProps> = ({
+  open,
+  selectedItem,
+  onClose,
+  onDelete
+}) => {
+  const { t } = useTranslation()
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={localstyles.modal}>
+        <Stack spacing={2}>
+          <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: 'bold' }}
+            >
+              {t('pick_up_order.delete_msg')}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box sx={{ alignSelf: 'center', paddingBottom: 3 }}>
+            <button
+              className="primary-btn mr-2 cursor-pointer"
+              onClick={() => onDelete(selectedItem!!)}
+            >
+              {t('check_in.confirm')}
+            </button>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onClose()
+              }}
+            >
+              {t('check_out.cancel')}
+            </button>
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
+
 const CreateProcessOrder = ({}: {}) => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
@@ -117,7 +175,9 @@ const CreateProcessOrder = ({}: {}) => {
   >(null)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
-
+  const [openDelete, setOpenDelete] = useState<boolean>(false)
+  const [selectedDeletedItem, setSelectedDeletedItem] =
+    useState<ProcessInDtlData | null>(null)
   const buttonFilledCustom = {
     borderRadius: '40px',
     borderColor: '#7CE495',
@@ -674,6 +734,8 @@ const CreateProcessOrder = ({}: {}) => {
     setProcessOrderDtlSource(updatedProcessOrderDtlSource)
     // update plannedAt and plannedEnd
     updateDateOnProcessDetail(updatedProcessOrderDtlSource)
+    setSelectedDeletedItem(null)
+    setOpenDelete(false)
   }
 
   return (
@@ -799,7 +861,9 @@ const CreateProcessOrder = ({}: {}) => {
                         fontSize="small"
                         className="cursor-pointer text-grey-dark"
                         onClick={(event) => {
-                          handleDelete(item)
+                          //handleDelete(item)
+                          setSelectedDeletedItem(item)
+                          setOpenDelete(true)
                         }}
                         style={{ cursor: 'pointer' }}
                       />
@@ -932,6 +996,14 @@ const CreateProcessOrder = ({}: {}) => {
                   />
                 ))}
             </Grid>
+            <DeleteModal
+              open={openDelete}
+              onClose={() => {
+                setOpenDelete(false)
+              }}
+              selectedItem={selectedDeletedItem}
+              onDelete={handleDelete}
+            />
           </Grid>
         </LocalizationProvider>
       </Box>
@@ -982,6 +1054,17 @@ const localstyles = {
     border: 2,
     borderRadius: 3,
     borderColor: '#E2E2E2'
+  },
+  modal: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%,-50%)',
+    width: '34%',
+    height: 'fit-content',
+    backgroundColor: 'white',
+    border: 'none',
+    borderRadius: 5
   }
 }
 

@@ -1063,7 +1063,7 @@ const InputProcessForm = ({
                                       ? 'estInWeight'
                                       : 'estOutWeight'
                                   const idx = key === 'processIn' ? 0 : 1
-                                  handleWeightChange(value, field, idx)
+                                  handleWeightChange(value, field, 0)
                                 }
                               )
                             }}
@@ -1078,7 +1078,7 @@ const InputProcessForm = ({
                                   ? 'estInWeight'
                                   : 'estOutWeight'
                               const idx = key === 'processIn' ? 0 : 1
-                              handleWeightChange(value, field, idx)
+                              handleWeightChange(value, field, 0)
                             }}
                             value={
                               key === 'processIn'
