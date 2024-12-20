@@ -680,6 +680,7 @@ const JobOrder = () => {
   const { localeTextDataGrid } = useLocaleTextDataGrid();
   const [reasonModal, setReasonModal] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
+  const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
   const initJobOrderRequest = async () => {
     // setIsLoading(true)
@@ -768,6 +769,7 @@ const JobOrder = () => {
     setOpenModal(false);
     setReasonModal(false);
     setSelectedRow(null);
+    await delay(2000);
     initJobOrderRequest();
   };
 
@@ -829,10 +831,14 @@ const JobOrder = () => {
     setIsLoading(true);
     const tempRows =
       jobOrder?.map(async (item) => {
-        const senderCompany = await fetchTenantDetails(Number(item.senderId));
-        const receiverCompany = await fetchTenantDetails(
-          Number(item.receiverId)
-        );
+        const senderCompany =
+          Number(item.senderId) !== 0 && !isNaN(Number(item.senderId))
+            ? await fetchTenantDetails(Number(item.senderId))
+            : item.senderName;
+        const receiverCompany =
+          Number(item.receiverId) !== 0 && !isNaN(Number(item.receiverId))
+            ? await fetchTenantDetails(Number(item.receiverId))
+            : item.receiverName;
         return {
           ...item,
           id: item.joId,
@@ -983,9 +989,7 @@ const JobOrder = () => {
             selectedRow={selectedRow}
             onApproved={() => setApproveModal(true)}
             onReject={() => setRejectModal(true)}
-            onSuccess={() => successChangeDate()}
             setReasonModal={() => setReasonModal(!reasonModal)}
-            reasonList={reasonList}
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
           />
