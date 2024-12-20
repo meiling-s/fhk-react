@@ -693,9 +693,9 @@ const InputProcessForm = ({
       const newState = [...prevState]
 
       if (field === 'estInWeight') {
-        newState[idx].processIn.estInWeight = value
+        newState[idx].processIn.estInWeight = value 
       } else if (field === 'estOutWeight') {
-        newState[idx].processOut.estOutWeight = value
+        newState[idx].processOut.estOutWeight = value 
       }
 
       return newState
@@ -1053,6 +1053,7 @@ const InputProcessForm = ({
                             id="weight"
                             placeholder={t('userAccount.pleaseEnterNumber')}
                             onChange={(event) => {
+                              console.log('event', event.target.value)
                               onChangeWeight(
                                 event.target.value,
                                 decimalVal,
@@ -1067,10 +1068,11 @@ const InputProcessForm = ({
                               )
                             }}
                             onBlur={(event) => {
-                              const value = formatWeight(
+                              const value =  event.target.value ? formatWeight(
                                 event.target.value,
                                 decimalVal
-                              )
+                              ) : '0'
+                              console.log("value", value)
                               const field =
                                 key === 'processIn'
                                   ? 'estInWeight'
@@ -1084,7 +1086,7 @@ const InputProcessForm = ({
                                 : processOrderDetail[0].processOut.estOutWeight
                             }
                             error={
-                              (!trySubmited &&
+                              (trySubmited &&
                                 (key === 'processOut'
                                   ? parseFloat(
                                       processOrderDetail[0].processOut
