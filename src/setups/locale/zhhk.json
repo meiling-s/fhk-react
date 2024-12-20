@@ -82,7 +82,7 @@
     "open": "開放",
     "close": "關閉",
     "colRecycType": "回收物資料",
-    "recycType": "可回收物類別 (按一下類別顯示子類別，按兩下取消選擇)",
+    "recycType": "可回收物類別",
     "category": "類別 (按一下類別選擇/取消選擇)",
     "staffInfo": "員工資料",
     "numOfStaff": "員工數量",
@@ -739,7 +739,8 @@
     "internal_transfer": "內部運輸",
     "process_out": "處理輸出",
     "process_in": "處理輸入",
-    "pickup_order_record": "回收運單紀錄"
+    "pickup_order_record": "回收運單紀錄",
+    "compactor": "壓縮車紀錄"
   },
   "processRecord": {
     "processing": "處理中",
@@ -1618,7 +1619,7 @@
       "package": "包裝",
       "itemToProcessIn": "預計待處理物品",
       "itemToProcessOut": "預計處理後物品",
-      "itemCategory": "物品類別 (按一下類別顯示子類別)",
+      "itemCategory": "物品類別 (按一下類別顯示子類別，按兩下取消選擇)",
       "recycling": "回收物",
       "product": "產品",
       "warehouse": "貨倉"

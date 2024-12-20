@@ -3,6 +3,7 @@ import {
   CREATE_PROCESS_IN,
   CREATE_PROCESS_OUT,
   GET_INVENTORY,
+  GET_INVENTORY_BY_LABEL,
   GET_ITEM_TRACK_INVENTORY
 } from '../../constants/requests'
 import { returnApiToken } from '../../utils/utils'
@@ -126,5 +127,19 @@ export const createProcessOut = async (data: ProcessOutType, processOrderId: str
       })
   } catch (error) {
       console.error(error)
+  }
+}
+
+
+export const astdGetInventoryByGIDLabel = async (label: string) => {
+  try {
+    const response = await axiosInstance({
+      baseURL: window.baseURL.administrator,
+      ...GET_INVENTORY_BY_LABEL(label)
+    })
+
+    return response
+  } catch (error) {
+    console.error(error)
   }
 }

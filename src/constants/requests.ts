@@ -721,6 +721,11 @@ export const GET_ITEM_TRACK_INVENTORY = (
   url: `api/v1/administrator/globalItemId/${gid}`
 })
 
+export const GET_INVENTORY_BY_LABEL = (label: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/searchItemsbyGID/${label}`
+})
+
 //process records
 export const GET_PROCESS_OUT = (
   table: string,

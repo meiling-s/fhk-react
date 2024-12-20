@@ -17,7 +17,7 @@ export const GET_PROCESS_ORDER_ESTENDDATETIME = (): AxiosRequestConfig => ({
   url: 'api/v1/factory/processOrder/estEndDatetime'
 })
 
-export const GET_FACTORIES_LIST = (tenantId: number): AxiosRequestConfig => ({
+export const GET_FACTORIES_LIST = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/factory/getFactories/${tenantId}`
 })

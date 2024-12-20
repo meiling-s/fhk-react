@@ -82,7 +82,7 @@
     "open": "Open",
     "close": "Close",
     "colRecycType": "Collection Recyclable Type(s)",
-    "recycType": "Recyclable type(s) (Click on the type to show subtype(s), double-click to unselect)",
+    "recycType": "Recyclable type(s)",
     "locationData": "Location Data",
     "category": " subtype (s) (Click on the type to Select/Unselect)",
     "staffInfo": "Staff Information",
@@ -741,7 +741,8 @@
     "internal_transfer": "Internal Transfer",
     "process_out": "Process Out",
     "process_in": "Process In",
-    "pickup_order_record": "Pickup Order Record"
+    "pickup_order_record": "Pickup Order Record",
+    "compactor": "Compression Car Record"
   },
   "processRecord": {
     "processing": "Processing",
@@ -1624,7 +1625,7 @@
       "package": "Package",
       "itemToProcessIn": "Expected process in items",
       "itemToProcessOut": "Expected process out items",
-      "itemCategory": "Item category (click a category to display subcategories",
+      "itemCategory": "Item category (Click on the type to show subtype(s), double-click to unselect)",
       "recycling": "Recyclable",
       "product": "Product",
       "warehouse": "Warehouse"
