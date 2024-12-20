@@ -263,9 +263,9 @@ const Inventory: FunctionComponent = () => {
   async function initCollectionPoint() {
     setIsLoading(true);
     try {
+      setColList([]);
       const result = await getCollectionPoint(0, 1000);
       if (result?.status === STATUS_CODE[200]) {
-        setColList([]);
         const data = result?.data.content;
         if (data && data.length > 0) {
           setColList(data);
@@ -295,7 +295,8 @@ const Inventory: FunctionComponent = () => {
   const initWarehouseList = async () => {
     setIsLoading(true);
     setWarehouseDataList([]);
-    const result = await getAllFactoriesWarehouse();
+    let result;
+    result = await getAllFactoriesWarehouse();
     const data = result?.data;
 
     if (data) {
@@ -763,41 +764,45 @@ const Inventory: FunctionComponent = () => {
       type: "string",
       valueGetter: (params) => {
         // If warehouse, find warehouse name
-        if (params.row.warehouseId && params.row.warehouseId !== 0) {
-          const warehouse = warehouseDataList.find(
-            (warehouse) => warehouse.warehouseId === params.row.warehouseId
-          );
+        if (realmApi === "account") {
+          return params.row.location;
+        } else {
+          if (params.row.warehouseId && params.row.warehouseId !== 0) {
+            const warehouse = warehouseDataList.find(
+              (warehouse) => warehouse.warehouseId === params.row.warehouseId
+            );
 
-          if (warehouse) {
-            switch (i18n.language) {
-              case Languages.ENUS:
-                return warehouse.warehouseNameEng || "-";
-              case Languages.ZHCH:
-                return warehouse.warehouseNameSchi || "-";
-              case Languages.ZHHK:
-                return warehouse.warehouseNameTchi || "-";
-              default:
-                return warehouse.warehouseNameTchi || "-";
+            if (warehouse) {
+              switch (i18n.language) {
+                case Languages.ENUS:
+                  return warehouse.warehouseNameEng || "-";
+                case Languages.ZHCH:
+                  return warehouse.warehouseNameSchi || "-";
+                case Languages.ZHHK:
+                  return warehouse.warehouseNameTchi || "-";
+                default:
+                  return warehouse.warehouseNameTchi || "-";
+              }
             }
           }
-        }
 
-        // If collection point, find collection point name
-        if (params.row.colId && params.row.colId !== 0) {
-          const collectionPoint = colList.find(
-            (col) => col.colId === params.row.colId
-          );
+          // If collection point, find collection point name
+          if (params.row.colId && params.row.colId !== 0) {
+            const collectionPoint = colList.find(
+              (col) => col.colId === params.row.colId
+            );
 
-          if (collectionPoint) {
-            switch (i18n.language) {
-              case Languages.ENUS:
-                return collectionPoint.colName || "-";
-              case Languages.ZHCH:
-                return collectionPoint.colName || "-";
-              case Languages.ZHHK:
-                return collectionPoint.colName || "-";
-              default:
-                return collectionPoint.colName || "-";
+            if (collectionPoint) {
+              switch (i18n.language) {
+                case Languages.ENUS:
+                  return collectionPoint.colName || "-";
+                case Languages.ZHCH:
+                  return collectionPoint.colName || "-";
+                case Languages.ZHHK:
+                  return collectionPoint.colName || "-";
+                default:
+                  return collectionPoint.colName || "-";
+              }
             }
           }
         }
@@ -964,10 +969,6 @@ const Inventory: FunctionComponent = () => {
     setSelectedPico(selectedPicoList);
     setDrawerOpen(true);
   };
-
-  useEffect(() => {
-    console.log("row", selectedRow);
-  }, [selectedRow]);
 
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
@@ -1179,6 +1180,8 @@ const Inventory: FunctionComponent = () => {
 
   useEffect(() => {
     if (debouncedSearchValue) {
+      initWarehouse();
+      initCollectionPoint();
       setInventory([]);
       setFilteredInventory([]);
       setSelectedRow(null);
@@ -1187,7 +1190,6 @@ const Inventory: FunctionComponent = () => {
       setPicoList([]);
       setSelectedPico([]);
       initInventory();
-      initWarehouse();
     }
   }, [debouncedSearchValue, query, i18n.language]);
 
