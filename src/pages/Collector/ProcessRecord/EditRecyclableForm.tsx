@@ -40,6 +40,7 @@ import useModalConfirmRemarksEmpty from "src/components/ModalConfirmRemarksEmpty
 
 type createRecyclable = {
   itemId: number
+  itemType: 'GENERAL' | 'LEFTOVER' | 'WASTE' | string
   recycTypeId: string
   recycSubTypeId: string
   productTypeId: string,
@@ -59,6 +60,7 @@ type createRecyclable = {
 
 type RecycItem = {  
   itemId: number
+  itemType: 'GENERAL' | 'LEFTOVER' | 'WASTE' | string
   processOutDtlId?: number
   processInDtlId?: number
   recycType: il_item
@@ -116,6 +118,8 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
   const [productAddon, setProductAddon] = useState('');
   const [productSubtypeRemark, setProductSubtypeRemark] = useState('');
   const [productAddonRemark, setProductAddonRemark] = useState('');
+  const [selectedLeftOver, setSelectedLeftOver] = useState('')
+
 
   const {
     resetModal,
@@ -167,6 +171,8 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
       setDefaultProduct(defProduct)
       setIsRecyc(Boolean(editedData.recycType?.id))
       setWeight(formatWeight(editedData.weight.toString(), decimalVal))
+      const initialItemType = editedData.itemType || "GENERAL";
+      setSelectedLeftOver(initialItemType);
       
       const imageList: any = editedData?.images?.map(
         (url: string, index: number) => {
@@ -319,6 +325,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
 
     const data: createRecyclable = {
       itemId: editedData ? editedData.processOutDtlId! || editedData.processInDtlId! : generateNumericId(),
+      itemType: selectedLeftOver || 'GENERAL',
       recycTypeId: recycTypeId,
       recycSubTypeId: recycSubTypeId,
       productTypeId: productTypeId,
@@ -628,6 +635,30 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
                       />
                       </CustomField>
                   )}
+              </Grid>
+              <Grid item>
+                <CustomField label={t('inventory.leftOverTitle')}>
+                  <Select
+                    labelId="selectedLeftOver"
+                    disabled={action === 'delete'}
+                    id="selectedLeftOver"
+                    value={selectedLeftOver}
+                    sx={{
+                      borderRadius: '12px',
+                      width: '30%'
+                    }}
+                    onChange={(event) => {
+                        setSelectedLeftOver(event.target.value)
+                    }}
+                  >       
+                      <MenuItem value={"LEFTOVER"}>
+                        <em>{t('inventory.leftOver')}</em>                      
+                      </MenuItem>                
+                      <MenuItem value={"WASTE"}>
+                        <em>{t('inventory.waste')}</em>
+                      </MenuItem>
+                  </Select>
+                </CustomField>
               </Grid>
               <CustomField label={t('pick_up_order.recyclForm.weight')}>
                 <CustomTextField
