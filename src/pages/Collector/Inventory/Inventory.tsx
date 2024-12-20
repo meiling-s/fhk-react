@@ -228,7 +228,7 @@ const Inventory: FunctionComponent = () => {
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const [totalData, setTotalData] = useState<number>(0);
-  const { recycType, dateFormat, productType } =
+  const { recycType, dateFormat, productType, packagingList } =
     useContainer(CommonTypeContainer);
   const [recycItem, setRecycItem] = useState<recycItem[]>([]);
   const [picoList, setPicoList] = useState<PickupOrder[]>([]);
@@ -627,7 +627,7 @@ const Inventory: FunctionComponent = () => {
           }
         }
 
-        const packages = packagingMapping.find(
+        const packages = packagingList.find(
           (packageItem) => packageItem.packagingTypeId === item.packageTypeId
         );
 
