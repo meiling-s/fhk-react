@@ -249,7 +249,7 @@ const ProcessingRecordCard: FunctionComponent<ProcessingRecordCardProps> = ({
                 color="textSecondary"
                 sx={{ color: "#535353" }}
               >
-                {data.total_weight} {getConditionalValue(data, "weightUnit")}
+                {data.total_weight} Kg
               </Typography>
             </Box>
           </Box>
