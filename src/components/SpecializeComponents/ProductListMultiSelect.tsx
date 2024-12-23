@@ -124,7 +124,6 @@ export default function ProductListMultiSelect({
 
   useEffect(() => {
     setState(toProduct())
-    console.log("option", options)
   }, [productType, productSubType, productAddon, options])
 
   useEffect(() => {
@@ -186,14 +185,14 @@ export default function ProductListMultiSelect({
                     productAddonId: addonId,
                     isProductAddonTypeOthers:
                       addonData?.productNameEng === 'Others',
-                    productAddonTypeRemark: addonData?.remark || ''
+                    productAddonTypeRemark: addonData?.remark || productAddonTypeRemark
                   }
                 }
               )
 
               return {
                 productSubTypeId: subTypeId,
-                productSubTypeRemark: subTypeData.remark || '',
+                productSubTypeRemark: subTypeData.remark || productSubTypeRemark,
                 isProductSubTypeOthers: subTypeData.productNameEng === 'Others',
                 productAddon: addonItems
               }
