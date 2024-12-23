@@ -697,6 +697,7 @@ const Inventory: FunctionComponent = () => {
   const handleSubmit = async (type: string, msg: string) => {
     if (type === "success") {
       showSuccessToast(msg);
+      initInventory();
     } else {
       showErrorToast(msg);
     }
