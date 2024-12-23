@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from 'axios'
 
-export const GET_PROCESS_ORDER = (tenantId: number): AxiosRequestConfig => ({
+export const GET_PROCESS_ORDER = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/factory/processOrder/headers/${tenantId}`
 })
@@ -23,14 +23,14 @@ export const GET_FACTORIES_LIST = (tenantId: string): AxiosRequestConfig => ({
 })
 
 export const CREATE_PROCESSE_ORDER = (
-  tenantId: number
+  tenantId: string
 ): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/factory/processOrder/header/${tenantId}`
 })
 
 export const DELETE_PROCESS_ORDER = (
-  tenantId: number,
+  tenantId: string,
   processOrderId: number
 ): AxiosRequestConfig => ({
   method: 'patch',
