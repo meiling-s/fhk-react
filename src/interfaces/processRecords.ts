@@ -18,6 +18,7 @@ export type processOutImage = {
     unitId: string
     processoutDetailPhoto: processOutImage[]
     itemId: number
+    itemType: 'GENERAL' | 'LEFTOVER' | 'WASTE' | string
     createdBy: string
     updatedBy: string
     version: number
@@ -38,6 +39,7 @@ export type processOutImage = {
     unitId: string
     processinDetailPhoto: processOutImage[]
     itemId: number
+    itemType: 'GENERAL' | 'LEFTOVER' | 'WASTE' | string
     createdBy: string
     updatedBy: string
     version: number
@@ -61,6 +63,7 @@ export type processOutImage = {
   
   export type CreateRecyclable = {
     itemId: number
+    itemType: 'GENERAL' | 'LEFTOVER' | 'WASTE' | string
     recycTypeId: string
     recycSubTypeId: string
     productTypeId: string,

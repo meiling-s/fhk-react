@@ -578,7 +578,6 @@ const DetailProcessOrder = ({
                             {item.startTime != null
                               ? dayjs
                                   .utc(item.startTime)
-                                  .tz('Asia/Hong_Kong')
                                   .format(`${dateFormat} HH:mm`)
                               : 'N/A'}
                           </Typography>
