@@ -615,7 +615,6 @@ const InputProcessForm = ({
     return singleProducts
   }
 
-  //to do : change to multiple product select
   const handleProductChange = (type: string, value: productsVal[]) => {
     console.log('val', value)
     // let tempProduct: any[] = []
@@ -663,16 +662,6 @@ const InputProcessForm = ({
           )
       )
 
-      //update to data to recy key
-      // setProcessOrderDetail((prevDetails) =>
-      //   prevDetails.map((detail) => ({
-      //     ...detail,
-      //     [type]: {
-      //       ...detail[type as keyof CreateProcessOrderDetailPairs],
-      //       processOrderDetailRecyc: tempRecy
-      //     }
-      //   }))
-      // )
       setProcessOrderDetail((prevDetails) =>
         prevDetails.map((detail) => {
           const existingRecyc =
