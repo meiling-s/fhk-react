@@ -726,6 +726,9 @@
     "at": "at",
     "select_location": "select location",
     "handover": "hand over",
+    "leftOverTitle": "Is there any leftover material or waste?",
+    "leftOver": "Leftover",
+    "waste": "Wastage",
     "track": "Track",
     "company": "Company",
     "beforeProcessing": "Before Processing",
@@ -1649,7 +1652,7 @@
     "introduction": "Introduction"
   },
   "globalItemId": {
-    "globalItemId": "Global Item ID",
+    "globalItemId": "Global Item ID Search",
     "enterGlobalItemId": "Enter the Global Item ID"
   }
 }

@@ -724,6 +724,9 @@
     "at": "於",
     "select_location": "選擇位置",
     "handover": "交給",
+    "leftOverTitle": "是否剩餘物料或廢物？",
+    "leftOver": "剩餘物料",
+    "waste": "廢物",
     "track": "追踪",
     "company": "公司",
     "beforeProcessing": "處理前",
@@ -1643,7 +1646,7 @@
     "introduction": "簡介"
   },
   "globalItemId": {
-    "globalItemId": "物品編號",
+    "globalItemId": "搜尋物品編號",
     "enterGlobalItemId": "輸入物品編號"
   }
 }
