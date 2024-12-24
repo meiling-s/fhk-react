@@ -6,7 +6,7 @@ import {
   GET_PROCESS_ORDER_ESTENDDATETIME,
   GET_FACTORIES_LIST
 } from '../constants/processOrder'
-import { returnApiToken } from '../utils/utils'
+import { getFormatId, returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
 import {
   PorQuery,
@@ -21,6 +21,7 @@ export const getProcessOrder = async (
 ) => {
   try {
     const token = returnApiToken()
+    const tenantId = getFormatId(token.tenantId)
 
     const params: any = {
       page: page,
@@ -34,7 +35,7 @@ export const getProcessOrder = async (
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...GET_PROCESS_ORDER(parseInt(token.tenantId)),
+      ...GET_PROCESS_ORDER(tenantId),
       params: params
     })
 
@@ -62,10 +63,11 @@ export const getProcessOrderById = async (processOrderId: number) => {
 export const createProcessOrder = async (data: any) => {
   try {
     const token = returnApiToken()
+    const tenantId = getFormatId(token.tenantId)
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...CREATE_PROCESSE_ORDER(parseInt(token.tenantId)),
+      ...CREATE_PROCESSE_ORDER(tenantId),
       data: data
     })
 
@@ -82,10 +84,11 @@ export const deleteProcessOrder = async (
 ) => {
   try {
     const token = returnApiToken()
+    const tenantId = getFormatId(token.tenantId)
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...DELETE_PROCESS_ORDER(parseInt(token.tenantId), processOrderId),
+      ...DELETE_PROCESS_ORDER(tenantId, processOrderId),
       data: data
     })
     return response
@@ -99,8 +102,9 @@ export const getEstimateEndTime = async (
   queryEstEndDatetime: QueryEstEndDatetime
 ) => {
   const token = returnApiToken()
+  const tenantId = getFormatId(token.tenantId)
   const params: any = {
-    tenantId: token.tenantId,
+    tenantId: tenantId,
     processTypeId: queryEstEndDatetime.processTypeId,
     estInWeight: queryEstEndDatetime.estInWeight,
     plannedStartAt: queryEstEndDatetime.plannedStartAt
@@ -122,11 +126,12 @@ export const getEstimateEndTime = async (
 
 export const getFactories = async (page: number, size: number) => {
   const token = returnApiToken()
+  const tenantId = getFormatId(token.tenantId)
 
   try {
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...GET_FACTORIES_LIST(token.tenantId),
+      ...GET_FACTORIES_LIST(tenantId),
       params: {
         page: page,
         size: size
