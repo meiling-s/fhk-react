@@ -32,13 +32,29 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   isPressGID,
   handleGetHyperlinkData,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [shippingData, setShippingData] = useState<InventoryTracking | null>(
     null
   );
-  const { decimalVal } = useContainer(CommonTypeContainer);
+  const { decimalVal, weightUnits } = useContainer(CommonTypeContainer);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const location = useLocation();
+
+  const getWeightUnits = (unitId: number) => {
+    const unitData = weightUnits.find((value) => value.unitId === unitId);
+    if (unitData) {
+      switch (i18n.language) {
+        case "enus":
+          return unitData.unitNameEng;
+        case "zhch":
+          return unitData.unitNameSchi;
+        case "zhhk":
+          return unitData.unitNameTchi;
+        default:
+          return unitData.unitNameTchi;
+      }
+    }
+  };
 
   const fieldItem = [
     {
@@ -77,7 +93,10 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
     },
     {
       label: t("inventory.weight"),
-      value: `${formatWeight(selectedRow?.weight || 0, decimalVal)} kg`,
+      value: `${formatWeight(
+        selectedRow?.weight || 0,
+        decimalVal
+      )} ${getWeightUnits(Number(selectedRow?.unitId))}`,
     },
   ];
 

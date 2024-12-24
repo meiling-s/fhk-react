@@ -228,7 +228,7 @@ const Inventory: FunctionComponent = () => {
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const [totalData, setTotalData] = useState<number>(0);
-  const { recycType, dateFormat, productType } =
+  const { recycType, dateFormat, productType, packagingList, weightUnits } =
     useContainer(CommonTypeContainer);
   const [recycItem, setRecycItem] = useState<recycItem[]>([]);
   const [picoList, setPicoList] = useState<PickupOrder[]>([]);
@@ -260,12 +260,28 @@ const Inventory: FunctionComponent = () => {
   const [productItem, setProductItem] = useState<productItem[]>([]);
   const [isPressGID, setPressGID] = useState<boolean>(false);
 
+  const getWeightUnits = (unitId: number) => {
+    const unitData = weightUnits.find((value) => value.unitId === unitId);
+    if (unitData) {
+      switch (i18n.language) {
+        case "enus":
+          return unitData.unitNameEng;
+        case "zhch":
+          return unitData.unitNameSchi;
+        case "zhhk":
+          return unitData.unitNameTchi;
+        default:
+          return unitData.unitNameTchi;
+      }
+    }
+  };
+
   async function initCollectionPoint() {
     setIsLoading(true);
     try {
+      setColList([]);
       const result = await getCollectionPoint(0, 1000);
       if (result?.status === STATUS_CODE[200]) {
-        setColList([]);
         const data = result?.data.content;
         if (data && data.length > 0) {
           setColList(data);
@@ -295,7 +311,8 @@ const Inventory: FunctionComponent = () => {
   const initWarehouseList = async () => {
     setIsLoading(true);
     setWarehouseDataList([]);
-    const result = await getAllFactoriesWarehouse();
+    let result;
+    result = await getAllFactoriesWarehouse();
     const data = result?.data;
 
     if (data) {
@@ -627,7 +644,7 @@ const Inventory: FunctionComponent = () => {
           }
         }
 
-        const packages = packagingMapping.find(
+        const packages = packagingList.find(
           (packageItem) => packageItem.packagingTypeId === item.packageTypeId
         );
 
@@ -696,6 +713,7 @@ const Inventory: FunctionComponent = () => {
   const handleSubmit = async (type: string, msg: string) => {
     if (type === "success") {
       showSuccessToast(msg);
+      initInventory();
     } else {
       showErrorToast(msg);
     }
@@ -763,41 +781,46 @@ const Inventory: FunctionComponent = () => {
       type: "string",
       valueGetter: (params) => {
         // If warehouse, find warehouse name
-        if (params.row.warehouseId && params.row.warehouseId !== 0) {
-          const warehouse = warehouseDataList.find(
-            (warehouse) => warehouse.warehouseId === params.row.warehouseId
-          );
+        console.log(realmApi, "realm");
+        if (realmApi === "account") {
+          return params.row.location;
+        } else {
+          if (params.row.warehouseId && params.row.warehouseId !== 0) {
+            const warehouse = warehouseDataList.find(
+              (warehouse) => warehouse.warehouseId === params.row.warehouseId
+            );
 
-          if (warehouse) {
-            switch (i18n.language) {
-              case Languages.ENUS:
-                return warehouse.warehouseNameEng || "-";
-              case Languages.ZHCH:
-                return warehouse.warehouseNameSchi || "-";
-              case Languages.ZHHK:
-                return warehouse.warehouseNameTchi || "-";
-              default:
-                return warehouse.warehouseNameTchi || "-";
+            if (warehouse) {
+              switch (i18n.language) {
+                case Languages.ENUS:
+                  return warehouse.warehouseNameEng || "-";
+                case Languages.ZHCH:
+                  return warehouse.warehouseNameSchi || "-";
+                case Languages.ZHHK:
+                  return warehouse.warehouseNameTchi || "-";
+                default:
+                  return warehouse.warehouseNameTchi || "-";
+              }
             }
           }
-        }
 
-        // If collection point, find collection point name
-        if (params.row.colId && params.row.colId !== 0) {
-          const collectionPoint = colList.find(
-            (col) => col.colId === params.row.colId
-          );
+          // If collection point, find collection point name
+          if (params.row.colId && params.row.colId !== 0) {
+            const collectionPoint = colList.find(
+              (col) => col.colId === params.row.colId
+            );
 
-          if (collectionPoint) {
-            switch (i18n.language) {
-              case Languages.ENUS:
-                return collectionPoint.colName || "-";
-              case Languages.ZHCH:
-                return collectionPoint.colName || "-";
-              case Languages.ZHHK:
-                return collectionPoint.colName || "-";
-              default:
-                return collectionPoint.colName || "-";
+            if (collectionPoint) {
+              switch (i18n.language) {
+                case Languages.ENUS:
+                  return collectionPoint.colName || "-";
+                case Languages.ZHCH:
+                  return collectionPoint.colName || "-";
+                case Languages.ZHHK:
+                  return collectionPoint.colName || "-";
+                default:
+                  return collectionPoint.colName || "-";
+              }
             }
           }
         }
@@ -811,7 +834,12 @@ const Inventory: FunctionComponent = () => {
       width: 200,
       type: "string",
       renderCell: (params) => {
-        return <div>{params.row.weight} kg</div>;
+        console.log(params.row, "row");
+        return (
+          <div>
+            {params.row.weight} {getWeightUnits(Number(params.row.unitId))}
+          </div>
+        );
       },
     },
   ];
@@ -965,10 +993,6 @@ const Inventory: FunctionComponent = () => {
     setDrawerOpen(true);
   };
 
-  useEffect(() => {
-    console.log("row", selectedRow);
-  }, [selectedRow]);
-
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10,
@@ -993,9 +1017,6 @@ const Inventory: FunctionComponent = () => {
   // }
 
   const handleSearch = debounce((keyName, value) => {
-    if (value.trim() === "" && query.labelId == null) {
-      return;
-    }
     updateQuery({ [keyName]: value });
     setPage(1);
   }, 500);
@@ -1182,6 +1203,8 @@ const Inventory: FunctionComponent = () => {
 
   useEffect(() => {
     if (debouncedSearchValue) {
+      initWarehouse();
+      initCollectionPoint();
       setInventory([]);
       setFilteredInventory([]);
       setSelectedRow(null);
@@ -1190,7 +1213,6 @@ const Inventory: FunctionComponent = () => {
       setPicoList([]);
       setSelectedPico([]);
       initInventory();
-      initWarehouse();
     }
   }, [debouncedSearchValue, query, i18n.language]);
 
@@ -1270,6 +1292,7 @@ const Inventory: FunctionComponent = () => {
               disableIcon={s.disableIcon}
               options={s.options || []}
               onChange={handleSearch}
+              numberOnly={s.label === t("common.idleDays")}
             />
           ))}
         </Stack>

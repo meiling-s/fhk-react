@@ -161,7 +161,7 @@ const Inventory: FunctionComponent = () => {
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const [totalData, setTotalData] = useState<number>(0);
-  const { recycType, dateFormat, productType } =
+  const { recycType, dateFormat, productType, weightUnits } =
     useContainer(CommonTypeContainer);
   const [recycItem, setRecycItem] = useState<recycItem[]>([]);
   const [picoList, setPicoList] = useState<PickupOrder[]>([]);
@@ -191,6 +191,22 @@ const Inventory: FunctionComponent = () => {
     FactoryWarehouseData[]
   >([]);
   const [productItem, setProductItem] = useState<productItem[]>([]);
+
+  const getWeightUnits = (unitId: number) => {
+    const unitData = weightUnits.find((value) => value.unitId === unitId);
+    if (unitData) {
+      switch (i18n.language) {
+        case "enus":
+          return unitData.unitNameEng;
+        case "zhch":
+          return unitData.unitNameSchi;
+        case "zhhk":
+          return unitData.unitNameTchi;
+        default:
+          return unitData.unitNameTchi;
+      }
+    }
+  };
 
   async function initCollectionPoint() {
     setIsLoading(true);
@@ -658,7 +674,11 @@ const Inventory: FunctionComponent = () => {
       width: 200,
       type: "string",
       renderCell: (params) => {
-        return <div>{params.row.weight} kg</div>;
+        return (
+          <div>
+            {params.row.weight} {getWeightUnits(Number(params.row.unitId))}
+          </div>
+        );
       },
     },
   ];
