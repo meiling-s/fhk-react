@@ -14,7 +14,7 @@ export type FactoryWarehouseData = {
 
 export type FactoryData = {
     factoryId: number;
-    tenantId: number;
+    tenantId: string;
     factoryNameEng: string;
     factoryNameSchi: string;
     factoryNameTchi: string;
