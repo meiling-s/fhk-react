@@ -125,11 +125,6 @@ const CreateCollectionPoint = () => {
     return t("col.otherPremise");
   };
 
-  const createdDate = dayjs
-    .utc(new Date())
-    .tz("Asia/Hong_Kong")
-    .format(`${dateFormat} HH:mm`);
-
   useEffect(() => {
     const initType = async () => {
       try {
@@ -165,6 +160,10 @@ const CreateCollectionPoint = () => {
     try {
       const loginId = localStorage.getItem("username") || "";
       const tenantId = localStorage.getItem("tenantId") || "";
+      const newServiceFlgValue =
+        values.colType === "CPT00001" ? "basic" : serviceFlg;
+      const newPremiseTypeIdValue =
+        values.colType === "CPT00003" ? values.premiseType : "";
       const cp: createCP = {
         tenantId: tenantId,
         colName: values.colName,
@@ -175,13 +174,13 @@ const CreateCollectionPoint = () => {
         address: values.address,
         gpsCode: [22.426887, 114.211165],
         epdFlg: values.EPDFlg,
-        serviceFlg: serviceFlg,
+        serviceFlg: newServiceFlgValue,
         siteTypeId: values.siteType,
         contractNo: values.contractNo,
         noOfStaff: values.staffNum,
         status: values.status ? "CREATED" : "CLOSED",
         premiseName: values.premiseName,
-        premiseTypeId: values.premiseType,
+        premiseTypeId: newPremiseTypeIdValue,
         premiseRemark: values.premiseRemark,
         normalFlg: true,
         createdBy: loginId,
@@ -189,13 +188,15 @@ const CreateCollectionPoint = () => {
         colPtRecyc: values.recyclables,
         roster: [],
       };
-      const response = await createCollectionPoint(cp);
 
-      if (response.data) {
-        navigate("/collector/collectionPoint", { state: "created" });
-      } else {
-        console.log(response);
-      }
+      console.log(cp, "cp");
+      // const response = await createCollectionPoint(cp);
+
+      // if (response.data) {
+      //   navigate("/collector/collectionPoint", { state: "created" });
+      // } else {
+      //   console.log(response);
+      // }
     } catch (err) {
       console.log(err);
     }
@@ -210,7 +211,11 @@ const CreateCollectionPoint = () => {
         validateOnChange={true}
         onSubmit={(values) => handleCreateOnClick(values)}
       >
-        {({ setFieldValue, isValid, dirty }) => {
+        {({ setFieldValue, values, isValid, dirty, validateForm }) => {
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          useEffect(() => {
+            validateForm();
+          }, [values.colType]);
           return (
             <Form>
               <Box sx={{ paddingLeft: { xs: 0 }, width: "80%" }}>
@@ -235,7 +240,15 @@ const CreateCollectionPoint = () => {
                   <Grid item>
                     <CustomField label={t("col.colType")} mandatory={true}>
                       <ColPointTypeList
-                        setState={(value) => setFieldValue("colType", value)}
+                        setState={(value) => {
+                          setFieldValue("colType", value);
+                          if (value === "CPT00001") {
+                            setFieldValue("premiseType", "");
+                            setServiceFlg("basic");
+                          } else if (value === "CPT00002") {
+                            setFieldValue("premiseType", "");
+                          }
+                        }}
                         colPointTypes={typeList.colPoint}
                       />
                       <ErrorMessage
@@ -341,23 +354,27 @@ const CreateCollectionPoint = () => {
                       />
                     </CustomField>
                   </Grid>
-
-                  <Grid item>
-                    <CustomField label={t("col.premiseType")} mandatory={true}>
-                      <PremiseTypeList
-                        setState={(value) => {
-                          setFieldValue("premiseType", value);
-                          setPremiseType(value);
-                        }}
-                        premiseTypes={typeList.premise}
-                      />
-                      <ErrorMessage
-                        name="premiseType"
-                        component="div"
-                        className="text-red text-sm font-bold"
-                      />
-                    </CustomField>
-                  </Grid>
+                  {values.colType === "CPT00003" && (
+                    <Grid item>
+                      <CustomField
+                        label={t("col.premiseType")}
+                        mandatory={true}
+                      >
+                        <PremiseTypeList
+                          setState={(value) => {
+                            setFieldValue("premiseType", value);
+                            setPremiseType(value);
+                          }}
+                          premiseTypes={typeList.premise}
+                        />
+                        <ErrorMessage
+                          name="premiseType"
+                          component="div"
+                          className="text-red text-sm font-bold"
+                        />
+                      </CustomField>
+                    </Grid>
+                  )}
                   {isIncludeOthersPremis() && (
                     <Grid item>
                       <CustomField label={getLabel()} mandatory={true}>
@@ -471,26 +488,31 @@ const CreateCollectionPoint = () => {
                       />
                     </CustomField>
 
-                    <CustomField label={t("col.serviceType")} mandatory={true}>
-                      <CustomItemList
-                        items={serviceTypeList}
-                        singleSelect={(value) => {
-                          setServiceFlg((prevValue) => {
-                            if (value === "") {
-                              return "basic";
-                            }
-                            return value;
-                          });
-                        }}
-                        value={serviceFlg}
-                        defaultSelected={serviceFlg}
-                      />
-                      <ErrorMessage
-                        name="serviceFlg"
-                        component="div"
-                        className="text-red text-sm font-bold"
-                      />
-                    </CustomField>
+                    {values.colType !== "CPT00001" && (
+                      <CustomField
+                        label={t("col.serviceType")}
+                        mandatory={true}
+                      >
+                        <CustomItemList
+                          items={serviceTypeList}
+                          singleSelect={(value) => {
+                            setServiceFlg((prevValue) => {
+                              if (value === "") {
+                                return "basic";
+                              }
+                              return value;
+                            });
+                          }}
+                          value={serviceFlg}
+                          defaultSelected={serviceFlg}
+                        />
+                        <ErrorMessage
+                          name="serviceFlg"
+                          component="div"
+                          className="text-red text-sm font-bold"
+                        />
+                      </CustomField>
+                    )}
 
                     <Grid item></Grid>
                   </Grid>
