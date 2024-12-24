@@ -86,7 +86,7 @@ export type ProcessInOutEventDetail = {
   start_date_time: string
   warehouse_en: string
   total_weight: string
-  gidLabel: string
+  gidLabel: string[]
 }
 
 export type ProcessOutData = {
@@ -120,7 +120,7 @@ export type ProcessingRecordData = {
   addr_sc: string
   addr_tc: string
   total_weight: number,
-  gidLabel: string,
+  gidLabel: string[],
   unitId: string,
   createdAt: string
 }

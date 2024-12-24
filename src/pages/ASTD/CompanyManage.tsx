@@ -13,65 +13,65 @@ import {
   CircularProgress,
   Alert,
   FormControl,
-  MenuItem
-} from '@mui/material'
+  MenuItem,
+} from "@mui/material";
 import {
   DataGrid,
   GridColDef,
   GridRowParams,
   GridRowSpacingParams,
-} from '@mui/x-data-grid'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
-import { ADD_PERSON_ICON, SEARCH_ICON } from '../../themes/icons'
-import { useEffect, useState } from 'react'
-import CloseIcon from '@mui/icons-material/Close'
-import React from 'react'
+} from "@mui/x-data-grid";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
+import { useEffect, useState } from "react";
+import CloseIcon from "@mui/icons-material/Close";
+import React from "react";
 import {
   createInvitation,
   getAllTenant,
   searchTenantById,
   updateTenantStatus,
   sendEmailInvitation,
-  createNewTenant
-} from '../../APICalls/tenantManage'
-import { STATUS_CODE, defaultPath } from '../../constants/constant'
-import { styles } from '../../constants/styles'
-import CircularLoading from '../../components/CircularLoading'
-import dayjs from 'dayjs'
-import { LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import CustomDatePicker2 from '../../components/FormComponents/CustomDatePicker2'
-import CustomField from '../../components/FormComponents/CustomField'
-import CustomTextField from '../../components/FormComponents/CustomTextField'
+  createNewTenant,
+} from "../../APICalls/tenantManage";
+import { STATUS_CODE, defaultPath } from "../../constants/constant";
+import { styles } from "../../constants/styles";
+import CircularLoading from "../../components/CircularLoading";
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import CustomDatePicker2 from "../../components/FormComponents/CustomDatePicker2";
+import CustomField from "../../components/FormComponents/CustomField";
+import CustomTextField from "../../components/FormComponents/CustomTextField";
 import CustomItemList, {
-  il_item
-} from '../../components/FormComponents/CustomItemList'
-import TenantDetails from './TenantDetails'
-import { Company, UpdateStatus } from '../../interfaces/tenant'
+  il_item,
+} from "../../components/FormComponents/CustomItemList";
+import TenantDetails from "./TenantDetails";
+import { Company, UpdateStatus } from "../../interfaces/tenant";
 
-import { useTranslation } from 'react-i18next'
-import { useFormik } from 'formik'
-import * as Yup from 'yup'
-import { useNavigate } from 'react-router-dom'
+import { useTranslation } from "react-i18next";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
 import {
   extractError,
   showErrorToast,
   showSuccessToast,
   validateEmail,
-  debounce
-} from '../../utils/utils'
-import { ToastContainer } from 'react-toastify'
-import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
-import { useContainer } from 'unstated-next'
-import CommonTypeContainer from '../../contexts/CommonTypeContainer'
-import i18n from '../../setups/i18n'
-import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
-import ConfirmModal from '../../components/SpecializeComponents/ConfirmationModal'
-import { errorState } from '../../interfaces/common'
+  debounce,
+} from "../../utils/utils";
+import { ToastContainer } from "react-toastify";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import { useContainer } from "unstated-next";
+import CommonTypeContainer from "../../contexts/CommonTypeContainer";
+import i18n from "../../setups/i18n";
+import useLocaleTextDataGrid from "../../hooks/useLocaleTextDataGrid";
+import ConfirmModal from "../../components/SpecializeComponents/ConfirmationModal";
+import { errorState } from "../../interfaces/common";
 
-dayjs.extend(utc)
-dayjs.extend(timezone)
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 function createCompany(
   id: number,
@@ -84,102 +84,118 @@ function createCompany(
   accountNum: number,
   version: number
 ): Company {
-  return { id, cName, sName, eName, status, type, createDate, accountNum, version }
+  return {
+    id,
+    cName,
+    sName,
+    eName,
+    status,
+    type,
+    createDate,
+    accountNum,
+    version,
+  };
 }
 
 type inviteModal = {
-  open: boolean
-  onClose: () => void
-  id: string
-  onSendInvitation: (isSend: boolean) => void
-}
+  open: boolean;
+  onClose: () => void;
+  id: string;
+  onSendInvitation: (isSend: boolean) => void;
+};
 
 const Required = () => {
   return (
     <Typography
       sx={{
-        color: 'red',
-        ml: '5px'
+        color: "red",
+        ml: "5px",
       }}
     >
       *
     </Typography>
-  )
-}
+  );
+};
 
 type rejectModal = {
-  tenantId: number
-  version: number
-  open: boolean
-  onClose: () => void
-  onSubmit: () => void
-}
+  tenantId: number;
+  version: number;
+  open: boolean;
+  onClose: () => void;
+  onSubmit: () => void;
+};
 
-function RejectModal({ tenantId, version, open, onClose, onSubmit }: rejectModal) {
-  const { t } = useTranslation()
-  const [, setRejectReasonId] = useState<string[]>([])
-  const navigate = useNavigate()
+function RejectModal({
+  tenantId,
+  version,
+  open,
+  onClose,
+  onSubmit,
+}: rejectModal) {
+  const { t } = useTranslation();
+  const [, setRejectReasonId] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   const getReason = () => {
     const reasonList = [
       {
-        id: '1',
-        reasonEn: 'Photo is blurry',
+        id: "1",
+        reasonEn: "Photo is blurry",
         reasonSchi: '照片模糊"',
-        reasonTchi: '照片模糊'
+        reasonTchi: "照片模糊",
       },
       {
-        id: '2',
-        reasonEn: 'Business number does not match',
-        reasonSchi: '商业编号不匹配',
-        reasonTchi: '商業編號不匹配'
-      }
-    ]
-    const reasons: il_item[] = []
+        id: "2",
+        reasonEn: "Business number does not match",
+        reasonSchi: "商业编号不匹配",
+        reasonTchi: "商業編號不匹配",
+      },
+    ];
+    const reasons: il_item[] = [];
     reasonList.forEach((item) => {
-      let name = ''
+      let name = "";
       switch (i18n.language) {
-        case 'enus':
-          name = item.reasonEn
-          break
-        case 'zhch':
-          name = item.reasonSchi
-          break
-        case 'zhhk':
-          name = item.reasonTchi
-          break
+        case "enus":
+          name = item.reasonEn;
+          break;
+        case "zhch":
+          name = item.reasonSchi;
+          break;
+        case "zhhk":
+          name = item.reasonTchi;
+          break;
         default:
-          name = item.reasonTchi //default fallback language is zhhk
-          break
+          name = item.reasonTchi; //default fallback language is zhhk
+          break;
       }
       const reasonItem: il_item = {
         id: item.id,
-        name: name
-      }
-      reasons.push(reasonItem)
-    })
-    return reasons
-  }
+        name: name,
+      };
+      reasons.push(reasonItem);
+    });
+    return reasons;
+  };
   const handleRejectRequest = async () => {
     try {
       const statData: UpdateStatus = {
-        status: 'REJECTED',
-        updatedBy: 'admin',
-        version: version
-      }
+        status: "REJECTED",
+        updatedBy: "admin",
+        version: version,
+      };
 
-      const result = await updateTenantStatus(statData, tenantId)
+      const result = await updateTenantStatus(statData, tenantId);
       // const data = result?.data
       if (result.status === 200) {
-        onSubmit()
+        onSubmit();
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-  }
+  };
 
   return (
     <Modal
@@ -195,15 +211,15 @@ function RejectModal({ tenantId, version, open, onClose, onSubmit }: rejectModal
               id="modal-modal-title"
               variant="h6"
               component="h3"
-              sx={{ fontWeight: 'bold' }}
+              sx={{ fontWeight: "bold" }}
             >
-              {`${t('tenant.are_sure_to_reject')} ${tenantId}?`}
+              {`${t("tenant.are_sure_to_reject")} ${tenantId}?`}
             </Typography>
           </Box>
           <Divider />
           <Box sx={{ paddingX: 3, paddingTop: 3 }}>
             <Typography sx={localstyles.typo}>
-              {t('check_out.reject_reasons')}
+              {t("check_out.reject_reasons")}
             </Typography>
             <CustomItemList
               items={getReason() || []}
@@ -211,46 +227,46 @@ function RejectModal({ tenantId, version, open, onClose, onSubmit }: rejectModal
             />
           </Box>
 
-          <Box sx={{ alignSelf: 'center', paddingY: 3 }}>
+          <Box sx={{ alignSelf: "center", paddingY: 3 }}>
             <button
               className="primary-btn mr-2 cursor-pointer"
               onClick={() => {
-                handleRejectRequest()
-                onClose()
+                handleRejectRequest();
+                onClose();
               }}
             >
-              {t('check_in.confirm')}
+              {t("check_in.confirm")}
             </button>
             <button
               className="secondary-btn mr-2 cursor-pointer"
               onClick={() => {
-                onClose()
+                onClose();
               }}
             >
-              {t('check_in.cancel')}
+              {t("check_in.cancel")}
             </button>
           </Box>
         </Stack>
       </Box>
     </Modal>
-  )
+  );
 }
 
 interface ModalNotif {
-  open?: boolean
-  onClose?: () => void
-  isSend?: boolean
+  open?: boolean;
+  onClose?: () => void;
+  isSend?: boolean;
 }
 
 const ModalNotification: React.FC<ModalNotif> = ({
   open = false,
   onClose,
-  isSend = false
+  isSend = false,
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const msgModal = isSend
-    ? t('tenant.invite_modal.invite_success')
-    : t('tenant.invite_modal.invite_failed')
+    ? t("tenant.invite_modal.invite_success")
+    : t("tenant.invite_modal.invite_failed");
 
   return (
     <Modal
@@ -261,53 +277,53 @@ const ModalNotification: React.FC<ModalNotif> = ({
     >
       <Box sx={localstyles.modal}>
         <Stack spacing={2}>
-          <Box sx={{ paddingX: 3, paddingTop: 3, textAlign: 'center' }}>
+          <Box sx={{ paddingX: 3, paddingTop: 3, textAlign: "center" }}>
             <Typography
               id="modal-modal-title"
               variant="h6"
               component="h3"
-              sx={{ fontWeight: 'bold' }}
+              sx={{ fontWeight: "bold" }}
             >
               {msgModal}
             </Typography>
           </Box>
 
-          <Box sx={{ alignSelf: 'center', paddingY: 3 }}>
+          <Box sx={{ alignSelf: "center", paddingY: 3 }}>
             <button
               className="secondary-btn mr-2 cursor-pointer"
               onClick={onClose}
             >
-              {t('check_out.ok')}
+              {t("check_out.ok")}
             </button>
           </Box>
         </Stack>
       </Box>
     </Modal>
-  )
-}
+  );
+};
 
 function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
-  const { t } = useTranslation()
-  const [email, setEmail] = useState<string>('')
-  const [emailErr, setEmailErr] = useState<boolean>(false)
+  const { t } = useTranslation();
+  const [email, setEmail] = useState<string>("");
+  const [emailErr, setEmailErr] = useState<boolean>(false);
 
   const sendInvitation = async () => {
-    const titleInv = 'Invitation Tenant Account'
+    const titleInv = "Invitation Tenant Account";
     const content = `are u invited to register as tenant member , ${
       defaultPath.tenantRegisterPath + id
-    }`
+    }`;
 
     const result = await sendEmailInvitation(
       email,
-      id.toString().padStart(6, '0')
-    )
+      id.toString().padStart(6, "0")
+    );
     if (result) {
-      onSendInvitation(true)
+      onSendInvitation(true);
     } else {
-      onSendInvitation(false)
+      onSendInvitation(false);
     }
-    onClose()
-  }
+    onClose();
+  };
 
   return (
     <Modal
@@ -323,59 +339,59 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
               id="modal-modal-title"
               variant="h6"
               component="h2"
-              sx={{ fontWeight: 'bold' }}
+              sx={{ fontWeight: "bold" }}
             >
-              {t('tenant.invite_modal.invite_company')}
+              {t("tenant.invite_modal.invite_company")}
             </Typography>
           </Box>
           <Divider />
           <Box sx={{ paddingX: 3 }}>
             <Typography sx={localstyles.typo}>
-              {t('tenant.invite_modal.invite_by_email')}
+              {t("tenant.invite_modal.invite_by_email")}
               <Required />
             </Typography>
             <TextField
               fullWidth
-              placeholder={t('tenant.invite_modal.enter_email')}
+              placeholder={t("tenant.invite_modal.enter_email")}
               onChange={(event) => {
-                setEmailErr(!validateEmail(email))
-                setEmail(event.target.value)
+                setEmailErr(!validateEmail(email));
+                setEmail(event.target.value);
               }}
               error={emailErr}
               InputProps={{
                 sx: styles.textField,
                 endAdornment: (
-                  <InputAdornment position="end" sx={{ height: '100%' }}>
+                  <InputAdornment position="end" sx={{ height: "100%" }}>
                     <Button
                       sx={[
                         styles.buttonOutlinedGreen,
                         {
-                          width: '90px',
-                          height: '100%'
-                        }
+                          width: "90px",
+                          height: "100%",
+                        },
                       ]}
                       variant="outlined"
                       onClick={sendInvitation}
                       disabled={emailErr}
                     >
-                      {t('tenant.invite_modal.send')}
+                      {t("tenant.invite_modal.send")}
                     </Button>
                   </InputAdornment>
-                )
+                ),
               }}
             />
           </Box>
           <Box sx={{ paddingX: 3, paddingBottom: 3 }}>
             <Typography variant="h6" component="h2" sx={{ marginBottom: 2 }}>
-              {t('tenant.invite_modal.or')}
+              {t("tenant.invite_modal.or")}
             </Typography>
             <Typography sx={localstyles.typo}>
-              {t('tenant.invite_modal.link_invitation')}
+              {t("tenant.invite_modal.link_invitation")}
             </Typography>
             <TextField
               fullWidth
               value={
-                defaultPath.tenantRegisterPath + id.toString().padStart(6, '0')
+                defaultPath.tenantRegisterPath + id.toString().padStart(6, "0")
               }
               onChange={(event: { target: { value: any } }) => {
                 //console.log(event.target.value)
@@ -383,58 +399,58 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
               InputProps={{
                 sx: styles.textField,
                 endAdornment: (
-                  <InputAdornment position="end" sx={{ height: '100%' }}>
+                  <InputAdornment position="end" sx={{ height: "100%" }}>
                     <Button
                       onClick={() =>
                         navigator.clipboard.writeText(
                           defaultPath.tenantRegisterPath +
-                            id.toString().padStart(6, '0')
+                            id.toString().padStart(6, "0")
                         )
                       }
                       sx={[
                         styles.buttonOutlinedGreen,
                         {
-                          width: '90px',
-                          height: '100%'
-                        }
+                          width: "90px",
+                          height: "100%",
+                        },
                       ]}
                       variant="outlined"
                     >
-                      {t('tenant.invite_modal.copy')}
+                      {t("tenant.invite_modal.copy")}
                     </Button>
                   </InputAdornment>
-                )
+                ),
               }}
             />
           </Box>
         </Stack>
       </Box>
     </Modal>
-  )
+  );
 }
 
 type InviteTenant = {
-  tenantId: number
-  companyNumber: string
-  companyCategory: string
-  companyZhName: string
-  companyCnName: string
-  companyEnName: string
-  bussinessNumber: string
-  effFrmDate: string
-  effToDate: string
-  remark: string
-}
+  tenantId: number;
+  companyNumber: string;
+  companyCategory: string;
+  companyZhName: string;
+  companyCnName: string;
+  companyEnName: string;
+  bussinessNumber: string;
+  effFrmDate: string;
+  effToDate: string;
+  remark: string;
+};
 
 type inviteForm = {
-  open: boolean
-  isLoading: boolean
-  onClose: () => void
-  onSubmitForm: (formikValues: InviteTenant) => void
-  isDuplicated: boolean
-  duplicatedErr: string
-  isTenantErr: boolean
-}
+  open: boolean;
+  isLoading: boolean;
+  onClose: () => void;
+  onSubmitForm: (formikValues: InviteTenant) => void;
+  isDuplicated: boolean;
+  duplicatedErr: string;
+  isTenantErr: boolean;
+};
 
 function InviteForm({
   open,
@@ -443,99 +459,99 @@ function InviteForm({
   onSubmitForm,
   isDuplicated,
   duplicatedErr,
-  isTenantErr
+  isTenantErr,
 }: inviteForm) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   //const [submitable, setSubmitable] = useState<boolean>(false)
-  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false)
+  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
   const validateSchema = Yup.object().shape({
     companyCategory: Yup.string().required(
-      `${t('tenant.invite_form.company_category')} ${t(
-        'purchase_order.create.is_required'
+      `${t("tenant.invite_form.company_category")} ${t(
+        "purchase_order.create.is_required"
       )}`
     ),
     companyZhName: Yup.string().required(
-      `${t('tenant.invite_form.company_zh_name')} ${t(
-        'purchase_order.create.is_required'
+      `${t("tenant.invite_form.company_zh_name")} ${t(
+        "purchase_order.create.is_required"
       )}`
     ),
     companyCnName: Yup.string().required(
-      `${t('tenant.invite_form.company_cn_name')} ${t(
-        'purchase_order.create.is_required'
+      `${t("tenant.invite_form.company_cn_name")} ${t(
+        "purchase_order.create.is_required"
       )}`
     ),
     companyEnName: Yup.string().required(
-      `${t('tenant.invite_form.company_en_name')} ${t(
-        'purchase_order.create.is_required'
+      `${t("tenant.invite_form.company_en_name")} ${t(
+        "purchase_order.create.is_required"
       )}`
     ),
     bussinessNumber: Yup.string().required(
-      `${t('tenant.invite_form.bussiness_number')} ${t(
-        'purchase_order.create.is_required'
+      `${t("tenant.invite_form.bussiness_number")} ${t(
+        "purchase_order.create.is_required"
       )}`
     ),
     remark: Yup.string().required(
-      `${t('tenant.invite_form.remark')} ${t(
-        'purchase_order.create.is_required'
+      `${t("tenant.invite_form.remark")} ${t(
+        "purchase_order.create.is_required"
       )}`
     ),
     effFrmDate: Yup.mixed()
       .nullable()
       .required(
-        `${t('common.start_date_at')} ${t('purchase_order.create.is_required')}`
+        `${t("common.start_date_at")} ${t("purchase_order.create.is_required")}`
       )
       .test(
-        'is-valid-format',
-        `${t('common.start_date_at')} ${t('form.error.isInWrongFormat')}`,
+        "is-valid-format",
+        `${t("common.start_date_at")} ${t("form.error.isInWrongFormat")}`,
         function (value) {
-          if (value === null || value === undefined) return true
-          const date = new Date(value as string)
-          return !isNaN(date.getTime())
+          if (value === null || value === undefined) return true;
+          const date = new Date(value as string);
+          return !isNaN(date.getTime());
         }
       )
       .test(
-        'is-before-end-date',
-        `${t('tenant.invite_modal.err_date')}`,
+        "is-before-end-date",
+        `${t("tenant.invite_modal.err_date")}`,
         function (value) {
-          const { effToDate } = this.parent
-          if (!value || !effToDate) return true
-          const startDate = new Date(value as string)
-          const endDate = new Date(effToDate as string)
-          return startDate <= endDate
+          const { effToDate } = this.parent;
+          if (!value || !effToDate) return true;
+          const startDate = new Date(value as string);
+          const endDate = new Date(effToDate as string);
+          return startDate <= endDate;
         }
       ),
     effToDate: Yup.mixed()
       .nullable()
       .required(
-        `${t('tenant.invite_modal.validaity_to_date')} ${t(
-          'purchase_order.create.is_required'
+        `${t("tenant.invite_modal.validaity_to_date")} ${t(
+          "purchase_order.create.is_required"
         )}`
       )
       .test(
-        'is-valid-format',
-        `${t('tenant.invite_modal.validaity_to_date')} ${t(
-          'form.error.isInWrongFormat'
+        "is-valid-format",
+        `${t("tenant.invite_modal.validaity_to_date")} ${t(
+          "form.error.isInWrongFormat"
         )}`,
         function (value) {
-          if (value === null || value === undefined) return true
-          const date = new Date(value as string)
-          return !isNaN(date.getTime())
+          if (value === null || value === undefined) return true;
+          const date = new Date(value as string);
+          return !isNaN(date.getTime());
         }
-      )
-  })
+      ),
+  });
 
   const initialValues = {
     tenantId: 0,
-    companyNumber: '',
-    companyCategory: 'collector',
-    companyZhName: '',
-    companyCnName: '',
-    companyEnName: '',
-    bussinessNumber: '',
+    companyNumber: "",
+    companyCategory: "collector",
+    companyZhName: "",
+    companyCnName: "",
+    companyEnName: "",
+    bussinessNumber: "",
     effFrmDate: new Date().toDateString(),
     effToDate: new Date().toDateString(),
-    remark: ''
-  }
+    remark: "",
+  };
 
   const formik = useFormik<InviteTenant>({
     initialValues,
@@ -543,114 +559,116 @@ function InviteForm({
 
     onSubmit: async (values, { resetForm }) => {
       try {
-        await onSubmitForm(values)
+        await onSubmitForm(values);
         // resetForm()
         //onClose && onClose()
       } catch (error) {
-        console.error('Error submitting form:', error)
+        console.error("Error submitting form:", error);
       }
-    }
-  })
+    },
+  });
 
   useEffect(() => {
     if (open) {
-      formik.resetForm()
+      formik.resetForm();
     }
-  }, [open])
+  }, [open]);
 
   const TextFields = [
     {
-      label: t('tenant.invite_form.company_number'),
-      placeholder: t('tenant.invite_form.enter_company_number'),
-      id: 'companyNumber',
+      label: t("tenant.invite_form.company_number"),
+      placeholder: t("tenant.invite_form.enter_company_number"),
+      id: "companyNumber",
       value: formik.values.companyNumber,
       error: formik.errors.companyNumber && formik.touched.companyNumber,
-      mandatory: false
+      mandatory: false,
     },
     {
-      label: t('tenant.invite_form.company_category'),
-      placeholder: t('tenant.invite_form.enter_company_category'),
-      id: 'companyCategory',
+      label: t("tenant.invite_form.company_category"),
+      placeholder: t("tenant.invite_form.enter_company_category"),
+      id: "companyCategory",
       value: formik.values.companyCategory,
       error: formik.errors.companyCategory && formik.touched.companyCategory,
       mandatory: true,
       options: [
         {
-          key: 'collector',
-          label: t('tenant.invite_form.collector_company')
+          key: "collector",
+          label: t("tenant.invite_form.collector_company"),
         },
         {
-          key: 'logistic',
-          label: t('tenant.invite_form.logistic_company')
+          key: "logistic",
+          label: t("tenant.invite_form.logistic_company"),
         },
         {
-          key: 'manufacturer',
-          label: t('tenant.invite_form.manufacturer_company')
+          key: "manufacturer",
+          label: t("tenant.invite_form.manufacturer_company"),
         },
         {
-          key: 'customer',
-          label: t('tenant.invite_form.customer_company')
-        }
-      ]
+          key: "customer",
+          label: t("tenant.invite_form.customer_company"),
+        },
+      ],
     },
     {
-      label: t('tenant.invite_form.company_zh_name'),
-      placeholder: t('tenant.invite_form.enter_company_zh_name'),
-      id: 'companyZhName',
+      label: t("tenant.invite_form.company_zh_name"),
+      placeholder: t("tenant.invite_form.enter_company_zh_name"),
+      id: "companyZhName",
       value: formik.values.companyZhName,
       error: formik.errors.companyZhName && formik.touched.companyZhName,
-      mandatory: true
+      mandatory: true,
     },
     {
-      label: t('tenant.invite_form.company_cn_name'),
-      placeholder: t('tenant.invite_form.enter_company_cn_name'),
-      id: 'companyCnName',
+      label: t("tenant.invite_form.company_cn_name"),
+      placeholder: t("tenant.invite_form.enter_company_cn_name"),
+      id: "companyCnName",
       value: formik.values.companyCnName,
       error: formik.errors.companyCnName && formik.touched.companyCnName,
-      mandatory: true
+      mandatory: true,
     },
     {
-      label: t('tenant.invite_form.company_en_name'),
-      placeholder: t('tenant.invite_form.enter_company_en_name'),
-      id: 'companyEnName',
+      label: t("tenant.invite_form.company_en_name"),
+      placeholder: t("tenant.invite_form.enter_company_en_name"),
+      id: "companyEnName",
       value: formik.values.companyEnName,
       error: formik.errors.companyEnName && formik.touched.companyEnName,
-      mandatory: true
+      mandatory: true,
     },
     {
-      label: t('tenant.invite_form.bussiness_number'),
-      placeholder: t('tenant.invite_form.enter_bussiness_number'),
-      id: 'bussinessNumber',
+      label: t("tenant.invite_form.bussiness_number"),
+      placeholder: t("tenant.invite_form.enter_bussiness_number"),
+      id: "bussinessNumber",
       value: formik.values.bussinessNumber,
       error: formik.errors.bussinessNumber && formik.touched.bussinessNumber,
-      mandatory: true
-    }
-  ]
+      mandatory: true,
+    },
+  ];
 
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-    await formik.handleSubmit()
-  }
+    event.preventDefault();
+    await formik.handleSubmit();
+  };
 
   const handleOncloseForm = () => {
-    setOpenConfirmModal(true)
+    setOpenConfirmModal(true);
     // onClose()
-  }
+  };
 
   const getErrorMessage = () => {
     switch (duplicatedErr) {
-      case 'brNo':
-        return t('tenant.invite_modal.err_duplicated_br_no')
-      case 'companyName':
-        return t('tenant.invite_modal.err_duplicated_company_name')
-      case 'companyNumber' || 'tenantId':
-        return t('tenant.invite_modal.err_duplicated_company_number')
-      case 'illegalTenantId':
-        return t('tenant.invite_modal.err_illegal_tenant_id')
+      case "brNo":
+        return t("tenant.invite_modal.err_duplicated_br_no");
+      case "companyName":
+        return t("tenant.invite_modal.err_duplicated_company_name");
+      case "companyNumber":
+        return t("tenant.invite_modal.err_duplicated_company_number");
+      case "tenantId":
+        return t("tenant.invite_modal.err_duplicated_company_number");
+      case "illegalTenantId":
+        return t("tenant.invite_modal.err_illegal_tenant_id");
       default:
-        return t('tenant.invite_modal.err_duplicated_company_number')
+        return t("tenant.invite_modal.err_duplicated_company_number");
     }
-  }
+  };
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -665,10 +683,10 @@ function InviteForm({
             sx={[
               localstyles.modal,
               {
-                height: '90%',
-                width: 'max-content',
-                overflowY: 'auto'
-              }
+                height: "90%",
+                width: "max-content",
+                overflowY: "auto",
+              },
             ]}
           >
             <Stack spacing={2}>
@@ -676,18 +694,18 @@ function InviteForm({
                 sx={{
                   paddingX: 3,
                   paddingTop: 3,
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
                 <Typography
                   id="modal-modal-title"
                   variant="h6"
                   component="h2"
-                  sx={{ fontWeight: 'bold' }}
+                  sx={{ fontWeight: "bold" }}
                 >
-                  {t('tenant.invite_modal.invite_company')}
+                  {t("tenant.invite_modal.invite_company")}
                 </Typography>
                 <CloseIcon
                   className="text-black cursor-pointer"
@@ -699,11 +717,11 @@ function InviteForm({
                 {TextFields.map((t, index) => (
                   <Grid item sx={{ marginBottom: 3 }} key={index}>
                     <CustomField mandatory={t.mandatory} label={t.label}>
-                      {t.id === 'companyCategory' ? (
+                      {t.id === "companyCategory" ? (
                         <Grid item>
                           <FormControl
                             sx={{
-                              width: '100%'
+                              width: "100%",
                             }}
                           >
                             <Select
@@ -711,17 +729,17 @@ function InviteForm({
                               id="userGroup"
                               value={t.value}
                               sx={{
-                                borderRadius: '12px'
+                                borderRadius: "12px",
                               }}
                               onChange={(event: SelectChangeEvent<string>) => {
                                 const selectedValue = t?.options?.find(
                                   (item) => item.key === event.target.value
-                                )
+                                );
                                 if (selectedValue) {
                                   formik.setFieldValue(
-                                    'companyCategory',
+                                    "companyCategory",
                                     selectedValue.key
-                                  )
+                                  );
                                 }
                               }}
                             >
@@ -733,30 +751,30 @@ function InviteForm({
                             </Select>
                           </FormControl>
                         </Grid>
-                      ) : t.id === 'companyNumber' ? (
+                      ) : t.id === "companyNumber" ? (
                         <Box>
                           <TextField
                             fullWidth
                             InputProps={{
-                              sx: styles.textField
+                              sx: styles.textField,
                             }}
                             placeholder={t.placeholder}
                             onChange={(event) => {
                               const numericValue = event.target.value.replace(
                                 /\D/g,
-                                ''
-                              )
+                                ""
+                              );
                               formik.setFieldValue(
-                                'companyNumber',
+                                "companyNumber",
                                 numericValue
-                              )
+                              );
                             }}
                             sx={localstyles.inputState}
                             value={t.value}
                             inputProps={{
-                              inputMode: 'numeric',
-                              pattern: '[0-9]*',
-                              maxLength: 6
+                              inputMode: "numeric",
+                              pattern: "[0-9]*",
+                              maxLength: 6,
                             }}
                             error={t.error || undefined}
                           />
@@ -768,7 +786,7 @@ function InviteForm({
                           rows={4}
                           onChange={formik.handleChange}
                           value={t.value}
-                          sx={{ width: '100%' }}
+                          sx={{ width: "100%" }}
                           error={t.error || undefined}
                         />
                       )}
@@ -779,8 +797,8 @@ function InviteForm({
                   <CustomDatePicker2
                     pickupOrderForm={true}
                     setDate={(values) => {
-                      formik.setFieldValue('effFrmDate', values.startDate)
-                      formik.setFieldValue('effToDate', values.endDate)
+                      formik.setFieldValue("effFrmDate", values.startDate);
+                      formik.setFieldValue("effToDate", values.endDate);
                     }}
                     defaultStartDate={new Date()}
                     defaultEndDate={new Date()}
@@ -788,15 +806,15 @@ function InviteForm({
                 </Grid>
               </Box>
               <Box sx={{ paddingX: 3 }}>
-                <CustomField mandatory label={t('tenant.invite_form.remark')}>
+                <CustomField mandatory label={t("tenant.invite_form.remark")}>
                   <CustomTextField
-                    id={'remark'}
-                    placeholder={t('tenant.invite_form.enter_remark')}
+                    id={"remark"}
+                    placeholder={t("tenant.invite_form.enter_remark")}
                     multiline={true}
                     rows={4}
                     onChange={formik.handleChange}
                     value={formik.values.remark}
-                    sx={{ width: '100%' }}
+                    sx={{ width: "100%" }}
                     error={
                       (formik.errors?.remark && formik.touched?.remark) ||
                       undefined
@@ -807,38 +825,38 @@ function InviteForm({
                   {formik.errors.companyNumber &&
                     formik.touched.companyNumber && (
                       <Alert severity="error">
-                        {formik.errors.companyNumber}{' '}
+                        {formik.errors.companyNumber}{" "}
                       </Alert>
                     )}
                   {formik.errors.companyCategory &&
                     formik.touched.companyCategory && (
                       <Alert severity="error">
-                        {formik.errors.companyCategory}{' '}
+                        {formik.errors.companyCategory}{" "}
                       </Alert>
                     )}
 
                   {formik.errors.companyZhName &&
                     formik.touched.companyZhName && (
                       <Alert severity="error">
-                        {formik.errors.companyZhName}{' '}
+                        {formik.errors.companyZhName}{" "}
                       </Alert>
                     )}
                   {formik.errors.companyCnName &&
                     formik.touched.companyCnName && (
                       <Alert severity="error">
-                        {formik.errors.companyCnName}{' '}
+                        {formik.errors.companyCnName}{" "}
                       </Alert>
                     )}
                   {formik.errors.companyEnName &&
                     formik.touched.companyEnName && (
                       <Alert severity="error">
-                        {formik.errors.companyEnName}{' '}
+                        {formik.errors.companyEnName}{" "}
                       </Alert>
                     )}
                   {formik.errors.bussinessNumber &&
                     formik.touched.bussinessNumber && (
                       <Alert severity="error">
-                        {formik.errors.bussinessNumber}{' '}
+                        {formik.errors.bussinessNumber}{" "}
                       </Alert>
                     )}
                   {formik.errors.effFrmDate && formik.touched.effFrmDate && (
@@ -855,15 +873,15 @@ function InviteForm({
                   )}
                   {isTenantErr && (
                     <Alert severity="error">
-                      {t('tenant.invite_modal.err_companyIdLength')}{' '}
+                      {t("tenant.invite_modal.err_companyIdLength")}{" "}
                     </Alert>
                   )}
                 </Stack>
               </Box>
-              <Box sx={{ alignSelf: 'center' }}>
+              <Box sx={{ alignSelf: "center" }}>
                 {isLoading && <CircularProgress color="success" />}
               </Box>
-              <Box sx={{ alignSelf: 'center', paddingBottom: '16px' }}>
+              <Box sx={{ alignSelf: "center", paddingBottom: "16px" }}>
                 <Button
                   //disabled={!formik.isValid || isLoading}
                   onClick={handleSubmit}
@@ -876,21 +894,21 @@ function InviteForm({
                     styles.buttonFilledGreen,
                     {
                       mt: 3,
-                      color: 'white',
-                      width: 'max-content',
-                      height: '40px'
-                    }
+                      color: "white",
+                      width: "max-content",
+                      height: "40px",
+                    },
                   ]}
                 >
-                  {t('common.submit')}
+                  {t("common.submit")}
                 </Button>
               </Box>
             </Stack>
             <ConfirmModal
               isOpen={openConfirmModal}
               onConfirm={() => {
-                setOpenConfirmModal(false)
-                onClose()
+                setOpenConfirmModal(false);
+                onClose();
               }}
               onCancel={() => setOpenConfirmModal(false)}
             />
@@ -898,228 +916,232 @@ function InviteForm({
         </Modal>
       </LocalizationProvider>
     </form>
-  )
+  );
 }
 
 function CompanyManage() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-  const [invFormModal, setInvFormModal] = useState<boolean>(false)
-  const [invSendModal, setInvSendModal] = useState<boolean>(false)
-  const [modalNotification, setModalNotification] = useState<boolean>(false)
-  const [successSendInv, setSuccessSendInv] = useState<boolean>(false)
-  const [rejectModal, setRejectModal] = useState<boolean>(false)
-  const [InviteId, setInviteId] = useState<string>('')
-  const [companies, setCompanies] = useState<Company[]>([])
-  const [filterCompanies, setFilterCompanies] = useState<Company[]>([])
-  const [openDetail, setOpenDetails] = useState<boolean>(false)
-  const [selectedTenanId, setSelectedTenantId] = useState(0)
-  const [isLoadingInvite, setIsLoadingInvite] = useState<boolean>(false)
-  const [rejectedId, setRejectId] = useState(0)
-  const [rejectVersion, setRejectVersion] = useState<number>(0)
-  const [page, setPage] = useState(1)
-  const pageSize = 10
-  const [totalData, setTotalData] = useState<number>(0)
-  const { dateFormat } = useContainer(CommonTypeContainer)
-  const [duplicatedData, setDuplicatedData] = useState<boolean>(false)
-  const [duplicatedType, setDuplicatedType] = useState<string>('')
-  const [tenantIdErr, setTenantIdErr] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [invFormModal, setInvFormModal] = useState<boolean>(false);
+  const [invSendModal, setInvSendModal] = useState<boolean>(false);
+  const [modalNotification, setModalNotification] = useState<boolean>(false);
+  const [successSendInv, setSuccessSendInv] = useState<boolean>(false);
+  const [rejectModal, setRejectModal] = useState<boolean>(false);
+  const [InviteId, setInviteId] = useState<string>("");
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [filterCompanies, setFilterCompanies] = useState<Company[]>([]);
+  const [openDetail, setOpenDetails] = useState<boolean>(false);
+  const [selectedTenanId, setSelectedTenantId] = useState(0);
+  const [isLoadingInvite, setIsLoadingInvite] = useState<boolean>(false);
+  const [rejectedId, setRejectId] = useState(0);
+  const [rejectVersion, setRejectVersion] = useState<number>(0);
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const [totalData, setTotalData] = useState<number>(0);
+  const { dateFormat } = useContainer(CommonTypeContainer);
+  const [duplicatedData, setDuplicatedData] = useState<boolean>(false);
+  const [duplicatedType, setDuplicatedType] = useState<string>("");
+  const [tenantIdErr, setTenantIdErr] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const realmOptions = [
     {
-      key: 'collector',
-      label: t('tenant.invite_form.collector_company')
+      key: "collector",
+      label: t("tenant.invite_form.collector_company"),
     },
     {
-      key: 'logistic',
-      label: t('tenant.invite_form.logistic_company')
+      key: "logistic",
+      label: t("tenant.invite_form.logistic_company"),
     },
     {
-      key: 'manufacturer',
-      label: t('tenant.invite_form.manufacturer_company')
+      key: "manufacturer",
+      label: t("tenant.invite_form.manufacturer_company"),
     },
     {
-      key: 'customer',
-      label: t('tenant.invite_form.customer_company')
-    }
-  ]
-  const navigate = useNavigate()
-  const { localeTextDataGrid } = useLocaleTextDataGrid()
+      key: "customer",
+      label: t("tenant.invite_form.customer_company"),
+    },
+  ];
+  const navigate = useNavigate();
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   const handleApproveTenant = async (tenantId: number, version: number) => {
     try {
-      setOpenDetails(false)
+      setOpenDetails(false);
       const statData: UpdateStatus = {
-        status: 'CONFIRMED',
-        updatedBy: 'admin',
-        version: version
-      }
+        status: "CONFIRMED",
+        updatedBy: "admin",
+        version: version,
+      };
 
-      const result = await updateTenantStatus(statData, tenantId)
+      const result = await updateTenantStatus(statData, tenantId);
       if (result?.status === 200) {
-        await createTenantSocif(tenantId)
-        showSuccessToast(t('common.approveSuccess'))
-        initCompaniesData()
+        await createTenantSocif(tenantId);
+        showSuccessToast(t("common.approveSuccess"));
+        initCompaniesData();
       }
       //  window.location.reload()
-      setOpenDetails(false)
+      setOpenDetails(false);
     } catch (error) {
-      const { state } = extractError(error)
+      const { state } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-  }
+  };
 
   const createTenantSocif = async (tenantId: number) => {
     try {
-      const companyData: Company = companies.find(value => value.id === tenantId)!
-      if (companyData === undefined) throw new Error('fail to get company data')
+      const companyData: Company = companies.find(
+        (value) => value.id === tenantId
+      )!;
+      if (companyData === undefined)
+        throw new Error("fail to get company data");
       const payload = {
-          "namec": companyData?.cName,
-          "names": companyData?.sName,
-          "namee": companyData?.eName,
-          "tenantId": `${tenantId.toString().padStart(6, '0')}`
-      }
-      await createNewTenant(payload)
+        namec: companyData?.cName,
+        names: companyData?.sName,
+        namee: companyData?.eName,
+        tenantId: `${tenantId.toString().padStart(6, "0")}`,
+      };
+      await createNewTenant(payload);
     } catch (error) {
-      if (window.baseURL.socif !== '') { // prevent redirecting to error page on DEV ENV
-        const { state } = extractError(error)
+      if (window.baseURL.socif !== "") {
+        // prevent redirecting to error page on DEV ENV
+        const { state } = extractError(error);
         if (state.code === STATUS_CODE[503]) {
-          navigate('/maintenance')
+          navigate("/maintenance");
         }
       }
     }
-  }
+  };
 
   const handleRejectTenant = (tenantId: number, version: number) => {
-    setRejectId(tenantId)
-    setRejectVersion(version)
-    setRejectModal(true)
-  }
+    setRejectId(tenantId);
+    setRejectVersion(version);
+    setRejectModal(true);
+  };
 
   const headCells: GridColDef[] = [
     // checkboxColumn,
     {
-      field: 'id',
-      headerName: t('tenant.company_number'),
-      type: 'string',
+      field: "id",
+      headerName: t("tenant.company_number"),
+      type: "string",
       width: 200,
       valueFormatter: (params) => {
-        return params.value.toString().padStart(6, '0')
-      }
+        return params.value.toString().padStart(6, "0");
+      },
     },
     {
-      field: 'cName',
-      headerName: t('tenant.company_cn_name'),
+      field: "cName",
+      headerName: t("tenant.company_cn_name"),
       width: 150,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'eName',
-      headerName: t('tenant.company_en_name'),
-      type: 'string',
-      width: 150
-    },
-    {
-      field: 'status',
-      headerName: t('tenant.status'),
+      field: "eName",
+      headerName: t("tenant.company_en_name"),
+      type: "string",
       width: 150,
-      type: 'string',
+    },
+    {
+      field: "status",
+      headerName: t("tenant.status"),
+      width: 150,
+      type: "string",
       renderCell: (params) => {
-        return t(`status.${params.row.status.toLowerCase()}`).toUpperCase()
-      }
+        return t(`status.${params.row.status.toLowerCase()}`).toUpperCase();
+      },
     },
     {
-      field: 'type',
-      headerName: t('tenant.company_category'),
+      field: "type",
+      headerName: t("tenant.company_category"),
       width: 150,
-      type: 'string',
+      type: "string",
       valueGetter: (params) => {
         return (
-          realmOptions.find((item) => item.key === params.row.type)?.label || ''
-        )
-      }
+          realmOptions.find((item) => item.key === params.row.type)?.label || ""
+        );
+      },
     },
     {
-      field: 'createDate',
-      headerName: t('tenant.created_date'),
+      field: "createDate",
+      headerName: t("tenant.created_date"),
       width: 150,
-      type: 'string',
+      type: "string",
       valueGetter: (params) => {
         return dayjs
           .utc(params.row?.createDate)
-          .tz('Asia/Hong_Kong')
-          .format(`${dateFormat} HH:mm`)
-      }
+          .tz("Asia/Hong_Kong")
+          .format(`${dateFormat} HH:mm`);
+      },
     },
     {
-      field: 'accountNum',
-      headerName: t('tenant.number_of_acc'),
+      field: "accountNum",
+      headerName: t("tenant.number_of_acc"),
       width: 150,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'action',
-      headerName: t('pick_up_order.item.actions'),
+      field: "action",
+      headerName: t("pick_up_order.item.actions"),
       width: 250,
-      type: 'string',
+      type: "string",
       filterable: false,
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
-            {params.row.status === 'CREATED' ? (
+          <div style={{ display: "flex", gap: "8px" }}>
+            {params.row.status === "CREATED" ? (
               <div>
                 <Button
                   sx={[
                     styles.buttonFilledGreen,
                     {
-                      width: 'max-content',
-                      height: '40px',
-                      marginRight: '8px'
-                    }
+                      width: "max-content",
+                      height: "40px",
+                      marginRight: "8px",
+                    },
                   ]}
                   variant="outlined"
                   onClick={(event) => {
-                    handleApproveTenant(params.row.id, params.row.version)
-                    event.stopPropagation()
+                    handleApproveTenant(params.row.id, params.row.version);
+                    event.stopPropagation();
                   }}
                 >
-                  {t('check_out.approve')}
+                  {t("check_out.approve")}
                 </Button>
                 <Button
                   sx={[
                     styles.buttonOutlinedGreen,
                     {
-                      width: 'max-content',
-                      height: '40px'
-                    }
+                      width: "max-content",
+                      height: "40px",
+                    },
                   ]}
                   variant="outlined"
                   onClick={(event) => {
-                    handleRejectTenant(params.row.id, params.row.version)
-                    event.stopPropagation() // Prevent event bubbling
+                    handleRejectTenant(params.row.id, params.row.version);
+                    event.stopPropagation(); // Prevent event bubbling
                   }}
                 >
-                  {t('check_out.reject')}
+                  {t("check_out.reject")}
                 </Button>
               </div>
             ) : (
               <div></div>
             )}
           </div>
-        )
-      }
-    }
-  ]
+        );
+      },
+    },
+  ];
 
   useEffect(() => {
-    initCompaniesData()
-  }, [page])
+    initCompaniesData();
+  }, [page]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mappingTenantData = (data: any) => {
-    const tenantList: Company[] = []
+    const tenantList: Company[] = [];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data.map((com: any) => {
       tenantList.push(
@@ -1134,126 +1156,126 @@ function CompanyManage() {
           com?.decimalPlace || 0,
           com?.version
         )
-      )
-    })
+      );
+    });
 
-    return tenantList
-  }
+    return tenantList;
+  };
 
   async function initCompaniesData() {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const result = await getAllTenant(page - 1, pageSize)
-      const data = result?.data.content
+      const result = await getAllTenant(page - 1, pageSize);
+      const data = result?.data.content;
       if (data.length > 0) {
-        const tenantList = mappingTenantData(data)
-        setCompanies(tenantList)
-        setFilterCompanies(tenantList)
+        const tenantList = mappingTenantData(data);
+        setCompanies(tenantList);
+        setFilterCompanies(tenantList);
       }
-      setTotalData(result?.data.totalPages)
+      setTotalData(result?.data.totalPages);
     } catch (error) {
-      const { state } = extractError(error)
+      const { state } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-    setIsLoading(false)
+    setIsLoading(false);
   }
 
   const handleFilterCompanies = debounce(async (searchWord: string) => {
     try {
-      if (searchWord != '') {
-        const tenantId = parseInt(searchWord)
-        const result = await searchTenantById(page - 1, pageSize, tenantId)
-        const data = result?.data.content
+      if (searchWord != "") {
+        const tenantId = parseInt(searchWord);
+        const result = await searchTenantById(page - 1, pageSize, tenantId);
+        const data = result?.data.content;
         if (data?.length > 0) {
-          const tenantList = mappingTenantData(data)
-          setCompanies(tenantList)
-          setFilterCompanies(tenantList)
-          setTotalData(result?.data.totalPages)
+          const tenantList = mappingTenantData(data);
+          setCompanies(tenantList);
+          setFilterCompanies(tenantList);
+          setTotalData(result?.data.totalPages);
         }
       } else {
-        initCompaniesData()
+        initCompaniesData();
       }
     } catch (error) {
-      const { state } = extractError(error)
+      const { state } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-  }, 500)
+  }, 500);
 
   const onRejectModal = () => {
-    initCompaniesData()
-    console.log('onRejectModal', onRejectModal)
-    showSuccessToast(t('common.rejectSuccess'))
-    setOpenDetails(false)
-  }
+    initCompaniesData();
+    console.log("onRejectModal", onRejectModal);
+    showSuccessToast(t("common.rejectSuccess"));
+    setOpenDetails(false);
+  };
 
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
-      top: params.isFirstVisible ? 0 : 10
-    }
-  }, [])
+      top: params.isFirstVisible ? 0 : 10,
+    };
+  }, []);
 
   const handleSelectRow = (params: GridRowParams) => {
-    setSelectedTenantId(params.row.id)
-    console.log('clicked')
-    setOpenDetails(true)
-  }
+    setSelectedTenantId(params.row.id);
+    console.log("clicked");
+    setOpenDetails(true);
+  };
 
   const handleDrawerClose = () => {
-    setSelectedTenantId(0)
-    setOpenDetails(false)
-  }
+    setSelectedTenantId(0);
+    setOpenDetails(false);
+  };
 
   const handleCloseInvite = () => {
-    setInvSendModal(false)
-    setDuplicatedData(false)
-    setDuplicatedType('')
-    initCompaniesData()
-  }
+    setInvSendModal(false);
+    setDuplicatedData(false);
+    setDuplicatedType("");
+    initCompaniesData();
+  };
 
   const getDuplicatedErrType = (state: errorState) => {
-    const match = state.message.match(/\[(.*?)\]/)
-    const errField = match ? match[1] : ''
+    const match = state.message.match(/\[(.*?)\]/);
+    const errField = match ? match[1] : "";
 
     switch (state.code) {
       case 409:
-        setDuplicatedType(errField)
-        break
+        setDuplicatedType(errField);
+        break;
       case 403:
-        setDuplicatedType(errField)
-        break
+        setDuplicatedType(errField);
+        break;
       case 500:
-        setDuplicatedType('companyNumber')
+        setDuplicatedType("companyNumber");
     }
-  }
+  };
 
   const handleSendInvitation = (isSend: boolean) => {
-    setInvSendModal(false)
-    setModalNotification(true)
-    setSuccessSendInv(isSend)
-  }
+    setInvSendModal(false);
+    setModalNotification(true);
+    setSuccessSendInv(isSend);
+  };
 
   const onChangeStatus = () => {
-    initCompaniesData()
-  }
+    initCompaniesData();
+  };
 
   const onInviteFormSubmit = async (
     formikValues: InviteTenant
     //submitForm: () => void
   ) => {
     if (formikValues.companyNumber && formikValues.companyNumber.length !== 6) {
-      setTenantIdErr(true)
-      setIsLoadingInvite(false)
-      return
+      setTenantIdErr(true);
+      setIsLoadingInvite(false);
+      return;
     } else {
       try {
-        setIsLoadingInvite(true)
+        setIsLoadingInvite(true);
         const realmType =
           realmOptions.find((item) => item.key == formikValues.companyCategory)
-            ?.key || 'collector'
+            ?.key || "collector";
 
         const result = await createInvitation(
           {
@@ -1262,132 +1284,132 @@ function CompanyManage() {
             companyNameSchi: formikValues.companyCnName,
             companyNameEng: formikValues.companyEnName,
             tenantType: realmType,
-            status: 'CREATED',
+            status: "CREATED",
             brNo: formikValues.bussinessNumber,
             remark: formikValues.remark,
-            contactNo: '',
-            email: '',
-            contactName: '',
+            contactNo: "",
+            email: "",
+            contactName: "",
             decimalPlace: 0,
-            monetaryValue: '',
-            inventoryMethod: '',
-            allowImgSize: 0,
-            allowImgNum: 0,
+            monetaryValue: "",
+            inventoryMethod: "",
+            allowImgSize: 3,
+            allowImgNum: 3,
             effFrmDate: formikValues.effFrmDate,
             effToDate: formikValues.effToDate,
-            createdBy: 'admin',
-            updatedBy: 'admin'
+            createdBy: "admin",
+            updatedBy: "admin",
           },
           realmType
-        )
+        );
 
         if (result?.data?.tenantId) {
-          console.log(result)
-          setInviteId(result?.data?.tenantId)
-          setInvSendModal(true)
-          setInvFormModal(false)
-          setIsLoadingInvite(false)
-          setDuplicatedData(false)
-          setDuplicatedType('')
-          setTenantIdErr(false)
+          console.log(result);
+          setInviteId(result?.data?.tenantId);
+          setInvSendModal(true);
+          setInvFormModal(false);
+          setIsLoadingInvite(false);
+          setDuplicatedData(false);
+          setDuplicatedType("");
+          setTenantIdErr(false);
         } else {
-          showErrorToast(t('common.saveFailed'))
-          setIsLoadingInvite(false)
+          showErrorToast(t("common.saveFailed"));
+          setIsLoadingInvite(false);
         }
       } catch (error) {
-        const { state } = extractError(error)
-        console.log('state.code', state.code)
+        const { state } = extractError(error);
+        console.log("state.code", state.code);
         if (state.code === STATUS_CODE[503]) {
-          navigate('/maintenance')
+          navigate("/maintenance");
         } else if (state.code === STATUS_CODE[403]) {
           //showErrorToast(t('common.saveFailed'))
-          getDuplicatedErrType(state)
-          setDuplicatedData(true)
-          setIsLoadingInvite(false)
+          getDuplicatedErrType(state);
+          setDuplicatedData(true);
+          setIsLoadingInvite(false);
         } else {
-          showErrorToast(`${t('common.saveFailed')}`)
-          getDuplicatedErrType(state)
-          setDuplicatedData(true)
-          setTenantIdErr(false)
-          setIsLoadingInvite(false)
+          showErrorToast(`${t("common.saveFailed")}`);
+          getDuplicatedErrType(state);
+          setDuplicatedData(true);
+          setTenantIdErr(false);
+          setIsLoadingInvite(false);
         }
       }
     }
-  }
+  };
 
   return (
     <>
       <Box
         sx={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          pr: 4
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          pr: 4,
         }}
       >
         <ToastContainer></ToastContainer>
         <Typography fontSize={20} color="black" fontWeight="bold">
-          {t('tenant.company')}
+          {t("tenant.company")}
         </Typography>
         <Button
           sx={[
             styles.buttonOutlinedGreen,
             {
               mt: 3,
-              width: 'max-content',
-              height: '40px'
-            }
+              width: "max-content",
+              height: "40px",
+            },
           ]}
           variant="outlined"
           onClick={() => {
-            setInvFormModal(true)
-            setDuplicatedData(false)
-            setDuplicatedType('')
+            setInvFormModal(true);
+            setDuplicatedData(false);
+            setDuplicatedType("");
           }}
         >
-          <ADD_PERSON_ICON sx={{ marginX: 1 }} /> {t('tenant.invite')}
+          <ADD_PERSON_ICON sx={{ marginX: 1 }} /> {t("tenant.invite")}
         </Button>
         <TextField
           id="searchCompany"
           onChange={(event) => {
-            const numericValue = event.target.value.replace(/\D/g, '')
-            handleFilterCompanies(numericValue)
+            const numericValue = event.target.value.replace(/\D/g, "");
+            handleFilterCompanies(numericValue);
           }}
           sx={{
             mt: 3,
-            width: '100%',
-            bgcolor: 'white',
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: '#79CA25'
+            width: "100%",
+            bgcolor: "white",
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: "#79CA25",
               },
-              '&:hover fieldset': {
-                borderColor: '#79CA25'
+              "&:hover fieldset": {
+                borderColor: "#79CA25",
               },
-              '&.Mui-focused fieldset': {
-                borderColor: '#79CA25'
-              }
-            }
+              "&.Mui-focused fieldset": {
+                borderColor: "#79CA25",
+              },
+            },
           }}
-          label={t('tenant.company_number')}
+          label={t("tenant.company_number")}
           inputProps={{
-            inputMode: 'numeric',
-            pattern: '[0-9]*',
-            maxLength: 6
+            inputMode: "numeric",
+            pattern: "[0-9]*",
+            maxLength: 6,
           }}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton>
-                  <SEARCH_ICON style={{ color: '#79CA25' }} />
+                  <SEARCH_ICON style={{ color: "#79CA25" }} />
                 </IconButton>
               </InputAdornment>
-            )
+            ),
           }}
         />
         <div className="table-tenant">
-          <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
+          <Box pr={4} pt={3} sx={{ flexGrow: 1, width: "100%" }}>
             {isLoading ? (
               <CircularLoading />
             ) : (
@@ -1403,31 +1425,31 @@ function CompanyManage() {
                   localeText={localeTextDataGrid}
                   getRowClassName={(params) =>
                     selectedTenanId && params.id === selectedTenanId
-                      ? 'selected-row'
-                      : ''
+                      ? "selected-row"
+                      : ""
                   }
                   sx={{
-                    border: 'none',
-                    '& .MuiDataGrid-cell': {
-                      border: 'none'
+                    border: "none",
+                    "& .MuiDataGrid-cell": {
+                      border: "none",
                     },
-                    '& .MuiDataGrid-row': {
-                      bgcolor: 'white',
-                      borderRadius: '10px'
+                    "& .MuiDataGrid-row": {
+                      bgcolor: "white",
+                      borderRadius: "10px",
                     },
-                    '&>.MuiDataGrid-main': {
-                      '&>.MuiDataGrid-columnHeaders': {
-                        borderBottom: 'none'
-                      }
+                    "&>.MuiDataGrid-main": {
+                      "&>.MuiDataGrid-columnHeaders": {
+                        borderBottom: "none",
+                      },
                     },
-                    '.MuiDataGrid-columnHeaderTitle': {
-                      fontWeight: 'bold !important',
-                      overflow: 'visible !important'
+                    ".MuiDataGrid-columnHeaderTitle": {
+                      fontWeight: "bold !important",
+                      overflow: "visible !important",
                     },
-                    '& .selected-row': {
-                      backgroundColor: '#F6FDF2 !important',
-                      border: '1px solid #79CA25'
-                    }
+                    "& .selected-row": {
+                      backgroundColor: "#F6FDF2 !important",
+                      border: "1px solid #79CA25",
+                    },
                   }}
                 />
                 <Pagination
@@ -1435,7 +1457,7 @@ function CompanyManage() {
                   count={Math.ceil(totalData)}
                   page={page}
                   onChange={(_, newPage) => {
-                    setPage(newPage)
+                    setPage(newPage);
                   }}
                 />
               </Box>
@@ -1446,8 +1468,8 @@ function CompanyManage() {
           open={invFormModal}
           isLoading={isLoadingInvite}
           onClose={() => {
-            setInvFormModal(false)
-            setTenantIdErr(false)
+            setInvFormModal(false);
+            setTenantIdErr(false);
           }}
           onSubmitForm={onInviteFormSubmit}
           isDuplicated={duplicatedData}
@@ -1484,115 +1506,115 @@ function CompanyManage() {
         )}
       </Box>
     </>
-  )
+  );
 }
 
 const localstyles = {
   btn_WhiteGreenTheme: {
-    borderRadius: '20px',
+    borderRadius: "20px",
     borderWidth: 1,
-    borderColor: '#79ca25',
-    backgroundColor: 'white',
-    color: '#79ca25',
-    fontWeight: 'bold',
-    '&.MuiButton-root:hover': {
-      bgcolor: '#F4F4F4',
-      borderColor: '#79ca25'
-    }
+    borderColor: "#79ca25",
+    backgroundColor: "white",
+    color: "#79ca25",
+    fontWeight: "bold",
+    "&.MuiButton-root:hover": {
+      bgcolor: "#F4F4F4",
+      borderColor: "#79ca25",
+    },
   },
   table: {
     minWidth: 750,
-    borderCollapse: 'separate',
-    borderSpacing: '0px 10px'
+    borderCollapse: "separate",
+    borderSpacing: "0px 10px",
   },
   headerRow: {
     borderRadius: 10,
     mb: 1,
-    'th:first-child': {
-      borderRadius: '10px 0 0 10px'
+    "th:first-child": {
+      borderRadius: "10px 0 0 10px",
     },
-    'th:last-child': {
-      borderRadius: '0 10px 10px 0'
-    }
+    "th:last-child": {
+      borderRadius: "0 10px 10px 0",
+    },
   },
   row: {
-    backgroundColor: '#FBFBFB',
+    backgroundColor: "#FBFBFB",
     borderRadius: 10,
     mb: 1,
-    'td:first-child': {
-      borderRadius: '10px 0 0 10px'
+    "td:first-child": {
+      borderRadius: "10px 0 0 10px",
     },
-    'td:last-child': {
-      borderRadius: '0 10px 10px 0'
-    }
+    "td:last-child": {
+      borderRadius: "0 10px 10px 0",
+    },
   },
   headCell: {
-    border: 'none',
-    fontWeight: 'bold'
+    border: "none",
+    fontWeight: "bold",
   },
   bodyCell: {
-    border: 'none'
+    border: "none",
   },
   typo: {
-    color: 'grey',
+    color: "grey",
     fontSize: 14,
-    display: 'flex'
+    display: "flex",
   },
   textField: {
-    borderRadius: '10px',
-    fontWeight: '500',
-    '& .MuiOutlinedInput-input': {
-      padding: '10px'
-    }
+    borderRadius: "10px",
+    fontWeight: "500",
+    "& .MuiOutlinedInput-input": {
+      padding: "10px",
+    },
   },
   modal: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%,-50%)',
-    width: '34%',
-    height: 'fit-content',
-    backgroundColor: 'white',
-    border: 'none',
-    borderRadius: 5
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%,-50%)",
+    width: "34%",
+    height: "fit-content",
+    backgroundColor: "white",
+    border: "none",
+    borderRadius: 5,
   },
   textArea: {
-    width: '100%',
-    height: '100px',
-    padding: '10px',
-    borderColor: '#ACACAC',
-    borderRadius: 5
+    width: "100%",
+    height: "100px",
+    padding: "10px",
+    borderColor: "#ACACAC",
+    borderRadius: 5,
   },
   formButton: {
-    width: '150px',
+    width: "150px",
     borderRadius: 5,
-    backgroundColor: '#79CA25',
-    color: 'white',
-    '&.MuiButton-root:hover': {
-      backgroundColor: '#7AD123'
-    }
+    backgroundColor: "#79CA25",
+    color: "white",
+    "&.MuiButton-root:hover": {
+      backgroundColor: "#7AD123",
+    },
   },
-  borderRadius: '10px',
-  fontWeight: '500',
-  '& .MuiOutlinedInput-input': {
-    padding: '15px 20px',
-    margin: 0
+  borderRadius: "10px",
+  fontWeight: "500",
+  "& .MuiOutlinedInput-input": {
+    padding: "15px 20px",
+    margin: 0,
   },
   inputState: {
-    '& .MuiInputLabel-root': {
-      color: '#ACACAC'
+    "& .MuiInputLabel-root": {
+      color: "#ACACAC",
       /* Add any other custom styles here */
     },
-    '& .MuiOutlinedInput-root': {
+    "& .MuiOutlinedInput-root": {
       margin: 0,
-      '&:not(.Mui-disabled):hover fieldset': {
-        borderColor: '#79CA25'
+      "&:not(.Mui-disabled):hover fieldset": {
+        borderColor: "#79CA25",
       },
-      '&.Mui-focused fieldset': {
-        borderColor: '#79CA25'
-      }
-    }
-  }
-}
+      "&.Mui-focused fieldset": {
+        borderColor: "#79CA25",
+      },
+    },
+  },
+};
 
-export default CompanyManage
+export default CompanyManage;

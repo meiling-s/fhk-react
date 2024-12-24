@@ -58,8 +58,6 @@ const JobOrderForm = ({
   selectedRow,
   onApproved,
   onReject,
-  onSuccess,
-  reasonList,
   setReasonModal,
   selectedDate,
   setSelectedDate,
@@ -68,8 +66,6 @@ const JobOrderForm = ({
   selectedRow: Row | null;
   onApproved: () => void;
   onReject: () => void;
-  onSuccess: () => void;
-  reasonList: any;
   setReasonModal: (value: boolean) => void;
   selectedDate: string;
   setSelectedDate: (value: string) => void;
@@ -132,8 +128,18 @@ const JobOrderForm = ({
               senderId: number;
               senderName: any;
             }) => {
-              const senderName = await fetchTenantDetails(item.senderId);
-              const receiverName = await fetchTenantDetails(item.receiverId);
+              const senderName =
+                item.senderId !== 0 &&
+                !isNaN(item.senderId) &&
+                item.senderId !== null
+                  ? await fetchTenantDetails(item.senderId)
+                  : item.senderName;
+              const receiverName =
+                item.receiverId !== 0 &&
+                !isNaN(item.receiverId) &&
+                item.receiverId !== null
+                  ? await fetchTenantDetails(item.receiverId)
+                  : item.receiverName;
               return {
                 ...item,
                 senderName: senderName || item.senderName,
@@ -147,39 +153,6 @@ const JobOrderForm = ({
           (item) => item.picoDtlId === selectedRow?.picoDtlId
         );
         setPickUpOrderDetail([picoDetailItem]);
-      }
-    }
-  };
-
-  const onSaveDate = async () => {
-    const updateJOStatus = {
-      status: "UNASSIGNED",
-      reason: [],
-      updatedBy: auth.loginId,
-      pickupDate: selectedDate.split("T")[0],
-    };
-
-    if (selectedRow) {
-      try {
-        const result = await editJobOrderStatus(
-          selectedRow?.joId,
-          updateJOStatus
-        );
-        if (result) {
-          toast.info(t("jobOrder.store_date"), {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
-          onSuccess();
-        }
-      } catch (error) {
-        console.error("Error Update Date:", error);
       }
     }
   };
