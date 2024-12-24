@@ -354,6 +354,8 @@ const Inventory: FunctionComponent = () => {
         initWarehouseList();
         initCollectionPoint();
       }
+    } else {
+      initInventory();
     }
   }, [recycItem, productItem, page, realmApi, query, i18n.language]);
 
