@@ -153,6 +153,12 @@ const CreateCollectionPoint = () => {
     initType();
   }, []);
 
+  function convertToUTCWithOffset(dateString: any) {
+    // Parse the date and subtract 8 hours (HK time is UTC+8)
+    const date = new Date(`${dateString}T00:00:00+08:00`);
+    return date.toISOString();
+  }
+
   const handleCreateOnClick = async (values: any) => {
     if (routineValidationError) {
       return;
@@ -164,12 +170,18 @@ const CreateCollectionPoint = () => {
         values.colType === "CPT00001" ? "basic" : serviceFlg;
       const newPremiseTypeIdValue =
         values.colType === "CPT00003" ? values.premiseType : "";
+      const utcEffFrmDate = convertToUTCWithOffset(
+        dayjs(values.openingPeriod.startDate).format("YYYY-MM-DD")
+      );
+      const utcEffToDate = convertToUTCWithOffset(
+        dayjs(values.openingPeriod.endDate).format("YYYY-MM-DD")
+      );
       const cp: createCP = {
         tenantId: tenantId,
         colName: values.colName,
         colPointTypeId: values.colType,
-        effFrmDate: dayjs(values.openingPeriod.startDate).format("YYYY-MM-DD"),
-        effToDate: dayjs(values.openingPeriod.endDate).format("YYYY-MM-DD"),
+        effFrmDate: utcEffFrmDate,
+        effToDate: utcEffToDate,
         routine: values.colPtRoutine,
         address: values.address,
         gpsCode: [22.426887, 114.211165],
@@ -189,14 +201,14 @@ const CreateCollectionPoint = () => {
         roster: [],
       };
 
-      console.log(cp, "cp");
-      // const response = await createCollectionPoint(cp);
+      // console.log(cp, "cp");
+      const response = await createCollectionPoint(cp);
 
-      // if (response.data) {
-      //   navigate("/collector/collectionPoint", { state: "created" });
-      // } else {
-      //   console.log(response);
-      // }
+      if (response.data) {
+        navigate("/collector/collectionPoint", { state: "created" });
+      } else {
+        console.log(response);
+      }
     } catch (err) {
       console.log(err);
     }
