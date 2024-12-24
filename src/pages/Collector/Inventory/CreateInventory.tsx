@@ -752,26 +752,15 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
 
                   const cursorPosition = input.selectionStart || 0;
 
-                  if (!rawValue || isNaN(Number(rawValue))) {
-                    setWeight("");
+                  if (!/^\d*\.?\d*$/.test(rawValue)) {
                     return;
-                  }
-
-                  onChangeWeight(
-                    rawValue,
-                    decimalVal,
-                    (formattedValue: string) => {
-                      const formattedWeight = formatWeight(
-                        formattedValue,
-                        decimalVal
-                      );
-                      setWeight(formattedWeight);
-
-                      setTimeout(() => {
-                        input.setSelectionRange(cursorPosition, cursorPosition);
-                      }, 0);
-                    }
-                  );
+                }
+            
+                setWeight(rawValue);
+            
+                setTimeout(() => {
+                    input.setSelectionRange(cursorPosition, cursorPosition);
+                }, 0);
                 }}
                 sx={{
                   ".MuiInputBase-root": {
