@@ -278,12 +278,12 @@ const InputProcessForm = ({
           type: 'error'
         })
 
-      // 1. validation rectype and product type type
       const productItemIn = processOrderDetail[0].processIn
       const recyItemIn = processOrderDetail[0].processIn
       const productItemOut = processOrderDetail[0].processOut
       const recyItemOut = processOrderDetail[0].processOut
 
+      // 1. validation rectype and product type
       if (productItemIn.itemCategory === 'product') {
         if (productItemIn.processOrderDetailProduct.length === 0) {
           tempV.push({
@@ -479,6 +479,8 @@ const InputProcessForm = ({
               ) {
                 tempV.push({
                   field:
+                    t('processOrder.create.product') +
+                    ' - ' +
                     t('pick_up_order.product_type.add-on') +
                     ' - ' +
                     t('processOrder.table.processOut'),
@@ -617,8 +619,6 @@ const InputProcessForm = ({
 
   const handleProductChange = (type: string, value: productsVal[]) => {
     console.log('val', value)
-    // let tempProduct: any[] = []
-    //if (value.productTypeId) tempProduct.push(value)
 
     const singleProducts: singleProduct[] = transformToSingleProducts(value)
     //console.log('handleProductChange', singleProducts)
@@ -883,8 +883,6 @@ const InputProcessForm = ({
 
     if (selectedProduct.length > 0) {
       const product = transformData(selectedProduct, productType)
-
-      //console.log('getDefaultProduct', product)
       return product
     }
 
@@ -905,6 +903,35 @@ const InputProcessForm = ({
     }))
 
     return defaultData
+  }
+
+  const isSubProductRequired = (key: string) => {
+    const typeProcess =
+      key === 'processIn'
+        ? t('processOrder.table.processIn')
+        : t('processOrder.table.processOut')
+    const currfield =
+      t('processOrder.create.product') +
+      ' - ' +
+      t('pick_up_order.product_type.subtype') +
+      ' - ' +
+      typeProcess
+    return validation.some((item) => item.field === currfield) && trySubmited
+  }
+
+  const isAddonRequired = (key: string) => {
+    const typeProcess =
+      key === 'processIn'
+        ? t('processOrder.table.processIn')
+        : t('processOrder.table.processOut')
+    const currfield =
+      t('processOrder.create.product') +
+      ' - ' +
+      t('pick_up_order.product_type.add-on') +
+      ' - ' +
+      typeProcess
+
+    return validation.some((item) => item.field === currfield) && trySubmited
   }
 
   return (
@@ -1042,6 +1069,8 @@ const InputProcessForm = ({
                               )?.processOrderDetailProduct?.length === 0 &&
                               trySubmited
                             }
+                            showErrorSubtype={isSubProductRequired(key)}
+                            showErrorAddon={isAddonRequired(key)}
                             defaultProduct={getDefaultProduct(key)}
                           />
                         </CustomField>
