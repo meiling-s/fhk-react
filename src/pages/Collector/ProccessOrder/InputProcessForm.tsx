@@ -916,7 +916,7 @@ const InputProcessForm = ({
       t('pick_up_order.product_type.subtype') +
       ' - ' +
       typeProcess
-    return validation.some((item) => item.field === currfield) && trySubmited
+    return validation.some((item) => item.field === currfield)
   }
 
   const isAddonRequired = (key: string) => {
@@ -931,7 +931,7 @@ const InputProcessForm = ({
       ' - ' +
       typeProcess
 
-    return validation.some((item) => item.field === currfield) && trySubmited
+    return validation.some((item) => item.field === currfield)
   }
 
   return (
@@ -1069,8 +1069,10 @@ const InputProcessForm = ({
                               )?.processOrderDetailProduct?.length === 0 &&
                               trySubmited
                             }
-                            showErrorSubtype={isSubProductRequired(key)}
-                            showErrorAddon={isAddonRequired(key)}
+                            showErrorSubtype={
+                              isSubProductRequired(key) && trySubmited
+                            }
+                            showErrorAddon={isAddonRequired(key) && trySubmited}
                             defaultProduct={getDefaultProduct(key)}
                           />
                         </CustomField>
