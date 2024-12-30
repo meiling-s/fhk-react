@@ -518,6 +518,7 @@ export default function ProductListMultiSelect({
       }
     }
     setProductAddon(selectedAddOn)
+    setCurrAddonType('')
   }
 
   const onChangeSubRemark = (value: string) => {
@@ -672,8 +673,9 @@ export default function ProductListMultiSelect({
                 setLastSelect={(s) => setCurrAddonType(s)}
                 error={
                   showErrorAddon &&
-                  currAddonType == '' &&
-                  choosenProductAddon?.productNameEng != 'Others'
+                  !returnAddonList(currSubProductType).some((it) =>
+                    productAddon.includes(it.id)
+                  )
                 }
                 defaultSelected={productAddon}
               />
