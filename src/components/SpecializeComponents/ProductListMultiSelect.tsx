@@ -488,6 +488,7 @@ export default function ProductListMultiSelect({
     }
 
     setProductSubType(selectedSubType)
+    setCurrAddonType('')
   }
 
   const selectAddon = (
@@ -668,7 +669,12 @@ export default function ProductListMultiSelect({
               <CustomItemListRecyble
                 items={returnAddonList(currSubProductType)}
                 multiSelect={selectAddon}
-                error={showErrorAddon}
+                setLastSelect={(s) => setCurrAddonType(s)}
+                error={
+                  showErrorAddon &&
+                  currAddonType == '' &&
+                  choosenProductAddon?.productNameEng != 'Others'
+                }
                 defaultSelected={productAddon}
               />
             </CustomField>
