@@ -356,11 +356,17 @@ export default function ProductListMultiSelect({
       const subId = returnSubTypesId(prod)
       subId.map((sub) => {
         const addonIds = returnAddonTypesId(prod, sub)
-        addonIds.map((addonIds) => {
-          if (productAddon.includes(addonIds)) {
+        if (addonIds.length === 0) {
+          if (productSubType.includes(sub)) {
             withSubItem.push(prod)
           }
-        })
+        } else {
+          addonIds.map((addonIds) => {
+            if (productAddon.includes(addonIds)) {
+              withSubItem.push(prod)
+            }
+          })
+        }
       })
     })
     return withSubItem
@@ -623,7 +629,7 @@ export default function ProductListMultiSelect({
                 setLastSelect={(s: string) => setCurrSubProductType(s)}
                 defaultSelected={productSubType}
                 error={showErrorSubtype}
-                noSubItems={subProductWithNoAddonItems}
+                //noSubItems={subProductWithNoAddonItems}
               />
             </CustomField>
             {choosenProductSubType?.productNameEng === 'Others' && (
