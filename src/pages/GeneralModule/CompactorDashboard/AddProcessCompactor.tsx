@@ -231,7 +231,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
       setValidation(tempV)
     }
     validate()
-  }, [weight, pictures, selectedProduct, selectedRecyc])
+  }, [weight, pictures, selectedProduct, selectedRecyc, i18n.language])
 
   const editItemCompactor = (item: ProcessOutItem) => {
     setEditedItem(item)
@@ -269,6 +269,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
     setWeight('0')
     setPictures([])
     setEditedItem(null)
+    setTrySubmited(false)
   }
 
   const addProcessItem = () => {
@@ -609,6 +610,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                         )
                         setWeight(value)
                       }}
+                      error={parseFloat(weight) <= 0 && trySubmited}
                       value={weight}
                       sx={{ width: '100%' }}
                       endAdornment={
@@ -641,8 +643,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                             sx={{
                               ...localstyles.cardImg,
                               ...(trySubmited &&
-                                (imageList.length === 0 ||
-                                  imageList.length < 2) &&
+                                imageList.length === 0 &&
                                 localstyles.imgError)
                             }}
                           >
@@ -660,16 +661,16 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                               </Typography>
                             </ButtonBase>
                           </Card>
-                          {errors && (
+                          {/* {errors && (
                             <div>
                               {errors.maxFileSize && (
                                 <span style={{ color: 'red' }}>
-                                  Selected file size exceeds maximum file size{' '}
+                                  Selected file size exceeds maximum file size
                                   {imgSettings?.ImgSize / 1000000} mb
                                 </span>
                               )}
                             </div>
-                          )}
+                          )} */}
                           <ImageList sx={localstyles.imagesContainer} cols={6}>
                             {imageList.map((image, index) => (
                               <ImageListItem
