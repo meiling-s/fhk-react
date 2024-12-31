@@ -1597,6 +1597,7 @@
     "plateNumber": "车牌号码",
     "show": "顯示",
     "card": "",
+    "selectProcessing": "选择处理日期及车牌号码以显示卸货纪录",
     "table": {
       "date": "日期",
       "itemCategory": "物品类别",

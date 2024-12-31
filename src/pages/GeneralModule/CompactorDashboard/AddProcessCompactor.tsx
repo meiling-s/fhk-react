@@ -75,7 +75,7 @@ import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
 
 type AddProcessCompactorProps = {
   chkInIds: number[]
-  inItemId: number[],
+  inItemId: number[]
   onSubmit: () => void
 }
 
@@ -377,12 +377,16 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                   >
                     <div className="recyle-type flex items-center gap-2">
                       <div className="category" style={categoryRecyle}>
-                        {item.recycTypeId
+                        {/* {item.recycTypeId
                           ? mappingRecy(item.recycTypeId, recycType).charAt(0)
                           : mappingProductType(
                               item.productTypeId,
                               productType
-                            ).charAt(0)}
+                            ).charAt(0)} */}
+                        {packagingList
+                          ?.find((it) => item.packageTypeId === it.id)
+                          ?.name.charAt(0)
+                          .toUpperCase() || '-'}
                       </div>
                       <div className="type-item text-justify">
                         <div className="type text-mini text-[#ACACAC] font-normal tracking-widest mb-2">
@@ -407,9 +411,13 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                               )}
                         </div>
                         <div className="type text-mini text-[#ACACAC] font-normal tracking-widest">
-                          {packagingList?.find(
-                            (it) => item.packageTypeId === it.id
-                          )?.name || '-'}
+                          {item.productAddonTypeId != '' &&
+                            mappingAddonsType(
+                              item.productTypeId,
+                              item.productSubTypeId,
+                              item.productAddonTypeId,
+                              productType
+                            )}
                         </div>
                       </div>
                     </div>
@@ -468,7 +476,12 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
             </Box>
           ) : (
             <Box sx={{ margin: '24px', width: '100%' }}>
-              <Grid container direction={'column'} spacing={4}>
+              <Grid
+                container
+                direction={'column'}
+                spacing={4}
+                sx={{ width: '100%' }}
+              >
                 <Grid item>
                   <Typography sx={{ ...styles.header3, marginBottom: 1 }}>
                     {t('packaging_unit.packaging_unit')}
@@ -576,7 +589,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                   </CustomField>
                 )}
                 <Grid item>
-                  <CustomField label={t('compactor.table.weight')}>
+                  <CustomField label={t('compactor.table.weight')} mandatory>
                     <CustomTextField
                       id="weight"
                       placeholder={t('userAccount.pleaseEnterNumber')}
