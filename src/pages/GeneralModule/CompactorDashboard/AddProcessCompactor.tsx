@@ -376,7 +376,10 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                 className="p-8 border-solid border-[1px] rounded-xl w-[300px] text-center cursor-pointer m-6
             "
                 style={{ borderColor: colorTheme }}
-                onClick={() => setShowForm(true)}
+                onClick={() => {
+                  setShowForm(true)
+                  resetForm()
+                }}
               >
                 <ADD_CIRCLE_FILL_ICON_
                   sx={{ color: colorTheme, fontSize: '30px' }}
