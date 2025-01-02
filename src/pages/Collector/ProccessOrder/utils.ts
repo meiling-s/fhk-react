@@ -61,7 +61,7 @@ export const mappingProductType = (id: string, productType: Products[]) => {
       i18n.language === 'enus'
         ? matchingProductType.productNameEng
         : i18n.language === 'zhch'
-        ? matchingProductType.productNameTchi
+        ? matchingProductType.productNameSchi
         : i18n.language === 'zhhk'
         ? matchingProductType.productNameTchi
         : matchingProductType.productNameEng
@@ -88,7 +88,7 @@ export const mappingSubProductType = (
         i18n.language === 'enus'
           ? matchingProductSubType.productNameEng
           : i18n.language === 'zhch'
-          ? matchingProductSubType.productNameTchi
+          ? matchingProductSubType.productNameSchi
           : i18n.language === 'zhhk'
           ? matchingProductSubType.productNameTchi
           : matchingProductSubType.productNameEng
@@ -123,7 +123,7 @@ export const mappingAddonsType = (
           i18n.language === 'enus'
             ? matchingProductAddon.productNameEng
             : i18n.language === 'zhch'
-            ? matchingProductAddon.productNameTchi
+            ? matchingProductAddon.productNameSchi
             : i18n.language === 'zhhk'
             ? matchingProductAddon.productNameTchi
             : matchingProductAddon.productNameEng
