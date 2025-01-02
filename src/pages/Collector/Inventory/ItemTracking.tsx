@@ -55,17 +55,26 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
             if (
               value.eventType === "processout" ||
               value.eventType === "processin" ||
-              value.eventType === "compactorProcessout"
+              value.eventType === "compactorProcessout" ||
+              value.eventType === "compactorProcessin"
             ) {
               const details = JSON.parse(value.eventDetail);
-              details.process_in.gidLabel =
-                details.process_in.gid.length > 0
-                  ? await getGIDLabel(details.process_in.gid[0])
-                  : "";
-              details.process_out.gidLabel =
-                details.process_out.gid.length > 0
-                  ? await getGIDLabel(details.process_out.gid[0])
-                  : "";
+              let processInLabelArray: string[] = [];
+              let processOutLabelArray: string[] = [];
+              if (details.process_in.gid.length > 0) {
+                for (const gid of details.process_in.gid) {
+                  const res = await getGIDLabel(gid);
+                  processInLabelArray.push(res);
+                }
+              }
+              if (details.process_out.gid.length > 0) {
+                for (const gid of details.process_out.gid) {
+                  const res = await getGIDLabel(gid);
+                  processOutLabelArray.push(res);
+                }
+              }
+              details.process_in.gidLabel = processInLabelArray;
+              details.process_out.gidLabel = processOutLabelArray;
               details.createdAt = value.createdAt;
               details.unitId = shippingData.unitId;
               details.eventType = value.eventType;
@@ -73,8 +82,14 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
               return { ...value, details };
             } else if (value.eventType === "processRecord") {
               const details = JSON.parse(value.eventDetail);
-              details.gidLabel =
-                details.gid.length > 0 ? await getGIDLabel(details.gid[0]) : "";
+              let processRecordLabelArray: string[] = [];
+              if (details.gid.length > 0) {
+                for (const gid of details.gid) {
+                  const res = await getGIDLabel(gid);
+                  processRecordLabelArray.push(res);
+                }
+              }
+              details.gidLabel = processRecordLabelArray;
               details.unitId = shippingData.unitId;
               details.createdAt = value.createdAt;
               return { ...value, details };
@@ -125,12 +140,13 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
       {parsedEventDetails?.event.map((eventItem: EventTrackingData) => {
         return (
           <Box key={eventItem.gidEventId} sx={{ marginBottom: 4 }}>
-            {eventItem.eventType === "compactorProcessout" && (
+            {eventItem.eventType === "compactorProcessout" ||
+            eventItem.eventType === "compactorProcessin" ? (
               <CompactorCard
                 data={eventItem.details as ProcessOutData}
                 handleClickGIDLabel={handleClickGIDLabel}
               />
-            )}
+            ) : null}
             {eventItem.eventType === "checkin" && (
               <CheckinCard data={eventItem.details as CheckinData} />
             )}
@@ -150,6 +166,7 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
             {eventItem.eventType === "processRecord" && (
               <ProcessingRecordCard
                 data={eventItem.details as ProcessingRecordData}
+                handleClickGIDLabel={handleClickGIDLabel}
               />
             )}
             {eventItem.eventType === "internalTransfer" && (

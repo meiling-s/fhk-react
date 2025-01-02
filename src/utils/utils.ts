@@ -280,6 +280,7 @@ export const onChangeWeight = (
       regexStr = '^(?!\\.$)\\d*\\.?\\d{0,' + zeroCount + '}$' // 匹配小數，但首字符不能是小數點
       const regex = new RegExp(regexStr)
       if (regex.test(value) || value === '') {
+        console.log(value)
         cb(value)
       }
     }

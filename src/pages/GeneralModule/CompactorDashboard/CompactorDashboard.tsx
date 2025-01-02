@@ -64,6 +64,7 @@ interface CompactorProcessIn {
 
 interface CompactorProcessInItem {
   chkInDtlId: number
+  itemId: number
   recycTypeId: string
   recycSubTypeId: string
   productTypeId: string | null
@@ -252,6 +253,8 @@ const CompactorDashboard: FunctionComponent = () => {
 
     if (result.data.length > 0) {
       setCompactorProcessIn(result.data)
+    } else {
+      setCompactorProcessIn([])
     }
     setIsLoading(false)
   }
@@ -322,6 +325,13 @@ const CompactorDashboard: FunctionComponent = () => {
 
       return updatedSelected
     })
+  }
+
+  const onSubmitProcessOutItem = () => {
+    setSelectedPlate('')
+    initLicensePlate()
+    setCompactorProcessInItem([])
+    setCompactorProcessIn([])
   }
 
   const formattedTime = (value: string) => {
@@ -555,7 +565,8 @@ const CompactorDashboard: FunctionComponent = () => {
             >
               <AddProcessCompactor
                 chkInIds={selectedCheckInIds}
-                inItemId={compactorProcessInItem.map((item) => item.chkInDtlId)}
+                inItemId={compactorProcessInItem.map((item) => item.itemId)}
+                onSubmit={onSubmitProcessOutItem}
               />
             </Box>
           </Box>

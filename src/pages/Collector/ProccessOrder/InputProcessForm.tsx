@@ -611,18 +611,17 @@ const InputProcessForm = ({
       }
     })
 
-    console.log('singleProducts', singleProducts)
+    //console.log('singleProducts', singleProducts)
     return singleProducts
   }
 
-  //to do : change to multiple product select
   const handleProductChange = (type: string, value: productsVal[]) => {
     console.log('val', value)
     // let tempProduct: any[] = []
     //if (value.productTypeId) tempProduct.push(value)
 
     const singleProducts: singleProduct[] = transformToSingleProducts(value)
-    console.log('handleProductChange', singleProducts)
+    //console.log('handleProductChange', singleProducts)
     setProcessOrderDetail((prevDetails) =>
       prevDetails.map((detail) => ({
         ...detail,
@@ -633,35 +632,69 @@ const InputProcessForm = ({
       }))
     )
 
-    console.log('product', processOrderDetail[0])
+    //console.log('product', processOrderDetail[0])
   }
 
   const handleRecycChange = (type: string, value: recyclable[]) => {
-    let tempRecy: any[] = []
-    tempRecy = value.flatMap((item) =>
-      item.recycSubTypeId.length > 0
-        ? item.recycSubTypeId.map((subType) => ({
-            recycTypeId: item.recycTypeId,
-            recycSubTypeId: subType
-          }))
-        : [
-            {
+    if (value.length > 0) {
+      let tempRecy: any[] = []
+      tempRecy = value.flatMap((item) =>
+        item.recycSubTypeId.length > 0
+          ? item.recycSubTypeId.map((subType) => ({
               recycTypeId: item.recycTypeId,
-              recycSubTypeId: ''
-            }
-          ]
-    )
+              recycSubTypeId: subType
+            }))
+          : [
+              {
+                recycTypeId: item.recycTypeId,
+                recycSubTypeId: ''
+              }
+            ]
+      )
 
-    //update to data to recy key
-    setProcessOrderDetail((prevDetails) =>
-      prevDetails.map((detail) => ({
-        ...detail,
-        [type]: {
-          ...detail[type as keyof CreateProcessOrderDetailPairs],
-          processOrderDetailRecyc: tempRecy
-        }
-      }))
-    )
+      tempRecy = tempRecy.filter(
+        (item, index, self) =>
+          index ===
+          self.findIndex(
+            (t) =>
+              t.recycTypeId === item.recycTypeId &&
+              t.recycSubTypeId === item.recycSubTypeId
+          )
+      )
+
+      setProcessOrderDetail((prevDetails) =>
+        prevDetails.map((detail) => {
+          const existingRecyc =
+            detail[type as keyof CreateProcessOrderDetailPairs]
+              ?.processOrderDetailRecyc || []
+
+          // Check if new tempRecy is different from the existing one
+          const isDifferent =
+            tempRecy.length !== existingRecyc.length ||
+            tempRecy.some(
+              (item) =>
+                !existingRecyc.some(
+                  (existing) =>
+                    existing.recycTypeId === item.recycTypeId &&
+                    existing.recycSubTypeId === item.recycSubTypeId
+                )
+            )
+
+          // Only update if different
+          if (!isDifferent) {
+            return detail
+          }
+
+          return {
+            ...detail,
+            [type]: {
+              ...detail[type as keyof CreateProcessOrderDetailPairs],
+              processOrderDetailRecyc: tempRecy
+            }
+          }
+        })
+      )
+    }
   }
 
   const updateWarehouseIds = (
@@ -781,7 +814,7 @@ const InputProcessForm = ({
   }
 
   const handleSaveItem = async () => {
-    console.log('handleSaveItem', processOrderDetail[0].processIn)
+    //console.log('handleSaveItem', processOrderDetail[0].processIn)
     if (validation.length !== 0) {
       setTrySubmited(true)
       return
@@ -851,7 +884,7 @@ const InputProcessForm = ({
     if (selectedProduct.length > 0) {
       const product = transformData(selectedProduct, productType)
 
-      console.log('getDefaultProduct', product)
+      //console.log('getDefaultProduct', product)
       return product
     }
 
@@ -983,7 +1016,10 @@ const InputProcessForm = ({
                           </CustomField>
                         </Grid>
                       ) : value.itemCategory === 'product' ? (
-                        <CustomField label={t('pick_up_order.product_type.product')} mandatory>
+                        <CustomField
+                          label={t('pick_up_order.product_type.product')}
+                          mandatory
+                        >
                           <ProductListMultiSelect
                             options={productType || []}
                             setState={(value) => {
@@ -1053,6 +1089,7 @@ const InputProcessForm = ({
                             id="weight"
                             placeholder={t('userAccount.pleaseEnterNumber')}
                             onChange={(event) => {
+                              console.log('event', event.target.value)
                               onChangeWeight(
                                 event.target.value,
                                 decimalVal,
@@ -1067,10 +1104,10 @@ const InputProcessForm = ({
                               )
                             }}
                             onBlur={(event) => {
-                              const value = formatWeight(
-                                event.target.value,
-                                decimalVal
-                              )
+                              const value = event.target.value
+                                ? formatWeight(event.target.value, decimalVal)
+                                : '0'
+                              console.log('value', value)
                               const field =
                                 key === 'processIn'
                                   ? 'estInWeight'
@@ -1084,7 +1121,7 @@ const InputProcessForm = ({
                                 : processOrderDetail[0].processOut.estOutWeight
                             }
                             error={
-                              (!trySubmited &&
+                              (trySubmited &&
                                 (key === 'processOut'
                                   ? parseFloat(
                                       processOrderDetail[0].processOut

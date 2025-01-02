@@ -102,8 +102,10 @@ function CustomItemList({
         multiSelect(selected)
       }
     }
+    console.log('setLastSelect', select)
 
     if (setLastSelect) {
+      console.log('setLastSelect dalemmm', select)
       setLastSelect(selectAction ? select : ' ')
       setLS(selectAction ? select : ' ')
     }

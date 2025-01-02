@@ -19,11 +19,15 @@ export const validationSchema = (t: TFunction) => {
         .min(Yup.ref('startDate'), t('form.error.endDateEarlyThanStartDate')),
     }),
     premiseName: Yup.string().required(t('form.error.shouldNotBeEmpty')),
-    premiseType: Yup.string().required(t('form.error.shouldNotBeEmpty')),
+    premiseType: Yup.string().when('colType', {
+      is: (colType: string) => !['CPT00001', 'CPT00002'].includes(colType),
+      then: (schema) => schema.required(t('form.error.shouldNotBeEmpty')),
+      otherwise: (schema) => schema.nullable(), // No validation for CPT00001 or CPT00002
+    }),
     premiseRemark: Yup.string().when('premiseType', {
       is: (value: string) => ['PT00009', 'PT00027', 'PT00028'].includes(value),
       then: (schema) => schema.required(t('form.error.shouldNotBeEmpty')),
-      otherwise: (schema) => schema,  // Otherwise, just return the schema as-is
+      otherwise: (schema) => schema, // Optional if other values
     }),
     staffNum: Yup.number()
       .required(t('form.error.shouldNotBeEmpty'))
@@ -31,7 +35,7 @@ export const validationSchema = (t: TFunction) => {
     contractNo: Yup.string().when('serviceFlg', {
       is: 'additional',
       then: (schema) => schema.required(t('form.error.shouldNotBeEmpty')),
-      otherwise: (schema) => schema,  // Optional schema in other cases
+      otherwise: (schema) => schema, // Optional schema in other cases
     }),
     colPtRoutine: Yup.object().shape({
       routineType: Yup.string().required(t('form.error.routineTypeRequired')),
