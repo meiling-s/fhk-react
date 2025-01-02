@@ -70,8 +70,10 @@ import {
   mappingSubProductType,
   mappingAddonsType
 } from 'src/pages/Collector/ProccessOrder/utils'
+import { getWeightUnit } from 'src/APICalls/ASTD/recycling'
 import { formValidate } from 'src/interfaces/common'
 import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
+import { WeightUnit } from 'src/interfaces/weightUnit'
 
 type AddProcessCompactorProps = {
   chkInIds: number[]
@@ -116,10 +118,12 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
   >(undefined)
   const [pictures, setPictures] = useState<ImageListType>([])
   const [remark, setRemark] = useState<string>('')
+  const [weightUnit, setWeightUnit] = useState<string>('')
 
   useEffect(() => {
     initPackagingUnit()
     getProductType()
+    initWeightUnit()
   }, [i18n.language])
 
   useEffect(() => {
@@ -150,6 +154,23 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
         if (packageUnit.length > 0 && !editedItem)
           setSelectedPackage(packageUnit[0].id)
       }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+    }
+  }
+
+  const initWeightUnit = async () => {
+    try {
+      const result = await getWeightUnit(0, 1000)
+      const data = result?.data
+
+      const selectedUnit = data.find(
+        (item: WeightUnit) => item.unitNameEng === 'kg'
+      )
+      setWeightUnit(selectedUnit ? selectedUnit.unitId : '')
     } catch (error: any) {
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
@@ -307,7 +328,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
       productAddonTypeRemark: selectedProduct?.productAddonTypeRemark ?? '',
       packageTypeId: selectedPackage,
       weight: parseInt(weight),
-      unitId: '12',
+      unitId: weightUnit,
       photos: photosData
     }
 
