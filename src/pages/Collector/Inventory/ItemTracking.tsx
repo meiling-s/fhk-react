@@ -55,7 +55,8 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
             if (
               value.eventType === "processout" ||
               value.eventType === "processin" ||
-              value.eventType === "compactorProcessout"
+              value.eventType === "compactorProcessout" ||
+              value.eventType === "compactorProcessin"
             ) {
               const details = JSON.parse(value.eventDetail);
               let processInLabelArray: string[] = [];
@@ -139,12 +140,13 @@ const ItemTracking: FunctionComponent<ItemTrackingProps> = ({
       {parsedEventDetails?.event.map((eventItem: EventTrackingData) => {
         return (
           <Box key={eventItem.gidEventId} sx={{ marginBottom: 4 }}>
-            {eventItem.eventType === "compactorProcessout" && (
+            {eventItem.eventType === "compactorProcessout" ||
+            eventItem.eventType === "compactorProcessin" ? (
               <CompactorCard
                 data={eventItem.details as ProcessOutData}
                 handleClickGIDLabel={handleClickGIDLabel}
               />
-            )}
+            ) : null}
             {eventItem.eventType === "checkin" && (
               <CheckinCard data={eventItem.details as CheckinData} />
             )}
