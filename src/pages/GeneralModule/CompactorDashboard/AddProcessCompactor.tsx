@@ -673,16 +673,6 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                               </Typography>
                             </ButtonBase>
                           </Card>
-                          {/* {errors && (
-                            <div>
-                              {errors.maxFileSize && (
-                                <span style={{ color: 'red' }}>
-                                  Selected file size exceeds maximum file size
-                                  {imgSettings?.ImgSize / 1000000} mb
-                                </span>
-                              )}
-                            </div>
-                          )} */}
                           <ImageList sx={localstyles.imagesContainer} cols={6}>
                             {imageList.map((image, index) => (
                               <ImageListItem
@@ -721,8 +711,10 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                   <Button
                     sx={{ ...styles.buttonFilledGreen, width: '200px' }}
                     disabled={
-                      selectedRecyc?.recycTypeId === '' ||
-                      selectedProduct?.productTypeId === ''
+                      (isRecylingCategory &&
+                        selectedRecyc?.recycTypeId === '') ||
+                      (!isRecylingCategory &&
+                        selectedProduct?.productTypeId === '')
                     }
                     onClick={() => addProcessItem()}
                   >
