@@ -1,28 +1,28 @@
-import { useEffect, useState, FunctionComponent, useCallback } from 'react'
-import { Box, Button, Typography, Pagination } from '@mui/material'
+import { useEffect, useState, FunctionComponent, useCallback } from "react";
+import { Box, Button, Typography, Pagination } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
   GridRowParams,
   GridRowSpacingParams,
-  GridRenderCellParams
-} from '@mui/x-data-grid'
-import { ToastContainer, toast } from 'react-toastify'
-import { useTranslation } from 'react-i18next'
-import { styles } from '../../../constants/styles'
+  GridRenderCellParams,
+} from "@mui/x-data-grid";
+import { ToastContainer, toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import { styles } from "../../../constants/styles";
 import {
   ADD_ICON,
   EDIT_OUTLINED_ICON,
-  DELETE_OUTLINED_ICON
-} from '../../../themes/icons'
-import CircularLoading from '../../../components/CircularLoading'
-import { getAllCompany } from '../../../APICalls/Collector/company'
-import { Company as CompanyItem } from '../../../interfaces/company'
-import CreateCompany from './CreateCompany'
-import { extractError } from '../../../utils/utils'
-import { useNavigate } from 'react-router-dom'
-import { STATUS_CODE } from '../../../constants/constant'
-import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+  DELETE_OUTLINED_ICON,
+} from "../../../themes/icons";
+import CircularLoading from "../../../components/CircularLoading";
+import { getAllCompany } from "../../../APICalls/Collector/company";
+import { Company as CompanyItem } from "../../../interfaces/company";
+import CreateCompany from "./CreateCompany";
+import { extractError } from "../../../utils/utils";
+import { useNavigate } from "react-router-dom";
+import { STATUS_CODE } from "../../../constants/constant";
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 
 function createCompany(
   companyId: string,
@@ -38,7 +38,7 @@ function createCompany(
   createdAt: string,
   updatedAt: string,
   companyType: string,
-  version: string,
+  version: string
 ): CompanyItem {
   return {
     companyId,
@@ -55,64 +55,64 @@ function createCompany(
     updatedAt,
     companyType,
     version,
-  }
+  };
 }
 
 type Pages = {
-  collectorlist: number
-  logisticlist: number
-  manulist: number
-  customerlist: number
-}
+  collectorlist: number;
+  logisticlist: number;
+  manulist: number;
+  customerlist: number;
+};
 
 const Company: FunctionComponent = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   // const [page, setPage] = useState(1)
-  const pageSize = 10
-  const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
-  const [rowId, setRowId] = useState<number>(1)
-  const [drawerOpen, setDrawerOpen] = useState(false)
-  const [totalData, setTotalData] = useState<number>(0)
+  const pageSize = 10;
+  const [action, setAction] = useState<"add" | "edit" | "delete">("add");
+  const [rowId, setRowId] = useState<number>(1);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [totalData, setTotalData] = useState<number>(0);
   // const [companyList, setCompanyList] = useState<CompanyItem[]>([]);
-  const [selectedRow, setSelectedRow] = useState<CompanyItem | null>(null)
+  const [selectedRow, setSelectedRow] = useState<CompanyItem | null>(null);
   const companyTypeList: string[] = [
-    'collectorlist',
-    'logisticlist',
-    'manulist',
-    'customerlist'
-  ]
-  const [selectCompanyType, setSelectCompanyType] = useState<string>('')
-  const [collectorList, setCollectorList] = useState<CompanyItem[]>([])
-  const [logisticList, setLogisticList] = useState<CompanyItem[]>([])
-  const [manuList, setManuList] = useState<CompanyItem[]>([])
-  const [customerList, setCustomerList] = useState<CompanyItem[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [collectorData, setCollectorData] = useState<number>(0)
-  const [logisticData, setLogisticData] = useState<number>(0)
-  const [manuData, setManuData] = useState<number>(0)
-  const [customerData, setCustomerData] = useState<number>(0)
-  const navigate = useNavigate()
-  const { localeTextDataGrid } = useLocaleTextDataGrid()
+    "collectorlist",
+    "logisticlist",
+    "manulist",
+    "customerlist",
+  ];
+  const [selectCompanyType, setSelectCompanyType] = useState<string>("");
+  const [collectorList, setCollectorList] = useState<CompanyItem[]>([]);
+  const [logisticList, setLogisticList] = useState<CompanyItem[]>([]);
+  const [manuList, setManuList] = useState<CompanyItem[]>([]);
+  const [customerList, setCustomerList] = useState<CompanyItem[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [collectorData, setCollectorData] = useState<number>(0);
+  const [logisticData, setLogisticData] = useState<number>(0);
+  const [manuData, setManuData] = useState<number>(0);
+  const [customerData, setCustomerData] = useState<number>(0);
+  const navigate = useNavigate();
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
   const [pages, setPages] = useState<Pages>({
     collectorlist: 1,
     logisticlist: 1,
     manulist: 1,
-    customerlist: 1
-  })
+    customerlist: 1,
+  });
 
   const initCompanyList = async (companyType: string) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const page = pages[companyType as keyof Pages]
-      const result = await getAllCompany(companyType, page - 1, pageSize)
-      const data = result?.data
+      const page = pages[companyType as keyof Pages];
+      const result = await getAllCompany(companyType, page - 1, pageSize);
+      const data = result?.data;
       // setCompanyList(data);
       if (data) {
-        var companyMapping: CompanyItem[] = []
+        var companyMapping: CompanyItem[] = [];
         const prefixItemName =
-          companyType === 'manulist'
-            ? 'manufacturer'
-            : companyType.replace('list', '')
+          companyType === "manulist"
+            ? "manufacturer"
+            : companyType.replace("list", "");
         data.content.map((item: any) => {
           companyMapping.push(
             createCompany(
@@ -131,49 +131,50 @@ const Company: FunctionComponent = () => {
               companyType,
               item?.version ?? "0"
             )
-          )
-        })
+          );
+        });
         switch (companyType) {
-          case 'collectorlist':
-            setCollectorList(companyMapping)
-            setCollectorData(data.totalPages)
-            break
-          case 'logisticlist':
-            setLogisticList(companyMapping)
-            setLogisticData(data.totalPages)
-            break
-          case 'manulist':
-            setManuList(companyMapping)
-            setManuData(data.totalPages)
-            break
-          case 'customerlist':
-            setCustomerList(companyMapping)
-            setCustomerData(data.totalPages)
-            break
+          case "collectorlist":
+            setCollectorList(companyMapping);
+            setCollectorData(data.totalPages);
+            break;
+          case "logisticlist":
+            setLogisticList(companyMapping);
+            setLogisticData(data.totalPages);
+            break;
+          case "manulist":
+            setManuList(companyMapping);
+            setManuData(data.totalPages);
+            break;
+          case "customerlist":
+            setCustomerList(companyMapping);
+            setCustomerData(data.totalPages);
+            break;
           default:
-            break
+            break;
         }
-        setTotalData(data.totalPages)
+        setTotalData(data.totalPages);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   const initSpecifiedCompany = async (companyType: string, page: number) => {
     try {
-      const result = await getAllCompany(companyType, page - 1, pageSize)
-      const data = result?.data
+      console.log(companyType, "companyType");
+      const result = await getAllCompany(companyType, page - 1, pageSize);
+      const data = result?.data;
       if (data) {
-        var companyMapping: CompanyItem[] = []
+        var companyMapping: CompanyItem[] = [];
         const prefixItemName =
-          companyType === 'manulist'
-            ? 'manufacturer'
-            : companyType.replace('list', '')
+          companyType === "manulist"
+            ? "manufacturer"
+            : companyType.replace("list", "");
         data.content.map((item: any) => {
           companyMapping.push(
             createCompany(
@@ -189,181 +190,183 @@ const Company: FunctionComponent = () => {
               item?.updatedBy,
               item?.createdAt,
               item?.updatedAt,
-              item?.companyType,
+              companyType,
               item?.version
             )
-          )
-        })
+          );
+        });
+        console.log(companyMapping, "mapping");
         switch (companyType) {
-          case 'collectorlist':
-            setCollectorList(companyMapping)
-            setCollectorData(data.totalPages)
-            break
-          case 'logisticlist':
-            setLogisticList(companyMapping)
-            setLogisticData(data.totalPages)
-            break
-          case 'manulist':
-            setManuList(companyMapping)
-            setManuData(data.totalPages)
-            break
-          case 'customerlist':
-            setCustomerList(companyMapping)
-            setCustomerData(data.totalPages)
-            break
+          case "collectorlist":
+            setCollectorList(companyMapping);
+            setCollectorData(data.totalPages);
+            break;
+          case "logisticlist":
+            setLogisticList(companyMapping);
+            setLogisticData(data.totalPages);
+            break;
+          case "manulist":
+            setManuList(companyMapping);
+            setManuData(data.totalPages);
+            break;
+          case "customerlist":
+            setCustomerList(companyMapping);
+            setCustomerData(data.totalPages);
+            break;
           default:
-            break
+            break;
         }
-        setTotalData(data.totalPages)
+        setTotalData(data.totalPages);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-  }
+  };
 
   const getSelectedCompanyList = useCallback(
     (companyType: string) => {
-      let selectedList: CompanyItem[] = []
+      let selectedList: CompanyItem[] = [];
       switch (companyType) {
-        case 'collectorlist':
-          selectedList = collectorList
-          break
-        case 'logisticlist':
-          selectedList = logisticList
-          break
-        case 'manulist':
-          selectedList = manuList
-          break
-        case 'customerlist':
-          selectedList = customerList
-          break
+        case "collectorlist":
+          selectedList = collectorList;
+          break;
+        case "logisticlist":
+          selectedList = logisticList;
+          break;
+        case "manulist":
+          selectedList = manuList;
+          break;
+        case "customerlist":
+          selectedList = customerList;
+          break;
         default:
-          selectedList = []
-          break
+          selectedList = [];
+          break;
       }
-      return selectedList
+      return selectedList;
     },
     [collectorList, logisticList, manuList, customerList]
-  )
+  );
 
   const getSelectedTotalCompany = useCallback(
     (companyType: string) => {
-      let selectedTotalData: number = 0
+      let selectedTotalData: number = 0;
       switch (companyType) {
-        case 'collectorlist':
-          selectedTotalData = collectorData
-          break
-        case 'logisticlist':
-          selectedTotalData = logisticData
-          break
-        case 'manulist':
-          selectedTotalData = manuData
-          break
-        case 'customerlist':
-          selectedTotalData = customerData
-          break
+        case "collectorlist":
+          selectedTotalData = collectorData;
+          break;
+        case "logisticlist":
+          selectedTotalData = logisticData;
+          break;
+        case "manulist":
+          selectedTotalData = manuData;
+          break;
+        case "customerlist":
+          selectedTotalData = customerData;
+          break;
         default:
-          selectedTotalData = 1
-          break
+          selectedTotalData = 1;
+          break;
       }
-      return selectedTotalData
+      return selectedTotalData;
     },
     [collectorData, collectorData, manuData, customerData]
-  )
+  );
 
   const initAllData = () => {
     for (const type of companyTypeList) {
-      initCompanyList(type)
+      initCompanyList(type);
     }
-  }
+  };
   useEffect(() => {
-    initAllData()
-  }, [])
+    initAllData();
+  }, []);
 
   const columns: GridColDef[] = [
     {
-      field: 'nameTchi',
-      headerName: t('common.traditionalChineseName'),
+      field: "nameTchi",
+      headerName: t("common.traditionalChineseName"),
       width: 200,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'nameSchi',
-      headerName: t('common.simplifiedChineseName'),
+      field: "nameSchi",
+      headerName: t("common.simplifiedChineseName"),
       width: 200,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'nameEng',
-      headerName: t('common.englishName'),
+      field: "nameEng",
+      headerName: t("common.englishName"),
       width: 200,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'brNo',
-      headerName: t('companyManagement.brNo'),
+      field: "brNo",
+      headerName: t("companyManagement.brNo"),
       width: 200,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'description',
-      headerName: t('common.description'),
+      field: "description",
+      headerName: t("common.description"),
       width: 100,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'remark',
-      headerName: t('common.remark'),
+      field: "remark",
+      headerName: t("common.remark"),
       width: 100,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'edit',
-      headerName: t('pick_up_order.item.edit'),
+      field: "edit",
+      headerName: t("pick_up_order.item.edit"),
       filterable: false,
       renderCell: (params) => {
         return (
           <Button
             onClick={(event) => {
-              event.stopPropagation()
-              handleAction(params, 'edit')
-              setSelectCompanyType(params.row.companyType)
+              event.stopPropagation();
+              handleAction(params, "edit");
+              console.log(params.row, "roww");
+              setSelectCompanyType(params.row.companyType);
             }}
           >
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
             />
           </Button>
-        )
-      }
+        );
+      },
     },
     {
-      field: 'delete',
-      headerName: t('pick_up_order.item.delete'),
+      field: "delete",
+      headerName: t("pick_up_order.item.delete"),
       filterable: false,
       renderCell: (params) => {
         return (
           <Button
             onClick={(event) => {
-              event.stopPropagation()
-              handleAction(params, 'delete')
+              event.stopPropagation();
+              handleAction(params, "delete");
             }}
           >
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
             />
           </Button>
-        )
-      }
-    }
-  ]
+        );
+      },
+    },
+  ];
 
   const findArrayStateByCompanyId = (lists: any, row: any) => {
     for (const { name, list } of lists) {
@@ -372,145 +375,146 @@ const Company: FunctionComponent = () => {
           item.companyId === row.companyId &&
           item.nameEng === row.nameEng &&
           item.brNo === row.brNo
-      )
+      );
       if (foundItem) {
-        return [list, name]
+        return [list, name];
       }
     }
-    return [null, null]
-  }
+    return [null, null];
+  };
 
   const handleAction = (
     params: GridRenderCellParams,
-    action: 'add' | 'edit' | 'delete'
+    action: "add" | "edit" | "delete"
   ) => {
-    setAction(action)
-    setRowId(params.row.id)
-    setSelectedRow(params.row)
-    setDrawerOpen(true)
+    setAction(action);
+    setRowId(params.row.id);
+    setSelectedRow(params.row);
+    setDrawerOpen(true);
     const matchedArrayState = findArrayStateByCompanyId(
       [
-        { name: 'collectorlist', list: collectorList },
-        { name: 'logisticlist', list: logisticList },
-        { name: 'manulist', list: manuList },
-        { name: 'customerlist', list: customerList }
+        { name: "collectorlist", list: collectorList },
+        { name: "logisticlist", list: logisticList },
+        { name: "manulist", list: manuList },
+        { name: "customerlist", list: customerList },
       ],
       params.row
-    )
+    );
 
     if (matchedArrayState) {
-      setSelectCompanyType(matchedArrayState[1])
+      setSelectCompanyType(matchedArrayState[1]);
     } else {
-      console.log('No match found.')
+      console.log("No match found.");
     }
-  }
+  };
 
   const handleSelectRow = (params: GridRowParams, type: string) => {
-    setAction('edit')
-    setSelectCompanyType(type)
-    setRowId(params.row.id)
-    setSelectedRow(params.row)
-    setDrawerOpen(true)
-  }
+    setAction("edit");
+    console.log(type, "typee");
+    setSelectCompanyType(type);
+    setRowId(params.row.id);
+    setSelectedRow(params.row);
+    setDrawerOpen(true);
+  };
 
   const showErrorToast = (msg: string) => {
     toast.error(msg, {
-      position: 'top-center',
+      position: "top-center",
       autoClose: 3000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      theme: 'light'
-    })
-  }
+      theme: "light",
+    });
+  };
 
   const showSuccessToast = (msg: string) => {
     toast.info(msg, {
-      position: 'top-center',
+      position: "top-center",
       autoClose: 3000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      theme: 'light'
-    })
-  }
+      theme: "light",
+    });
+  };
 
   const onSubmitData = (type: string, msg: string) => {
     // initAllData()
-    const page = getPage(selectCompanyType)
-    initSpecifiedCompany(selectCompanyType, page)
-    if (type == 'success') {
-      showSuccessToast(msg)
+    const page = getPage(selectCompanyType);
+    initSpecifiedCompany(selectCompanyType, page);
+    if (type == "success") {
+      showSuccessToast(msg);
     } else {
-      showErrorToast(msg)
+      showErrorToast(msg);
     }
-  }
+  };
 
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
-      top: params.isFirstVisible ? 0 : 10
-    }
-  }, [])
+      top: params.isFirstVisible ? 0 : 10,
+    };
+  }, []);
 
   const onChangePage = (newPage: number, companyType: string) => {
-    initSpecifiedCompany(companyType, newPage)
+    initSpecifiedCompany(companyType, newPage);
     setPages((prev) => {
       return {
         ...prev,
-        [companyType]: newPage
-      }
-    })
-  }
+        [companyType]: newPage,
+      };
+    });
+  };
 
   const getPage = (companyType: string) => {
-    return pages[companyType as keyof Pages]
-  }
+    return pages[companyType as keyof Pages];
+  };
 
   useEffect(() => {
     if (collectorList.length === 0 && pages.collectorlist > 1) {
       setPages((prev) => {
         return {
           ...prev,
-          collectorlist: pages.collectorlist - 1
-        }
-      })
+          collectorlist: pages.collectorlist - 1,
+        };
+      });
     }
     if (manuList.length === 0 && pages.manulist > 1) {
       setPages((prev) => {
         return {
           ...prev,
-          manulist: pages.manulist - 1
-        }
-      })
+          manulist: pages.manulist - 1,
+        };
+      });
     }
     if (logisticList.length === 0 && pages.logisticlist > 1) {
       setPages((prev) => {
         return {
           ...prev,
-          logisticlist: pages.logisticlist - 1
-        }
-      })
+          logisticlist: pages.logisticlist - 1,
+        };
+      });
     }
     if (customerList.length === 0 && pages.customerlist > 1) {
       setPages((prev) => {
         return {
           ...prev,
-          customerlist: pages.customerlist - 1
-        }
-      })
+          customerlist: pages.customerlist - 1,
+        };
+      });
     }
-  }, [collectorList, manuList, logisticList, customerList])
+  }, [collectorList, manuList, logisticList, customerList]);
 
   useEffect(() => {
     if (selectCompanyType) {
-      const page = getPage(selectCompanyType)
-      initSpecifiedCompany(selectCompanyType, page)
+      const page = getPage(selectCompanyType);
+      initSpecifiedCompany(selectCompanyType, page);
     }
-  }, [pages])
+  }, [pages]);
 
   return (
     <>
@@ -519,20 +523,20 @@ const Company: FunctionComponent = () => {
           <Box
             key={index}
             sx={{
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              pr: 4
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              pr: 4,
             }}
           >
             <ToastContainer></ToastContainer>
             <Box
               sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '16px',
-                marginY: 4
+                display: "flex",
+                alignItems: "center",
+                gap: "16px",
+                marginY: 4,
               }}
             >
               <Typography fontSize={16} color="black" fontWeight="bold">
@@ -542,22 +546,22 @@ const Company: FunctionComponent = () => {
                 sx={[
                   styles.buttonOutlinedGreen,
                   {
-                    width: 'max-content',
-                    height: '40px'
-                  }
+                    width: "max-content",
+                    height: "40px",
+                  },
                 ]}
                 variant="outlined"
                 onClick={() => {
-                  setSelectCompanyType(item)
-                  setDrawerOpen(true)
-                  setAction('add')
+                  setSelectCompanyType(item);
+                  setDrawerOpen(true);
+                  setAction("add");
                 }}
               >
-                <ADD_ICON /> {t('top_menu.add_new')}
+                <ADD_ICON /> {t("top_menu.add_new")}
               </Button>
             </Box>
             <div className="table-vehicle">
-              <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
+              <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
                 {isLoading ? (
                   <CircularLoading />
                 ) : (
@@ -568,7 +572,7 @@ const Company: FunctionComponent = () => {
                       hideFooter
                       columns={columns}
                       onRowClick={(params) => {
-                        handleSelectRow(params, item)
+                        handleSelectRow(params, item);
                       }}
                       getRowSpacing={getRowSpacing}
                       localeText={localeTextDataGrid}
@@ -576,31 +580,31 @@ const Company: FunctionComponent = () => {
                         selectedRow &&
                         params.id === selectedRow.companyId &&
                         item === selectCompanyType
-                          ? 'selected-row'
-                          : ''
+                          ? "selected-row"
+                          : ""
                       }
                       sx={{
-                        border: 'none',
-                        '& .MuiDataGrid-cell': {
-                          border: 'none'
+                        border: "none",
+                        "& .MuiDataGrid-cell": {
+                          border: "none",
                         },
-                        '& .MuiDataGrid-row': {
-                          bgcolor: 'white',
-                          borderRadius: '10px'
+                        "& .MuiDataGrid-row": {
+                          bgcolor: "white",
+                          borderRadius: "10px",
                         },
-                        '&>.MuiDataGrid-main': {
-                          '&>.MuiDataGrid-columnHeaders': {
-                            borderBottom: 'none'
-                          }
+                        "&>.MuiDataGrid-main": {
+                          "&>.MuiDataGrid-columnHeaders": {
+                            borderBottom: "none",
+                          },
                         },
-                        '.MuiDataGrid-columnHeaderTitle': {
-                          fontWeight: 'bold !important',
-                          overflow: 'visible !important'
+                        ".MuiDataGrid-columnHeaderTitle": {
+                          fontWeight: "bold !important",
+                          overflow: "visible !important",
                         },
-                        '& .selected-row': {
-                          backgroundColor: '#F6FDF2 !important',
-                          border: '1px solid #79CA25'
-                        }
+                        "& .selected-row": {
+                          backgroundColor: "#F6FDF2 !important",
+                          border: "1px solid #79CA25",
+                        },
                       }}
                     />
                     <Pagination
@@ -609,7 +613,7 @@ const Company: FunctionComponent = () => {
                       count={Math.ceil(getSelectedTotalCompany(item))}
                       page={getPage(item)}
                       onChange={(_, newPage) => {
-                        onChangePage(newPage, item)
+                        onChangePage(newPage, item);
                         // setPage(newPage)
                       }}
                     />
@@ -618,15 +622,15 @@ const Company: FunctionComponent = () => {
               </Box>
             </div>
           </Box>
-        )
+        );
       })}
       {rowId !== 0 && (
         <CreateCompany
           companyType={selectCompanyType}
           drawerOpen={drawerOpen}
           handleDrawerClose={() => {
-            setDrawerOpen(false)
-            setSelectedRow(null)
+            setDrawerOpen(false);
+            setSelectedRow(null);
           }}
           action={action}
           selectedItem={selectedRow}
@@ -635,7 +639,7 @@ const Company: FunctionComponent = () => {
         />
       )}
     </>
-  )
-}
+  );
+};
 
-export default Company
+export default Company;
