@@ -339,9 +339,14 @@ const ItemCategoryRow: React.FC<Props> = ({
               <TextField
                 type="number"
                 value={item.recycTypeCapacity || ""}
-                onChange={(e) =>
-                  handleFieldChange("recycTypeCapacity", +e.target.value)
-                }
+                onChange={(e) => {
+                  const newValue = +e.target.value;
+
+                  // Prevent setting negative values
+                  if (newValue >= 0 || e.target.value === "") {
+                    handleFieldChange("recycTypeCapacity", newValue);
+                  }
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">kg</InputAdornment>
@@ -458,9 +463,14 @@ const ItemCategoryRow: React.FC<Props> = ({
               <TextField
                 type="number"
                 value={item.productTypeCapacity || ""}
-                onChange={(e) =>
-                  handleFieldChange("productTypeCapacity", +e.target.value)
-                }
+                onChange={(e) => {
+                  const newValue = +e.target.value;
+
+                  // Prevent setting negative values
+                  if (newValue >= 0 || e.target.value === "") {
+                    handleFieldChange("productTypeCapacity", newValue);
+                  }
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">kg</InputAdornment>
