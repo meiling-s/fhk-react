@@ -234,6 +234,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
   }, [weight, pictures, selectedProduct, selectedRecyc, i18n.language])
 
   const editItemCompactor = (item: ProcessOutItem) => {
+    console.log('item', item)
     setEditedItem(item)
     const defRecyc: singleRecyclable = {
       recycTypeId: item.recycTypeId,
@@ -249,10 +250,24 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
     }
     //mapping edited item
     setSelectedPackage(item.packageTypeId)
-    setRecycleCategory(item.recycTypeId != '')
+    setRecycleCategory(item.recycTypeId != '' ? true : false)
     setDefaultRecyc(defRecyc)
+    setSelectedRecyc(defRecyc)
     setDefaultProduct(defProduct)
+
     setWeight(item.weight.toString())
+
+    const photoList: any = item.photos.map((url: string, index: number) => {
+      return {
+        data_url: url,
+        file: {
+          name: `image${index + 1}`,
+          size: 0,
+          type: 'image/jpeg'
+        }
+      }
+    })
+    setPictures(photoList)
   }
 
   const removeImage = (index: number) => {
@@ -262,7 +277,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
   }
 
   const resetForm = () => {
-    setRecycleCategory(true)
+    setRecycleCategory(false)
     setSelectedProduct(undefined)
     setSelectedRecyc(undefined)
     setDefaultRecyc(undefined)
@@ -378,12 +393,6 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                   >
                     <div className="recyle-type flex items-center gap-2">
                       <div className="category" style={categoryRecyle}>
-                        {/* {item.recycTypeId
-                          ? mappingRecy(item.recycTypeId, recycType).charAt(0)
-                          : mappingProductType(
-                              item.productTypeId,
-                              productType
-                            ).charAt(0)} */}
                         {packagingList
                           ?.find((it) => item.packageTypeId === it.id)
                           ?.name.charAt(0)
