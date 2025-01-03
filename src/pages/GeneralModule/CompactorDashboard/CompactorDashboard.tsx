@@ -418,83 +418,89 @@ const CompactorDashboard: FunctionComponent = () => {
               <CircularLoading />
             ) : (
               <Box sx={{ paddingY: '24px', paddingX: '40px' }}>
-                <div className="grid grid-cols-2 gap-4 justify-items-start w-full max-w-[980px]">
-                  {compactorProcessIn.map((item) => (
-                    <div
-                      className={`relative card-wrapper col-span-1 max-w-[450px] w-full flex items-center space-x-6 py-4 px-4 rounded-lg border-solid cursor-pointer ${
-                        selectedCheckInIds.includes(item.chkInId)
-                          ? 'border-[2px] border-[#79CA25]'
-                          : 'border-[1px] border-[#C6C6C6]'
-                      }`}
-                      onClick={() => selectCard(item.chkInId)}
-                    >
-                      <div className="text-left">
-                        <div className="mb-2 text-[#717171] text-xs font-medium">
-                          {t('compactor.unloadTime')}
+                {compactorProcessIn.length > 0 ? (
+                  <div className="grid grid-cols-2 gap-4 justify-items-start w-full max-w-[980px]">
+                    {compactorProcessIn.map((item) => (
+                      <div
+                        className={`relative card-wrapper col-span-1 max-w-[450px] w-full flex items-center space-x-6 py-4 px-4 rounded-lg border-solid cursor-pointer ${
+                          selectedCheckInIds.includes(item.chkInId)
+                            ? 'border-[2px] border-[#79CA25]'
+                            : 'border-[1px] border-[#C6C6C6]'
+                        }`}
+                        onClick={() => selectCard(item.chkInId)}
+                      >
+                        <div className="text-left">
+                          <div className="mb-2 text-[#717171] text-xs font-medium">
+                            {t('compactor.unloadTime')}
+                          </div>
+                          <div className="mb-2 text-black font-bold text-base">
+                            {formattedTime(item.dropoffAt)}
+                          </div>
+                          <div className="mb-2 text-[#717171] text-sm font-medium">
+                            {item.picoId}
+                          </div>
                         </div>
-                        <div className="mb-2 text-black font-bold text-base">
-                          {formattedTime(item.dropoffAt)}
+                        <div className="flex flex-col border-l border-[#E2E2E2]">
+                          <div className="flex items-center mb-2">
+                            <PersonOutlineOutlinedIcon
+                              fontSize="small"
+                              className=" text-[#ACACAC] text-sm mr-1"
+                            />
+                            <div className="text-[#ACACAC] text-sm font-medium">
+                              {t('driver.tabs.driver')}
+                            </div>
+                          </div>
+                          <div className="flex items-center mb-2">
+                            <Inventory2OutlinedIcon
+                              fontSize="small"
+                              className=" text-[#ACACAC] text-sm mr-1"
+                            />
+                            <div className="text-[#ACACAC] text-sm font-medium">
+                              {t('pick_up_order.card_detail.shipping_receiver')}
+                            </div>
+                          </div>
+                          <div className="flex items-center mb-2">
+                            <LocationOnOutlinedIcon
+                              fontSize="small"
+                              className=" text-[#ACACAC] text-sm mr-1"
+                            />
+                            <div className="text-[#ACACAC] text-sm font-medium">
+                              {t('pick_up_order.card_detail.deliver_location')}
+                            </div>
+                          </div>
                         </div>
-                        <div className="mb-2 text-[#717171] text-sm font-medium">
-                          {item.picoId}
+                        <div>
+                          <div className="mb-2 text-[#535353] text-sm font-medium">
+                            {i18n.language === 'zhhk'
+                              ? item.driverNameTchi
+                              : i18n.language === 'zhch'
+                              ? item.driverNameSchi
+                              : item.driverNameEng}
+                          </div>
+                          <div className="mb-2">
+                            <div className="text-[#535353] text-sm font-medium">
+                              {item.senderName ?? 'N/A'} ➔{' '}
+                              {item.receiverName ?? 'N/A'}
+                            </div>
+                          </div>
+                          <div className="mb-2">
+                            <div className="text-[#535353] text-sm font-medium">
+                              {item.senderAddr ?? 'N/A'} ➔{' '}
+                              {item.receiverAddr ?? 'N/A'}
+                            </div>
+                          </div>
                         </div>
+                        {selectedCheckInIds.includes(item.chkInId) && (
+                          <CheckCircleIcon className="absolute top-[-8px] right-[-8px] text-[#79CA25] w-6 h-6" />
+                        )}
                       </div>
-                      <div className="flex flex-col border-l border-[#E2E2E2]">
-                        <div className="flex items-center mb-2">
-                          <PersonOutlineOutlinedIcon
-                            fontSize="small"
-                            className=" text-[#ACACAC] text-sm mr-1"
-                          />
-                          <div className="text-[#ACACAC] text-sm font-medium">
-                            {t('driver.tabs.driver')}
-                          </div>
-                        </div>
-                        <div className="flex items-center mb-2">
-                          <Inventory2OutlinedIcon
-                            fontSize="small"
-                            className=" text-[#ACACAC] text-sm mr-1"
-                          />
-                          <div className="text-[#ACACAC] text-sm font-medium">
-                            {t('pick_up_order.card_detail.shipping_receiver')}
-                          </div>
-                        </div>
-                        <div className="flex items-center mb-2">
-                          <LocationOnOutlinedIcon
-                            fontSize="small"
-                            className=" text-[#ACACAC] text-sm mr-1"
-                          />
-                          <div className="text-[#ACACAC] text-sm font-medium">
-                            {t('pick_up_order.card_detail.deliver_location')}
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="mb-2 text-[#535353] text-sm font-medium">
-                          {i18n.language === 'zhhk'
-                            ? item.driverNameTchi
-                            : i18n.language === 'zhch'
-                            ? item.driverNameSchi
-                            : item.driverNameEng}
-                        </div>
-                        <div className="mb-2">
-                          <div className="text-[#535353] text-sm font-medium">
-                            {item.senderName ?? 'N/A'} ➔{' '}
-                            {item.receiverName ?? 'N/A'}
-                          </div>
-                        </div>
-                        <div className="mb-2">
-                          <div className="text-[#535353] text-sm font-medium">
-                            {item.senderAddr ?? 'N/A'} ➔{' '}
-                            {item.receiverAddr ?? 'N/A'}
-                          </div>
-                        </div>
-                      </div>
-                      {selectedCheckInIds.includes(item.chkInId) && (
-                        <CheckCircleIcon className="absolute top-[-8px] right-[-8px] text-[#79CA25] w-6 h-6" />
-                      )}
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  <Box sx={{ marginTop: '15%', textAlign: 'center' }}>
+                    {t('compactor.selectProcessing')}
+                  </Box>
+                )}
               </Box>
             )}
           </Box>
