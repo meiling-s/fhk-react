@@ -324,8 +324,7 @@ const CompactorCard: FunctionComponent<CompactorCardProps> = ({
                     color="textSecondary"
                     sx={{ color: "#535353" }}
                   >
-                    {data.process_in.total_weight}{" "}
-                    {getConditionalValue(data, "weightUnit")}
+                    {data.process_in.total_weight} Kg
                   </Typography>
                 </Box>
               </Box>
