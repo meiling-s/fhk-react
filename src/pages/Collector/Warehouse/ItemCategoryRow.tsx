@@ -347,6 +347,16 @@ const ItemCategoryRow: React.FC<Props> = ({
                     handleFieldChange("recycTypeCapacity", newValue);
                   }
                 }}
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "e" ||
+                    e.key === "E" ||
+                    e.key === "-" ||
+                    e.key === "+"
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">kg</InputAdornment>
@@ -475,6 +485,16 @@ const ItemCategoryRow: React.FC<Props> = ({
                   endAdornment: (
                     <InputAdornment position="end">kg</InputAdornment>
                   ),
+                }}
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "e" ||
+                    e.key === "E" ||
+                    e.key === "-" ||
+                    e.key === "+"
+                  ) {
+                    e.preventDefault();
+                  }
                 }}
                 sx={{
                   border: errors.productTypeCapacity
