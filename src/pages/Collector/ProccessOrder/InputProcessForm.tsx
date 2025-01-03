@@ -209,7 +209,7 @@ const InputProcessForm = ({
               ? item.warehouseNameTchi
               : i18n.language === 'zhch'
               ? item.warehouseNameSchi
-              : item.warehouseNameTchi
+              : item.warehouseNameEng
           warehouse.push({
             id: item.warehouseId.toString(),
             name: warehouseName
