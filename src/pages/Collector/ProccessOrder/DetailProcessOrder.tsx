@@ -124,10 +124,11 @@ const CancelModal: React.FC<CancelForm> = ({
 
   const handleCancelRequest = async () => {
     let reasonData: PorReason[] = []
+
     rejectReasonId.map((item) => {
       reasonData.push({
         reasonId: parseInt(item),
-        remark: ''
+        remark: otherReason?.id === item ? remarkVal : ''
       })
     })
 
@@ -137,6 +138,7 @@ const CancelModal: React.FC<CancelForm> = ({
       version: version++,
       processOrderRejectReason: reasonData
     }
+
 
     const result = await deleteProcessOrder(form, processOrderId!!)
     if (result) {
