@@ -1590,6 +1590,7 @@
     "processingDate": "處理日期",
     "plateNumber": "車牌號碼",
     "show": "顯示",
+    "selectProcessing": "選擇處理日期及車牌號碼以顯示卸貨紀錄",
     "table": {
       "date": "顯示",
       "itemCategory": "日期",
