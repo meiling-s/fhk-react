@@ -209,7 +209,7 @@ const InputProcessForm = ({
               ? item.warehouseNameTchi
               : i18n.language === 'zhch'
               ? item.warehouseNameSchi
-              : item.warehouseNameTchi
+              : item.warehouseNameEng
           warehouse.push({
             id: item.warehouseId.toString(),
             name: warehouseName
@@ -278,12 +278,12 @@ const InputProcessForm = ({
           type: 'error'
         })
 
-      // 1. validation rectype and product type type
       const productItemIn = processOrderDetail[0].processIn
       const recyItemIn = processOrderDetail[0].processIn
       const productItemOut = processOrderDetail[0].processOut
       const recyItemOut = processOrderDetail[0].processOut
 
+      // 1. validation rectype and product type
       if (productItemIn.itemCategory === 'product') {
         if (productItemIn.processOrderDetailProduct.length === 0) {
           tempV.push({
@@ -479,6 +479,8 @@ const InputProcessForm = ({
               ) {
                 tempV.push({
                   field:
+                    t('processOrder.create.product') +
+                    ' - ' +
                     t('pick_up_order.product_type.add-on') +
                     ' - ' +
                     t('processOrder.table.processOut'),
@@ -589,11 +591,11 @@ const InputProcessForm = ({
             singleProducts.push({
               productTypeId: product.productTypeId,
               productSubTypeId: subType.productSubTypeId,
-              productAddonId: '', // No addon
+              productAddonId: '',
               productSubTypeRemark: subType.productSubTypeRemark,
-              productAddonTypeRemark: '', // No addon remark
+              productAddonTypeRemark: '',
               isProductSubTypeOthers: subType.isProductSubTypeOthers,
-              isProductAddonTypeOthers: false // No addon
+              isProductAddonTypeOthers: false
             })
           }
         })
@@ -601,12 +603,12 @@ const InputProcessForm = ({
         // Handle cases where productSubType is null or empty
         singleProducts.push({
           productTypeId: product.productTypeId,
-          productSubTypeId: '', // No subtype
-          productAddonId: '', // No addon
-          productSubTypeRemark: '', // No subtype remark
-          productAddonTypeRemark: '', // No addon remark
-          isProductSubTypeOthers: false, // Default to false
-          isProductAddonTypeOthers: false // Default to false
+          productSubTypeId: '',
+          productAddonId: '',
+          productSubTypeRemark: '',
+          productAddonTypeRemark: '',
+          isProductSubTypeOthers: false,
+          isProductAddonTypeOthers: false
         })
       }
     })
@@ -616,12 +618,10 @@ const InputProcessForm = ({
   }
 
   const handleProductChange = (type: string, value: productsVal[]) => {
-    console.log('val', value)
-    // let tempProduct: any[] = []
-    //if (value.productTypeId) tempProduct.push(value)
+    //console.log('val', value)
 
     const singleProducts: singleProduct[] = transformToSingleProducts(value)
-    //console.log('handleProductChange', singleProducts)
+    console.log('handleProductChange', singleProducts)
     setProcessOrderDetail((prevDetails) =>
       prevDetails.map((detail) => ({
         ...detail,
@@ -883,8 +883,6 @@ const InputProcessForm = ({
 
     if (selectedProduct.length > 0) {
       const product = transformData(selectedProduct, productType)
-
-      //console.log('getDefaultProduct', product)
       return product
     }
 
@@ -905,6 +903,50 @@ const InputProcessForm = ({
     }))
 
     return defaultData
+  }
+
+  const isSubProductRequired = (key: string) => {
+    const typeProcess =
+      key === 'processIn'
+        ? t('processOrder.table.processIn')
+        : t('processOrder.table.processOut')
+    const currfield =
+      t('processOrder.create.product') +
+      ' - ' +
+      t('pick_up_order.product_type.subtype') +
+      ' - ' +
+      typeProcess
+    return validation.some((item) => item.field === currfield)
+  }
+
+  const isAddonRequired = (key: string) => {
+    const typeProcess =
+      key === 'processIn'
+        ? t('processOrder.table.processIn')
+        : t('processOrder.table.processOut')
+    const currfield =
+      t('processOrder.create.product') +
+      ' - ' +
+      t('pick_up_order.product_type.add-on') +
+      ' - ' +
+      typeProcess
+
+    return validation.some((item) => item.field === currfield)
+  }
+
+  const isSubRecyleRequired = (key: string) => {
+    const typeProcess =
+      key === 'processIn'
+        ? t('processOrder.table.processIn')
+        : t('processOrder.table.processOut')
+
+    const currfield =
+      t('processOrder.create.recycling') +
+      ' - ' +
+      t('jobOrder.subcategory') +
+      ' - ' +
+      typeProcess
+    return validation.some((item) => item.field === currfield)
   }
 
   return (
@@ -1010,6 +1052,9 @@ const InputProcessForm = ({
                                 )?.processOrderDetailRecyc?.length === 0 &&
                                 trySubmited
                               }
+                              showErrorSubtype={
+                                isSubRecyleRequired(key) && trySubmited
+                              }
                               subTypeRequired={true}
                               defaultRecycL={getDefaultRecy(key)}
                             />
@@ -1042,6 +1087,10 @@ const InputProcessForm = ({
                               )?.processOrderDetailProduct?.length === 0 &&
                               trySubmited
                             }
+                            showErrorSubtype={
+                              isSubProductRequired(key) && trySubmited
+                            }
+                            showErrorAddon={isAddonRequired(key) && trySubmited}
                             defaultProduct={getDefaultProduct(key)}
                           />
                         </CustomField>
