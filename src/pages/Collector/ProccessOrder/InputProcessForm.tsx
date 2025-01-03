@@ -591,11 +591,11 @@ const InputProcessForm = ({
             singleProducts.push({
               productTypeId: product.productTypeId,
               productSubTypeId: subType.productSubTypeId,
-              productAddonId: '', // No addon
+              productAddonId: '',
               productSubTypeRemark: subType.productSubTypeRemark,
-              productAddonTypeRemark: '', // No addon remark
+              productAddonTypeRemark: '',
               isProductSubTypeOthers: subType.isProductSubTypeOthers,
-              isProductAddonTypeOthers: false // No addon
+              isProductAddonTypeOthers: false
             })
           }
         })
@@ -603,12 +603,12 @@ const InputProcessForm = ({
         // Handle cases where productSubType is null or empty
         singleProducts.push({
           productTypeId: product.productTypeId,
-          productSubTypeId: '', // No subtype
-          productAddonId: '', // No addon
-          productSubTypeRemark: '', // No subtype remark
-          productAddonTypeRemark: '', // No addon remark
-          isProductSubTypeOthers: false, // Default to false
-          isProductAddonTypeOthers: false // Default to false
+          productSubTypeId: '',
+          productAddonId: '',
+          productSubTypeRemark: '',
+          productAddonTypeRemark: '',
+          isProductSubTypeOthers: false,
+          isProductAddonTypeOthers: false
         })
       }
     })
@@ -618,10 +618,10 @@ const InputProcessForm = ({
   }
 
   const handleProductChange = (type: string, value: productsVal[]) => {
-    console.log('val', value)
+    //console.log('val', value)
 
     const singleProducts: singleProduct[] = transformToSingleProducts(value)
-    //console.log('handleProductChange', singleProducts)
+    console.log('handleProductChange', singleProducts)
     setProcessOrderDetail((prevDetails) =>
       prevDetails.map((detail) => ({
         ...detail,
@@ -934,6 +934,21 @@ const InputProcessForm = ({
     return validation.some((item) => item.field === currfield)
   }
 
+  const isSubRecyleRequired = (key: string) => {
+    const typeProcess =
+      key === 'processIn'
+        ? t('processOrder.table.processIn')
+        : t('processOrder.table.processOut')
+
+    const currfield =
+      t('processOrder.create.recycling') +
+      ' - ' +
+      t('jobOrder.subcategory') +
+      ' - ' +
+      typeProcess
+    return validation.some((item) => item.field === currfield)
+  }
+
   return (
     <>
       <Box>
@@ -1036,6 +1051,9 @@ const InputProcessForm = ({
                                   : processOrderDetail?.[0]?.processOut
                                 )?.processOrderDetailRecyc?.length === 0 &&
                                 trySubmited
+                              }
+                              showErrorSubtype={
+                                isSubRecyleRequired(key) && trySubmited
                               }
                               subTypeRequired={true}
                               defaultRecycL={getDefaultRecy(key)}

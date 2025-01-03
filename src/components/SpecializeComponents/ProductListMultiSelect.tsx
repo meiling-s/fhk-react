@@ -111,10 +111,10 @@ export default function ProductListMultiSelect({
   const [currAddonRemark, setCurrAddonRemark] = useState<string>('')
   const [productSubTypeRemark, setProductSubTypeRemark] = useState<
     remarkVal[] | null
-  >(null)
+  >([])
   const [productAddonTypeRemark, setProductAddonRemark] = useState<
     remarkVal[] | null
-  >(null)
+  >([])
 
   useEffect(() => {
     if (defaultProduct) {
@@ -564,7 +564,6 @@ export default function ProductListMultiSelect({
   }
 
   const onChangeAddonRemark = (value: string) => {
-    setCurrAddonType(value)
     if (choosenProductAddon && value) {
       const newRemark = value
       setProductSubTypeRemark((prevRemarks: any) => {
@@ -593,6 +592,8 @@ export default function ProductListMultiSelect({
             value: newRemark
           })
         }
+
+        console.log('remark', updatedRemarks)
 
         return updatedRemarks
       })
@@ -628,8 +629,12 @@ export default function ProductListMultiSelect({
                 multiSelect={selectSubProduct}
                 setLastSelect={(s: string) => setCurrSubProductType(s)}
                 defaultSelected={productSubType}
-                error={showErrorSubtype}
-                //noSubItems={subProductWithNoAddonItems}
+                error={
+                  showErrorSubtype &&
+                  !returnSubProduct(currProductType).some((it) =>
+                    productSubType.includes(it.id)
+                  )
+                }
               />
             </CustomField>
             {choosenProductSubType?.productNameEng === 'Others' && (
@@ -691,7 +696,7 @@ export default function ProductListMultiSelect({
                 label={
                   getNameFromSubId(currSubProductType) +
                   ' ' +
-                  t('pick_up_order.product_type.add') +
+                  t('pick_up_order.product_type.add-on') +
                   ' ' +
                   t('general_settings.remark')
                 }
@@ -708,6 +713,7 @@ export default function ProductListMultiSelect({
                     t('general_settings.remark')
                   }
                   onChange={(event) => {
+                    setCurrAddonRemark(event.target.value)
                     onChangeAddonRemark(event.target.value)
                   }}
                   value={currAddonRemark}

@@ -152,7 +152,6 @@ export function transformData(
       isProductAddonTypeOthers
     } = item
 
-    // Find or create productType
     if (!productMap.has(productTypeId)) {
       const selectedProd = productType.find(
         (it) => it.productTypeId === productTypeId
