@@ -70,12 +70,14 @@ import {
   mappingSubProductType,
   mappingAddonsType
 } from 'src/pages/Collector/ProccessOrder/utils'
+import { getWeightUnit } from 'src/APICalls/ASTD/recycling'
 import { formValidate } from 'src/interfaces/common'
 import { FormErrorMsg } from 'src/components/FormComponents/FormErrorMsg'
+import { WeightUnit } from 'src/interfaces/weightUnit'
 
 type AddProcessCompactorProps = {
   chkInIds: number[]
-  inItemId: number[],
+  inItemId: number[]
   onSubmit: () => void
 }
 
@@ -116,10 +118,12 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
   >(undefined)
   const [pictures, setPictures] = useState<ImageListType>([])
   const [remark, setRemark] = useState<string>('')
+  const [weightUnit, setWeightUnit] = useState<string>('')
 
   useEffect(() => {
     initPackagingUnit()
     getProductType()
+    initWeightUnit()
   }, [i18n.language])
 
   useEffect(() => {
@@ -150,6 +154,23 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
         if (packageUnit.length > 0 && !editedItem)
           setSelectedPackage(packageUnit[0].id)
       }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+    }
+  }
+
+  const initWeightUnit = async () => {
+    try {
+      const result = await getWeightUnit(0, 1000)
+      const data = result?.data
+
+      const selectedUnit = data.find(
+        (item: WeightUnit) => item.unitNameEng === 'kg'
+      )
+      setWeightUnit(selectedUnit ? selectedUnit.unitId : '')
     } catch (error: any) {
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
@@ -231,9 +252,10 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
       setValidation(tempV)
     }
     validate()
-  }, [weight, pictures, selectedProduct, selectedRecyc])
+  }, [weight, pictures, selectedProduct, selectedRecyc, i18n.language])
 
   const editItemCompactor = (item: ProcessOutItem) => {
+    console.log('item', item)
     setEditedItem(item)
     const defRecyc: singleRecyclable = {
       recycTypeId: item.recycTypeId,
@@ -249,10 +271,24 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
     }
     //mapping edited item
     setSelectedPackage(item.packageTypeId)
-    setRecycleCategory(item.recycTypeId != '')
+    setRecycleCategory(item.recycTypeId != '' ? true : false)
     setDefaultRecyc(defRecyc)
+    setSelectedRecyc(defRecyc)
     setDefaultProduct(defProduct)
+
     setWeight(item.weight.toString())
+
+    const photoList: any = item.photos.map((url: string, index: number) => {
+      return {
+        data_url: url,
+        file: {
+          name: `image${index + 1}`,
+          size: 0,
+          type: 'image/jpeg'
+        }
+      }
+    })
+    setPictures(photoList)
   }
 
   const removeImage = (index: number) => {
@@ -262,13 +298,14 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
   }
 
   const resetForm = () => {
-    setRecycleCategory(true)
+    setRecycleCategory(false)
     setSelectedProduct(undefined)
     setSelectedRecyc(undefined)
     setDefaultRecyc(undefined)
     setWeight('0')
     setPictures([])
     setEditedItem(null)
+    setTrySubmited(false)
   }
 
   const addProcessItem = () => {
@@ -291,7 +328,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
       productAddonTypeRemark: selectedProduct?.productAddonTypeRemark ?? '',
       packageTypeId: selectedPackage,
       weight: parseInt(weight),
-      unitId: '12',
+      unitId: weightUnit,
       photos: photosData
     }
 
@@ -360,7 +397,10 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                 className="p-8 border-solid border-[1px] rounded-xl w-[300px] text-center cursor-pointer m-6
             "
                 style={{ borderColor: colorTheme }}
-                onClick={() => setShowForm(true)}
+                onClick={() => {
+                  setShowForm(true)
+                  resetForm()
+                }}
               >
                 <ADD_CIRCLE_FILL_ICON_
                   sx={{ color: colorTheme, fontSize: '30px' }}
@@ -377,12 +417,10 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                   >
                     <div className="recyle-type flex items-center gap-2">
                       <div className="category" style={categoryRecyle}>
-                        {item.recycTypeId
-                          ? mappingRecy(item.recycTypeId, recycType).charAt(0)
-                          : mappingProductType(
-                              item.productTypeId,
-                              productType
-                            ).charAt(0)}
+                        {packagingList
+                          ?.find((it) => item.packageTypeId === it.id)
+                          ?.name.charAt(0)
+                          .toUpperCase() || '-'}
                       </div>
                       <div className="type-item text-justify">
                         <div className="type text-mini text-[#ACACAC] font-normal tracking-widest mb-2">
@@ -407,9 +445,13 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                               )}
                         </div>
                         <div className="type text-mini text-[#ACACAC] font-normal tracking-widest">
-                          {packagingList?.find(
-                            (it) => item.packageTypeId === it.id
-                          )?.name || '-'}
+                          {item.productAddonTypeId != '' &&
+                            mappingAddonsType(
+                              item.productTypeId,
+                              item.productSubTypeId,
+                              item.productAddonTypeId,
+                              productType
+                            )}
                         </div>
                       </div>
                     </div>
@@ -468,7 +510,12 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
             </Box>
           ) : (
             <Box sx={{ margin: '24px', width: '100%' }}>
-              <Grid container direction={'column'} spacing={4}>
+              <Grid
+                container
+                direction={'column'}
+                spacing={4}
+                sx={{ width: '100%' }}
+              >
                 <Grid item>
                   <Typography sx={{ ...styles.header3, marginBottom: 1 }}>
                     {t('packaging_unit.packaging_unit')}
@@ -576,7 +623,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                   </CustomField>
                 )}
                 <Grid item>
-                  <CustomField label={t('compactor.table.weight')}>
+                  <CustomField label={t('compactor.table.weight')} mandatory>
                     <CustomTextField
                       id="weight"
                       placeholder={t('userAccount.pleaseEnterNumber')}
@@ -596,6 +643,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                         )
                         setWeight(value)
                       }}
+                      error={parseFloat(weight) <= 0 && trySubmited}
                       value={weight}
                       sx={{ width: '100%' }}
                       endAdornment={
@@ -628,8 +676,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                             sx={{
                               ...localstyles.cardImg,
                               ...(trySubmited &&
-                                (imageList.length === 0 ||
-                                  imageList.length < 2) &&
+                                imageList.length === 0 &&
                                 localstyles.imgError)
                             }}
                           >
@@ -647,16 +694,6 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                               </Typography>
                             </ButtonBase>
                           </Card>
-                          {errors && (
-                            <div>
-                              {errors.maxFileSize && (
-                                <span style={{ color: 'red' }}>
-                                  Selected file size exceeds maximum file size{' '}
-                                  {imgSettings?.ImgSize / 1000000} mb
-                                </span>
-                              )}
-                            </div>
-                          )}
                           <ImageList sx={localstyles.imagesContainer} cols={6}>
                             {imageList.map((image, index) => (
                               <ImageListItem
@@ -695,8 +732,10 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
                   <Button
                     sx={{ ...styles.buttonFilledGreen, width: '200px' }}
                     disabled={
-                      selectedRecyc?.recycTypeId === '' ||
-                      selectedProduct?.productTypeId === ''
+                      (isRecylingCategory &&
+                        selectedRecyc?.recycTypeId === '') ||
+                      (!isRecylingCategory &&
+                        selectedProduct?.productTypeId === '')
                     }
                     onClick={() => addProcessItem()}
                   >
