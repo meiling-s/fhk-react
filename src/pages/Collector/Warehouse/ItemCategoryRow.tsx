@@ -339,9 +339,24 @@ const ItemCategoryRow: React.FC<Props> = ({
               <TextField
                 type="number"
                 value={item.recycTypeCapacity || ""}
-                onChange={(e) =>
-                  handleFieldChange("recycTypeCapacity", +e.target.value)
-                }
+                onChange={(e) => {
+                  const newValue = +e.target.value;
+
+                  // Prevent setting negative values
+                  if (newValue >= 0 || e.target.value === "") {
+                    handleFieldChange("recycTypeCapacity", newValue);
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "e" ||
+                    e.key === "E" ||
+                    e.key === "-" ||
+                    e.key === "+"
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">kg</InputAdornment>
@@ -458,13 +473,28 @@ const ItemCategoryRow: React.FC<Props> = ({
               <TextField
                 type="number"
                 value={item.productTypeCapacity || ""}
-                onChange={(e) =>
-                  handleFieldChange("productTypeCapacity", +e.target.value)
-                }
+                onChange={(e) => {
+                  const newValue = +e.target.value;
+
+                  // Prevent setting negative values
+                  if (newValue >= 0 || e.target.value === "") {
+                    handleFieldChange("productTypeCapacity", newValue);
+                  }
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">kg</InputAdornment>
                   ),
+                }}
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "e" ||
+                    e.key === "E" ||
+                    e.key === "-" ||
+                    e.key === "+"
+                  ) {
+                    e.preventDefault();
+                  }
                 }}
                 sx={{
                   border: errors.productTypeCapacity

@@ -40,8 +40,6 @@ const EditPickupOrder = () => {
   const role = localStorage.getItem(localStorgeKeyName.role);
   const { decimalVal } = useContainer(CommonTypeContainer);
 
-  console.log(poInfo, "poInfo");
-
   const getErrorMsg = (field: string, type: string) => {
     switch (type) {
       case "empty":
@@ -187,7 +185,10 @@ const EditPickupOrder = () => {
           effFrmDate: data.effFrmDate,
           effToDate: data.effToDate,
           routineType: data.routineType,
-          routine: data.routine,
+          routine:
+            data.routineType === "specificDate"
+              ? data.specificDates
+              : data.routine,
           logisticId: data.logisticId,
           logisticName: data.logisticName,
           vehicleTypeId: data.vehicleTypeId,
