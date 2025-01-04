@@ -165,6 +165,7 @@ export default function ProductListMultiSelect({
 
   const toProduct = () => {
     var productS: productsVal[] = []
+
     productType.map((prod) => {
       const prodType = options.find((p) => p.productTypeId === prod)
 
@@ -188,9 +189,11 @@ export default function ProductListMultiSelect({
 
             if (subTypeData) {
               // Retrieve associated addons
-              const addonIdList = returnAddonList(subTypeId).map((it) => it.id)
+              const addonIdList = subTypeData.productAddonType?.map(
+                (item) => item.productAddonTypeId
+              )
               const filteredAddons = productAddon.filter((addonId) =>
-                addonIdList.includes(addonId)
+                addonIdList?.includes(addonId)
               )
 
               const addonItems: productAddonVal[] = filteredAddons.map(
