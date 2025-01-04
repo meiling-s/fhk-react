@@ -323,11 +323,16 @@ export default function ProductListMultiSelect({
       return prod.productType.id == prodId
     })
     if (re) {
-      re.productSubType.map((sub) => {
-        sub.productAddon.map((addOn) => {
-          addonTypesId.push(addOn.productAddon.id)
-        })
-      })
+      console.log('re', re)
+
+      const subItem = re.productSubType.find(
+        (sub) => sub.productSubType.id === subProdId
+      )
+      if (subItem) {
+        subItem.productAddon.map((add_on) =>
+          addonTypesId.push(add_on.productAddon.id)
+        )
+      }
     }
     return addonTypesId
   }
@@ -357,8 +362,10 @@ export default function ProductListMultiSelect({
     var withSubItem: string[] = []
     productType.map((prod) => {
       const subId = returnSubTypesId(prod)
+      console.log('subId', subId)
       subId.map((sub) => {
         const addonIds = returnAddonTypesId(prod, sub)
+        console.log('addonIds', sub, '=>>', addonIds)
         if (addonIds.length === 0) {
           if (productSubType.includes(sub)) {
             withSubItem.push(prod)
