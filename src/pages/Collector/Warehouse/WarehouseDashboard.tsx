@@ -48,6 +48,7 @@ import {
   getCheckOutWarehouse,
   getCheckInOutWarehouse,
   getRecycSubTypeWeight,
+  getWeightBySubType,
 } from "../../../APICalls/warehouseDashboard";
 import {
   astdSearchWarehouse,
@@ -214,7 +215,7 @@ const WarehouseDashboard: FunctionComponent = () => {
           debouncedSearchValue
         );
       } else {
-        result = await getWeightbySubtype(
+        result = await getWeightBySubType(
           parseInt(selectedWarehouse.id),
           token.decodeKeycloack
         );
@@ -355,19 +356,13 @@ const WarehouseDashboard: FunctionComponent = () => {
     }
   };
 
-  const mappingProductName = (
-    productTypeId: string,
-    productSubTypeId: string
-  ) => {
+  const mappingProductName = (productTypeId: string) => {
     const matchingProductType = productType?.find(
       (prod) => productTypeId === prod.productTypeId
     );
 
+    var name = "";
     if (matchingProductType) {
-      const matchProductSubType = matchingProductType.productSubType?.find(
-        (subtype) => subtype.productSubTypeId === productSubTypeId
-      );
-      var name = "";
       switch (i18n.language) {
         case "enus":
           name = matchingProductType.productNameEng;
@@ -382,23 +377,7 @@ const WarehouseDashboard: FunctionComponent = () => {
           name = matchingProductType.productNameTchi;
           break;
       }
-      var subName = "";
-      switch (i18n.language) {
-        case "enus":
-          subName = matchProductSubType?.productNameEng ?? "";
-          break;
-        case "zhch":
-          subName = matchProductSubType?.productNameSchi ?? "";
-          break;
-        case "zhhk":
-          subName = matchProductSubType?.productNameTchi ?? "";
-          break;
-        default:
-          subName = matchProductSubType?.productNameTchi ?? "";
-          break;
-      }
-
-      return { name, subName };
+      return { name };
     }
   };
 
@@ -417,7 +396,6 @@ const WarehouseDashboard: FunctionComponent = () => {
             )[0];
             if (filteredWarehouse) {
               const chosenWarehouseRecyc = filteredWarehouse.warehouseRecyc;
-              console.log(chosenWarehouseRecyc, "chosenWarehouseRecyc");
               let subtypeWarehouse: warehouseSubtype[] = [];
 
               chosenWarehouseRecyc.forEach((item: any) => {
@@ -444,13 +422,10 @@ const WarehouseDashboard: FunctionComponent = () => {
         }
       } else {
         const weightSubtype = await getWeightSubtypeWarehouse();
-        console.log(weightSubtype, "weightSubType");
         const result = await getWarehouseById(parseInt(selectedWarehouse.id));
-        console.log("weightSubtype", weightSubtype);
 
         if (result) {
           const data = result.data;
-          console.log(data, "dataaa");
           let subtypeWarehouse: warehouseSubtype[] = [];
           let subtypeProduct: warehouseSubtype[] = [];
 
@@ -473,21 +448,19 @@ const WarehouseDashboard: FunctionComponent = () => {
             });
           });
 
+          console.log(weightSubtype, "weightSubType");
           data?.warehouseProduct.forEach((item: any) => {
-            const prodItem = mappingProductName(
-              item.productTypeId,
-              item.productSubTypeId
-            );
-            const prodSubTypeId = item.productSubTypeId;
-            let subTypeWeight = weightSubtype[prodSubTypeId]
-              ? weightSubtype[prodSubTypeId]
+            const prodItem = mappingProductName(item.productTypeId);
+            const prodTypeId = item.productTypeId;
+            console.log(prodTypeId, "product list");
+            let subTypeWeight = weightSubtype[prodTypeId]
+              ? weightSubtype[prodTypeId]
               : 0;
-
             subtypeWarehouse.push({
-              subTypeId: item.productSubTypeId,
-              subtypeName: prodItem ? prodItem.subName : "-",
+              subTypeId: item.productTypeId,
+              subtypeName: prodItem ? prodItem.name : "-",
               weight: subTypeWeight,
-              capacity: item.productSubTypeCapacity,
+              capacity: item.productTypeCapacity,
             });
           });
 
@@ -527,7 +500,6 @@ const WarehouseDashboard: FunctionComponent = () => {
               const logistic = companies.find(
                 (company) => company.id == item.logisticId
               );
-              console.log("logisticId", logistic);
               if (logistic) {
                 if (i18n.language === Languages.ENUS)
                   item.logisticName = logistic.nameEng;
@@ -542,7 +514,6 @@ const WarehouseDashboard: FunctionComponent = () => {
               const receiverName = companies.find(
                 (company) => company.id == item.receiverId
               );
-              console.log("receiverName", receiverName);
               if (receiverName) {
                 if (i18n.language === Languages.ENUS)
                   item.receiverName = receiverName.nameEng;
@@ -558,7 +529,6 @@ const WarehouseDashboard: FunctionComponent = () => {
                 (company) => company.id == item.senderId
               );
 
-              console.log("senderName", senderName);
               if (senderName) {
                 if (i18n.language === Languages.ENUS)
                   item.senderName = senderName.nameEng;
@@ -732,7 +702,6 @@ const WarehouseDashboard: FunctionComponent = () => {
   const handleSearchByTenantId = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    console.log("event.target.value", event.target.value);
     if (event.target.value === "") {
       resetData();
     }
