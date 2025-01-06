@@ -15,6 +15,7 @@ type recycItem = {
 
 type props = {
   showError?: boolean
+  showErrorSubtype?: boolean
   defaultRecycL?: recyclable[]
   recycL: recycType[]
   setState: (s: recyclable[]) => void
@@ -24,6 +25,7 @@ type props = {
 
 export default function RecyclablesList({
   showError,
+  showErrorSubtype,
   defaultRecycL,
   recycL,
   setState,
@@ -200,20 +202,6 @@ export default function RecyclablesList({
     return subTypes
   }
 
-  // const toRecyclables = () => {
-  //   var recyclableS: recyclable[] = []
-  //   recycTypeList.map((recyc) => {
-  //     const subId = returnSubTypesId(recyc)
-  //     const subList = subTypeList.filter((sub) => {
-  //       //get the selected sub types of corresponding recyc type
-  //       return subId.includes(sub)
-  //     })
-  //     recyclableS.push({ recycTypeId: recyc, recycSubTypeId: subList })
-  //   })
-
-  //   return recyclableS
-  // }
-
   const toRecyclables = () => {
     var recyclableS: recyclable[] = []
     recycTypeList.map((recyc) => {
@@ -274,6 +262,12 @@ export default function RecyclablesList({
               items={returnSubRecyclables(curRecyc)}
               multiSelect={selectSubRecyc}
               defaultSelected={subTypeList}
+              error={
+                showErrorSubtype &&
+                !returnSubRecyclables(curRecyc).some((it) =>
+                  subTypeList.includes(it.id)
+                )
+              }
             />
           </CustomField>
         </Collapse>

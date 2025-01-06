@@ -481,23 +481,23 @@ const PickupOrderCreateForm = ({
             default:
               name = matchingProductType?.productNameTchi;
           }
-          return name
+          return name;
         } else if (row.productType) {
-          let name = ''
+          let name = "";
           switch (i18n.language) {
-            case 'enus':
-              name = row.productType?.productNameEng
+            case "enus":
+              name = row.productType?.productNameEng;
               break;
-            case 'zhch':
-              name = row.productType?.productNameSchi
+            case "zhch":
+              name = row.productType?.productNameSchi;
               break;
-            case 'zhhk':
-              name = row.productType?.productNameTchi
+            case "zhhk":
+              name = row.productType?.productNameTchi;
               break;
             default:
-              name = row.productType?.productNameTchi
+              name = row.productType?.productNameTchi;
           }
-          return name
+          return name;
         }
 
         return typeField;
@@ -682,46 +682,48 @@ const PickupOrderCreateForm = ({
     picodetail: PickupOrderDetail[],
     picoId: string
   ) => {
-    const newRow: CreatePicoDetail[] = 
-      picodetail.filter(value => value.status === 'OUTSTANDING')
+    const newRow: CreatePicoDetail[] = picodetail
+      .filter((value) => value.status === "OUTSTANDING")
       // picodetail.filter(value => value)
-        .map((value, index) => {
-          return {
-            createdBy: value?.createdBy,
-            updatedBy: value?.updatedBy,
-            pickupAt: value?.pickupAt,
-            picoHisId: value?.picoHisId,
-            receiverAddr: value?.receiverAddr,
-            receiverAddrGps: value?.receiverAddrGps,
-            receiverId: value?.receiverId,
-            receiverName: value?.receiverName,
-            senderAddr: value?.senderAddr,
-            senderAddrGps: value?.senderAddrGps,
-            senderId: value?.senderId,
-            senderName: value?.senderName,
-            status: 'CREATED',
-            weight: `${value?.weight}`,
-            id: state.length + index + 1000,
-            refPicoDtlId: value?.picoDtlId,
-            recycType: value?.recycType,
-            recycSubType: value?.recycSubType,
-            productType: value?.productType,
-            version: value?.version,
-            productAddonType: value?.productAddonType,
-            productAddOnTypeRemark: value?.productAddOnTypeRemark,
-            productSubType: value?.productSubType,
-            productSubTypeRemark: value?.productSubTypeRemark,
-            isAutomation: true,
-          }
-        })
-    
-    const newState = state?.filter(value => value?.isAutomation === undefined).concat(newRow)
-    setState(newState)
+      .map((value, index) => {
+        return {
+          createdBy: value?.createdBy,
+          updatedBy: value?.updatedBy,
+          pickupAt: value?.pickupAt,
+          picoHisId: value?.picoHisId,
+          receiverAddr: value?.receiverAddr,
+          receiverAddrGps: value?.receiverAddrGps,
+          receiverId: value?.receiverId,
+          receiverName: value?.receiverName,
+          senderAddr: value?.senderAddr,
+          senderAddrGps: value?.senderAddrGps,
+          senderId: value?.senderId,
+          senderName: value?.senderName,
+          status: "CREATED",
+          weight: `${value?.weight}`,
+          id: state.length + index + 1000,
+          refPicoDtlId: value?.picoDtlId,
+          recycType: value?.recycType,
+          recycSubType: value?.recycSubType,
+          productType: value?.productType,
+          version: value?.version,
+          productAddonType: value?.productAddonType,
+          productAddOnTypeRemark: value?.productAddOnTypeRemark,
+          productSubType: value?.productSubType,
+          productSubTypeRemark: value?.productSubTypeRemark,
+          isAutomation: true,
+        };
+      });
 
-    setPicoRefId(picoId)
-    formik.setFieldValue('refPicoId', picoId)
-    setOpenPico(false)
-  }
+    const newState = state
+      ?.filter((value) => value?.isAutomation === undefined)
+      .concat(newRow);
+    setState(newState);
+
+    setPicoRefId(picoId);
+    formik.setFieldValue("refPicoId", picoId);
+    setOpenPico(false);
+  };
 
   const resetPicoId = () => {
     setOpenPico(true);
@@ -778,8 +780,9 @@ const PickupOrderCreateForm = ({
   }, [i18n.language]);
 
   const onhandleSubmit = () => {
-    const param = formik?.values?.picoType === 'AD_HOC' ? 'contractNo' : undefined
-    const isValid = validateData(param)
+    const param =
+      formik?.values?.picoType === "AD_HOC" ? "contractNo" : undefined;
+    const isValid = validateData(param);
     if (isValid == true) {
       formik.handleSubmit();
       console.log(isValid, "a");
@@ -884,7 +887,12 @@ const PickupOrderCreateForm = ({
                     }}
                     defaultValue={{
                       routineType: selectedPo?.routineType ?? "daily",
-                      routineContent: selectedPo?.routine ?? [],
+                      routineContent:
+                        selectedPo?.routineType === "weekly"
+                          ? selectedPo?.routine ?? []
+                          : selectedPo?.routineType === "specificDate"
+                          ? selectedPo?.specificDates ?? []
+                          : [],
                     }}
                     itemColor={{
                       bgColor: customListTheme?.bgColor,
@@ -1021,11 +1029,11 @@ const PickupOrderCreateForm = ({
                   dataTestId="astd-create-edit-pickup-order-contact-no-input-field-6429"
                 />
                 {errorsField.contactNo.status ? (
-                  <div style={{ marginTop: 8, width: '750px' }}>
+                  <div style={{ marginTop: 8, width: "750px" }}>
                     <ErrorMessage message={errorsField.contactNo.message} />
                   </div>
                 ) : (
-                  ''
+                  ""
                 )}
               </CustomField>
             </Grid>
