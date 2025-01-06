@@ -1160,6 +1160,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                   productTypes={productTypeDataArray}
                   setHasErrors={setHasErrors}
                   validation={validation}
+                  isTriedSubmitted={trySubmited}
                 />
               ))}
             </div>
