@@ -102,6 +102,7 @@ const ItemCategoryRow: React.FC<Props> = ({
   const recycCapacityError = validation.find(
     (v) => v.field === `itemCategory[${index}].recycTypeCapacity`
   );
+  
   const productTypeError = validation.find(
     (v) => v.field === `itemCategory[${index}].productTypeId`
   );
@@ -110,6 +111,9 @@ const ItemCategoryRow: React.FC<Props> = ({
   );
   const productAddonTypeError = validation.find(
     (v) => v.field === `itemCategory[${index}].productAddonTypeId`
+  );
+  const productTypeCapacityError = validation.find(
+    (v) => v.field === `itemCategory[${index}].productTypeCapacity`
   );
 
   const validateDuplicates = () => {
@@ -512,7 +516,7 @@ const ItemCategoryRow: React.FC<Props> = ({
                 }}
                 sx={{
                   border: 
-                  errors.productTypeCapacity && isTriedSubmitted
+                  (errors.productTypeCapacity || productTypeCapacityError) && isTriedSubmitted
                     ? "2px solid red"
                     : "1px solid #ccc",
                 }}
