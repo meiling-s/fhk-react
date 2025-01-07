@@ -1161,6 +1161,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                   setHasErrors={setHasErrors}
                   validation={validation}
                   isTriedSubmitted={trySubmited}
+                  disabled={action === "delete"}
                 />
               ))}
             </div>
