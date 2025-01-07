@@ -357,13 +357,13 @@ const WarehouseDashboard: FunctionComponent = () => {
             if (matchingAddon) {
               switch (i18n.language) {
                 case "enus":
-                  return matchingAddon.productNameEng;
+                  return `${subType.productNameEng} (${matchingAddon.productNameEng})`;
                 case "zhch":
-                  return matchingAddon.productNameSchi;
+                  return `${subType.productNameSchi} (${matchingAddon.productNameSchi})`;
                 case "zhhk":
-                  return matchingAddon.productNameTchi;
+                  return `${subType.productNameTchi} (${matchingAddon.productNameTchi})`;
                 default:
-                  return matchingAddon.productNameTchi;
+                  return `${subType.productNameTchi} (${matchingAddon.productNameTchi})`;
               }
             }
           }
