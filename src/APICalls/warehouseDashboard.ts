@@ -5,7 +5,8 @@ import {
   GET_CHECKIN_WAREHOUSE,
   GET_CHECKOUT_WAREHOUSE,
   GET_CHECK_IN_OUT_WAREHOUSE,
-  GET_RECYC_SUB_TYPE_WEIGHT
+  GET_RECYC_SUB_TYPE_WEIGHT,
+  GET_WEIGHT_BY_SUB_TYPE
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
@@ -54,7 +55,6 @@ export const getWeightbySubtype = async (
 }
 
 export const getCheckInWarehouse = async (warehouseId: number, table: string) => {
-  console.log(table, 'table checkin')
   try {
     const token = returnApiToken()
     const response = await axiosInstance({
@@ -70,7 +70,6 @@ export const getCheckInWarehouse = async (warehouseId: number, table: string) =>
 }
 
 export const getCheckOutWarehouse = async (warehouseId: number, table: string) => {
-  console.log(table, 'table checkout')
   try {
     const token = returnApiToken()
 
@@ -109,6 +108,22 @@ export const getRecycSubTypeWeight = async (warehouseId: number, table: string) 
     const response = await axiosInstance({
         baseURL: window.baseURL.collector,
       ...GET_RECYC_SUB_TYPE_WEIGHT(token.realmApiRoute, table, warehouseId)
+    })
+
+    return response
+  } catch (e) {
+    console.error(`Get capacity warehouse ${warehouseId} checkinout failed:`, e)
+    return null
+  }
+}
+
+export const getWeightBySubType = async (warehouseId: number, table: string) => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+        baseURL: window.baseURL.collector,
+      ...GET_WEIGHT_BY_SUB_TYPE(token.realmApiRoute, table, warehouseId)
     })
 
     return response

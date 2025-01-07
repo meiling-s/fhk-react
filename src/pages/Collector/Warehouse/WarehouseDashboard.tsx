@@ -48,6 +48,7 @@ import {
   getCheckOutWarehouse,
   getCheckInOutWarehouse,
   getRecycSubTypeWeight,
+  getWeightBySubType,
 } from "../../../APICalls/warehouseDashboard";
 import {
   astdSearchWarehouse,
@@ -208,24 +209,15 @@ const WarehouseDashboard: FunctionComponent = () => {
     const token = returnApiToken();
     if (selectedWarehouse) {
       let result;
-      if (realmApi === "account") {
-        result = await getWeightbySubtype(
-          parseInt(selectedWarehouse.id),
-          debouncedSearchValue
-        );
-      } else {
-        result = await getWeightbySubtype(
-          parseInt(selectedWarehouse.id),
-          token.decodeKeycloack
-        );
-      }
+      result = await getWeightBySubType(
+        parseInt(selectedWarehouse.id),
+        token.decodeKeycloack
+      );
       if (result) {
         const data = result.data;
-        //get weigt subtype
-        //set current capacity warehouse
         var currCapacityWarehouse = 0;
         Object.keys(data).forEach((item) => {
-          currCapacityWarehouse += data[item];
+          currCapacityWarehouse += data[item].weight;
         });
         setCurrentCapacity(Math.ceil(currCapacityWarehouse * 1000) / 1000);
         return result.data;
@@ -311,95 +303,110 @@ const WarehouseDashboard: FunctionComponent = () => {
     }
   };
 
-  const mappingRecyName = (recycTypeId: string, recycSubTypeId: string) => {
-    const matchingRecycType = recycType?.find(
-      (recyc) => recycTypeId === recyc.recycTypeId
-    );
+  const mappingName = (typeId: string) => {
+    if (typeId.startsWith("RS") || typeId.startsWith("RSC")) {
+      const isRecycType = typeId.startsWith("RS") && !typeId.startsWith("RSC");
+      const isRecycSubType = typeId.startsWith("RSC");
 
-    if (matchingRecycType) {
-      const matchRecycSubType = matchingRecycType.recycSubType?.find(
-        (subtype) => subtype.recycSubTypeId === recycSubTypeId
-      );
-      var name = "";
-      switch (i18n.language) {
-        case "enus":
-          name = matchingRecycType.recyclableNameEng;
-          break;
-        case "zhch":
-          name = matchingRecycType.recyclableNameSchi;
-          break;
-        case "zhhk":
-          name = matchingRecycType.recyclableNameTchi;
-          break;
-        default:
-          name = matchingRecycType.recyclableNameTchi;
-          break;
+      if (isRecycType) {
+        const matchingRecycType = recycType?.find(
+          (recyc) => recyc.recycTypeId === typeId
+        );
+        if (matchingRecycType) {
+          switch (i18n.language) {
+            case "enus":
+              return matchingRecycType.recyclableNameEng;
+            case "zhch":
+              return matchingRecycType.recyclableNameSchi;
+            case "zhhk":
+              return matchingRecycType.recyclableNameTchi;
+            default:
+              return matchingRecycType.recyclableNameTchi;
+          }
+        }
+      } else if (isRecycSubType) {
+        for (const recyc of recycType || []) {
+          const matchingRecycSubType = recyc.recycSubType?.find(
+            (subType) => subType.recycSubTypeId === typeId
+          );
+          if (matchingRecycSubType) {
+            switch (i18n.language) {
+              case "enus":
+                return matchingRecycSubType.recyclableNameEng;
+              case "zhch":
+                return matchingRecycSubType.recyclableNameSchi;
+              case "zhhk":
+                return matchingRecycSubType.recyclableNameTchi;
+              default:
+                return matchingRecycSubType.recyclableNameTchi;
+            }
+          }
+        }
       }
-      var subName = "";
-      switch (i18n.language) {
-        case "enus":
-          subName = matchRecycSubType?.recyclableNameEng ?? "";
-          break;
-        case "zhch":
-          subName = matchRecycSubType?.recyclableNameSchi ?? "";
-          break;
-        case "zhhk":
-          subName = matchRecycSubType?.recyclableNameTchi ?? "";
-          break;
-        default:
-          subName = matchRecycSubType?.recyclableNameTchi ?? ""; //default fallback language is zhhk
-          break;
+    } else if (
+      typeId.startsWith("APD") ||
+      typeId.startsWith("SPD") ||
+      typeId.startsWith("PD")
+    ) {
+      if (typeId.startsWith("APD")) {
+        for (const product of productType || []) {
+          for (const subType of product.productSubType || []) {
+            const matchingAddon = subType.productAddonType?.find(
+              (addon) => addon.productAddonTypeId === typeId
+            );
+            if (matchingAddon) {
+              switch (i18n.language) {
+                case "enus":
+                  return matchingAddon.productNameEng;
+                case "zhch":
+                  return matchingAddon.productNameSchi;
+                case "zhhk":
+                  return matchingAddon.productNameTchi;
+                default:
+                  return matchingAddon.productNameTchi;
+              }
+            }
+          }
+        }
+      } else if (typeId.startsWith("SPD")) {
+        // Handle ProductSubType
+        for (const product of productType || []) {
+          const matchingSubType = product.productSubType?.find(
+            (subType) => subType.productSubTypeId === typeId
+          );
+          if (matchingSubType) {
+            switch (i18n.language) {
+              case "enus":
+                return matchingSubType.productNameEng;
+              case "zhch":
+                return matchingSubType.productNameSchi;
+              case "zhhk":
+                return matchingSubType.productNameTchi;
+              default:
+                return matchingSubType.productNameTchi;
+            }
+          }
+        }
+      } else if (typeId.startsWith("PD")) {
+        const matchingProductType = productType?.find(
+          (product) => product.productTypeId === typeId
+        );
+        if (matchingProductType) {
+          switch (i18n.language) {
+            case "enus":
+              return matchingProductType.productNameEng;
+            case "zhch":
+              return matchingProductType.productNameSchi;
+            case "zhhk":
+              return matchingProductType.productNameTchi;
+            default:
+              return matchingProductType.productNameTchi;
+          }
+        }
       }
-
-      return { name, subName };
     }
-  };
 
-  const mappingProductName = (
-    productTypeId: string,
-    productSubTypeId: string
-  ) => {
-    const matchingProductType = productType?.find(
-      (prod) => productTypeId === prod.productTypeId
-    );
-
-    if (matchingProductType) {
-      const matchProductSubType = matchingProductType.productSubType?.find(
-        (subtype) => subtype.productSubTypeId === productSubTypeId
-      );
-      var name = "";
-      switch (i18n.language) {
-        case "enus":
-          name = matchingProductType.productNameEng;
-          break;
-        case "zhch":
-          name = matchingProductType.productNameSchi;
-          break;
-        case "zhhk":
-          name = matchingProductType.productNameTchi;
-          break;
-        default:
-          name = matchingProductType.productNameTchi;
-          break;
-      }
-      var subName = "";
-      switch (i18n.language) {
-        case "enus":
-          subName = matchProductSubType?.productNameEng ?? "";
-          break;
-        case "zhch":
-          subName = matchProductSubType?.productNameSchi ?? "";
-          break;
-        case "zhhk":
-          subName = matchProductSubType?.productNameTchi ?? "";
-          break;
-        default:
-          subName = matchProductSubType?.productNameTchi ?? "";
-          break;
-      }
-
-      return { name, subName };
-    }
+    return "Unknown";
   };
 
   const initWarehouseSubType = async () => {
@@ -407,90 +414,38 @@ const WarehouseDashboard: FunctionComponent = () => {
     if (selectedWarehouse) {
       if (realmApi === "account") {
         const weightSubtype = await initGetRecycSubTypeWeight();
-        const result = await astdSearchWarehouse(0, 1000, debouncedSearchValue);
-        if (result) {
-          const data = result.data.content;
-          if (data.length > 0) {
-            const filteredWarehouse = data.filter(
-              (value: { warehouseId: string }) =>
-                value.warehouseId === selectedWarehouse.id
-            )[0];
-            if (filteredWarehouse) {
-              const chosenWarehouseRecyc = filteredWarehouse.warehouseRecyc;
-              console.log(chosenWarehouseRecyc, "chosenWarehouseRecyc");
-              let subtypeWarehouse: warehouseSubtype[] = [];
 
-              chosenWarehouseRecyc.forEach((item: any) => {
-                const recyItem = mappingRecyName(
-                  item.recycTypeId,
-                  item.recycSubTypeId
-                );
-                const recycSubTypeId = item.recycSubTypeId;
-                let subTypeWeight = weightSubtype[recycSubTypeId]
-                  ? weightSubtype[recycSubTypeId]
-                  : 0;
+        if (weightSubtype.length > 0) {
+          let subtypeWarehouse: warehouseSubtype[] = [];
 
-                subtypeWarehouse.push({
-                  subTypeId: item.recycSubTypeId,
-                  subtypeName: recyItem ? recyItem.subName : "-",
-                  weight: subTypeWeight,
-                  capacity: item.recycSubTypeCapacity,
-                });
-              });
+          weightSubtype.forEach((item: any) => {
+            const recyItem = mappingName(item.typeId);
 
-              setWarehouseSubtype(subtypeWarehouse);
-            }
-          }
+            subtypeWarehouse.push({
+              subTypeId: item.typeId,
+              subtypeName: recyItem ? recyItem : "-",
+              weight: item.weight,
+              capacity: item.capacity,
+            });
+          });
+          setWarehouseSubtype(subtypeWarehouse);
         }
       } else {
         const weightSubtype = await getWeightSubtypeWarehouse();
-        console.log(weightSubtype, "weightSubType");
-        const result = await getWarehouseById(parseInt(selectedWarehouse.id));
-        console.log("weightSubtype", weightSubtype);
 
-        if (result) {
-          const data = result.data;
-          console.log(data, "dataaa");
+        if (weightSubtype.length > 0) {
           let subtypeWarehouse: warehouseSubtype[] = [];
-          let subtypeProduct: warehouseSubtype[] = [];
 
-          // var subTypeWeight = 0;
-          data?.warehouseRecyc.forEach((item: any) => {
-            const recyItem = mappingRecyName(
-              item.recycTypeId,
-              item.recycSubTypeId
-            );
-            const recycSubTypeId = item.recycSubTypeId;
-            let subTypeWeight = weightSubtype[recycSubTypeId]
-              ? weightSubtype[recycSubTypeId]
-              : 0;
+          weightSubtype.forEach((item: any) => {
+            const recyItem = mappingName(item.typeId);
 
             subtypeWarehouse.push({
-              subTypeId: item.recycSubTypeId,
-              subtypeName: recyItem ? recyItem.subName : "-",
-              weight: subTypeWeight,
-              capacity: item.recycSubTypeCapacity,
+              subTypeId: item.typeId,
+              subtypeName: recyItem ? recyItem : "-",
+              weight: item.weight,
+              capacity: item.capacity,
             });
           });
-
-          data?.warehouseProduct.forEach((item: any) => {
-            const prodItem = mappingProductName(
-              item.productTypeId,
-              item.productSubTypeId
-            );
-            const prodSubTypeId = item.productSubTypeId;
-            let subTypeWeight = weightSubtype[prodSubTypeId]
-              ? weightSubtype[prodSubTypeId]
-              : 0;
-
-            subtypeWarehouse.push({
-              subTypeId: item.productSubTypeId,
-              subtypeName: prodItem ? prodItem.subName : "-",
-              weight: subTypeWeight,
-              capacity: item.productSubTypeCapacity,
-            });
-          });
-
           setWarehouseSubtype(subtypeWarehouse);
         }
       }
@@ -527,7 +482,6 @@ const WarehouseDashboard: FunctionComponent = () => {
               const logistic = companies.find(
                 (company) => company.id == item.logisticId
               );
-              console.log("logisticId", logistic);
               if (logistic) {
                 if (i18n.language === Languages.ENUS)
                   item.logisticName = logistic.nameEng;
@@ -542,7 +496,6 @@ const WarehouseDashboard: FunctionComponent = () => {
               const receiverName = companies.find(
                 (company) => company.id == item.receiverId
               );
-              console.log("receiverName", receiverName);
               if (receiverName) {
                 if (i18n.language === Languages.ENUS)
                   item.receiverName = receiverName.nameEng;
@@ -558,7 +511,6 @@ const WarehouseDashboard: FunctionComponent = () => {
                 (company) => company.id == item.senderId
               );
 
-              console.log("senderName", senderName);
               if (senderName) {
                 if (i18n.language === Languages.ENUS)
                   item.senderName = senderName.nameEng;
@@ -610,7 +562,7 @@ const WarehouseDashboard: FunctionComponent = () => {
         const data = result.data;
         var currCapacityWarehouse = 0;
         Object.keys(data).forEach((item) => {
-          currCapacityWarehouse += data[item];
+          currCapacityWarehouse += data[item].weight;
         });
         setCurrentCapacity(currCapacityWarehouse);
         return result.data;
@@ -732,7 +684,6 @@ const WarehouseDashboard: FunctionComponent = () => {
   const handleSearchByTenantId = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    console.log("event.target.value", event.target.value);
     if (event.target.value === "") {
       resetData();
     }
