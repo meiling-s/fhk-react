@@ -326,7 +326,6 @@ const Inventory: FunctionComponent = () => {
       const result = await getAllPackagingUnit(0, 1000);
       const data = result?.data;
       if (data) {
-        console.log(data, "data");
         const filteredData = data.content.filter(
           (value: { status: string }) => value.status === "ACTIVE"
         );
