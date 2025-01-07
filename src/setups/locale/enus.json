@@ -867,6 +867,7 @@
     "pleaseEnterNumber": "Please enter number",
     "pleaseEnterName": "Please enter name",
     "pleaseEnterEmailAddress": "Please enter email address",
+    "phone_number": "Phone Number",
     "active": "Active",
     "inactive": "Inactive",
     "suspend": "Suspended",
