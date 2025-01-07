@@ -165,6 +165,7 @@ export default function ProductListMultiSelect({
 
   const toProduct = () => {
     var productS: productsVal[] = []
+
     productType.map((prod) => {
       const prodType = options.find((p) => p.productTypeId === prod)
 
@@ -188,9 +189,11 @@ export default function ProductListMultiSelect({
 
             if (subTypeData) {
               // Retrieve associated addons
-              const addonIdList = returnAddonList(subTypeId).map((it) => it.id)
+              const addonIdList = subTypeData.productAddonType?.map(
+                (item) => item.productAddonTypeId
+              )
               const filteredAddons = productAddon.filter((addonId) =>
-                addonIdList.includes(addonId)
+                addonIdList?.includes(addonId)
               )
 
               const addonItems: productAddonVal[] = filteredAddons.map(
@@ -320,11 +323,16 @@ export default function ProductListMultiSelect({
       return prod.productType.id == prodId
     })
     if (re) {
-      re.productSubType.map((sub) => {
-        sub.productAddon.map((addOn) => {
-          addonTypesId.push(addOn.productAddon.id)
-        })
-      })
+      console.log('re', re)
+
+      const subItem = re.productSubType.find(
+        (sub) => sub.productSubType.id === subProdId
+      )
+      if (subItem) {
+        subItem.productAddon.map((add_on) =>
+          addonTypesId.push(add_on.productAddon.id)
+        )
+      }
     }
     return addonTypesId
   }
@@ -354,8 +362,10 @@ export default function ProductListMultiSelect({
     var withSubItem: string[] = []
     productType.map((prod) => {
       const subId = returnSubTypesId(prod)
+      console.log('subId', subId)
       subId.map((sub) => {
         const addonIds = returnAddonTypesId(prod, sub)
+        console.log('addonIds', sub, '=>>', addonIds)
         if (addonIds.length === 0) {
           if (productSubType.includes(sub)) {
             withSubItem.push(prod)
