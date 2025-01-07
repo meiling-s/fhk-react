@@ -548,11 +548,15 @@ const ItemCategoryRow: React.FC<Props> = ({
 
       {/* Action Buttons */}
       <Grid item xs={2}>
-        <IconButton onClick={handleAddRow} color="success">
+        <IconButton onClick={handleAddRow} color="success" disabled={disabled}>
           <AddCircleOutline />
         </IconButton>
         {itemCategories.length > 1 && (
-          <IconButton onClick={handleRemoveRow} color="error">
+          <IconButton
+            onClick={handleRemoveRow}
+            color="error"
+            disabled={disabled}
+          >
             <RemoveCircleOutline />
           </IconButton>
         )}
