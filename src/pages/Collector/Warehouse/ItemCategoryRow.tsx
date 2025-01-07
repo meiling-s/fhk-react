@@ -69,6 +69,7 @@ interface Props {
   productTypes: Products[];
   setHasErrors: (hasErrors: boolean) => void;
   validation: { field: string; error: string }[];
+  isTriedSubmitted: boolean;
 }
 
 const ItemCategoryRow: React.FC<Props> = ({
@@ -80,6 +81,7 @@ const ItemCategoryRow: React.FC<Props> = ({
   productTypes,
   setHasErrors,
   validation,
+  isTriedSubmitted,
 }) => {
   const { t, i18n } = useTranslation();
   const [errors, setErrors] = useState<{
@@ -88,6 +90,7 @@ const ItemCategoryRow: React.FC<Props> = ({
     recycTypeCapacity?: boolean;
     productTypeCapacity?: boolean;
   }>({});
+  console.log('validation', validation);
 
   const recycTypeError = validation.find(
     (v) => v.field === `itemCategory[${index}].recycTypeId`
@@ -95,6 +98,11 @@ const ItemCategoryRow: React.FC<Props> = ({
   const recycSubTypeError = validation.find(
     (v) => v.field === `itemCategory[${index}].recycSubTypeId`
   );
+
+  const recycCapacityError = validation.find(
+    (v) => v.field === `itemCategory[${index}].recycTypeCapacity`
+  );
+  
   const productTypeError = validation.find(
     (v) => v.field === `itemCategory[${index}].productTypeId`
   );
@@ -103,6 +111,9 @@ const ItemCategoryRow: React.FC<Props> = ({
   );
   const productAddonTypeError = validation.find(
     (v) => v.field === `itemCategory[${index}].productAddonTypeId`
+  );
+  const productTypeCapacityError = validation.find(
+    (v) => v.field === `itemCategory[${index}].productTypeCapacity`
   );
 
   const validateDuplicates = () => {
@@ -290,7 +301,10 @@ const ItemCategoryRow: React.FC<Props> = ({
                   handleFieldChange("recycTypeId", e.target.value)
                 }
                 sx={{
-                  border: recycTypeError ? "2px solid red" : "1px solid #ccc",
+                  border: 
+                    recycTypeError && isTriedSubmitted 
+                      ? "2px solid red" 
+                      : "1px solid #ccc",
                   borderRadius: "4px",
                 }}
               >
@@ -311,9 +325,10 @@ const ItemCategoryRow: React.FC<Props> = ({
                   handleFieldChange("recycSubTypeId", e.target.value)
                 }
                 sx={{
-                  border: recycSubTypeError
-                    ? "2px solid red"
-                    : "1px solid #ccc",
+                  border: 
+                    recycSubTypeError && isTriedSubmitted
+                      ? "2px solid red"
+                      : "1px solid #ccc",
                   borderRadius: "4px",
                 }}
               >
@@ -363,9 +378,10 @@ const ItemCategoryRow: React.FC<Props> = ({
                   ),
                 }}
                 sx={{
-                  border: errors.recycTypeCapacity
-                    ? "2px solid red"
-                    : "1px solid #ccc",
+                  border: 
+                    (errors.recycTypeCapacity || recycCapacityError) && isTriedSubmitted
+                      ? "2px solid red"
+                      : "1px solid #ccc",
                 }}
                 onBlur={() => {
                   if (!item.recycTypeCapacity) {
@@ -389,7 +405,7 @@ const ItemCategoryRow: React.FC<Props> = ({
                 value={item.productTypeId || ""}
                 onChange={handleProductTypeChange}
                 sx={{
-                  border: productTypeError ? "2px solid red" : "1px solid #ccc",
+                  border: productTypeError && isTriedSubmitted ? "2px solid red" : "1px solid #ccc",
                   borderRadius: "4px",
                 }}
               >
@@ -408,7 +424,8 @@ const ItemCategoryRow: React.FC<Props> = ({
                 value={item.productSubTypeId || ""}
                 onChange={handleProductSubTypeChange}
                 sx={{
-                  border: productSubTypeError
+                  border: 
+                  productSubTypeError && isTriedSubmitted
                     ? "2px solid red"
                     : "1px solid #ccc",
                   borderRadius: "4px",
@@ -439,7 +456,8 @@ const ItemCategoryRow: React.FC<Props> = ({
                 disabled={!item.productSubTypeId}
                 error={!!errors.productAddonTypeId}
                 sx={{
-                  border: productAddonTypeError
+                  border: 
+                  productAddonTypeError && isTriedSubmitted
                     ? "2px solid red"
                     : "1px solid #ccc",
                   borderRadius: "4px",
@@ -497,7 +515,8 @@ const ItemCategoryRow: React.FC<Props> = ({
                   }
                 }}
                 sx={{
-                  border: errors.productTypeCapacity
+                  border: 
+                  (errors.productTypeCapacity || productTypeCapacityError) && isTriedSubmitted
                     ? "2px solid red"
                     : "1px solid #ccc",
                 }}
