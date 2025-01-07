@@ -118,6 +118,7 @@ export default function ProductListMultiSelect({
 
   useEffect(() => {
     if (defaultProduct) {
+      console.log('defaultProduct', defaultProduct)
       const types = product_getProducts(defaultProduct)
       const subTypes = product_getSubtype(defaultProduct)
       const addons = product_getAddon(defaultProduct)
@@ -211,7 +212,7 @@ export default function ProductListMultiSelect({
                       productAddonTypeRemark?.find(
                         (addon) => addon.id === addonId
                       )?.value ||
-                      ''
+                      '-'
                   }
                 }
               )
@@ -221,7 +222,7 @@ export default function ProductListMultiSelect({
                 productSubTypeRemark:
                   subTypeData.remark ||
                   productSubTypeRemark?.find(
-                    (sub) => sub.id === subTypeId || ''
+                    (sub) => sub.id === subTypeId || '-'
                   )?.value,
                 isProductSubTypeOthers: subTypeData.productNameEng === 'Others',
                 productAddon: addonItems
@@ -323,8 +324,6 @@ export default function ProductListMultiSelect({
       return prod.productType.id == prodId
     })
     if (re) {
-      console.log('re', re)
-
       const subItem = re.productSubType.find(
         (sub) => sub.productSubType.id === subProdId
       )
@@ -362,10 +361,8 @@ export default function ProductListMultiSelect({
     var withSubItem: string[] = []
     productType.map((prod) => {
       const subId = returnSubTypesId(prod)
-      console.log('subId', subId)
       subId.map((sub) => {
         const addonIds = returnAddonTypesId(prod, sub)
-        console.log('addonIds', sub, '=>>', addonIds)
         if (addonIds.length === 0) {
           if (productSubType.includes(sub)) {
             withSubItem.push(prod)
@@ -650,7 +647,7 @@ export default function ProductListMultiSelect({
             {choosenProductSubType?.productNameEng === 'Others' && (
               <CustomField
                 label={
-                  getNameFromSubId(currSubProductType) +
+                  getNameFromProductId(currProductType) +
                   ' ' +
                   t('pick_up_order.product_type.subtype') +
                   ' ' +

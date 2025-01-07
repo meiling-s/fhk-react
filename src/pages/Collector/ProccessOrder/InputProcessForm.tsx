@@ -778,7 +778,7 @@ const InputProcessForm = ({
           (item.isProductSubTypeOthers && !item.productSubTypeRemark) ||
           (item.isProductAddonTypeOthers &&
             !item.productAddonTypeRemark &&
-            !trySubmited)
+            trySubmited)
         ) {
           setModalRemarks(true)
           return true
@@ -793,7 +793,7 @@ const InputProcessForm = ({
           (item.isProductSubTypeOthers && !item.productSubTypeRemark) ||
           (item.isProductAddonTypeOthers &&
             !item.productAddonTypeRemark &&
-            !trySubmited)
+            trySubmited)
         ) {
           setModalRemarks(true)
           return true
