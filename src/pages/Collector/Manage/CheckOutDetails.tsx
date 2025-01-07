@@ -1,174 +1,270 @@
-import { FunctionComponent, useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import CheckIcon from '@mui/icons-material/Check'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import ImageIcon from '@mui/icons-material/Image'
-import AspectRatio from '@mui/joy/AspectRatio'
+import { FunctionComponent, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import CheckIcon from "@mui/icons-material/Check";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ImageIcon from "@mui/icons-material/Image";
+import AspectRatio from "@mui/joy/AspectRatio";
 import {
   CheckOut,
   CheckoutDetail,
-  CheckoutDetailPhoto
-} from '../../../interfaces/checkout'
+  CheckoutDetailPhoto,
+} from "../../../interfaces/checkout";
 
-import RightOverlayForm from '../../../components/RightOverlayForm'
-import { Box, Stack } from '@mui/material'
-import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { il_item } from '../../../components/FormComponents/CustomItemList'
-import { useContainer } from 'unstated-next'
+import RightOverlayForm from "../../../components/RightOverlayForm";
+import { Box, Stack } from "@mui/material";
+import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
+import { il_item } from "../../../components/FormComponents/CustomItemList";
+import { useContainer } from "unstated-next";
 
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
-import { format } from '../../../constants/constant'
-import i18n from '../../../setups/i18n'
-import { localStorgeKeyName } from '../../../constants/constant'
-import { formatWeight } from '../../../utils/utils'
-import { getDetailCheckoutRequests } from '../../../APICalls/Collector/checkout'
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import { format } from "../../../constants/constant";
+import i18n from "../../../setups/i18n";
+import { localStorgeKeyName } from "../../../constants/constant";
+import { formatWeight } from "../../../utils/utils";
+import { getDetailCheckoutRequests } from "../../../APICalls/Collector/checkout";
+import ProductCard from "src/components/ProductCard";
+import RecycleCard from "src/components/RecycleCard";
 
-dayjs.extend(utc)
-dayjs.extend(timezone)
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
-type RecycItem = {
-  recycType: il_item
-  recycSubtype: il_item
-  weight: number
-  images: CheckoutDetailPhoto[]
-  packageTypeId: string
-}
+type recycItem = {
+  recycType: il_item;
+  recycSubType: il_item;
+  weight: number;
+  packageTypeId: string;
+  checkoutDetailPhoto: CheckoutDetailPhoto[];
+};
+
+type productItem = {
+  productType: il_item;
+  productSubType: il_item;
+  productAddonType: il_item;
+  weight: number;
+  packageTypeId: string;
+  checkoutDetailPhoto: CheckoutDetailPhoto[];
+};
 
 interface CheckOutDetailsProps {
-  selectedCheckOut?: CheckOut
-  drawerOpen: boolean
-  handleDrawerClose: () => void
+  selectedCheckOut?: CheckOut;
+  drawerOpen: boolean;
+  handleDrawerClose: () => void;
 }
 
 const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
   selectedCheckOut,
   drawerOpen = false,
-  handleDrawerClose
+  handleDrawerClose,
 }) => {
-  const { t } = useTranslation()
-  const { recycType, decimalVal, dateFormat, packagingList } = useContainer(CommonTypeContainer)
+  const { t } = useTranslation();
+  const { recycType, decimalVal, dateFormat, packagingList, productType } =
+    useContainer(CommonTypeContainer);
   const [selectedDetail, setSelectedDetail] = useState<
     CheckoutDetail[] | undefined
-  >([])
-  const [recycItem, setRecycItem] = useState<RecycItem[]>([])
+  >([]);
+  const [recycItem, setRecycItem] = useState<recycItem[]>([]);
+  const [productItem, setProductItem] = useState<productItem[]>([]);
 
   const poNumber =
-    selectedCheckOut?.picoId != null ? `${selectedCheckOut.picoId}` : ''
+    selectedCheckOut?.picoId != null ? `${selectedCheckOut.picoId}` : "";
   const shippingInfo = [
     {
-      label: t('check_out.logistic_company'),
-      value: selectedCheckOut?.logisticName
+      label: t("check_out.logistic_company"),
+      value: selectedCheckOut?.logisticName,
     },
     {
-      label: t('check_out.shipping_company'),
-      value: selectedCheckOut?.senderCompany
+      label: t("check_out.shipping_company"),
+      value: selectedCheckOut?.senderCompany,
     },
     {
-      label: t('check_out.receiver_company'),
-      value: selectedCheckOut?.receiverName
-    }
-  ]
+      label: t("check_out.receiver_company"),
+      value: selectedCheckOut?.receiverName,
+    },
+  ];
 
-  const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || "";
 
   const updatedDate = selectedCheckOut?.updatedAt
     ? dayjs
         .utc(new Date(selectedCheckOut?.updatedAt))
-        .tz('Asia/Hong_Kong')
+        .tz("Asia/Hong_Kong")
         .format(`${dateFormat} HH:mm`)
-    : '-'
+    : "-";
   const messageCheckout = `[${loginId}] ${t(
-    'check_out.approved_on'
-  )} ${updatedDate} ${t('check_out.reason_is')} ${selectedCheckOut?.reason}`
+    "check_out.approved_on"
+  )} ${updatedDate} ${t("check_out.reason_is")} ${selectedCheckOut?.reason}`;
 
   useEffect(() => {
-    setSelectedDetail(selectedCheckOut?.checkoutDetail)
-    initCheckoutDetail(selectedCheckOut?.chkOutId)
-  }, [selectedCheckOut])
+    setSelectedDetail(selectedCheckOut?.checkoutDetail);
+    initCheckoutDetail(selectedCheckOut?.chkOutId);
+  }, [selectedCheckOut]);
 
   const initCheckoutDetail = async (chkOutId: number | undefined) => {
     if (chkOutId !== undefined) {
-      const result = await getDetailCheckoutRequests(chkOutId)
+      const result = await getDetailCheckoutRequests(chkOutId);
       if (result) {
-        const recycItems: RecycItem[] = []
-        const data = result.data
+        const recycItems: recycItem[] = [];
+        const productItems: productItem[] = [];
+        const data = result.data;
 
         data.forEach((detail: CheckoutDetail) => {
           const matchingRecycType = recycType?.find(
             (recyc) => detail.recycTypeId === recyc.recycTypeId
-          )
+          );
+          const matchingProductType = productType?.find(
+            (product) => detail.productTypeId === product.productTypeId
+          );
           if (matchingRecycType) {
             const matchrecycSubType = matchingRecycType.recycSubType?.find(
               (subtype) => subtype.recycSubTypeId === detail.recycSubTypeId
-            )
-            var name = ''
+            );
+            var name = "";
             switch (i18n.language) {
-              case 'enus':
-                name = matchingRecycType.recyclableNameEng
-                break
-              case 'zhch':
-                name = matchingRecycType.recyclableNameSchi
-                break
-              case 'zhhk':
-                name = matchingRecycType.recyclableNameTchi
-                break
+              case "enus":
+                name = matchingRecycType.recyclableNameEng;
+                break;
+              case "zhch":
+                name = matchingRecycType.recyclableNameSchi;
+                break;
+              case "zhhk":
+                name = matchingRecycType.recyclableNameTchi;
+                break;
               default:
-                name = matchingRecycType.recyclableNameTchi
-                break
+                name = matchingRecycType.recyclableNameTchi; //default fallback language is zhhk
+                break;
             }
-            var subName = ''
+            var subName = "";
             switch (i18n.language) {
-              case 'enus':
-                subName = matchrecycSubType?.recyclableNameEng ?? ''
-                break
-              case 'zhch':
-                subName = matchrecycSubType?.recyclableNameSchi ?? ''
-                break
-              case 'zhhk':
-                subName = matchrecycSubType?.recyclableNameTchi ?? ''
-                break
+              case "enus":
+                subName = matchrecycSubType?.recyclableNameEng ?? "";
+                break;
+              case "zhch":
+                subName = matchrecycSubType?.recyclableNameSchi ?? "";
+                break;
+              case "zhhk":
+                subName = matchrecycSubType?.recyclableNameTchi ?? "";
+                break;
               default:
-                subName = matchrecycSubType?.recyclableNameTchi ?? '' //default fallback language is zhhk
-                break
+                subName = matchrecycSubType?.recyclableNameTchi ?? ""; //default fallback language is zhhk
+                break;
             }
             recycItems.push({
               recycType: {
                 name: name,
-                id: detail.chkOutDtlId.toString()
+                id: detail.chkOutDtlId.toString(),
               },
-              recycSubtype: {
+              recycSubType: {
                 name: subName,
-                id: detail.chkOutDtlId.toString()
+                id: detail.chkOutDtlId.toString(),
               },
               weight: detail.weight,
-              images: detail.checkoutDetailPhoto,
-              packageTypeId: detail.packageTypeId
-            })
+              packageTypeId: detail.packageTypeId,
+              checkoutDetailPhoto: detail.checkoutDetailPhoto,
+            });
           }
-        })
-        setRecycItem(recycItems)
+          if (matchingProductType) {
+            const matchingProductSubType =
+              matchingProductType.productSubType?.find(
+                (subtype) =>
+                  subtype.productSubTypeId === detail.productSubTypeId
+              );
+            const matchingProductAddonType =
+              matchingProductSubType?.productAddonType?.find(
+                (addon) =>
+                  addon.productAddonTypeId === detail.productAddonTypeId
+              );
+            var productName = "";
+            var subProductName = "";
+            var addonName = "";
+            switch (i18n.language) {
+              case "enus":
+                productName = matchingProductType.productNameEng;
+                break;
+              case "zhch":
+                productName = matchingProductType.productNameSchi;
+                break;
+              case "zhhk":
+                productName = matchingProductType.productNameTchi;
+                break;
+              default:
+                productName = matchingProductType.productNameTchi; //default fallback language is zhhk
+                break;
+            }
+            if (matchingProductSubType) {
+              switch (i18n.language) {
+                case "enus":
+                  subProductName = matchingProductSubType?.productNameEng;
+                  break;
+                case "zhch":
+                  subProductName = matchingProductSubType?.productNameSchi;
+                  break;
+                case "zhhk":
+                  subProductName = matchingProductSubType?.productNameTchi;
+                  break;
+                default:
+                  subProductName = matchingProductSubType?.productNameTchi; //default fallback language is zhhk
+                  break;
+              }
+              if (matchingProductAddonType) {
+                switch (i18n.language) {
+                  case "enus":
+                    addonName = matchingProductAddonType?.productNameEng;
+                    break;
+                  case "zhch":
+                    addonName = matchingProductAddonType?.productNameSchi;
+                    break;
+                  case "zhhk":
+                    addonName = matchingProductAddonType?.productNameTchi;
+                    break;
+                  default:
+                    addonName = matchingProductAddonType?.productNameTchi; //default fallback language is zhhk
+                    break;
+                }
+              }
+            }
+            productItems.push({
+              productType: {
+                name: productName,
+                id: detail.chkOutDtlId.toString(),
+              },
+              productSubType: {
+                name: subProductName,
+                id: detail.chkOutDtlId.toString(),
+              },
+              productAddonType: {
+                name: addonName,
+                id: detail.chkOutDtlId.toString(),
+              },
+              weight: detail.weight,
+              packageTypeId: detail.packageTypeId,
+              checkoutDetailPhoto: detail.checkoutDetailPhoto,
+            });
+          }
+        });
+        setProductItem(productItems);
+        setRecycItem(recycItems);
       }
     }
-  }
+  };
 
   return (
     <div className="checkin-request-detail">
       <RightOverlayForm
         open={drawerOpen}
         onClose={handleDrawerClose}
-        anchor={'right'}
-        action={'none'}
+        anchor={"right"}
+        action={"none"}
         headerProps={{
-          title: t('check_out.request_check_out'),
+          title: t("check_out.request_check_out"),
           subTitle: poNumber,
-          onCloseHeader: handleDrawerClose
+          onCloseHeader: handleDrawerClose,
         }}
         useConfirmModal={false}
       >
         <div
-          style={{ borderTop: '1px solid lightgrey' }}
+          style={{ borderTop: "1px solid lightgrey" }}
           className="content p-6"
         >
           <Stack spacing={4}>
@@ -176,13 +272,13 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
               <Box>
                 <div className="bg-[#FBFBFB] rounded-sm flex items-center gap-2 p-2 adjustmen-inventory">
                   <CheckIcon className="text-[#79CA25]" />
-                  {t('check_out.stock_adjustment')}
+                  {t("check_out.stock_adjustment")}
                 </div>
               </Box>
             )}
             <Box>
               <div className="shiping-information text-base text-[#717171] font-bold">
-                {t('check_out.shipping_info')}
+                {t("check_out.shipping_info")}
               </div>
             </Box>
             <Box>
@@ -190,7 +286,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                 <div
                   key={index}
                   className={`wrapper ${
-                    index === shippingInfo.length - 1 ? '' : 'mb-6'
+                    index === shippingInfo.length - 1 ? "" : "mb-6"
                   }`}
                 >
                   <div className="shiping-information text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
@@ -204,20 +300,20 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
             </Box>
             <Box>
               <div className="recyle-loc-info shiping-information text-base text-[#717171] tracking-widest font-bold">
-                {t('check_out.recyc_loc_info')}
+                {t("check_out.recyc_loc_info")}
               </div>
             </Box>
             <Box
               sx={{
-                display: 'grid',
-                gridTemplateColumns: '1fr auto 1fr',
-                alignItems: 'center',
-                gap: '10px'
+                display: "grid",
+                gridTemplateColumns: "1fr auto 1fr",
+                alignItems: "center",
+                gap: "10px",
               }}
             >
               <div className="delivery-loc">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {t('check_out.sender_addr')}
+                  {t("check_out.sender_addr")}
                 </div>
                 <div className="text-mini text-black font-bold tracking-widest">
                   {selectedCheckOut?.senderAddr}
@@ -226,7 +322,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
               <ArrowForwardIcon className="text-gray" />
               <div className="arrived">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {t('check_out.arrival_location')}
+                  {t("check_out.arrival_location")}
                 </div>
                 <div className="text-mini text-black font-bold tracking-widest">
                   {selectedCheckOut?.receiverAddr}
@@ -235,53 +331,48 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
             </Box>
             <Box>
               <div className="recyle-type-weight text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                {t('check_out.recyclable_type_weight')}
+                {t("check_out.recyclable_type_weight")}
               </div>
-              {recycItem.map((item, index) => {
-                const packagingName = packagingList.find(value => value.packagingTypeId === item.packageTypeId)
-                const selectedPackaging = i18n.language === 'enus' ? packagingName?.packagingNameEng : i18n.language === 'zhch' ? packagingName?.packagingNameSchi : packagingName?.packagingNameTchi
-         
-                return (
-                <div
-                  key={index}
-                  className="recyle-item px-4 py-3 rounded-xl border border-solid border-[#E2E2E2] mt-2"
-                >
-                  <div className="detail flex justify-between items-center">
-                    <div className="recyle-type flex items-center gap-2">
-                      <div className="category" style={categoryRecyle}>
-                        {selectedPackaging ?? item.packageTypeId}
-                      </div>
-                      <div className="type-item">
-                        <div className="sub-type text-xs text-black font-bold tracking-widest">
-                          {item.recycType.name}
-                        </div>
-                        <div className="type text-mini text-[#ACACAC] font-normal tracking-widest mb-2">
-                          {item.recycSubtype.name}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="weight font-bold font-base">
-                      {formatWeight(item.weight, decimalVal)} kg
-                    </div>
-                  </div>
-                  <div className="images mt-3 grid lg:grid-cols-4 sm:rid grid-cols-2 gap-4">
-                    {item.images.map((img, index) => (
-                      <img
-                        src={img.photo}
-                        alt=""
-                        key={index}
-                        className="w-[115px] rounded-xl"
-                      />
-                    ))}
-                  </div>
-                </div>
-              )})}
+              <Stack spacing={2}>
+                {recycItem.map((item, index) => {
+                  return (
+                    <RecycleCard
+                      key={item.recycType.id}
+                      name={item.recycType.name}
+                      bgcolor="#e1f4ff"
+                      fontcolor="#66bff6"
+                      weight={formatWeight(item.weight, decimalVal)}
+                      showImage={true}
+                      packageTypeId={item.packageTypeId}
+                      recycleName={item.recycSubType.name}
+                      recycleType={item.recycType.name}
+                      images={item.checkoutDetailPhoto}
+                    />
+                  );
+                })}
+                {productItem.map((item, index) => {
+                  return (
+                    <ProductCard
+                      key={item.productType.id}
+                      name={item.productType.name}
+                      bgcolor="#e1f4ff"
+                      fontcolor="#66bff6"
+                      weight={formatWeight(item.weight, decimalVal)}
+                      showImage={true}
+                      packageTypeId={item.packageTypeId}
+                      productName={item.productType.name}
+                      productType={item.productType.name}
+                      images={item.checkoutDetailPhoto}
+                    />
+                  );
+                })}
+              </Stack>
             </Box>
             <Box>
-              {selectedCheckOut?.status !== 'CREATED' && (
+              {selectedCheckOut?.status !== "CREATED" && (
                 <div className="message">
                   <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                    {t('check_out.message')}
+                    {t("check_out.message")}
                   </div>
                   <div className=" text-sm text-[#717171] font-medium tracking-widest">
                     {messageCheckout}
@@ -293,18 +384,15 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
         </div>
       </RightOverlayForm>
     </div>
-  )
-}
+  );
+};
 
-const categoryRecyle: React.CSSProperties = {
-  height: '25px',
-  width: '25px',
-  padding: '4px',
-  textAlign: 'center',
-  background: 'lightskyblue',
-  lineHeight: '25px',
-  borderRadius: '25px',
-  color: 'darkblue'
-}
+let localstyles = {
+  content: {
+    flex: 9,
+    // p: 2,
+    // mb: 2,
+  },
+};
 
-export default CheckOutDetails
+export default CheckOutDetails;

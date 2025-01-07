@@ -21,6 +21,11 @@ export type CheckoutDetail = {
   chkOutDtlId: number
   recycTypeId: string
   recycSubTypeId: string
+  productAddonTypeId: string;
+  productAddonTypeRemark: string;
+  productSubTypeId: string;
+  productSubTypeRemark: string;
+  productTypeId: string;
   packageTypeId: string
   weight: number
   unitId: string
