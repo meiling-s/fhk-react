@@ -761,6 +761,7 @@ const InputProcessForm = ({
   }
 
   const checkingRemarks = () => {
+    setTrySubmited(true)
     const productItemIn = processOrderDetail[0].processIn
     const productItemOut = processOrderDetail[0].processOut
     //validate if others product showing
@@ -768,12 +769,10 @@ const InputProcessForm = ({
       const productData = productItemIn.processOrderDetailProduct
 
       for (const item of productData) {
-        console.log("itemmmm", item)
+        console.log('itemmmm', item, trySubmited)
         if (
           (item.isProductSubTypeOthers && !item.productSubTypeRemark) ||
-          (item.isProductAddonTypeOthers &&
-            !item.productAddonTypeRemark &&
-            trySubmited)
+          (item.isProductAddonTypeOthers && item.productAddonTypeRemark === '')
         ) {
           setModalRemarks(true)
           return true
@@ -786,9 +785,7 @@ const InputProcessForm = ({
       for (const item of productData) {
         if (
           (item.isProductSubTypeOthers && !item.productSubTypeRemark) ||
-          (item.isProductAddonTypeOthers &&
-            !item.productAddonTypeRemark &&
-            trySubmited)
+          (item.isProductAddonTypeOthers && item.productAddonTypeRemark == '')
         ) {
           setModalRemarks(true)
           return true
@@ -810,6 +807,7 @@ const InputProcessForm = ({
 
   const handleSaveItem = async () => {
     //console.log('handleSaveItem', processOrderDetail[0].processIn)
+
     if (validation.length !== 0) {
       setTrySubmited(true)
       return
