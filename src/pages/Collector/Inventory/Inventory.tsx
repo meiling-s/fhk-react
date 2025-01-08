@@ -325,10 +325,11 @@ const Inventory: FunctionComponent = () => {
     try {
       const result = await getAllPackagingUnit(0, 1000);
       const data = result?.data;
-
       if (data) {
-        setPackagingMapping(data.content);
-        console.log("data packunit", data.content);
+        const filteredData = data.content.filter(
+          (value: { status: string }) => value.status === "ACTIVE"
+        );
+        setPackagingMapping(filteredData ?? []);
       }
     } catch (error: any) {
       const { state, realm } = extractError(error);
@@ -782,8 +783,6 @@ const Inventory: FunctionComponent = () => {
       width: 200,
       type: "string",
       valueGetter: (params) => {
-        // If warehouse, find warehouse name
-        console.log(realmApi, "realm");
         if (realmApi === "account") {
           return params.row.location;
         } else {
@@ -836,7 +835,6 @@ const Inventory: FunctionComponent = () => {
       width: 200,
       type: "string",
       renderCell: (params) => {
-        console.log(params.row, "row");
         return (
           <div>
             {params.row.weight} {getWeightUnits(Number(params.row.unitId))}
@@ -981,14 +979,11 @@ const Inventory: FunctionComponent = () => {
       (item) => item.itemId == params.row.itemId
     );
     let selectedPicoList: PickupOrder[] = [];
-    // console.log('selectedInv', selectedInv)
-    // console.log('selectedInv', picoList)
     selectedInv.inventoryDetail?.forEach((item) => {
       const pico = picoList.find((pico) => pico.picoId == item.sourcePicoId);
       if (pico) {
         selectedPicoList.push(pico);
       }
-      console.log("pico", pico);
     });
     setSelectedRow(selectedInv);
     setSelectedPico(selectedPicoList);

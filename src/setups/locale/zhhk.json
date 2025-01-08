@@ -865,6 +865,7 @@
     "pleaseEnterNumber": "請輸入編號",
     "pleaseEnterName": "請輸入名稱",
     "pleaseEnterEmailAddress": "請輸入電郵地址",
+    "phone_number": "電話號碼",
     "active": "啟用",
     "inactive": "未啟用",
     "suspend": "暫停",

@@ -867,6 +867,7 @@
     "pleaseEnterNumber": "请输入编号",
     "pleaseEnterName": "请输入名称",
     "pleaseEnterEmailAddress": "请输入电邮地址",
+    "phone_number": "电话号码",
     "active": "启用",
     "inactive": "未激活",
     "suspend": "暂停",

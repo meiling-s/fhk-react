@@ -29,6 +29,7 @@ import { formatWeight } from "../../utils/utils";
 import { getDetailCheckInRequests } from "../../APICalls/Collector/warehouseManage";
 import NotifContainer from "../../contexts/NotifContainer";
 import ProductCard from "../ProductCard";
+import zIndex from "@mui/material/styles/zIndex";
 
 type recycItem = {
   recycType: il_item;
@@ -294,7 +295,8 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
     "check_out.approved_on"
   )} ${updatedDate} ${t("check_out.reason_is")} ${selectedItem?.reason}`;
 
-  console.log(productItem, "itemm");
+  console.log(productItem, "productItmmem");
+
   return (
     <Box sx={{ ...localstyles.modal, marginTop }} onClick={handleOverlayClick}>
       <Box sx={localstyles.container} className="md:w-[500px] w-[100vw]">
@@ -402,7 +404,6 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
             );
           })}
           {productItem.map((item, index) => {
-            console.log(item, "itemmmmmmm");
             return (
               <ProductCard
                 key={item.productType.id}
@@ -439,7 +440,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
 let localstyles = {
   modal: {
     display: "flex",
-    height: "100vh",
+    height: "100%",
     width: "100%",
     justifyContent: "flex-end",
   },
@@ -447,9 +448,9 @@ let localstyles = {
     display: "flex",
     flexDirection: "column",
     height: "100%",
-    // width: "40%",
     bgcolor: "white",
     overflowY: "scroll",
+    zIndex: 500,
   },
   header: {
     display: "flex",
@@ -460,6 +461,7 @@ let localstyles = {
   content: {
     flex: 9,
     p: 4,
+    mb: 2,
   },
   typo_header: {
     fontSize: "18px",
