@@ -612,16 +612,13 @@ const InputProcessForm = ({
         })
       }
     })
-
-    //console.log('singleProducts', singleProducts)
     return singleProducts
   }
 
   const handleProductChange = (type: string, value: productsVal[]) => {
-    //console.log('val', value)
-
     const singleProducts: singleProduct[] = transformToSingleProducts(value)
-    //console.log('handleProductChange', singleProducts)
+    console.log('handleProductChange', value)
+
     setProcessOrderDetail((prevDetails) =>
       prevDetails.map((detail) => ({
         ...detail,
@@ -631,8 +628,6 @@ const InputProcessForm = ({
         }
       }))
     )
-
-    //console.log('product', processOrderDetail[0])
   }
 
   const handleRecycChange = (type: string, value: recyclable[]) => {
@@ -856,8 +851,10 @@ const InputProcessForm = ({
       value.processTypeId = processTypeId
       value.idPair = tempRandomId
     })
+    console.log('onsave', processOrderDetail)
 
     onSave(processOrderDetail, isUpdate)
+
     handleDrawerClose()
   }
 
@@ -1138,7 +1135,6 @@ const InputProcessForm = ({
                             id="weight"
                             placeholder={t('userAccount.pleaseEnterNumber')}
                             onChange={(event) => {
-                              console.log('event', event.target.value)
                               onChangeWeight(
                                 event.target.value,
                                 decimalVal,
@@ -1156,7 +1152,6 @@ const InputProcessForm = ({
                               const value = event.target.value
                                 ? formatWeight(event.target.value, decimalVal)
                                 : '0'
-                              console.log('value', value)
                               const field =
                                 key === 'processIn'
                                   ? 'estInWeight'
