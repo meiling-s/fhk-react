@@ -768,6 +768,7 @@ const InputProcessForm = ({
       const productData = productItemIn.processOrderDetailProduct
 
       for (const item of productData) {
+        console.log("itemmmm", item)
         if (
           (item.isProductSubTypeOthers && !item.productSubTypeRemark) ||
           (item.isProductAddonTypeOthers &&

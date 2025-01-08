@@ -246,7 +246,8 @@ export default function ProductListMultiSelect({
                 productSubTypeRemark: subTypeRemarkData?.find(
                   (sub) => sub.id === subTypeId
                 )?.value,
-                isProductSubTypeOthers: subTypeData.productNameEng === 'Others',
+                isProductSubTypeOthers:
+                  subTypeData.productNameEng.toLocaleLowerCase() === 'others',
                 productAddon: addonItems
               }
             }
