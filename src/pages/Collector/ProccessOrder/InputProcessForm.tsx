@@ -617,7 +617,6 @@ const InputProcessForm = ({
 
   const handleProductChange = (type: string, value: productsVal[]) => {
     const singleProducts: singleProduct[] = transformToSingleProducts(value)
-    console.log('handleProductChange', value)
 
     setProcessOrderDetail((prevDetails) =>
       prevDetails.map((detail) => ({

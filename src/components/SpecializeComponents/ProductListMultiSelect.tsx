@@ -107,8 +107,6 @@ export default function ProductListMultiSelect({
   >([])
 
   //remarks
-  // const [currSubRemark, setCurrSubRemark] = useState<string>('')
-  // const [currAddonRemark, setCurrAddonRemark] = useState<string>('')
   const [subTypeRemarkData, setSubTypeRemarkData] = useState<
     remarkVal[] | null
   >([])
@@ -238,7 +236,7 @@ export default function ProductListMultiSelect({
                       addonData?.productNameEng === 'Others',
                     productAddonTypeRemark:
                       addonTypeRemarkData?.find((addon) => addon.id === addonId)
-                        ?.value || '-'
+                        ?.value || ''
                   }
                 }
               )
