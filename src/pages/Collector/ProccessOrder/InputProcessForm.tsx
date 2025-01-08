@@ -688,6 +688,20 @@ const InputProcessForm = ({
           }
         })
       )
+    } else {
+      setProcessOrderDetail((prevDetails) =>
+        prevDetails.map((detail) => ({
+          ...detail,
+          processIn: {
+            ...detail.processIn,
+            processOrderDetailRecyc: []
+          },
+          processOut: {
+            ...detail.processOut,
+            processOrderDetailRecyc: []
+          }
+        }))
+      )
     }
   }
 
@@ -715,7 +729,6 @@ const InputProcessForm = ({
     field: 'estInWeight' | 'estOutWeight',
     idx: number
   ) => {
-    console.log('handleWeightChange', value)
     setProcessOrderDetail((prevState) => {
       const newState = [...prevState]
 
@@ -769,7 +782,6 @@ const InputProcessForm = ({
       const productData = productItemIn.processOrderDetailProduct
 
       for (const item of productData) {
-        console.log('itemmmm', item, trySubmited)
         if (
           (item.isProductSubTypeOthers && !item.productSubTypeRemark) ||
           (item.isProductAddonTypeOthers && item.productAddonTypeRemark === '')
@@ -806,8 +818,6 @@ const InputProcessForm = ({
   }
 
   const handleSaveItem = async () => {
-    //console.log('handleSaveItem', processOrderDetail[0].processIn)
-
     if (validation.length !== 0) {
       setTrySubmited(true)
       return
@@ -849,7 +859,6 @@ const InputProcessForm = ({
       value.processTypeId = processTypeId
       value.idPair = tempRandomId
     })
-    console.log('onsave', processOrderDetail)
 
     onSave(processOrderDetail, isUpdate)
 
