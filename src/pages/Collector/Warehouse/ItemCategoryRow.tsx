@@ -90,8 +90,7 @@ const ItemCategoryRow: React.FC<Props> = ({
     recycTypeCapacity?: boolean;
     productTypeCapacity?: boolean;
   }>({});
-  console.log('validation', validation);
-
+  
   const recycTypeError = validation.find(
     (v) => v.field === `itemCategory[${index}].recycTypeId`
   );
@@ -187,9 +186,14 @@ const ItemCategoryRow: React.FC<Props> = ({
     setItemCategories(updatedItems);
   };
 
-  const handleFieldChange = (key: keyof ItemCategory, value: any) => {
+  type IHandleFieldChange = {
+    [key: string]: string | number;
+  };
+
+  const handleFieldChange = (fields: IHandleFieldChange) => {
     const updatedItems = [...itemCategories];
-    updatedItems[index] = { ...updatedItems[index], [key]: value };
+    updatedItems[index] = { ...updatedItems[index], ...fields };
+    console.log("updatedItems", updatedItems);
 
     setItemCategories(updatedItems);
   };
@@ -201,21 +205,40 @@ const ItemCategoryRow: React.FC<Props> = ({
     }
   };
 
+  const handleRecycTypeChange = (e: SelectChangeEvent<string>) => {
+    const recycTypeId = e.target.value;
+    handleFieldChange({
+      "recycTypeId": recycTypeId,
+      "recycSubTypeId": "",
+    });
+  };
+
+  const handleRecycSubTypeChange = (e: SelectChangeEvent<string>) => {
+    const recycSubTypeId = e.target.value;
+    handleFieldChange({"recycSubTypeId": recycSubTypeId});
+  };
+
   const handleProductTypeChange = (e: SelectChangeEvent<string>) => {
     const productTypeId = e.target.value;
-    handleFieldChange("productAddonTypeId", "");
-    handleFieldChange("productSubTypeId", "");
-    handleFieldChange("productTypeId", productTypeId);
+    handleFieldChange({
+      "productTypeId": productTypeId,
+      "productSubTypeId": "",
+      "productAddonTypeId": ""
+    });
   };
 
   const handleProductSubTypeChange = (e: SelectChangeEvent<string>) => {
     const productSubTypeId = e.target.value;
-    handleFieldChange("productAddonTypeId", "");
-    handleFieldChange("productSubTypeId", productSubTypeId);
+    handleFieldChange({
+      "productSubTypeId": productSubTypeId,
+      "productAddonTypeId": ""
+    });
   };
 
   const handleProductAddonChange = (e: SelectChangeEvent<string>) => {
-    handleFieldChange("productAddonTypeId", e.target.value);
+    handleFieldChange({
+      "productAddonTypeId": e.target.value
+    });
   };
 
   useEffect(() => {
@@ -297,9 +320,7 @@ const ItemCategoryRow: React.FC<Props> = ({
             <FormControl fullWidth>
               <Select
                 value={item.recycTypeId || ""}
-                onChange={(e) =>
-                  handleFieldChange("recycTypeId", e.target.value)
-                }
+                onChange={handleRecycTypeChange}
                 sx={{
                   border: 
                     recycTypeError && isTriedSubmitted 
@@ -321,9 +342,7 @@ const ItemCategoryRow: React.FC<Props> = ({
             <FormControl fullWidth error={!!errors.recycSubTypeId}>
               <Select
                 value={item.recycSubTypeId || ""}
-                onChange={(e) =>
-                  handleFieldChange("recycSubTypeId", e.target.value)
-                }
+                onChange={handleRecycSubTypeChange}
                 sx={{
                   border: 
                     recycSubTypeError && isTriedSubmitted
@@ -359,7 +378,7 @@ const ItemCategoryRow: React.FC<Props> = ({
 
                   // Prevent setting negative values
                   if (newValue >= 0 || e.target.value === "") {
-                    handleFieldChange("recycTypeCapacity", newValue);
+                    handleFieldChange({"recycTypeCapacity": newValue});
                   }
                 }}
                 onKeyDown={(e) => {
@@ -496,7 +515,7 @@ const ItemCategoryRow: React.FC<Props> = ({
 
                   // Prevent setting negative values
                   if (newValue >= 0 || e.target.value === "") {
-                    handleFieldChange("productTypeCapacity", newValue);
+                    handleFieldChange({"productTypeCapacity": newValue});
                   }
                 }}
                 InputProps={{
