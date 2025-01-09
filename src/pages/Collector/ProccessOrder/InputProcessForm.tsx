@@ -630,7 +630,6 @@ const InputProcessForm = ({
   }
 
   const handleRecycChange = (type: string, value: recyclable[]) => {
-    // if (value.length > 0) {
     let tempRecy: any[] = []
     tempRecy = value.flatMap((item) =>
       item.recycSubTypeId.length > 0
@@ -688,21 +687,6 @@ const InputProcessForm = ({
         }
       })
     )
-    // } else {
-    //   setProcessOrderDetail((prevDetails) =>
-    //     prevDetails.map((detail) => ({
-    //       ...detail,
-    //       processIn: {
-    //         ...detail.processIn,
-    //         processOrderDetailRecyc: []
-    //       },
-    //       processOut: {
-    //         ...detail.processOut,
-    //         processOrderDetailRecyc: []
-    //       }
-    //     }))
-    //   )
-    // }
   }
 
   const updateWarehouseIds = (
