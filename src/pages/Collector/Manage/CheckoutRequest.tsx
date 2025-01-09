@@ -614,7 +614,7 @@ const CheckoutRequest: FunctionComponent = () => {
     },
     {
       field: "receiverAddr",
-      headerName: t("check_out.arrival_location"),
+      headerName: t("pick_up_order.detail.arrived"),
       width: 200,
       type: "string",
     },
