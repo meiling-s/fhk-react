@@ -1646,7 +1646,9 @@
     "table": {
       "startOrFinishDate": "開始/結束日期",
       "processIn": "进程",
-      "processOut": "处理出"
+      "processOut": "处理出",
+      "showMore": "展開",
+      "showLess": "收起"
     }
   },
   "factory": {

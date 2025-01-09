@@ -410,7 +410,7 @@ const CreateProcessOrder = ({}: {}) => {
               ? item.warehouseNameTchi
               : i18n.language === 'zhch'
               ? item.warehouseNameSchi
-              : item.warehouseNameTchi
+              : item.warehouseNameEng
 
           warehouse.push({
             id: item.warehouseId.toString(),
@@ -808,7 +808,7 @@ const CreateProcessOrder = ({}: {}) => {
     const firstWarehouse =
       warehouseListName.length > 0 ? warehouseListName[0] : ''
     const remainingWarehouses = hasMultipleWarehouses
-      ? warehouseListName.slice(1)
+      ? warehouseListName.slice(1).join(',')
       : []
 
     const categoryLabel =
@@ -864,39 +864,60 @@ const CreateProcessOrder = ({}: {}) => {
           </TableCell>
           <TableCell
             style={{
-              width: '200px',
+              width: '400px',
               ...styleDivider
             }}
           >
-            {firstWarehouse}
-            {hasMultipleWarehouses && (
-              <IconButton size="small" onClick={() => toggleRow(row.id)}>
-                {expandedRows[row.id] ? (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      color: 'black',
-                      fontSize: '14px'
-                    }}
-                  >
-                    Show Less
-                    <KeyboardArrowUp />
-                  </Box>
-                ) : (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      color: 'black',
-                      fontSize: '14px'
-                    }}
-                  >
-                    Show More
-                    <KeyboardArrowDown />
-                  </Box>
-                )}
-              </IconButton>
+            {hasMultipleWarehouses ? (
+              <Box>
+                <IconButton
+                  sx={{ '&:hover': { backgroundColor: 'transparent' } }}
+                  size="small"
+                  onClick={() => toggleRow(row.id)}
+                >
+                  {expandedRows[row.id] ? (
+                    <Box
+                      sx={{
+                        color: 'black',
+                        fontSize: '14px',
+                        textAlign: 'left'
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >
+                        {t('processOrder.table.showLess')}
+                        <KeyboardArrowUp />
+                      </Box>
+                      {warehouseListName.join(',')}
+                    </Box>
+                  ) : (
+                    <Box
+                      sx={{
+                        color: 'black',
+                        fontSize: '14px',
+                        textAlign: 'left'
+                      }}
+                    >
+                      {firstWarehouse}
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                      >
+                        {t('processOrder.table.showMore')}
+                        <KeyboardArrowDown />
+                      </Box>
+                    </Box>
+                  )}
+                </IconButton>
+              </Box>
+            ) : (
+              <Box>{firstWarehouse}</Box>
             )}
           </TableCell>
           <TableCell
@@ -940,10 +961,10 @@ const CreateProcessOrder = ({}: {}) => {
             {addOnName}
           </TableCell>
         </TableRow>
-        {expandedRows[row.id] &&
-          hasMultipleWarehouses &&
-          remainingWarehouses.map((wh: string, index: number) => (
-            <TableRow key={`${row.id}-wh-${index}`}>
+        {/* {
+          expandedRows[row.id] && hasMultipleWarehouses && (
+            // remainingWarehouses.map((wh: string, index: number) => (
+            <TableRow key={`${row.id}`}>
               <TableCell style={{ width: '150px', border: 'none' }}></TableCell>
               <TableCell style={{ width: '250px', border: 'none' }}></TableCell>
               <TableCell
@@ -952,7 +973,7 @@ const CreateProcessOrder = ({}: {}) => {
                   border: 'none'
                 }}
               >
-                {wh}
+                {remainingWarehouses}
               </TableCell>
               <TableCell style={{ width: '150px', border: 'none' }}></TableCell>
               <TableCell style={{ width: '200px', border: 'none' }}></TableCell>
@@ -960,7 +981,9 @@ const CreateProcessOrder = ({}: {}) => {
               <TableCell style={{ width: '200px', border: 'none' }}></TableCell>
               <TableCell style={{ width: '200px', border: 'none' }}></TableCell>
             </TableRow>
-          ))}
+          )
+          // ))
+        } */}
       </React.Fragment>
     )
   }
