@@ -630,79 +630,79 @@ const InputProcessForm = ({
   }
 
   const handleRecycChange = (type: string, value: recyclable[]) => {
-    if (value.length > 0) {
-      let tempRecy: any[] = []
-      tempRecy = value.flatMap((item) =>
-        item.recycSubTypeId.length > 0
-          ? item.recycSubTypeId.map((subType) => ({
+    // if (value.length > 0) {
+    let tempRecy: any[] = []
+    tempRecy = value.flatMap((item) =>
+      item.recycSubTypeId.length > 0
+        ? item.recycSubTypeId.map((subType) => ({
+            recycTypeId: item.recycTypeId,
+            recycSubTypeId: subType
+          }))
+        : [
+            {
               recycTypeId: item.recycTypeId,
-              recycSubTypeId: subType
-            }))
-          : [
-              {
-                recycTypeId: item.recycTypeId,
-                recycSubTypeId: ''
-              }
-            ]
-      )
-
-      tempRecy = tempRecy.filter(
-        (item, index, self) =>
-          index ===
-          self.findIndex(
-            (t) =>
-              t.recycTypeId === item.recycTypeId &&
-              t.recycSubTypeId === item.recycSubTypeId
-          )
-      )
-
-      setProcessOrderDetail((prevDetails) =>
-        prevDetails.map((detail) => {
-          const existingRecyc =
-            detail[type as keyof CreateProcessOrderDetailPairs]
-              ?.processOrderDetailRecyc || []
-
-          // Check if new tempRecy is different from the existing one
-          const isDifferent =
-            tempRecy.length !== existingRecyc.length ||
-            tempRecy.some(
-              (item) =>
-                !existingRecyc.some(
-                  (existing) =>
-                    existing.recycTypeId === item.recycTypeId &&
-                    existing.recycSubTypeId === item.recycSubTypeId
-                )
-            )
-
-          // Only update if different
-          if (!isDifferent) {
-            return detail
-          }
-
-          return {
-            ...detail,
-            [type]: {
-              ...detail[type as keyof CreateProcessOrderDetailPairs],
-              processOrderDetailRecyc: tempRecy
+              recycSubTypeId: ''
             }
-          }
-        })
-      )
-    } else {
-      setProcessOrderDetail((prevDetails) =>
-        prevDetails.map((detail) => ({
+          ]
+    )
+
+    tempRecy = tempRecy.filter(
+      (item, index, self) =>
+        index ===
+        self.findIndex(
+          (t) =>
+            t.recycTypeId === item.recycTypeId &&
+            t.recycSubTypeId === item.recycSubTypeId
+        )
+    )
+
+    setProcessOrderDetail((prevDetails) =>
+      prevDetails.map((detail) => {
+        const existingRecyc =
+          detail[type as keyof CreateProcessOrderDetailPairs]
+            ?.processOrderDetailRecyc || []
+
+        // Check if new tempRecy is different from the existing one
+        const isDifferent =
+          tempRecy.length !== existingRecyc.length ||
+          tempRecy.some(
+            (item) =>
+              !existingRecyc.some(
+                (existing) =>
+                  existing.recycTypeId === item.recycTypeId &&
+                  existing.recycSubTypeId === item.recycSubTypeId
+              )
+          )
+
+        // Only update if different
+        if (!isDifferent) {
+          return detail
+        }
+
+        return {
           ...detail,
-          processIn: {
-            ...detail.processIn,
-            processOrderDetailRecyc: []
-          },
-          processOut: {
-            ...detail.processOut,
-            processOrderDetailRecyc: []
+          [type]: {
+            ...detail[type as keyof CreateProcessOrderDetailPairs],
+            processOrderDetailRecyc: tempRecy
           }
-        }))
-      )
-    }
+        }
+      })
+    )
+    // } else {
+    //   setProcessOrderDetail((prevDetails) =>
+    //     prevDetails.map((detail) => ({
+    //       ...detail,
+    //       processIn: {
+    //         ...detail.processIn,
+    //         processOrderDetailRecyc: []
+    //       },
+    //       processOut: {
+    //         ...detail.processOut,
+    //         processOrderDetailRecyc: []
+    //       }
+    //     }))
+    //   )
+    // }
   }
 
   const updateWarehouseIds = (
@@ -774,7 +774,6 @@ const InputProcessForm = ({
   }
 
   const checkingRemarks = () => {
-    setTrySubmited(true)
     const productItemIn = processOrderDetail[0].processIn
     const productItemOut = processOrderDetail[0].processOut
     //validate if others product showing
