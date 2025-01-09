@@ -1089,44 +1089,7 @@ const CreateProcessOrder = ({}: {}) => {
                     </div>
                   </div>
                   <Divider></Divider>
-                  {/* <DataGrid
-                    rows={item.rows}
-                    columns={columns}
-                    getRowId={(row) => row.id}
-                    hideFooter
-                    checkboxSelection={false}
-                    getRowClassName={(params) =>
-                      params.row.processAction === 'PROCESS_OUT'
-                        ? 'row-divider'
-                        : ''
-                    }
-                    sx={{
-                      border: 'none',
-                      '& .MuiDataGrid-cell': {
-                        border: 'none'
-                      },
-                      '& .row-divider': {
-                        borderRadius: '0px !important',
-                        borderTop: '1px solid #e0e0e0' // Divider style
-                      },
-                      '& .MuiDataGrid-row': {
-                        bgcolor: 'white',
-                        borderRadius: '10px'
-                      },
-                      '&>.MuiDataGrid-main': {
-                        '&>.MuiDataGrid-columnHeaders': {
-                          borderBottom: 'none'
-                        }
-                      },
-                      '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': {
-                        display: 'none'
-                      },
-                      '& .MuiDataGrid-overlay': {
-                        display: 'none'
-                      }
-                    }}
-                  /> */}
-
+                 
                   <TableContainer>
                     <Table>
                       <TableHead>
