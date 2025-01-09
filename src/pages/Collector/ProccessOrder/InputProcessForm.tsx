@@ -612,16 +612,12 @@ const InputProcessForm = ({
         })
       }
     })
-
-    //console.log('singleProducts', singleProducts)
     return singleProducts
   }
 
   const handleProductChange = (type: string, value: productsVal[]) => {
-    //console.log('val', value)
-
     const singleProducts: singleProduct[] = transformToSingleProducts(value)
-    //console.log('handleProductChange', singleProducts)
+
     setProcessOrderDetail((prevDetails) =>
       prevDetails.map((detail) => ({
         ...detail,
@@ -631,70 +627,66 @@ const InputProcessForm = ({
         }
       }))
     )
-
-    //console.log('product', processOrderDetail[0])
   }
 
   const handleRecycChange = (type: string, value: recyclable[]) => {
-    if (value.length > 0) {
-      let tempRecy: any[] = []
-      tempRecy = value.flatMap((item) =>
-        item.recycSubTypeId.length > 0
-          ? item.recycSubTypeId.map((subType) => ({
+    let tempRecy: any[] = []
+    tempRecy = value.flatMap((item) =>
+      item.recycSubTypeId.length > 0
+        ? item.recycSubTypeId.map((subType) => ({
+            recycTypeId: item.recycTypeId,
+            recycSubTypeId: subType
+          }))
+        : [
+            {
               recycTypeId: item.recycTypeId,
-              recycSubTypeId: subType
-            }))
-          : [
-              {
-                recycTypeId: item.recycTypeId,
-                recycSubTypeId: ''
-              }
-            ]
-      )
-
-      tempRecy = tempRecy.filter(
-        (item, index, self) =>
-          index ===
-          self.findIndex(
-            (t) =>
-              t.recycTypeId === item.recycTypeId &&
-              t.recycSubTypeId === item.recycSubTypeId
-          )
-      )
-
-      setProcessOrderDetail((prevDetails) =>
-        prevDetails.map((detail) => {
-          const existingRecyc =
-            detail[type as keyof CreateProcessOrderDetailPairs]
-              ?.processOrderDetailRecyc || []
-
-          // Check if new tempRecy is different from the existing one
-          const isDifferent =
-            tempRecy.length !== existingRecyc.length ||
-            tempRecy.some(
-              (item) =>
-                !existingRecyc.some(
-                  (existing) =>
-                    existing.recycTypeId === item.recycTypeId &&
-                    existing.recycSubTypeId === item.recycSubTypeId
-                )
-            )
-
-          // Only update if different
-          if (!isDifferent) {
-            return detail
-          }
-
-          return {
-            ...detail,
-            [type]: {
-              ...detail[type as keyof CreateProcessOrderDetailPairs],
-              processOrderDetailRecyc: tempRecy
+              recycSubTypeId: ''
             }
+          ]
+    )
+
+    tempRecy = tempRecy.filter(
+      (item, index, self) =>
+        index ===
+        self.findIndex(
+          (t) =>
+            t.recycTypeId === item.recycTypeId &&
+            t.recycSubTypeId === item.recycSubTypeId
+        )
+    )
+
+    setProcessOrderDetail((prevDetails) =>
+      prevDetails.map((detail) => {
+        const existingRecyc =
+          detail[type as keyof CreateProcessOrderDetailPairs]
+            ?.processOrderDetailRecyc || []
+
+        // Check if new tempRecy is different from the existing one
+        const isDifferent =
+          tempRecy.length !== existingRecyc.length ||
+          tempRecy.some(
+            (item) =>
+              !existingRecyc.some(
+                (existing) =>
+                  existing.recycTypeId === item.recycTypeId &&
+                  existing.recycSubTypeId === item.recycSubTypeId
+              )
+          )
+
+        // Only update if different
+        if (!isDifferent) {
+          return detail
+        }
+
+        return {
+          ...detail,
+          [type]: {
+            ...detail[type as keyof CreateProcessOrderDetailPairs],
+            processOrderDetailRecyc: tempRecy
           }
-        })
-      )
-    }
+        }
+      })
+    )
   }
 
   const updateWarehouseIds = (
@@ -721,7 +713,6 @@ const InputProcessForm = ({
     field: 'estInWeight' | 'estOutWeight',
     idx: number
   ) => {
-    console.log('handleWeightChange', value)
     setProcessOrderDetail((prevState) => {
       const newState = [...prevState]
 
@@ -776,9 +767,7 @@ const InputProcessForm = ({
       for (const item of productData) {
         if (
           (item.isProductSubTypeOthers && !item.productSubTypeRemark) ||
-          (item.isProductAddonTypeOthers &&
-            !item.productAddonTypeRemark &&
-            !trySubmited)
+          (item.isProductAddonTypeOthers && item.productAddonTypeRemark === '')
         ) {
           setModalRemarks(true)
           return true
@@ -791,9 +780,7 @@ const InputProcessForm = ({
       for (const item of productData) {
         if (
           (item.isProductSubTypeOthers && !item.productSubTypeRemark) ||
-          (item.isProductAddonTypeOthers &&
-            !item.productAddonTypeRemark &&
-            !trySubmited)
+          (item.isProductAddonTypeOthers && item.productAddonTypeRemark == '')
         ) {
           setModalRemarks(true)
           return true
@@ -814,7 +801,6 @@ const InputProcessForm = ({
   }
 
   const handleSaveItem = async () => {
-    //console.log('handleSaveItem', processOrderDetail[0].processIn)
     if (validation.length !== 0) {
       setTrySubmited(true)
       return
@@ -858,6 +844,7 @@ const InputProcessForm = ({
     })
 
     onSave(processOrderDetail, isUpdate)
+
     handleDrawerClose()
   }
 
@@ -1138,7 +1125,6 @@ const InputProcessForm = ({
                             id="weight"
                             placeholder={t('userAccount.pleaseEnterNumber')}
                             onChange={(event) => {
-                              console.log('event', event.target.value)
                               onChangeWeight(
                                 event.target.value,
                                 decimalVal,
@@ -1156,7 +1142,6 @@ const InputProcessForm = ({
                               const value = event.target.value
                                 ? formatWeight(event.target.value, decimalVal)
                                 : '0'
-                              console.log('value', value)
                               const field =
                                 key === 'processIn'
                                   ? 'estInWeight'
