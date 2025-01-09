@@ -323,7 +323,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
               <ArrowForwardIcon className="text-gray" />
               <div className="arrived">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {t("check_out.arrival_location")}
+                  {t("pick_up_order.detail.arrived")}
                 </div>
                 <div className="text-mini text-black font-bold tracking-widest">
                   {selectedCheckOut?.receiverAddr}
