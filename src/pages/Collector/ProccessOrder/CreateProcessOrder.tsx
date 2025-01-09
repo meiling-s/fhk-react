@@ -788,7 +788,8 @@ const CreateProcessOrder = ({}: {}) => {
 
     const warehouses = row.warehouse ? row.warehouse.split(',') : []
     const hasMultipleWarehouses = warehouses.length > 1
-    let warehouseListName = ''
+
+    let warehouseListName: string[] = []
     if (row.warehouse != '') {
       const warehouseIds = row.warehouse.split(',')
 
@@ -798,12 +799,17 @@ const CreateProcessOrder = ({}: {}) => {
             const warehouse = warehouseList.find(
               (it) => it.id === id.toString()
             )
-            return warehouse ? warehouse.name : null
+            return warehouse ? warehouse.name : '' // Ensure it always returns a string
           })
-          .filter(Boolean)
-          .join(', ')
+          .filter((name): name is string => name !== '')
       }
     }
+
+    const firstWarehouse =
+      warehouseListName.length > 0 ? warehouseListName[0] : ''
+    const remainingWarehouses = hasMultipleWarehouses
+      ? warehouseListName.slice(1)
+      : []
 
     const categoryLabel =
       row.itemCategory != ''
@@ -842,31 +848,27 @@ const CreateProcessOrder = ({}: {}) => {
 
     const isHaveDivider = () => row.processAction === 'PROCESS_OUT'
 
+    const styleDivider = {
+      border: 'none',
+      borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
+    }
+
     return (
       <React.Fragment key={row.id}>
         <TableRow>
-          <TableCell
-            style={{
-              width: '150px',
-              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
-            }}
-          >
+          <TableCell style={{ width: '150px', ...styleDivider }}>
             {processLabel}
           </TableCell>
-          <TableCell
-            style={{
-              width: '250px',
-              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
-            }}
-          >
+          <TableCell style={{ width: '200px', ...styleDivider }}>
             {dateTime}
           </TableCell>
           <TableCell
             style={{
               width: '200px',
-              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
+              ...styleDivider
             }}
           >
+            {firstWarehouse}
             {hasMultipleWarehouses && (
               <IconButton size="small" onClick={() => toggleRow(row.id)}>
                 {expandedRows[row.id] ? (
@@ -896,12 +898,11 @@ const CreateProcessOrder = ({}: {}) => {
                 )}
               </IconButton>
             )}
-            {!hasMultipleWarehouses && row.warehouse}
           </TableCell>
           <TableCell
             style={{
               width: '150px',
-              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
+              ...styleDivider
             }}
           >
             {row.weight}
@@ -909,7 +910,7 @@ const CreateProcessOrder = ({}: {}) => {
           <TableCell
             style={{
               width: '200px',
-              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
+              ...styleDivider
             }}
           >
             {categoryLabel}
@@ -917,7 +918,7 @@ const CreateProcessOrder = ({}: {}) => {
           <TableCell
             style={{
               width: '200px',
-              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
+              ...styleDivider
             }}
           >
             {mainCategory}
@@ -925,7 +926,7 @@ const CreateProcessOrder = ({}: {}) => {
           <TableCell
             style={{
               width: '200px',
-              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
+              ...styleDivider
             }}
           >
             {subCategory}
@@ -933,7 +934,7 @@ const CreateProcessOrder = ({}: {}) => {
           <TableCell
             style={{
               width: '200px',
-              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
+              ...styleDivider
             }}
           >
             {addOnName}
@@ -941,16 +942,23 @@ const CreateProcessOrder = ({}: {}) => {
         </TableRow>
         {expandedRows[row.id] &&
           hasMultipleWarehouses &&
-          warehouseListName.split(',').map((wh: string, index: number) => (
+          remainingWarehouses.map((wh: string, index: number) => (
             <TableRow key={`${row.id}-wh-${index}`}>
-              <TableCell style={{ width: '150px' }}></TableCell>
-              <TableCell style={{ width: '250px' }}></TableCell>
-              <TableCell style={{ width: '200px' }}>{wh}</TableCell>
-              <TableCell style={{ width: '150px' }}></TableCell>
-              <TableCell style={{ width: '200px' }}></TableCell>
-              <TableCell style={{ width: '200px' }}></TableCell>
-              <TableCell style={{ width: '200px' }}></TableCell>
-              <TableCell style={{ width: '200px' }}></TableCell>
+              <TableCell style={{ width: '150px', border: 'none' }}></TableCell>
+              <TableCell style={{ width: '250px', border: 'none' }}></TableCell>
+              <TableCell
+                style={{
+                  width: '200px',
+                  border: 'none'
+                }}
+              >
+                {wh}
+              </TableCell>
+              <TableCell style={{ width: '150px', border: 'none' }}></TableCell>
+              <TableCell style={{ width: '200px', border: 'none' }}></TableCell>
+              <TableCell style={{ width: '200px', border: 'none' }}></TableCell>
+              <TableCell style={{ width: '200px', border: 'none' }}></TableCell>
+              <TableCell style={{ width: '200px', border: 'none' }}></TableCell>
             </TableRow>
           ))}
       </React.Fragment>
@@ -1089,7 +1097,7 @@ const CreateProcessOrder = ({}: {}) => {
                     </div>
                   </div>
                   <Divider></Divider>
-                 
+
                   <TableContainer>
                     <Table>
                       <TableHead>
