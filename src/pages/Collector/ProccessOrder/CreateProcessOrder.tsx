@@ -8,7 +8,15 @@ import {
   MenuItem,
   Divider,
   Stack,
-  Modal
+  Modal,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
+  Paper
 } from '@mui/material'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import {
@@ -16,6 +24,7 @@ import {
   LocalizationProvider,
   TimePicker
 } from '@mui/x-date-pickers'
+import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -64,6 +73,7 @@ import {
   mappingSubProductType,
   mappingAddonsType
 } from './utils'
+import React from 'react'
 
 type rowPorDtl = {
   id: string
@@ -83,6 +93,12 @@ type ProcessInDtlData = {
   name: string
   idPair: number
   rows: rowPorDtl[]
+}
+
+interface RowData {
+  id: number
+  name: string
+  children?: RowData[]
 }
 
 type DeleteModalProps = {
@@ -352,6 +368,15 @@ const CreateProcessOrder = ({}: {}) => {
     }
   ]
 
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({})
+
+  const toggleRow = (id: string) => {
+    setExpandedRows((prev) => ({
+      ...prev,
+      [id]: !prev[id]
+    }))
+  }
+
   const initProcessType = async () => {
     let processList: il_item[] = []
 
@@ -397,7 +422,6 @@ const CreateProcessOrder = ({}: {}) => {
           name: t('check_in.any')
         })
         setWarehouseList(warehouse)
-        //if (warehouse.length > 0) setSelectedWarehouse(warehouse[0])
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -620,6 +644,7 @@ const CreateProcessOrder = ({}: {}) => {
     })
 
     setProcessInDetailData(rawProcessOrderInDtl)
+    console.log('setProcessInDetailData', rawProcessOrderInDtl)
   }
 
   const onSaveProcessDtl = (
@@ -736,6 +761,200 @@ const CreateProcessOrder = ({}: {}) => {
     updateDateOnProcessDetail(updatedProcessOrderDtlSource)
     setSelectedDeletedItem(null)
     setOpenDelete(false)
+  }
+
+  const renderRow = (row: rowPorDtl) => {
+    let processLabel = ''
+    if (row.processAction != '') {
+      processLabel =
+        row.processAction === 'PROCESS_IN'
+          ? t('processOrder.table.processIn')
+          : t('processOrder.table.processOut')
+    }
+
+    let dateTime = ''
+    if (row.processAction !== '') {
+      if (row.processAction === 'PROCESS_IN') {
+        dateTime = row.datetime
+          ? dayjs.utc(row.datetime).format(`${dateFormat} HH:mm`)
+          : dayjs.utc(row?.datetime).format(`${dateFormat} HH:mm`)
+      } else {
+        dateTime = dayjs
+          .utc(row?.datetime)
+
+          .format(`${dateFormat} HH:mm`)
+      }
+    }
+
+    const warehouses = row.warehouse ? row.warehouse.split(',') : []
+    const hasMultipleWarehouses = warehouses.length > 1
+    let warehouseListName = ''
+    if (row.warehouse != '') {
+      const warehouseIds = row.warehouse.split(',')
+
+      if (warehouseIds.length > 0) {
+        warehouseListName = warehouseIds
+          ?.map((id: string) => {
+            const warehouse = warehouseList.find(
+              (it) => it.id === id.toString()
+            )
+            return warehouse ? warehouse.name : null
+          })
+          .filter(Boolean)
+          .join(', ')
+      }
+    }
+
+    const categoryLabel =
+      row.itemCategory != ''
+        ? row.itemCategory === 'product'
+          ? t('processOrder.create.product')
+          : t('processOrder.create.recycling')
+        : '-'
+
+    let mainCategory = ''
+    if (row.itemCategory != 'product') {
+      mainCategory = mappingRecy(row.mainCategory, recycType)
+    } else {
+      mainCategory = mappingProductType(row.mainCategory, productType)
+    }
+
+    let subCategory = ''
+    if (row.itemCategory != 'product') {
+      subCategory = mappingSubRecy(row.mainCategory, row.subCategory, recycType)
+    } else {
+      subCategory = mappingSubProductType(
+        row.mainCategory,
+        row.subCategory,
+        productType
+      )
+    }
+
+    let addOnName = ''
+    if (row.itemCategory === 'product') {
+      addOnName = mappingAddonsType(
+        row.mainCategory,
+        row.subCategory,
+        row.additionalInfo,
+        productType
+      )
+    }
+
+    const isHaveDivider = () => row.processAction === 'PROCESS_OUT'
+
+    return (
+      <React.Fragment key={row.id}>
+        <TableRow>
+          <TableCell
+            style={{
+              width: '150px',
+              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
+            }}
+          >
+            {processLabel}
+          </TableCell>
+          <TableCell
+            style={{
+              width: '250px',
+              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
+            }}
+          >
+            {dateTime}
+          </TableCell>
+          <TableCell
+            style={{
+              width: '200px',
+              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
+            }}
+          >
+            {hasMultipleWarehouses && (
+              <IconButton size="small" onClick={() => toggleRow(row.id)}>
+                {expandedRows[row.id] ? (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      color: 'black',
+                      fontSize: '14px'
+                    }}
+                  >
+                    Show Less
+                    <KeyboardArrowUp />
+                  </Box>
+                ) : (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      color: 'black',
+                      fontSize: '14px'
+                    }}
+                  >
+                    Show More
+                    <KeyboardArrowDown />
+                  </Box>
+                )}
+              </IconButton>
+            )}
+            {!hasMultipleWarehouses && row.warehouse}
+          </TableCell>
+          <TableCell
+            style={{
+              width: '150px',
+              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
+            }}
+          >
+            {row.weight}
+          </TableCell>
+          <TableCell
+            style={{
+              width: '200px',
+              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
+            }}
+          >
+            {categoryLabel}
+          </TableCell>
+          <TableCell
+            style={{
+              width: '200px',
+              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
+            }}
+          >
+            {mainCategory}
+          </TableCell>
+          <TableCell
+            style={{
+              width: '200px',
+              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
+            }}
+          >
+            {subCategory}
+          </TableCell>
+          <TableCell
+            style={{
+              width: '200px',
+              borderTop: isHaveDivider() ? '1px solid #e0e0e0' : 'none'
+            }}
+          >
+            {addOnName}
+          </TableCell>
+        </TableRow>
+        {expandedRows[row.id] &&
+          hasMultipleWarehouses &&
+          warehouseListName.split(',').map((wh: string, index: number) => (
+            <TableRow key={`${row.id}-wh-${index}`}>
+              <TableCell style={{ width: '150px' }}></TableCell>
+              <TableCell style={{ width: '250px' }}></TableCell>
+              <TableCell style={{ width: '200px' }}>{wh}</TableCell>
+              <TableCell style={{ width: '150px' }}></TableCell>
+              <TableCell style={{ width: '200px' }}></TableCell>
+              <TableCell style={{ width: '200px' }}></TableCell>
+              <TableCell style={{ width: '200px' }}></TableCell>
+              <TableCell style={{ width: '200px' }}></TableCell>
+            </TableRow>
+          ))}
+      </React.Fragment>
+    )
   }
 
   return (
@@ -870,7 +1089,7 @@ const CreateProcessOrder = ({}: {}) => {
                     </div>
                   </div>
                   <Divider></Divider>
-                  <DataGrid
+                  {/* <DataGrid
                     rows={item.rows}
                     columns={columns}
                     getRowId={(row) => row.id}
@@ -906,7 +1125,22 @@ const CreateProcessOrder = ({}: {}) => {
                         display: 'none'
                       }
                     }}
-                  />
+                  /> */}
+
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          {columns.map((col) => (
+                            <TableCell>{col.headerName}</TableCell>
+                          ))}
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {item.rows.map((row) => renderRow(row))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </Box>
               ))}
 
