@@ -59,7 +59,7 @@ export type productsVal = {
 
 export type remarkVal = {
   id: string
-  value: ''
+  value: string
 }
 
 type props = {
@@ -107,14 +107,36 @@ export default function ProductListMultiSelect({
   >([])
 
   //remarks
-  const [currSubRemark, setCurrSubRemark] = useState<string>('')
-  const [currAddonRemark, setCurrAddonRemark] = useState<string>('')
-  const [productSubTypeRemark, setProductSubTypeRemark] = useState<
+  const [subTypeRemarkData, setSubTypeRemarkData] = useState<
     remarkVal[] | null
   >([])
-  const [productAddonTypeRemark, setProductAddonRemark] = useState<
+  const [addonTypeRemarkData, setAddonRemarkData] = useState<
     remarkVal[] | null
   >([])
+
+  useEffect(() => {
+    const subTypeData: remarkVal[] = []
+    const addonData: remarkVal[] = []
+
+    options.forEach((item) => {
+      item.productSubType?.forEach((sub) => {
+        subTypeData.push({
+          id: sub.productSubTypeId,
+          value: sub.remark || ''
+        })
+
+        sub.productAddonType?.forEach((addon) => {
+          addonData.push({
+            id: addon.productAddonTypeId,
+            value: addon.remark || ''
+          })
+        })
+      })
+    })
+
+    setSubTypeRemarkData(subTypeData)
+    setAddonRemarkData(addonData)
+  }, [])
 
   useEffect(() => {
     if (defaultProduct) {
@@ -125,12 +147,19 @@ export default function ProductListMultiSelect({
       setProductType(types)
       setProductSubType(subTypes)
       setProductAddon(addons)
-      setState(toProduct())
+      //set remarks
+
+      setSubTypeRemarkData((prev) => updateSubtypeRemarks(defaultProduct, prev))
+
+      // Update addon remarks
+      setAddonRemarkData((prev) => updateAddonRemarks(defaultProduct, prev))
 
       setCurrProductType(types.at(-1)!!)
       let tempCurrProduct = types.at(-1)!!
       selectSubProduct(subTypes, tempCurrProduct)
       selectAddon(addons, tempCurrProduct, subTypes.at(-1))
+
+      setState(toProduct())
     }
   }, [])
 
@@ -141,8 +170,8 @@ export default function ProductListMultiSelect({
     productSubType,
     productAddon,
     options,
-    currSubRemark,
-    currAddonRemark
+    subTypeRemarkData,
+    addonTypeRemarkData
   ])
 
   useEffect(() => {
@@ -165,7 +194,6 @@ export default function ProductListMultiSelect({
 
   const toProduct = () => {
     var productS: productsVal[] = []
-
     productType.map((prod) => {
       const prodType = options.find((p) => p.productTypeId === prod)
 
@@ -207,23 +235,19 @@ export default function ProductListMultiSelect({
                     isProductAddonTypeOthers:
                       addonData?.productNameEng === 'Others',
                     productAddonTypeRemark:
-                      addonData?.remark ||
-                      productAddonTypeRemark?.find(
-                        (addon) => addon.id === addonId
-                      )?.value ||
-                      ''
+                      addonTypeRemarkData?.find((addon) => addon.id === addonId)
+                        ?.value || ''
                   }
                 }
               )
 
               return {
                 productSubTypeId: subTypeId,
-                productSubTypeRemark:
-                  subTypeData.remark ||
-                  productSubTypeRemark?.find(
-                    (sub) => sub.id === subTypeId || ''
-                  )?.value,
-                isProductSubTypeOthers: subTypeData.productNameEng === 'Others',
+                productSubTypeRemark: subTypeRemarkData?.find(
+                  (sub) => sub.id === subTypeId
+                )?.value,
+                isProductSubTypeOthers:
+                  subTypeData.productNameEng.toLocaleLowerCase() === 'others',
                 productAddon: addonItems
               }
             }
@@ -236,7 +260,72 @@ export default function ProductListMultiSelect({
         productS.push({ productTypeId: prod, productSubType: [] })
       }
     })
+
+    console.log('productslalal', productS)
     return productS
+  }
+
+  const updateSubtypeRemarks = (
+    defaultProduct: any[],
+    prev: remarkVal[] | null
+  ): remarkVal[] => {
+    const updatedRemarks = [...(prev || [])]
+
+    defaultProduct.forEach((product) => {
+      product.productSubType.forEach((subType: productSubTypeItem) => {
+        const existingRemarkIndex = updatedRemarks.findIndex(
+          (remark) => remark.id === subType.productSubType.id
+        )
+
+        if (existingRemarkIndex > -1) {
+          updatedRemarks[existingRemarkIndex] = {
+            ...updatedRemarks[existingRemarkIndex],
+            value: subType.productSubTypeRemark || ''
+          }
+        } else {
+          updatedRemarks.push({
+            id: subType.productSubType.id,
+            value: subType.productSubTypeRemark || ''
+          })
+        }
+      })
+    })
+
+    return updatedRemarks
+  }
+
+  // Function to update addon remarks
+  const updateAddonRemarks = (
+    defaultProduct: any[],
+    prev: remarkVal[] | null
+  ): remarkVal[] => {
+    const updatedAddons = [...(prev || [])]
+
+    defaultProduct.forEach((product) => {
+      product.productSubType.forEach((subType: productSubTypeItem) => {
+        subType.productAddon?.forEach((addon: productAddonItem) => {
+          const existingAddonIndex = updatedAddons.findIndex(
+            (remark) => remark.id === addon.productAddon.id
+          )
+
+          if (existingAddonIndex > -1) {
+            // Update existing addon remark
+            updatedAddons[existingAddonIndex] = {
+              ...updatedAddons[existingAddonIndex],
+              value: addon.productAddonTypeRemark || ''
+            }
+          } else {
+            // Add new addon remark
+            updatedAddons.push({
+              id: addon.productAddon.id,
+              value: addon.productAddonTypeRemark || ''
+            })
+          }
+        })
+      })
+    })
+
+    return updatedAddons
   }
 
   const returnProductTypes = () => {
@@ -323,8 +412,6 @@ export default function ProductListMultiSelect({
       return prod.productType.id == prodId
     })
     if (re) {
-      console.log('re', re)
-
       const subItem = re.productSubType.find(
         (sub) => sub.productSubType.id === subProdId
       )
@@ -362,10 +449,8 @@ export default function ProductListMultiSelect({
     var withSubItem: string[] = []
     productType.map((prod) => {
       const subId = returnSubTypesId(prod)
-      console.log('subId', subId)
       subId.map((sub) => {
         const addonIds = returnAddonTypesId(prod, sub)
-        console.log('addonIds', sub, '=>>', addonIds)
         if (addonIds.length === 0) {
           if (productSubType.includes(sub)) {
             withSubItem.push(prod)
@@ -537,76 +622,30 @@ export default function ProductListMultiSelect({
     setCurrAddonType('')
   }
 
-  const onChangeSubRemark = (value: string) => {
-    setCurrSubRemark(value)
-    if (choosenProductSubType && value) {
-      const newRemark = value
-      setProductSubTypeRemark((prevRemarks: any) => {
-        if (prevRemarks === null)
-          return [
-            {
-              id: choosenProductSubType.productSubTypeId,
-              value: newRemark
-            }
-          ]
-
-        const updatedRemarks = prevRemarks.map((remark: any) =>
-          remark.id === choosenProductSubType.remark
-            ? { ...remark, value: newRemark }
-            : remark
-        )
-
-        if (
-          !updatedRemarks.some(
-            (remark: any) =>
-              remark.id === choosenProductSubType.productSubTypeId
-          )
-        ) {
-          updatedRemarks.push({
-            id: choosenProductSubType.productSubTypeId,
-            value: newRemark
-          })
-        }
-
-        return updatedRemarks
-      })
+  const onChangeAddonRemark = (value: string) => {
+    if (choosenProductAddon) {
+      setAddonRemarkData((prev) =>
+        prev
+          ? prev.map((addon) =>
+              addon.id === choosenProductAddon?.productAddonTypeId
+                ? { ...addon, value }
+                : addon
+            )
+          : []
+      )
     }
   }
 
-  const onChangeAddonRemark = (value: string) => {
-    if (choosenProductAddon && value) {
-      const newRemark = value
-      setProductSubTypeRemark((prevRemarks: any) => {
-        if (prevRemarks === null)
-          return [
-            {
-              id: choosenProductAddon.productAddonTypeId,
-              value: newRemark
-            }
-          ]
-
-        const updatedRemarks = prevRemarks.map((remark: any) =>
-          remark.id === choosenProductAddon.remark
-            ? { ...remark, value: newRemark }
-            : remark
-        )
-
-        if (
-          !updatedRemarks.some(
-            (remark: any) =>
-              remark.id === choosenProductAddon.productAddonTypeId
-          )
-        ) {
-          updatedRemarks.push({
-            id: choosenProductAddon.productAddonTypeId,
-            value: newRemark
-          })
-        }
-
-        console.log('remark', updatedRemarks)
-
-        return updatedRemarks
-      })
+  const onChangeSubRemark = (value: string) => {
+    if (choosenProductSubType) {
+      setSubTypeRemarkData(
+        (prev) =>
+          prev?.map((sub) =>
+            sub.id === choosenProductSubType.productSubTypeId
+              ? { ...sub, value }
+              : sub
+          ) || []
+      )
     }
   }
 
@@ -650,7 +689,7 @@ export default function ProductListMultiSelect({
             {choosenProductSubType?.productNameEng === 'Others' && (
               <CustomField
                 label={
-                  getNameFromSubId(currSubProductType) +
+                  getNameFromProductId(currProductType) +
                   ' ' +
                   t('pick_up_order.product_type.subtype') +
                   ' ' +
@@ -671,7 +710,11 @@ export default function ProductListMultiSelect({
                   onChange={(event) => {
                     onChangeSubRemark(event.target.value)
                   }}
-                  value={currSubRemark}
+                  value={
+                    subTypeRemarkData?.find(
+                      (sub) => sub.id === choosenProductSubType.productSubTypeId
+                    )?.value
+                  }
                 />
               </CustomField>
             )}
@@ -723,10 +766,14 @@ export default function ProductListMultiSelect({
                     t('general_settings.remark')
                   }
                   onChange={(event) => {
-                    setCurrAddonRemark(event.target.value)
                     onChangeAddonRemark(event.target.value)
                   }}
-                  value={currAddonRemark}
+                  value={
+                    addonTypeRemarkData?.find(
+                      (item) =>
+                        item.id === choosenProductAddon.productAddonTypeId
+                    )?.value
+                  }
                 />
               </CustomField>
             )}
