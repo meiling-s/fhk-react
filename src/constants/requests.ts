@@ -830,7 +830,12 @@ export const GET_RECYC_SUB_TYPE_WEIGHT = (
   warehouseId: number
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/recycsubtypeweight/${table}/${warehouseId}`
+  url: `api/v1/${realmApiRoute}/typeweight/${table}/${warehouseId}`
+})
+
+export const GET_WEIGHT_BY_SUB_TYPE = (realmApiRoute: string, table: string, warehouseId: number): AxiosRequestConfig => ({
+   method: 'get',
+  url: `api/v1/${realmApiRoute}/inventory/${table}/getweightbytypes/${warehouseId}`
 })
 
 export const GET_CHECKIN_WAREHOUSE = (

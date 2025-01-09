@@ -156,7 +156,6 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
 
   useEffect(() => {
     resetData();
-    console.log("diinventory", productType);
   }, [drawerOpen]);
 
   const resetData = () => {
@@ -299,7 +298,6 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
           type: "error",
         });
       }
-      console.log("tempV", tempV);
       setValidation(tempV);
     };
     validate();
@@ -754,13 +752,13 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
 
                   if (!/^\d*\.?\d*$/.test(rawValue)) {
                     return;
-                }
-            
-                setWeight(rawValue);
-            
-                setTimeout(() => {
+                  }
+
+                  setWeight(rawValue);
+
+                  setTimeout(() => {
                     input.setSelectionRange(cursorPosition, cursorPosition);
-                }, 0);
+                  }, 0);
                 }}
                 sx={{
                   ".MuiInputBase-root": {

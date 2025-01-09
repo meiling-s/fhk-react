@@ -70,6 +70,7 @@ interface Props {
   setHasErrors: (hasErrors: boolean) => void;
   validation: { field: string; error: string }[];
   isTriedSubmitted: boolean;
+  disabled: boolean;
 }
 
 const ItemCategoryRow: React.FC<Props> = ({
@@ -82,6 +83,7 @@ const ItemCategoryRow: React.FC<Props> = ({
   setHasErrors,
   validation,
   isTriedSubmitted,
+  disabled,
 }) => {
   const { t, i18n } = useTranslation();
   const [errors, setErrors] = useState<{
@@ -101,7 +103,7 @@ const ItemCategoryRow: React.FC<Props> = ({
   const recycCapacityError = validation.find(
     (v) => v.field === `itemCategory[${index}].recycTypeCapacity`
   );
-  
+
   const productTypeError = validation.find(
     (v) => v.field === `itemCategory[${index}].productTypeId`
   );
@@ -294,7 +296,7 @@ const ItemCategoryRow: React.FC<Props> = ({
     <Grid container spacing={2} alignItems="center">
       {/* Type Selection */}
       <Grid item xs={2}>
-        <FormControl fullWidth>
+        <FormControl fullWidth disabled={disabled}>
           <Select
             value={item.type || ""}
             onChange={(e) =>
@@ -322,12 +324,13 @@ const ItemCategoryRow: React.FC<Props> = ({
                 value={item.recycTypeId || ""}
                 onChange={handleRecycTypeChange}
                 sx={{
-                  border: 
-                    recycTypeError && isTriedSubmitted 
-                      ? "2px solid red" 
+                  border:
+                    recycTypeError && isTriedSubmitted
+                      ? "2px solid red"
                       : "1px solid #ccc",
                   borderRadius: "4px",
                 }}
+                disabled={disabled}
               >
                 {recycTypes.map((type) => (
                   <MenuItem value={type.recycTypeId} key={type.recycTypeId}>
@@ -344,12 +347,13 @@ const ItemCategoryRow: React.FC<Props> = ({
                 value={item.recycSubTypeId || ""}
                 onChange={handleRecycSubTypeChange}
                 sx={{
-                  border: 
+                  border:
                     recycSubTypeError && isTriedSubmitted
                       ? "2px solid red"
                       : "1px solid #ccc",
                   borderRadius: "4px",
                 }}
+                disabled={disabled}
               >
                 {recycTypes
                   .find((type) => type.recycTypeId === item.recycTypeId)
@@ -397,8 +401,9 @@ const ItemCategoryRow: React.FC<Props> = ({
                   ),
                 }}
                 sx={{
-                  border: 
-                    (errors.recycTypeCapacity || recycCapacityError) && isTriedSubmitted
+                  border:
+                    (errors.recycTypeCapacity || recycCapacityError) &&
+                    isTriedSubmitted
                       ? "2px solid red"
                       : "1px solid #ccc",
                 }}
@@ -410,6 +415,7 @@ const ItemCategoryRow: React.FC<Props> = ({
                     }));
                   }
                 }}
+                disabled={disabled}
               />
             </FormControl>
           </Grid>
@@ -424,9 +430,13 @@ const ItemCategoryRow: React.FC<Props> = ({
                 value={item.productTypeId || ""}
                 onChange={handleProductTypeChange}
                 sx={{
-                  border: productTypeError && isTriedSubmitted ? "2px solid red" : "1px solid #ccc",
+                  border:
+                    productTypeError && isTriedSubmitted
+                      ? "2px solid red"
+                      : "1px solid #ccc",
                   borderRadius: "4px",
                 }}
+                disabled={disabled}
               >
                 {productTypes.map((type) => (
                   <MenuItem value={type.productTypeId} key={type.productTypeId}>
@@ -443,13 +453,13 @@ const ItemCategoryRow: React.FC<Props> = ({
                 value={item.productSubTypeId || ""}
                 onChange={handleProductSubTypeChange}
                 sx={{
-                  border: 
-                  productSubTypeError && isTriedSubmitted
-                    ? "2px solid red"
-                    : "1px solid #ccc",
+                  border:
+                    productSubTypeError && isTriedSubmitted
+                      ? "2px solid red"
+                      : "1px solid #ccc",
                   borderRadius: "4px",
                 }}
-                disabled={!item.productTypeId}
+                disabled={!item.productTypeId || disabled}
               >
                 {productTypes !== undefined &&
                   productTypes
@@ -472,13 +482,13 @@ const ItemCategoryRow: React.FC<Props> = ({
                 value={item.productAddonTypeId || ""}
                 onChange={handleProductAddonChange}
                 fullWidth
-                disabled={!item.productSubTypeId}
+                disabled={!item.productSubTypeId || disabled}
                 error={!!errors.productAddonTypeId}
                 sx={{
-                  border: 
-                  productAddonTypeError && isTriedSubmitted
-                    ? "2px solid red"
-                    : "1px solid #ccc",
+                  border:
+                    productAddonTypeError && isTriedSubmitted
+                      ? "2px solid red"
+                      : "1px solid #ccc",
                   borderRadius: "4px",
                 }}
               >
@@ -534,10 +544,11 @@ const ItemCategoryRow: React.FC<Props> = ({
                   }
                 }}
                 sx={{
-                  border: 
-                  (errors.productTypeCapacity || productTypeCapacityError) && isTriedSubmitted
-                    ? "2px solid red"
-                    : "1px solid #ccc",
+                  border:
+                    (errors.productTypeCapacity || productTypeCapacityError) &&
+                    isTriedSubmitted
+                      ? "2px solid red"
+                      : "1px solid #ccc",
                 }}
                 onBlur={() => {
                   if (!item.productTypeCapacity) {
@@ -547,6 +558,7 @@ const ItemCategoryRow: React.FC<Props> = ({
                     }));
                   }
                 }}
+                disabled={disabled}
               />
             </FormControl>
           </Grid>
@@ -555,11 +567,15 @@ const ItemCategoryRow: React.FC<Props> = ({
 
       {/* Action Buttons */}
       <Grid item xs={2}>
-        <IconButton onClick={handleAddRow} color="success">
+        <IconButton onClick={handleAddRow} color="success" disabled={disabled}>
           <AddCircleOutline />
         </IconButton>
         {itemCategories.length > 1 && (
-          <IconButton onClick={handleRemoveRow} color="error">
+          <IconButton
+            onClick={handleRemoveRow}
+            color="error"
+            disabled={disabled}
+          >
             <RemoveCircleOutline />
           </IconButton>
         )}

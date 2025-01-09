@@ -3,6 +3,7 @@ import { useState } from "react";
 import BackgroundLetterAvatars from "./CustomAvatar";
 import { styles } from "../constants/styles";
 import { CheckinDetailPhoto } from "../interfaces/checkin";
+import { CheckoutDetailPhoto } from "src/interfaces/checkout";
 
 type props = {
   name: string;
@@ -13,7 +14,7 @@ type props = {
   productName: string;
   productType: string;
   weight: string;
-  images: CheckinDetailPhoto[];
+  images: CheckinDetailPhoto[] | CheckoutDetailPhoto[];
 };
 
 const RecycleCard = ({
@@ -67,7 +68,7 @@ const RecycleCard = ({
       </Box>
       {showImage && (
         <Stack mt="10px" spacing={3} direction="row">
-          {images.map((image: CheckinDetailPhoto) => (
+          {images.map((image: CheckinDetailPhoto | CheckoutDetailPhoto) => (
             <Box height="100px" bgcolor="red" width="100px" borderRadius="10px">
               <img
                 src={image.photo}

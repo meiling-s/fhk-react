@@ -133,7 +133,12 @@ const SelectReasonModal: React.FC<ReasonForm> = ({
   const [isUsingOtherRemark, setIsUsingOtherRemark] = useState<boolean>(false);
 
   useEffect(() => {
-    const selectedReason = rejectReasonId.find((value) => value == "43");
+    const findOthersReason = reasonList.find(
+      (value: any) => value.reasonNameEng === "Others"
+    );
+    const selectedReason = rejectReasonId.find(
+      (value) => value == findOthersReason.reasonId
+    );
     if (!selectedReason) {
       setOtherRemark("");
       setIsUsingOtherRemark(false);
@@ -349,8 +354,12 @@ const RejectModal: React.FC<RejectForm> = ({
   const [isUsingOtherRemark, setIsUsingOtherRemark] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log(rejectReasonId);
-    const selectedReason = rejectReasonId.find((value) => value == "43");
+    const findOthersReason = reasonList.find(
+      (value: any) => value.reasonNameEng === "Others"
+    );
+    const selectedReason = rejectReasonId.find(
+      (value) => value == findOthersReason.reasonId
+    );
     if (!selectedReason) {
       setOtherRemark("");
       setIsUsingOtherRemark(false);
