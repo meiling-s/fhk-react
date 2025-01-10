@@ -68,6 +68,11 @@ export const UPDATE_TENANT_STATUS = (tenantId: number): AxiosRequestConfig => ({
   url: `api/v1/account/t/V2/status/${tenantId}`
 })
 
+export const GET_REGISTER_LINK_STATUS = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/account/t/str/${tenantId}`
+})
+
 export const GET_CURRENCY_LIST: AxiosRequestConfig = {
   method: 'get',
   url: 'api/v1/administrator/currencyList'
