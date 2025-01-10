@@ -306,123 +306,143 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
   const { t } = useTranslation();
   const [email, setEmail] = useState<string>("");
   const [emailErr, setEmailErr] = useState<boolean>(false);
+  const [nextStep, setNextStep] = useState<boolean>(false);
 
   const sendInvitation = async () => {
-    const titleInv = "Invitation Tenant Account";
-    const content = `are u invited to register as tenant member , ${
-      defaultPath.tenantRegisterPath + id
-    }`;
-
     const result = await sendEmailInvitation(
       email,
       id.toString().padStart(6, "0")
     );
     if (result) {
-      onSendInvitation(true);
-    } else {
-      onSendInvitation(false);
+      setNextStep(true);
     }
+  };
+
+  const handleCloseInvitationLink = async () => {
+    setNextStep(false);
+    setEmail("");
     onClose();
   };
 
   return (
     <Modal
       open={open}
-      onClose={onClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
       <Box sx={localstyles.modal}>
         <Stack spacing={2}>
-          <Box sx={{ paddingX: 3, paddingTop: 3 }}>
-            <Typography
-              id="modal-modal-title"
-              variant="h6"
-              component="h2"
-              sx={{ fontWeight: "bold" }}
+          {!nextStep && (
+            <>
+              <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  component="h2"
+                  sx={{ fontWeight: "bold" }}
+                >
+                  {t("tenant.invite_modal.invite_company")}
+                </Typography>
+              </Box>
+              <Divider />
+              <Box sx={{ paddingX: 3, paddingBottom: 5 }}>
+                <Typography sx={localstyles.typo}>
+                  {t("tenant.invite_modal.invite_by_email")}
+                  <Required />
+                </Typography>
+                <TextField
+                  fullWidth
+                  placeholder={t("tenant.invite_modal.enter_email")}
+                  onChange={(event) => {
+                    setEmailErr(!validateEmail(email));
+                    setEmail(event.target.value);
+                  }}
+                  error={emailErr}
+                  required={true}
+                  value={email}
+                  InputProps={{
+                    sx: styles.textField,
+                    endAdornment: (
+                      <InputAdornment position="end" sx={{ height: "100%" }}>
+                        <Button
+                          sx={[
+                            styles.buttonOutlinedGreen,
+                            {
+                              width: "90px",
+                              height: "100%",
+                            },
+                          ]}
+                          variant="outlined"
+                          onClick={sendInvitation}
+                          disabled={emailErr || email === ""}
+                        >
+                          {t("tenant.invite_modal.send")}
+                        </Button>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+            </>
+          )}
+          {nextStep && (
+            <Box
+              sx={{
+                paddingX: 3,
+                paddingBottom: 3,
+                display: "flex",
+                flexDirection: "column",
+              }}
             >
-              {t("tenant.invite_modal.invite_company")}
-            </Typography>
-          </Box>
-          <Divider />
-          <Box sx={{ paddingX: 3 }}>
-            <Typography sx={localstyles.typo}>
-              {t("tenant.invite_modal.invite_by_email")}
-              <Required />
-            </Typography>
-            <TextField
-              fullWidth
-              placeholder={t("tenant.invite_modal.enter_email")}
-              onChange={(event) => {
-                setEmailErr(!validateEmail(email));
-                setEmail(event.target.value);
-              }}
-              error={emailErr}
-              InputProps={{
-                sx: styles.textField,
-                endAdornment: (
-                  <InputAdornment position="end" sx={{ height: "100%" }}>
-                    <Button
-                      sx={[
-                        styles.buttonOutlinedGreen,
-                        {
-                          width: "90px",
-                          height: "100%",
-                        },
-                      ]}
-                      variant="outlined"
-                      onClick={sendInvitation}
-                      disabled={emailErr}
-                    >
-                      {t("tenant.invite_modal.send")}
-                    </Button>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Box>
-          <Box sx={{ paddingX: 3, paddingBottom: 3 }}>
-            <Typography variant="h6" component="h2" sx={{ marginBottom: 2 }}>
-              {t("tenant.invite_modal.or")}
-            </Typography>
-            <Typography sx={localstyles.typo}>
-              {t("tenant.invite_modal.link_invitation")}
-            </Typography>
-            <TextField
-              fullWidth
-              value={
-                defaultPath.tenantRegisterPath + id.toString().padStart(6, "0")
-              }
-              onChange={(event: { target: { value: any } }) => {
-                //console.log(event.target.value)
-              }}
-              InputProps={{
-                sx: styles.textField,
-                endAdornment: (
-                  <InputAdornment position="end" sx={{ height: "100%" }}>
-                    <Button
-                      onClick={() =>
-                        navigator.clipboard.writeText(
-                          defaultPath.tenantRegisterPath +
-                            id.toString().padStart(6, "0")
-                        )
-                      }
-                      sx={[
-                        styles.buttonOutlinedGreen,
-                        {
-                          width: "90px",
-                          height: "100%",
-                        },
-                      ]}
-                      variant="outlined"
-                    >
-                      {t("tenant.invite_modal.copy")}
-                    </Button>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Box>
+              <Box sx={{ marginLeft: "auto", flex: 1, paddingTop: 2 }}>
+                <CloseIcon
+                  style={{
+                    color: "#000",
+                  }}
+                  className="hover:cursor-pointer"
+                  onClick={handleCloseInvitationLink}
+                />
+              </Box>
+              <Typography sx={localstyles.typo}>
+                {t("tenant.invite_modal.link_invitation")}
+              </Typography>
+              <TextField
+                fullWidth
+                value={
+                  defaultPath.tenantRegisterPath +
+                  id.toString().padStart(6, "0")
+                }
+                onChange={(event: { target: { value: any } }) => {
+                  //console.log(event.target.value)
+                }}
+                InputProps={{
+                  sx: styles.textField,
+                  endAdornment: (
+                    <InputAdornment position="end" sx={{ height: "100%" }}>
+                      <Button
+                        onClick={() =>
+                          navigator.clipboard.writeText(
+                            defaultPath.tenantRegisterPath +
+                              id.toString().padStart(6, "0")
+                          )
+                        }
+                        sx={[
+                          styles.buttonOutlinedGreen,
+                          {
+                            width: "90px",
+                            height: "100%",
+                          },
+                        ]}
+                        variant="outlined"
+                      >
+                        {t("tenant.invite_modal.copy")}
+                      </Button>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
+          )}
         </Stack>
       </Box>
     </Modal>

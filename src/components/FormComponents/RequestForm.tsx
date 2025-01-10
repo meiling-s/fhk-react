@@ -360,7 +360,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
           <Box display="flex" flexDirection="row">
             <Box sx={{ flex: 1 }}>
               <Typography sx={localstyles.typo_fieldTitle}>
-                {t("check_in.sender_addr")}
+                {t("check_out.shipping_location")}
               </Typography>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedItem?.senderAddr}
@@ -375,7 +375,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
               </Box>
               <Box>
                 <Typography sx={localstyles.typo_fieldTitle}>
-                  {t("check_in.receiver_addr")}
+                  {t("pick_up_order.detail.arrived")}
                 </Typography>
                 <Typography sx={localstyles.typo_fieldContent}>
                   {selectedItem?.deliveryAddress ?? "-"}
