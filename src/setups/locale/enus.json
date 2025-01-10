@@ -1645,7 +1645,9 @@
     "table": {
       "startOrFinishDate": "Start / Finish date",
       "processIn": "Pending",
-      "processOut": "After Processing"
+      "processOut": "After Processing",
+      "showMore": "Show More",
+      "showLess": "Show Less"
     }
   },
   "factory": {
