@@ -859,7 +859,7 @@ const CreateProcessOrder = ({}: {}) => {
           <TableCell style={{ width: '150px', ...styleDivider }}>
             {processLabel}
           </TableCell>
-          <TableCell style={{ width: '200px', ...styleDivider }}>
+          <TableCell style={{ width: '250px', ...styleDivider }}>
             {dateTime}
           </TableCell>
           <TableCell
@@ -938,7 +938,7 @@ const CreateProcessOrder = ({}: {}) => {
           </TableCell>
           <TableCell
             style={{
-              width: '200px',
+              width: '220px',
               ...styleDivider
             }}
           >
@@ -946,7 +946,7 @@ const CreateProcessOrder = ({}: {}) => {
           </TableCell>
           <TableCell
             style={{
-              width: '200px',
+              width: '220px',
               ...styleDivider
             }}
           >
@@ -954,7 +954,7 @@ const CreateProcessOrder = ({}: {}) => {
           </TableCell>
           <TableCell
             style={{
-              width: '200px',
+              width: '220px',
               ...styleDivider
             }}
           >
