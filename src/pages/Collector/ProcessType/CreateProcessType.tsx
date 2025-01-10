@@ -8,12 +8,23 @@ import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
-import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
+import {
+  extractError,
+  returnErrorMsg,
+  showErrorToast
+} from '../../../utils/utils'
 import { localStorgeKeyName } from '../../../constants/constant'
 import { useNavigate } from 'react-router-dom'
-import { CreateProcessTypeProps, ProcessTypeData } from '../../../interfaces/processType'
+import {
+  CreateProcessTypeProps,
+  ProcessTypeData
+} from '../../../interfaces/processType'
 import { WeightUnit } from '../../../interfaces/weightUnit'
-import { createProcessTypeData, deleteProcessTypeData, updateProcessTypeData } from '../../../APICalls/Collector/processType'
+import {
+  createProcessTypeData,
+  deleteProcessTypeData,
+  updateProcessTypeData
+} from '../../../APICalls/Collector/processType'
 
 interface CreateProcessType {
   drawerOpen: boolean
@@ -48,20 +59,26 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
   const [processTime, setProcessTime] = useState<string>('')
   const [processNumber, setProcessNumber] = useState<string>('')
   const [processWeight, setProcessWeight] = useState<string>('')
-  const navigate = useNavigate();
-  const number = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60]
+  const navigate = useNavigate()
+  const number = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+    22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+    60
+  ]
+  const [duplicateName, setDuplicatedName] = useState<boolean>(false)
   const time = [
     {
       id: 'D',
       nameEn: 'Day',
       nameTchi: '日',
-      nameSchi: '日',
+      nameSchi: '日'
     },
     {
       id: 'h',
       nameEn: 'Hour',
       nameTchi: '小時',
-      nameSchi: '小时',
+      nameSchi: '小时'
     },
     {
       id: 'm',
@@ -111,8 +128,8 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
 
   useEffect(() => {
     const validate = async () => {
-      const tempV: formValidate[] = [];
-  
+      const tempV: formValidate[] = []
+
       // Validate each individual field separately
       if (tChineseName.toString() === '') {
         tempV.push({
@@ -120,27 +137,27 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
           problem: formErr.empty,
           type: 'error',
           dataTestId: 'astd-product-type-form-tc-err-warning-3762'
-        });
+        })
       }
-  
+
       if (sChineseName.toString() === '') {
         tempV.push({
           field: t('process_type.simplified_chinese_name'),
           problem: formErr.empty,
           type: 'error',
           dataTestId: 'astd-product-type-form-sc-err-warning-3672'
-        });
+        })
       }
-  
+
       if (englishName.toString() === '') {
         tempV.push({
           field: t('process_type.english_name'),
           problem: formErr.empty,
           type: 'error',
           dataTestId: 'astd-product-type-form-en-err-warning-3278'
-        });
+        })
       }
-  
+
       // Grouped validation for processNumber, processTime, and processWeight
       if (
         processNumber.toString() === '' ||
@@ -148,19 +165,30 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
         processWeight.toString() === ''
       ) {
         tempV.push({
-          field: t('process_type.time'),  // You can adjust this field label if needed
+          field: t('process_type.time'), // You can adjust this field label if needed
           problem: formErr.empty,
           type: 'error',
           dataTestId: 'astd-product-type-form-time-err-warning-6697'
-        });
+        })
       }
-  
-      setValidation(tempV);
-    };
-  
-    validate();
-  }, [tChineseName, sChineseName, englishName, processNumber, processTime, processWeight, i18n.language]);
-  
+
+      setValidation(tempV)
+    }
+
+    validate()
+  }, [
+    tChineseName,
+    sChineseName,
+    englishName,
+    processNumber,
+    processTime,
+    processWeight,
+    i18n.language
+  ])
+
+  useEffect(() => {
+    setDuplicatedName(false)
+  }, [tChineseName, sChineseName, englishName])
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -168,6 +196,16 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
       return false
     }
     return s == ''
+  }
+
+  const nameExisting = () => {
+    const tempV: formValidate[] = []
+    tempV.push({
+      field: t('processRecord.handleName'),
+      problem: formErr.alreadyExist,
+      type: 'error'
+    })
+    setValidation(tempV)
   }
 
   const handleSubmit = () => {
@@ -181,9 +219,8 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
       processingTime: Number(processNumber),
       processingTimeUnit: processTime,
       processingWeightUnitId: Number(processWeight),
-      ...(action === 'edit' && {version: version}),
+      ...(action === 'edit' && { version: version })
       // ...(action === 'delete' && {version: version})
-
     }
     if (action == 'add') {
       handleCreateProcessType(formData)
@@ -209,12 +246,15 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
         setTrySubmited(true)
       }
     } catch (error: any) {
-      const { state } = extractError(error);
+      const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
         if (error?.response?.data?.status === STATUS_CODE[409]) {
-          showErrorToast(error?.response?.data?.message);
+          //showErrorToast(error?.response?.data?.message)
+          nameExisting()
+          setDuplicatedName(true)
+          setTrySubmited(true)
         }
         // if (error?.response?.data?.status === STATUS_CODE[500] ||
         //   error?.response?.data?.status === STATUS_CODE[409]) {
@@ -250,12 +290,14 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
         setTrySubmited(true)
       }
     } catch (error: any) {
-      const { state } = extractError(error);
+      const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
         if (error?.response?.data?.status === STATUS_CODE[409]) {
-          showErrorToast(error?.response?.data?.message);
+          nameExisting()
+          setDuplicatedName(true)
+          //showErrorToast(error?.response?.data?.message)
         }
       }
     }
@@ -274,7 +316,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
         }
       }
     } catch (error: any) {
-      const { state } = extractError(error);
+      const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
@@ -293,8 +335,8 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
             action == 'add'
               ? t('top_menu.add_new')
               : action == 'delete'
-                ? t('common.delete')
-                : selectedItem?.processTypeId,
+              ? t('common.delete')
+              : selectedItem?.processTypeId,
           subTitle: t('process_type.process_type'),
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),
@@ -315,10 +357,14 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                 id="tChineseName"
                 value={tChineseName}
                 disabled={action === 'delete'}
-                placeholder={t('process_type.traditional_chinese_name_placeholder')}
+                placeholder={t(
+                  'process_type.traditional_chinese_name_placeholder'
+                )}
                 onChange={(event) => setTChineseName(event.target.value)}
-                error={checkString(tChineseName)}
-                dataTestId='astd-product-type-form-tc-input-field-1266'
+                error={
+                  checkString(tChineseName) || (duplicateName && trySubmited)
+                }
+                dataTestId="astd-product-type-form-tc-input-field-1266"
               />
             </CustomField>
           </Box>
@@ -332,10 +378,14 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                 id="sChineseName"
                 value={sChineseName}
                 disabled={action === 'delete'}
-                placeholder={t('process_type.simplified_chinese_name_placeholder')}
+                placeholder={t(
+                  'process_type.simplified_chinese_name_placeholder'
+                )}
                 onChange={(event) => setSChineseName(event.target.value)}
-                error={checkString(sChineseName)}
-                dataTestId='astd-product-type-form-sc-input-field-6727'
+                error={
+                  checkString(sChineseName) || (duplicateName && trySubmited)
+                }
+                dataTestId="astd-product-type-form-sc-input-field-6727"
               />
             </CustomField>
           </Box>
@@ -348,8 +398,10 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                 disabled={action === 'delete'}
                 placeholder={t('process_type.english_name_placeholder')}
                 onChange={(event) => setEnglishName(event.target.value)}
-                error={checkString(englishName)}
-                dataTestId='astd-product-type-form-en-input-field-4655'
+                error={
+                  checkString(englishName) || (duplicateName && trySubmited)
+                }
+                dataTestId="astd-product-type-form-en-input-field-4655"
               />
             </CustomField>
           </Box>
@@ -359,13 +411,13 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-mini">
               <div className="self-stretch overflow-hidden flex flex-row items-center justify-start gap-[8px]">
                 <div className="w-full ">
-                  <div
-                    className="flex justify-center items-center gap-2 mb-2"
-                  >
+                  <div className="flex justify-center items-center gap-2 mb-2">
                     <FormControl sx={{ m: 1, width: '100%' }}>
                       <Select
                         value={processNumber}
-                        onChange={(event: SelectChangeEvent<string>) => setProcessNumber(event.target.value)}
+                        onChange={(event: SelectChangeEvent<string>) =>
+                          setProcessNumber(event.target.value)
+                        }
                         displayEmpty
                         disabled={action === 'delete'}
                         inputProps={{
@@ -375,7 +427,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                           borderRadius: '12px'
                         }}
                         error={checkString(processNumber)}
-                        data-testId='astd-product-type-duration-select-button-4196'
+                        data-testId="astd-product-type-duration-select-button-4196"
                       >
                         {number.map((value, index) => (
                           <MenuItem value={value} key={index}>
@@ -387,7 +439,9 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                     <FormControl sx={{ m: 1, width: '100%' }}>
                       <Select
                         value={processTime}
-                        onChange={(event: SelectChangeEvent<string>) => setProcessTime(event.target.value)}
+                        onChange={(event: SelectChangeEvent<string>) =>
+                          setProcessTime(event.target.value)
+                        }
                         displayEmpty
                         disabled={action === 'delete'}
                         inputProps={{
@@ -397,10 +451,15 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                           borderRadius: '12px' // Adjust the value as needed
                         }}
                         error={checkString(processTime)}
-                        data-testId='astd-product-type-duration-type-select-button-4370'
+                        data-testId="astd-product-type-duration-type-select-button-4370"
                       >
                         {time.map((value, index) => {
-                          const selectedLang = i18n.language === 'enus' ? value.nameEn : i18n.language === 'zhhk' ? value.nameTchi : value.nameSchi
+                          const selectedLang =
+                            i18n.language === 'enus'
+                              ? value.nameEn
+                              : i18n.language === 'zhhk'
+                              ? value.nameTchi
+                              : value.nameSchi
                           return (
                             <MenuItem value={value.id} key={index}>
                               {selectedLang}
@@ -412,7 +471,9 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                     <FormControl sx={{ m: 1, width: '100%' }}>
                       <Select
                         value={processWeight}
-                        onChange={(event: SelectChangeEvent<string>) => setProcessWeight(event.target.value)}
+                        onChange={(event: SelectChangeEvent<string>) =>
+                          setProcessWeight(event.target.value)
+                        }
                         displayEmpty
                         disabled={action === 'delete'}
                         inputProps={{
@@ -422,10 +483,15 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                           borderRadius: '12px'
                         }}
                         error={checkString(processWeight)}
-                        data-testId='astd-product-type-weight-unit-select-button-3108'
+                        data-testId="astd-product-type-weight-unit-select-button-3108"
                       >
                         {weightUnit.map((value, index) => {
-                          const name = i18n.language === 'enus' ? value.unitNameEng : i18n.language === 'zhhk' ? value.unitNameTchi : value.unitNameSchi
+                          const name =
+                            i18n.language === 'enus'
+                              ? value.unitNameEng
+                              : i18n.language === 'zhhk'
+                              ? value.unitNameTchi
+                              : value.unitNameSchi
                           return (
                             <MenuItem value={value.unitId} key={index}>
                               {name}
@@ -440,7 +506,6 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
             </div>
           </Box>
 
-
           <Box sx={{ marginY: 2 }}>
             <CustomField
               label={t('process_type.introduction')}
@@ -453,7 +518,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                 multiline={true}
                 defaultValue={description}
                 disabled={action === 'delete'}
-                dataTestId='astd-product-type-desc-input-field-2290'
+                dataTestId="astd-product-type-desc-input-field-2290"
               />
             </CustomField>
           </Box>
@@ -467,12 +532,12 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                 multiline={true}
                 defaultValue={remark}
                 disabled={action === 'delete'}
-                dataTestId='astd-product-type-remark-input-field-4854'
+                dataTestId="astd-product-type-remark-input-field-4854"
               />
             </CustomField>
           </Box>
 
-          <Box sx={{ marginY: 2 }}>
+          <Box sx={{ marginY: 2, paddingBottom: 4 }}>
             <Grid item>
               {trySubmited &&
                 validation.map((val, index) => (
@@ -485,7 +550,6 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                 ))}
             </Grid>
           </Box>
-
         </Box>
       </RightOverlayForm>
     </div>
