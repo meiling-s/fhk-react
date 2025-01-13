@@ -64,6 +64,7 @@ export type CheckOut = {
   senderAddr?: string
   version: number
   senderCompany?: string
+  senderAddress?: string
 }
 
 export type queryCheckout = {

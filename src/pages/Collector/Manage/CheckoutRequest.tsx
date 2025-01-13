@@ -71,6 +71,7 @@ import {
   getTenantById,
   searchTenantById,
 } from "../../../APICalls/tenantManage";
+import { getWarehouseById } from "src/APICalls/warehouseManage";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -562,7 +563,7 @@ const CheckoutRequest: FunctionComponent = () => {
     },
     {
       field: "senderCompany",
-      headerName: t("check_out.shipping_company"),
+      headerName: t("check_in.sender_company"),
       width: 150,
       type: "string",
     },
@@ -603,13 +604,17 @@ const CheckoutRequest: FunctionComponent = () => {
     },
     {
       field: "senderAddr",
-      headerName: t("check_out.sender_addr"),
+      headerName: t("check_out.shipping_location"),
       type: "string",
       width: 200,
+      valueGetter: (params) => {
+        // Check if senderAddr exists, if not use senderAddress
+        return params.row.senderAddr || params.row.senderAddress || "-";
+      },
     },
     {
       field: "receiverAddr",
-      headerName: t("check_out.arrival_location"),
+      headerName: t("pick_up_order.detail.arrived"),
       width: 200,
       type: "string",
     },
@@ -683,6 +688,40 @@ const CheckoutRequest: FunctionComponent = () => {
     return senderCompany;
   };
 
+  const getWarehouseDetail = async (id: number) => {
+    try {
+      const warehouse = await getWarehouseById(id);
+      return warehouse.data;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const cacheWarehouse: any = {};
+
+  const getWarehouseAddres = async (warehouseId: number) => {
+    let deliveryAddress: string = "";
+    if (warehouseId in cacheWarehouse) {
+      deliveryAddress = cacheWarehouse[warehouseId].address;
+    } else {
+      const warehouse = await getWarehouseDetail(warehouseId);
+
+      if (warehouse) {
+        cacheWarehouse[warehouseId] = {
+          isExist: true,
+          address: warehouse.location,
+        };
+        deliveryAddress = warehouse.location;
+      } else {
+        cacheWarehouse[warehouseId] = {
+          isExist: false,
+          address: "",
+        };
+      }
+    }
+    return deliveryAddress;
+  };
+
   const getCheckoutRequest = async () => {
     setIsLoading(true);
     try {
@@ -712,6 +751,10 @@ const CheckoutRequest: FunctionComponent = () => {
             const companyName = await getReceiverCompany(item.receiverId);
             item.receiverName =
               item.receiverId !== "" ? companyName : item.receiverName;
+          }
+          if (item?.warehouseId) {
+            item.senderAddress =
+              (await getWarehouseAddres(item.warehouseId)) ?? "";
           }
 
           item.senderCompany = getSenderCompany();
