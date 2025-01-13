@@ -447,7 +447,11 @@ function MainDrawer() {
     // console.log(currentSubMenu, "currentSubMenu");
     if (ipAddress) {
       const userActivity: UserActivity = {
-        operation: selectedFunction?.functionNameTChi ?? currentSubMenu.name,
+        operation: selectedFunction?.functionNameTChi
+          ? selectedFunction?.functionNameTChi
+          : currentSubMenu.name === "warehouse"
+          ? "概覽"
+          : currentSubMenu.name,
         ip: ipAddress,
         createdBy: loginId,
         updatedBy: loginId,
