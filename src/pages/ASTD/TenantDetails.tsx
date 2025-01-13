@@ -30,11 +30,13 @@ import {
   showErrorToast,
   extractError,
   returnApiToken,
+  getFormatId,
 } from "../../utils/utils";
 import { styles } from "../../constants/styles";
 import { ImageToBase64 } from "../../utils/utils";
 import CommonTypeContainer from "../../contexts/CommonTypeContainer";
 import {
+  astdUpdateTenantStatus,
   getTenantById,
   updateTenantDetail,
   updateTenantStatus,
@@ -81,9 +83,13 @@ function ClosedTenantModal({
       updatedBy: loginId,
       version: version,
     };
+    const operatorId = getFormatId(
+      localStorage.getItem(localStorgeKeyName.tenantId) ?? ""
+    );
 
-    const result = await updateTenantStatus(statData, tenantId);
+    const result = await astdUpdateTenantStatus(statData, operatorId, tenantId);
     const data = result?.data;
+
     onSubmit();
   };
 
