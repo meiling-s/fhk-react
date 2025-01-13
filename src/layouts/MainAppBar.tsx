@@ -12,137 +12,146 @@ import {
   Modal,
   Stack,
   Toolbar,
-  Typography
-} from '@mui/material'
-import { useContext, useEffect, useState } from 'react'
-import { LANGUAGE_ICON, NOTIFICATION_ICON } from '../themes/icons'
-import BackgroundLetterAvatars from '../components/CustomAvatar'
-import { useNavigate } from 'react-router-dom'
-import { localStorgeKeyName } from '../constants/constant'
-import { useTranslation } from 'react-i18next'
-import { useTheme } from '@mui/material/styles'
-import useMediaQuery from '@mui/material/useMediaQuery'
-import { CheckIn } from '../interfaces/checkin'
-import RequestForm from '../components/FormComponents/RequestForm'
-import NotifItem from '../components/NotifItem'
-import NotifContainerContext from '../contexts/NotifContainer'
-import { useContainer } from 'unstated-next'
-import ChangePasswordBase from '../pages/Auth/ChangePasswordBase'
-import { updateFlagNotif } from '../APICalls/notify'
-import { setLanguage } from '../setups/i18n'
-import { returnApiToken } from '../utils/utils'
-import { Notif } from '../interfaces/notif'
-import { createUserActivity } from '../APICalls/userAccount'
-import { UserActivity } from '../interfaces/common'
-import NotifContainer from '../contexts/NotifContainer'
-import logo_company from '../logo_company.png'
+  Typography,
+} from "@mui/material";
+import { useContext, useEffect, useState } from "react";
+import { LANGUAGE_ICON, NOTIFICATION_ICON } from "../themes/icons";
+import BackgroundLetterAvatars from "../components/CustomAvatar";
+import { useNavigate } from "react-router-dom";
+import { localStorgeKeyName } from "../constants/constant";
+import { useTranslation } from "react-i18next";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { CheckIn } from "../interfaces/checkin";
+import RequestForm from "../components/FormComponents/RequestForm";
+import NotifItem from "../components/NotifItem";
+import NotifContainerContext from "../contexts/NotifContainer";
+import { useContainer } from "unstated-next";
+import ChangePasswordBase from "../pages/Auth/ChangePasswordBase";
+import { updateFlagNotif } from "../APICalls/notify";
+import { setLanguage } from "../setups/i18n";
+import { returnApiToken } from "../utils/utils";
+import { Notif } from "../interfaces/notif";
+import { createUserActivity } from "../APICalls/userAccount";
+import { UserActivity } from "../interfaces/common";
+import NotifContainer from "../contexts/NotifContainer";
+import logo_company from "../logo_company.png";
 
 const MainAppBar = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [anchorElAvatar, setAnchorElAvatar] = useState<null | HTMLElement>(null)
-  const [selectedItem, setSelectedItem] = useState<CheckIn>()
-  const { t, i18n } = useTranslation()
-  const navigate = useNavigate()
-  const drawerWidth = 246
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const [openModal, setOpenModal] = useState<boolean>(false)
-  const { numOfNotif, notifList, updateNotifications, setNumOfNotif, setNotifList, broadcast, showBroadcast } = useContainer(
-    NotifContainerContext
-  )
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorElAvatar, setAnchorElAvatar] = useState<null | HTMLElement>(
+    null
+  );
+  const [selectedItem, setSelectedItem] = useState<CheckIn>();
+  const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const drawerWidth = 246;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const {
+    numOfNotif,
+    notifList,
+    updateNotifications,
+    setNumOfNotif,
+    setNotifList,
+    broadcast,
+    showBroadcast,
+  } = useContainer(NotifContainerContext);
   const { loginId } = returnApiToken();
-  const { setMarginTop, setBroadcast, setShowBroadcast } = useContainer(NotifContainer)
-  const ipAddress = localStorage.getItem('ipAddress');
-  const role = localStorage.getItem(localStorgeKeyName.role)
+  const { setMarginTop, setBroadcast, setShowBroadcast } =
+    useContainer(NotifContainer);
+  const ipAddress = localStorage.getItem("ipAddress");
+  const role = localStorage.getItem(localStorgeKeyName.role);
 
   useEffect(() => {
-    updateNotifications(loginId)
-  }, [loginId])
- 
+    updateNotifications(loginId);
+  }, [loginId]);
+
   const handleLanguageChange = (lng: string) => {
-    console.log('change language: ', lng)
-    i18n.changeLanguage(lng)
-    setLanguage(lng)
+    console.log("change language: ", lng);
+    i18n.changeLanguage(lng);
+    setLanguage(lng);
 
     localStorage.setItem(localStorgeKeyName.selectedLanguage, lng);
-  }
+  };
 
-  const open = Boolean(anchorEl)
+  const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleClickAvatar = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElAvatar(event.currentTarget)
-    localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'false')
-  }
+    setAnchorElAvatar(event.currentTarget);
+    localStorage.setItem(localStorgeKeyName.firstTimeLogin, "false");
+  };
   const handleClose = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
-  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
   const toggleDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen)
-  }
+    setIsDrawerOpen(!isDrawerOpen);
+  };
 
   const handleItemClick = (checkIn: CheckIn) => {
     // Store the selected item's content or perform any actions
-    setOpenModal(true)
-    console.log(checkIn)
-    setSelectedItem(checkIn)
-  }
+    setOpenModal(true);
+    console.log(checkIn);
+    setSelectedItem(checkIn);
+  };
   const handleCloses = () => {
-    setOpenModal(false)
-  }
+    setOpenModal(false);
+  };
 
-  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false)
-  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleSuccessModalClose = () => {
-    setShowSuccessModal(false)
-  }
-  
+    setShowSuccessModal(false);
+  };
+
   const handleLogout = () => {
-    console.log("on logout")
-    setMarginTop('0px')
-    setBroadcast(null)
-    setShowBroadcast(false)
-    if(ipAddress){
+    console.log("on logout");
+    setMarginTop("0px");
+    setBroadcast(null);
+    setShowBroadcast(false);
+    if (ipAddress) {
       const userActivity: UserActivity = {
-        operation: 'Logout',
+        operation: "登出",
         ip: ipAddress,
         createdBy: loginId,
-        updatedBy: loginId
-      }
-      createUserActivity(loginId, userActivity)
+        updatedBy: loginId,
+      };
+      createUserActivity(loginId, userActivity);
     }
-    setNumOfNotif(0)
-    setNotifList([])
-    localStorage.clear()
-    navigate('/')
-  }
+    setNumOfNotif(0);
+    setNotifList([]);
+    localStorage.clear();
+    navigate("/");
+  };
 
   const handlePasswordChangeSuccess = () => {
-    localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'false')
-    setShowChangePasswordModal(false)
-    setShowSuccessModal(true)
-  }
+    localStorage.setItem(localStorgeKeyName.firstTimeLogin, "false");
+    setShowChangePasswordModal(false);
+    setShowSuccessModal(true);
+  };
 
   const handleClickNotif = async (notifId: number) => {
-    console.log('handleClickNotif', notifId)
-    const result = await updateFlagNotif(notifId)
-    const data = result?.data
+    console.log("handleClickNotif", notifId);
+    const result = await updateFlagNotif(notifId);
+    const data = result?.data;
     if (data) {
-      await updateNotifications(loginId)
+      await updateNotifications(loginId);
     }
-  }
+  };
 
   const onClickNotif = (notif: Notif) => {
-    if(notif.messageType !== 'broadcast'){
-      handleClickNotif(notif.notiRecordId)
+    if (notif.messageType !== "broadcast") {
+      handleClickNotif(notif.notiRecordId);
     }
-  }
+  };
 
   return (
     //<Box flexDirection={"row"} sx={{ flexGrow: 1 }}>
@@ -152,27 +161,33 @@ const MainAppBar = () => {
       sx={{
         width: `calc(100% - ${isMobile ? 0 : drawerWidth}px)`,
         ml: `${drawerWidth}px`,
-        marginTop: `${showBroadcast && broadcast ? '30px': ''}`
+        marginTop: `${showBroadcast && broadcast ? "30px" : ""}`,
       }}
     >
       <Toolbar
-        style={{ background: 'white' }}
-        sx={{ height: { sm: '100px', lg: '64px' } }}
+        style={{ background: "white" }}
+        sx={{ height: { sm: "100px", lg: "64px" } }}
       >
         <Box
           display="flex"
-          sx={{ ml: 5, width: { sm: '50%', lg: '20%' } }}
+          sx={{ ml: 5, width: { sm: "50%", lg: "20%" } }}
         ></Box>
         <Box sx={{ flexGrow: 1 }} />
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: "flex" }}>
           <IconButton onClick={toggleDrawer}>
-
             {/* {numOfNotif !== 0 && (
               <Badge badgeContent={numOfNotif.toString()} color="error">
                 <NOTIFICATION_ICON />
               </Badge>
             )} */}
-            {numOfNotif === 0 ? <NOTIFICATION_ICON /> : <Badge badgeContent={numOfNotif.toString()} color="error"> <NOTIFICATION_ICON /></Badge>}
+            {numOfNotif === 0 ? (
+              <NOTIFICATION_ICON />
+            ) : (
+              <Badge badgeContent={numOfNotif.toString()} color="error">
+                {" "}
+                <NOTIFICATION_ICON />
+              </Badge>
+            )}
 
             <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
               <Box className="md:w-[500px] w-[100vw]">
@@ -180,15 +195,28 @@ const MainAppBar = () => {
                   <Typography
                     fontSize={20}
                     fontWeight="bold"
-                    sx={{ mr: '10px' }}
+                    sx={{ mr: "10px" }}
                   >
-                    {t('appBar.notify')}
+                    {t("appBar.notify")}
                   </Typography>
                   {numOfNotif !== 0 && (
-                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'red', borderRadius: 100, width: 25, height: 25}}>
-                    <Typography fontSize={14} style={{color: 'white', fontWeight: 'bold'}}>
-                      {numOfNotif}
-                    </Typography>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "red",
+                        borderRadius: 100,
+                        width: 25,
+                        height: 25,
+                      }}
+                    >
+                      <Typography
+                        fontSize={14}
+                        style={{ color: "white", fontWeight: "bold" }}
+                      >
+                        {numOfNotif}
+                      </Typography>
                     </div>
                     // <BackgroundLetterAvatars
                     //   name={numOfNotif}
@@ -224,9 +252,9 @@ const MainAppBar = () => {
             {/* </Badge> */}
           </IconButton>
           <IconButton
-            aria-controls={open ? 'fade-menu' : undefined}
+            aria-controls={open ? "fade-menu" : undefined}
             aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
+            aria-expanded={open ? "true" : undefined}
             onClick={handleClick}
           >
             <LANGUAGE_ICON />
@@ -236,58 +264,83 @@ const MainAppBar = () => {
             open={anchorEl ? true : false}
             onClose={handleClose}
             TransitionComponent={Fade}
-            style={{ padding: '16px' }}
+            style={{ padding: "16px" }}
           >
             <MenuItem
               divider={true}
-              onClick={() => handleLanguageChange('zhch')}
+              onClick={() => handleLanguageChange("zhch")}
             >
-              <Typography>{t('appBar.simplified_cn')}</Typography>
+              <Typography>{t("appBar.simplified_cn")}</Typography>
             </MenuItem>
             <MenuItem
               divider={true}
-              onClick={() => handleLanguageChange('zhhk')}
+              onClick={() => handleLanguageChange("zhhk")}
             >
-              <Typography>{t('appBar.traditional_cn')}</Typography>
+              <Typography>{t("appBar.traditional_cn")}</Typography>
             </MenuItem>
-            <MenuItem onClick={() => handleLanguageChange('enus')}>
-              <Typography>{t('appBar.english')}</Typography>
+            <MenuItem onClick={() => handleLanguageChange("enus")}>
+              <Typography>{t("appBar.english")}</Typography>
             </MenuItem>
           </Menu>
-          <Box sx={{ display: 'flex', flexDirection: 'row', ml: 3 }}>
+          <Box sx={{ display: "flex", flexDirection: "row", ml: 3 }}>
             <IconButton
               onClick={handleClickAvatar}
-              aria-controls={open ? 'fade-menu' : undefined}
+              aria-controls={open ? "fade-menu" : undefined}
               aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
+              aria-expanded={open ? "true" : undefined}
             >
-              {role !== 'astd' ? (
+              {role !== "astd" ? (
                 <BackgroundLetterAvatars
-                  name={role === 'manufacturer' ? 'M F' : role === 'customer' ? 'C S' : role === 'logistic' ? 'L O' : role === 'collector' ? 'C P' : 'C P'}
-                  backgroundColor={role === 'manufacturer' ? '#6BC7FF' : role === 'customer' ? "#199BEC" : role === 'logistic' ? '#63D884' : role === 'collector' ? '#79CA25' : '#79CA25'}
+                  name={
+                    role === "manufacturer"
+                      ? "M F"
+                      : role === "customer"
+                      ? "C S"
+                      : role === "logistic"
+                      ? "L O"
+                      : role === "collector"
+                      ? "C P"
+                      : "C P"
+                  }
+                  backgroundColor={
+                    role === "manufacturer"
+                      ? "#6BC7FF"
+                      : role === "customer"
+                      ? "#199BEC"
+                      : role === "logistic"
+                      ? "#63D884"
+                      : role === "collector"
+                      ? "#79CA25"
+                      : "#79CA25"
+                  }
                 />
-              ) : 
+              ) : (
                 <img
                   src={logo_company}
-                  style={{width: 40, height: 40, borderRadius: 100, objectFit: 'contain'}}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 100,
+                    objectFit: "contain",
+                  }}
                 />
-              }
+              )}
             </IconButton>
             <Menu
               anchorEl={anchorElAvatar}
               open={anchorElAvatar ? true : false}
               onClose={() => setAnchorElAvatar(null)}
               TransitionComponent={Fade}
-              style={{ padding: '16px' }}
+              style={{ padding: "16px" }}
             >
               <MenuItem
                 divider={true}
                 onClick={() => setShowChangePasswordModal(true)}
               >
-                <Typography>{t('changePassword')}</Typography>
+                <Typography>{t("changePassword")}</Typography>
               </MenuItem>
               <MenuItem divider={true} onClick={() => handleLogout()}>
-                <Typography>{t('signOut')}</Typography>
+                <Typography>{t("signOut")}</Typography>
               </MenuItem>
             </Menu>
             {/* <Box flexDirection={"column"} sx={{ flex: 3.5, pt: 0.4 }}>
@@ -323,14 +376,14 @@ const MainAppBar = () => {
           {showSuccessModal && (
             <Modal id="success-modal" open={showSuccessModal}>
               <Box sx={modalStyle}>
-                <Typography>{t('changePasswordConfirmation')}</Typography>
+                <Typography>{t("changePasswordConfirmation")}</Typography>
                 <Button
                   className="float-right"
                   sx={{
-                    borderRadius: '20px',
-                    backgroundColor: '#79ca25',
-                    '&.MuiButton-root:hover': { bgcolor: '#79ca25' },
-                    height: '40px'
+                    borderRadius: "20px",
+                    backgroundColor: "#79ca25",
+                    "&.MuiButton-root:hover": { bgcolor: "#79ca25" },
+                    height: "40px",
                   }}
                   variant="contained"
                   onClick={handleSuccessModalClose}
@@ -345,20 +398,20 @@ const MainAppBar = () => {
     </AppBar>
 
     ////</Box>
-  )
-}
+  );
+};
 
 const modalStyle = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: 'background.paper',
+  bgcolor: "background.paper",
   // border: '2px solid #000',
-  borderRadius: '8px',
+  borderRadius: "8px",
   boxShadow: 24,
-  p: 4
-}
+  p: 4,
+};
 
-export default MainAppBar
+export default MainAppBar;

@@ -42,26 +42,27 @@ import {
   MAINTENANCE_STATUS,
   Realm,
   Roles,
-  localStorgeKeyName
-} from '../constants/constant'
-import LoginIcon from '@mui/icons-material/Login'
-import LogoutIcon from '@mui/icons-material/Logout'
-import VerticalAlignCenterRoundedIcon from '@mui/icons-material/VerticalAlignCenterRounded'
-import InventoryIcon from '@mui/icons-material/Inventory'
-import RecyclingIcon from '@mui/icons-material/Recycling'
-import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
-import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined'
-import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined'
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
-import ScreenRotationAltIcon from '@mui/icons-material/ScreenRotationAlt'
-import BarChartIcon from '@mui/icons-material/BarChart'
-import { dynamicpath, returnApiToken, creatioPageList } from '../utils/utils'
-import { useContainer } from 'unstated-next'
-import NotifContainer from '../contexts/NotifContainer'
-import { createUserActivity } from '../APICalls/userAccount'
-import axios from 'axios'
-import { UserActivity } from '../interfaces/common'
-import ConfirmModal from '../components/SpecializeComponents/ConfirmationModal'
+  localStorgeKeyName,
+} from "../constants/constant";
+import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
+import VerticalAlignCenterRoundedIcon from "@mui/icons-material/VerticalAlignCenterRounded";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import RecyclingIcon from "@mui/icons-material/Recycling";
+import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
+import ViewQuiltOutlinedIcon from "@mui/icons-material/ViewQuiltOutlined";
+import FolderCopyOutlinedIcon from "@mui/icons-material/FolderCopyOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import ScreenRotationAltIcon from "@mui/icons-material/ScreenRotationAlt";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import { dynamicpath, returnApiToken, creatioPageList } from "../utils/utils";
+import { useContainer } from "unstated-next";
+import NotifContainer from "../contexts/NotifContainer";
+import { createUserActivity } from "../APICalls/userAccount";
+import axios from "axios";
+import { UserActivity } from "../interfaces/common";
+import ConfirmModal from "../components/SpecializeComponents/ConfirmationModal";
+import { getAllFunction } from "src/APICalls/Collector/userGroup";
 
 type MainDrawer = {
   role: string;
@@ -85,6 +86,20 @@ type subMenuItem = {
   functionName: string;
 };
 
+type functionList = {
+  createdAt: string;
+  createdBy: string;
+  description: string;
+  functionId: number;
+  functionNameEng: string;
+  functionNameSChi: string;
+  functionNameTChi: string;
+  hasReason: boolean;
+  tenantTypeId: string;
+  updatedAt: string;
+  updatedBy: string;
+  version: number;
+};
 const drawerWidth = 225;
 
 function MainDrawer() {
@@ -107,6 +122,7 @@ function MainDrawer() {
     useState<subMenuItem | null>(null);
   const [currentIdxSubMenu, setcurrentIdxSubMenu] = useState<number | 0>(0);
   const restrictPage = creatioPageList();
+  const [APIFunctionList, setAllFunction] = useState<functionList[]>([]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -216,10 +232,10 @@ function MainDrawer() {
         path: "/warehouse/checkout",
         functionName: "Request checkout",
       },
-      'Internal transfer request': {
-        name: t('internalTransfer.internal_transfer_request'),
+      "Internal transfer request": {
+        name: t("internalTransfer.internal_transfer_request"),
         icon: <ScreenRotationAltIcon />,
-        onClick: () => navigate('/warehouse/InternalTransferRequest'),
+        onClick: () => navigate("/warehouse/InternalTransferRequest"),
         collapse: false,
         path: "/warehouse/InternalTransferRequest",
         functionName: "Internal transfer request",
@@ -296,19 +312,19 @@ function MainDrawer() {
         onClick: () => setDashboardGroup((prev) => !prev),
         collapse: true,
         collapseGroup: dashboardGroup,
-        path: 'dashboard_recyclables.data',
-        functionName: 'Dashboard'
+        path: "dashboard_recyclables.data",
+        functionName: "Dashboard",
       },
-      'Compactor processing': {
-        name: t('compactor.compactorTruckHandling'),
+      "Compactor processing": {
+        name: t("compactor.compactorTruckHandling"),
         icon: <VerticalAlignCenterRoundedIcon />,
         onClick: () => navigate(`/${realm}/compactorDashboard`),
         collapse: false,
         path: `/${realm}/compactorDashboard`,
-        functionName: 'Compactor processing'
-      }
-    }
-  ]
+        functionName: "Compactor processing",
+      },
+    },
+  ];
   // 20240129 add function list daniel keung end
   // 20240129 add function list daniel keung start
   var drawerMenus;
@@ -387,8 +403,8 @@ function MainDrawer() {
         name: "weightOfRecyclables",
         value: t("dashboard_weight_of_recyclables.record"),
         path: `/logistic/weightOfRecyclables`,
-        functionName: "weightOfRecyclables"
-      }
+        functionName: "weightOfRecyclables",
+      },
     ];
   }
 
@@ -405,8 +421,12 @@ function MainDrawer() {
   ) {
     localStorage.setItem("previousPath", currentPath);
     if (ipAddress) {
+      const selectedFunction = APIFunctionList.find(
+        (value) => value.functionNameEng === currentMenu.functionName
+      );
       const userActivity: UserActivity = {
-        operation: currentMenu.functionName,
+        operation:
+          selectedFunction?.functionNameTChi ?? currentMenu.functionName,
         ip: ipAddress,
         createdBy: loginId,
         updatedBy: loginId,
@@ -418,9 +438,16 @@ function MainDrawer() {
     (previousPath !== currentPath && currentSubMenu)
   ) {
     localStorage.setItem("previousPath", currentPath);
+    const selectedFunction = APIFunctionList.find(
+      (value) =>
+        value.functionNameEng.toLowerCase() ===
+        currentSubMenu.value.toLowerCase()
+    );
+    // console.log(APIFunctionList, "aaa");
+    // console.log(currentSubMenu, "currentSubMenu");
     if (ipAddress) {
       const userActivity: UserActivity = {
-        operation: currentSubMenu.functionName,
+        operation: selectedFunction?.functionNameTChi ?? currentSubMenu.name,
         ip: ipAddress,
         createdBy: loginId,
         updatedBy: loginId,
@@ -431,6 +458,13 @@ function MainDrawer() {
 
   drawerMenus = drawerMenusTmp;
   subMenuDashboard = subMenuDashboardTmp;
+
+  const getAllUserFunction = async () => {
+    const result = await getAllFunction();
+    if (result) {
+      setAllFunction(result.data);
+    }
+  };
 
   useEffect(() => {
     const storedIndex = localStorage.getItem("selectedIndex");
@@ -443,6 +477,10 @@ function MainDrawer() {
       setSelectedIndex(parseInt(storedIndex, 10));
     }
   }, [currentPath, drawerMenusTmp]);
+
+  useEffect(() => {
+    getAllUserFunction();
+  }, []);
 
   const handleNavigateMenu = (drawerItem: DrawerItem, index: number) => {
     if (drawerItem.collapse) {
