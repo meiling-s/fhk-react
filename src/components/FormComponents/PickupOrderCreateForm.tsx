@@ -181,6 +181,7 @@ const PickupOrderCreateForm = ({
   state: CreatePicoDetail[];
   editMode: boolean;
 }) => {
+  console.log(state, "state");
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [editRowId, setEditRowId] = useState<number | null>(null);
