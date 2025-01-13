@@ -178,6 +178,7 @@ const CreateProcessOrder = ({}: {}) => {
   const [openDelete, setOpenDelete] = useState<boolean>(false)
   const [selectedDeletedItem, setSelectedDeletedItem] =
     useState<ProcessInDtlData | null>(null)
+  const [errCreatedDate, setErrCreatedDate] = useState<boolean>(false)
   const buttonFilledCustom = {
     borderRadius: '40px',
     borderColor: '#7CE495',
@@ -738,6 +739,15 @@ const CreateProcessOrder = ({}: {}) => {
     setOpenDelete(false)
   }
 
+  const onChangeCreatedDate = (value: dayjs.Dayjs | null) => {
+    if (value?.isValid()) {
+      setProcessStartAt(value!!)
+      setErrCreatedDate(false)
+    } else {
+      setErrCreatedDate(true)
+    }
+  }
+
   return (
     <>
       <Box sx={[styles.innerScreen_container, { paddingRight: 0 }]}>
@@ -765,14 +775,14 @@ const CreateProcessOrder = ({}: {}) => {
                   <DatePicker
                     defaultValue={dayjs(processStartAt)}
                     format={dateFormat}
-                    onChange={(value) => setProcessStartAt(value!!)}
+                    onChange={(value) => onChangeCreatedDate(value)}
                     sx={{ ...localstyles.datePicker }}
                   />
                 </Box>
                 <Box sx={{ ...localstyles.timePeriodItem }}>
                   <TimePicker
                     value={processStartAt}
-                    onChange={(value) => setProcessStartAt(value!!)}
+                    onChange={(value) => onChangeCreatedDate(value)}
                     sx={{ ...localstyles.timePicker }}
                   />
                 </Box>
@@ -932,6 +942,7 @@ const CreateProcessOrder = ({}: {}) => {
                   setAction('add')
                   setInputProcessDrawer(true)
                 }}
+                disabled={errCreatedDate}
                 sx={{
                   height: '40px',
                   width: '100%',
