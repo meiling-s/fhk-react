@@ -5,12 +5,12 @@ import {
   Card,
   CardContent,
   IconButton,
-  Collapse,
-} from "@mui/material";
-import { FunctionComponent, useState } from "react";
-import { GIDValue, ProcessOutData } from "../../interfaces/inventory";
-import { useTranslation } from "react-i18next";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+  Collapse
+} from '@mui/material'
+import { FunctionComponent, useState } from 'react'
+import { GIDValue, ProcessOutData } from '../../interfaces/inventory'
+import { useTranslation } from 'react-i18next'
+import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
   CALENDAR_ICON,
   CATEGORY_ICON,
@@ -18,131 +18,131 @@ import {
   FACTORY_ICON,
   INVENTORY_ICON,
   MEMORY_ICON,
-  WEIGHT_ICON,
-} from "src/themes/icons";
+  WEIGHT_ICON
+} from 'src/themes/icons'
 
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-import { useContainer } from "unstated-next";
-import CommonTypeContainer from "src/contexts/CommonTypeContainer";
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from 'src/contexts/CommonTypeContainer'
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 interface ProcessOutCardProps {
-  data: ProcessOutData;
-  handleClickGIDLabel: (gidValue: GIDValue) => void;
+  data: ProcessOutData
+  handleClickGIDLabel: (gidValue: GIDValue) => void
 }
 
 const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
   data,
-  handleClickGIDLabel,
+  handleClickGIDLabel
 }) => {
-  const { weightUnits, dateFormat } = useContainer(CommonTypeContainer);
-  const { i18n, t } = useTranslation();
-  const [expanded, setExpanded] = useState(true);
+  const { weightUnits, dateFormat } = useContainer(CommonTypeContainer)
+  const { i18n, t } = useTranslation()
+  const [expanded, setExpanded] = useState(true)
   const handleToggle = () => {
-    setExpanded((prev) => !prev);
-  };
+    setExpanded((prev) => !prev)
+  }
 
   const getConditionalValue = (data: ProcessOutData, type: string) => {
-    if (type === "company") {
+    if (type === 'company') {
       switch (i18n.language) {
-        case "enus":
-          return data.company_name_en;
-        case "zhch":
-          return data.company_name_sc;
-        case "zhhk":
-          return data.company_name_tc;
+        case 'enus':
+          return data.company_name_en
+        case 'zhch':
+          return data.company_name_sc
+        case 'zhhk':
+          return data.company_name_tc
       }
-    } else if (type === "factory") {
+    } else if (type === 'factory') {
       switch (i18n.language) {
-        case "enus":
-          return data.factory_name_en;
-        case "zhch":
-          return data.factory_name_sc;
-        case "zhhk":
-          return data.factory_name_tc;
+        case 'enus':
+          return data.factory_name_en
+        case 'zhch':
+          return data.factory_name_sc
+        case 'zhhk':
+          return data.factory_name_tc
       }
-    } else if (type === "processin_warehouse") {
+    } else if (type === 'processin_warehouse') {
       switch (i18n.language) {
-        case "enus":
-          return data.process_in.warehouse_en;
-        case "zhch":
-          return data.process_in.warehouse_sc;
-        case "zhhk":
-          return data.process_in.warehouse_tc;
+        case 'enus':
+          return data.process_in.warehouse_en
+        case 'zhch':
+          return data.process_in.warehouse_sc
+        case 'zhhk':
+          return data.process_in.warehouse_tc
       }
-    } else if (type === "processout_warehouse") {
+    } else if (type === 'processout_warehouse') {
       switch (i18n.language) {
-        case "enus":
-          return data.process_out.warehouse_en;
-        case "zhch":
-          return data.process_out.warehouse_sc;
-        case "zhhk":
-          return data.process_out.warehouse_tc;
+        case 'enus':
+          return data.process_out.warehouse_en
+        case 'zhch':
+          return data.process_out.warehouse_sc
+        case 'zhhk':
+          return data.process_out.warehouse_tc
       }
-    } else if (type === "category") {
+    } else if (type === 'category') {
       switch (i18n.language) {
-        case "enus":
-          return data.process_type_en;
-        case "zhch":
-          return data.process_type_sc;
-        case "zhhk":
-          return data.process_type_tc;
+        case 'enus':
+          return data.process_type_en
+        case 'zhch':
+          return data.process_type_sc
+        case 'zhhk':
+          return data.process_type_tc
       }
-    } else if (type === "weightUnit") {
+    } else if (type === 'weightUnit') {
       const selectedWeight = weightUnits.find(
         (value) => value.unitId === Number(data.unitId)
-      );
+      )
       if (selectedWeight) {
         switch (i18n.language) {
-          case "enus":
-            return selectedWeight.unitNameEng;
-          case "zhch":
-            return selectedWeight.unitNameSchi;
-          case "zhhk":
-            return selectedWeight.unitNameTchi;
+          case 'enus':
+            return selectedWeight.unitNameEng
+          case 'zhch':
+            return selectedWeight.unitNameSchi
+          case 'zhhk':
+            return selectedWeight.unitNameTchi
         }
       }
     }
-  };
+  }
 
   const getMoreText = () => {
     switch (i18n.language) {
-      case "enus":
-        return "(more than 1)";
-      case "zhch":
-        return "(或多於一個)";
-      case "zhhk":
-        return "(或多於一個)";
+      case 'enus':
+        return '(more than 1)'
+      case 'zhch':
+        return '(或多於一個)'
+      case 'zhhk':
+        return '(或多於一個)'
     }
-  };
+  }
 
   return (
     <Card variant="outlined" sx={{ marginBottom: 2, borderRadius: 3 }}>
       <Box display="flex" alignItems="center">
         <IconButton onClick={handleToggle}>
           {expanded ? (
-            <ExpandLess sx={{ color: "#79CA25" }} />
+            <ExpandLess sx={{ color: '#79CA25' }} />
           ) : (
-            <ExpandMore sx={{ color: "#79CA25" }} />
+            <ExpandMore sx={{ color: '#79CA25' }} />
           )}
         </IconButton>
         <Typography variant="h6">
-          {data.eventType === "processout"
-            ? t("inventory.process_out")
-            : t("inventory.process_in")}
+          {data.eventType === 'processout'
+            ? t('inventory.process_out')
+            : t('inventory.process_in')}
         </Typography>
         <Typography
           variant="body2"
           color="textSecondary"
-          sx={{ marginLeft: "auto", marginRight: 10 }}
+          sx={{ marginLeft: 'auto', marginRight: 10 }}
         >
           {dayjs
             .utc(data.createdAt)
-            .tz("Asia/Hong_Kong")
+            .tz('Asia/Hong_Kong')
             .format(`${dateFormat} HH:mm A`)}
         </Typography>
       </Box>
@@ -155,14 +155,14 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
               <Box display="flex" alignItems="center">
                 <COMPANY_ICON
                   fontSize="small"
-                  sx={{ marginRight: 1, color: "#ACACAC" }}
+                  sx={{ marginRight: 1, color: '#ACACAC' }}
                 />
                 <Typography
                   variant="body2"
                   color="textSecondary"
-                  sx={{ color: "#ACACAC" }}
+                  sx={{ color: '#ACACAC' }}
                 >
-                  {t("inventory.company")}
+                  {t('inventory.company')}
                 </Typography>
               </Box>
             </Box>
@@ -170,9 +170,9 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
               <Typography
                 variant="body2"
                 color="textSecondary"
-                sx={{ color: "#535353" }}
+                sx={{ color: '#535353' }}
               >
-                {getConditionalValue(data, "company")}
+                {getConditionalValue(data, 'company')}
               </Typography>
             </Box>
           </Box>
@@ -183,14 +183,14 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Box display="flex" alignItems="center">
                     <CATEGORY_ICON
                       fontSize="small"
-                      sx={{ marginRight: 1, color: "#ACACAC" }}
+                      sx={{ marginRight: 1, color: '#ACACAC' }}
                     />
                     <Typography
                       variant="body2"
                       color="textSecondary"
-                      sx={{ color: "#ACACAC" }}
+                      sx={{ color: '#ACACAC' }}
                     >
-                      {t("common.category")}
+                      {t('common.category')}
                     </Typography>
                   </Box>
                 </Box>
@@ -198,9 +198,9 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Typography
                     variant="body2"
                     color="textSecondary"
-                    sx={{ color: "#535353" }}
+                    sx={{ color: '#535353' }}
                   >
-                    {getConditionalValue(data, "category")}
+                    {getConditionalValue(data, 'category')}
                   </Typography>
                 </Box>
               </Box>
@@ -211,14 +211,14 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
               <Box display="flex" alignItems="center">
                 <FACTORY_ICON
                   fontSize="small"
-                  sx={{ marginRight: 1, color: "#ACACAC" }}
+                  sx={{ marginRight: 1, color: '#ACACAC' }}
                 />
                 <Typography
                   variant="body2"
                   color="textSecondary"
-                  sx={{ color: "#ACACAC" }}
+                  sx={{ color: '#ACACAC' }}
                 >
-                  {t("inventory.factory")}
+                  {t('inventory.factory')}
                 </Typography>
               </Box>
             </Box>
@@ -226,9 +226,9 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
               <Typography
                 variant="body2"
                 color="textSecondary"
-                sx={{ color: "#535353" }}
+                sx={{ color: '#535353' }}
               >
-                {getConditionalValue(data, "factory")}
+                {getConditionalValue(data, 'factory')}
               </Typography>
             </Box>
           </Box>
@@ -240,7 +240,7 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
             gutterBottom
             color="#717171"
           >
-            {t("inventory.beforeProcessing")}
+            {t('inventory.beforeProcessing')}
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -249,22 +249,22 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Box display="flex" alignItems="center">
                     <MEMORY_ICON
                       fontSize="small"
-                      sx={{ marginRight: 1, color: "#ACACAC" }}
+                      sx={{ marginRight: 1, color: '#ACACAC' }}
                     />
                     <Typography
                       variant="body2"
                       color="textSecondary"
-                      sx={{ color: "#ACACAC" }}
+                      sx={{ color: '#ACACAC' }}
                     >
-                      {t("inventory.itemNumber")}
+                      {t('inventory.itemNumber')}
                     </Typography>
                   </Box>
                 </Box>
                 <Box
                   width="70%"
-                  display={"flex"}
-                  flexDirection={"row"}
-                  flexWrap={"wrap"}
+                  display={'flex'}
+                  flexDirection={'row'}
+                  flexWrap={'wrap'}
                 >
                   {data.process_in.gidLabel.length > 0 &&
                     data.process_in.gidLabel.map(
@@ -272,30 +272,30 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                         const last =
                           data.process_in.gidLabel[
                             data.process_in.gidLabel.length - 1
-                          ];
+                          ]
                         return (
                           <Typography
                             variant="body2"
                             color="textSecondary"
                             sx={{
-                              color: "#199BEC",
-                              cursor: "pointer",
-                              marginRight: item === last ? 0 : 1,
+                              color: '#199BEC',
+                              cursor: 'pointer',
+                              marginRight: item === last ? 0 : 1
                             }}
                             key={index}
                             onClick={() => {
                               const indexItem =
-                                data.process_in.gidLabel.indexOf(item);
+                                data.process_in.gidLabel.indexOf(item)
                               const gidValue = {
                                 gid: data.process_in.gid[indexItem],
-                                gidLabel: item,
-                              };
-                              handleClickGIDLabel(gidValue);
+                                gidLabel: item
+                              }
+                              handleClickGIDLabel(gidValue)
                             }}
                           >
                             {item}
                           </Typography>
-                        );
+                        )
                       }
                     )}
                 </Box>
@@ -307,14 +307,14 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Box display="flex" alignItems="center">
                     <CALENDAR_ICON
                       fontSize="small"
-                      sx={{ marginRight: 1, color: "#ACACAC" }}
+                      sx={{ marginRight: 1, color: '#ACACAC' }}
                     />
                     <Typography
                       variant="body2"
                       color="textSecondary"
-                      sx={{ color: "#ACACAC" }}
+                      sx={{ color: '#ACACAC' }}
                     >
-                      {t("inventory.start_date")}
+                      {t('inventory.start_date')}
                     </Typography>
                   </Box>
                 </Box>
@@ -322,13 +322,14 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Typography
                     variant="body2"
                     color="textSecondary"
-                    sx={{ color: "#535353" }}
+                    sx={{ color: '#535353' }}
                   >
                     {data.process_in.start_date_time
-                      ? new Date(
-                          data.process_in.start_date_time
-                        ).toLocaleString()
-                      : "-"}
+                      ? dayjs
+                          .utc(data.process_in.start_date_time)
+                          .tz('Asia/Hong_Kong')
+                          .format(`${dateFormat} HH:mm`)
+                      : '-'}
                   </Typography>
                 </Box>
               </Box>
@@ -339,14 +340,14 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Box display="flex" alignItems="center">
                     <INVENTORY_ICON
                       fontSize="small"
-                      sx={{ marginRight: 1, color: "#ACACAC" }}
+                      sx={{ marginRight: 1, color: '#ACACAC' }}
                     />
                     <Typography
                       variant="body2"
                       color="textSecondary"
-                      sx={{ color: "#ACACAC" }}
+                      sx={{ color: '#ACACAC' }}
                     >
-                      {t("inventory.warehouse")}
+                      {t('inventory.warehouse')}
                     </Typography>
                   </Box>
                 </Box>
@@ -354,9 +355,9 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Typography
                     variant="body2"
                     color="textSecondary"
-                    sx={{ color: "#535353" }}
+                    sx={{ color: '#535353' }}
                   >
-                    {getConditionalValue(data, "processin_warehouse")}{" "}
+                    {getConditionalValue(data, 'processin_warehouse')}{' '}
                     {data.process_in.gidLabel.length > 1 ? getMoreText() : null}
                   </Typography>
                 </Box>
@@ -368,14 +369,14 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Box display="flex" alignItems="center">
                     <WEIGHT_ICON
                       fontSize="small"
-                      sx={{ marginRight: 1, color: "#ACACAC" }}
+                      sx={{ marginRight: 1, color: '#ACACAC' }}
                     />
                     <Typography
                       variant="body2"
                       color="textSecondary"
-                      sx={{ color: "#ACACAC" }}
+                      sx={{ color: '#ACACAC' }}
                     >
-                      {t("inventory.weight")}
+                      {t('inventory.weight')}
                     </Typography>
                   </Box>
                 </Box>
@@ -383,10 +384,10 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Typography
                     variant="body2"
                     color="textSecondary"
-                    sx={{ color: "#535353" }}
+                    sx={{ color: '#535353' }}
                   >
-                    {data.process_in.total_weight}{" "}
-                    {getConditionalValue(data, "weightUnit")}
+                    {data.process_in.total_weight}{' '}
+                    {getConditionalValue(data, 'weightUnit')}
                   </Typography>
                 </Box>
               </Box>
@@ -399,7 +400,7 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
             color="#717171"
             mt={2}
           >
-            {t("inventory.afterProcessing")}
+            {t('inventory.afterProcessing')}
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -408,22 +409,22 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Box display="flex" alignItems="center">
                     <MEMORY_ICON
                       fontSize="small"
-                      sx={{ marginRight: 1, color: "#ACACAC" }}
+                      sx={{ marginRight: 1, color: '#ACACAC' }}
                     />
                     <Typography
                       variant="body2"
                       color="textSecondary"
-                      sx={{ color: "#ACACAC" }}
+                      sx={{ color: '#ACACAC' }}
                     >
-                      {t("inventory.itemNumber")}
+                      {t('inventory.itemNumber')}
                     </Typography>
                   </Box>
                 </Box>
                 <Box
                   width="70%"
-                  display={"flex"}
-                  flexDirection={"row"}
-                  flexWrap={"wrap"}
+                  display={'flex'}
+                  flexDirection={'row'}
+                  flexWrap={'wrap'}
                 >
                   {data.process_out.gidLabel.length > 0 &&
                     data.process_out.gidLabel.map(
@@ -431,30 +432,30 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                         const last =
                           data.process_out.gidLabel[
                             data.process_out.gidLabel.length - 1
-                          ];
+                          ]
                         return (
                           <Typography
                             variant="body2"
                             color="textSecondary"
                             sx={{
-                              color: "#199BEC",
-                              cursor: "pointer",
-                              marginRight: item === last ? 0 : 1,
+                              color: '#199BEC',
+                              cursor: 'pointer',
+                              marginRight: item === last ? 0 : 1
                             }}
                             key={index}
                             onClick={() => {
                               const indexItem =
-                                data.process_out.gidLabel.indexOf(item);
+                                data.process_out.gidLabel.indexOf(item)
                               const gidValue = {
                                 gid: data.process_out.gid[indexItem],
-                                gidLabel: item,
-                              };
-                              handleClickGIDLabel(gidValue);
+                                gidLabel: item
+                              }
+                              handleClickGIDLabel(gidValue)
                             }}
                           >
                             {item}
                           </Typography>
-                        );
+                        )
                       }
                     )}
                 </Box>
@@ -466,14 +467,14 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Box display="flex" alignItems="center">
                     <CALENDAR_ICON
                       fontSize="small"
-                      sx={{ marginRight: 1, color: "#ACACAC" }}
+                      sx={{ marginRight: 1, color: '#ACACAC' }}
                     />
                     <Typography
                       variant="body2"
                       color="textSecondary"
-                      sx={{ color: "#ACACAC" }}
+                      sx={{ color: '#ACACAC' }}
                     >
-                      {t("inventory.start_date")}
+                      {t('inventory.start_date')}
                     </Typography>
                   </Box>
                 </Box>
@@ -481,13 +482,14 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Typography
                     variant="body2"
                     color="textSecondary"
-                    sx={{ color: "#535353" }}
+                    sx={{ color: '#535353' }}
                   >
                     {data.process_out.start_date_time
-                      ? new Date(
-                          data.process_out.start_date_time
-                        ).toLocaleString()
-                      : "-"}
+                      ? dayjs
+                          .utc(data.process_out.start_date_time)
+                          .tz('Asia/Hong_Kong')
+                          .format(`${dateFormat} HH:mm`)
+                      : '-'}
                   </Typography>
                 </Box>
               </Box>
@@ -498,14 +500,14 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Box display="flex" alignItems="center">
                     <INVENTORY_ICON
                       fontSize="small"
-                      sx={{ marginRight: 1, color: "#ACACAC" }}
+                      sx={{ marginRight: 1, color: '#ACACAC' }}
                     />
                     <Typography
                       variant="body2"
                       color="textSecondary"
-                      sx={{ color: "#ACACAC" }}
+                      sx={{ color: '#ACACAC' }}
                     >
-                      {t("inventory.warehouse")}
+                      {t('inventory.warehouse')}
                     </Typography>
                   </Box>
                 </Box>
@@ -513,9 +515,9 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Typography
                     variant="body2"
                     color="textSecondary"
-                    sx={{ color: "#535353" }}
+                    sx={{ color: '#535353' }}
                   >
-                    {getConditionalValue(data, "processout_warehouse")}{" "}
+                    {getConditionalValue(data, 'processout_warehouse')}{' '}
                     {data.process_out.gidLabel.length > 1
                       ? getMoreText()
                       : null}
@@ -529,14 +531,14 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Box display="flex" alignItems="center">
                     <WEIGHT_ICON
                       fontSize="small"
-                      sx={{ marginRight: 1, color: "#ACACAC" }}
+                      sx={{ marginRight: 1, color: '#ACACAC' }}
                     />
                     <Typography
                       variant="body2"
                       color="textSecondary"
-                      sx={{ color: "#ACACAC" }}
+                      sx={{ color: '#ACACAC' }}
                     >
-                      {t("inventory.weight")}
+                      {t('inventory.weight')}
                     </Typography>
                   </Box>
                 </Box>
@@ -544,7 +546,7 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
                   <Typography
                     variant="body2"
                     color="textSecondary"
-                    sx={{ color: "#535353" }}
+                    sx={{ color: '#535353' }}
                   >
                     {data.process_out.total_weight} Kg
                   </Typography>
@@ -555,7 +557,7 @@ const ProcessOutCard: FunctionComponent<ProcessOutCardProps> = ({
         </CardContent>
       </Collapse>
     </Card>
-  );
-};
+  )
+}
 
-export default ProcessOutCard;
+export default ProcessOutCard
