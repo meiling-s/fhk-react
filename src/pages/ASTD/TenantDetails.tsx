@@ -182,6 +182,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     .tz("Asia/Hong_Kong")
     .format(`${dateFormat} HH:mm`)} `;
 
+  console.log(tenantDetail, "aaa");
   useEffect(() => {
     getCompanyDetail();
     getReasonList();
@@ -770,8 +771,15 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
 
             <Box>
               <div className="field-tenant-footer">
-                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
+                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-5">
                   {footerTenant}
+                  {/* {i18n.language === "enus" &&
+                    `The application was rejected ${
+                      tenantDetail?.rejectedBy
+                    } at ${dayjs
+                      .utc(tenantDetail?.updatedAt)
+                      .tz("Asia/Hong_Kong")
+                      .format(`${dateFormat} HH:mm`)} due to reason...`} */}
                 </div>
               </div>
             </Box>
