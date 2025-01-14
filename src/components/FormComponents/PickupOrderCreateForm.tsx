@@ -57,6 +57,8 @@ import {
   getProductTypeFromDataRow,
   getProductSubTypeFromDataRow,
 } from "src/pages/Collector/PickupOrder/utils";
+import { getThirdPartyLogisticData } from "src/APICalls/Collector/pickupOrder/pickupOrder";
+import { logisticList } from "src/interfaces/common";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -206,6 +208,8 @@ const PickupOrderCreateForm = ({
   const navigate = useNavigate();
   const { localeTextDataGrid } = useLocaleTextDataGrid();
   const logisticCompany = logisticList;
+  const [thirdPartyLogisticList, setThirdPartyLogisticList] =
+    useState<logisticList[]>();
   const contractRole = contractType;
   const [index, setIndex] = useState<number | null>(null);
   const { validateData, errorsField, changeTouchField } =
@@ -274,8 +278,16 @@ const PickupOrderCreateForm = ({
   };
   //-- end custom style --
 
+  const get3rdPartyLogisticList = async () => {
+    const result = await getThirdPartyLogisticData();
+    if (result) {
+      console.log(result, "result");
+      setThirdPartyLogisticList(result.data.content);
+    }
+  };
+
   useEffect(() => {
-    getLogisticlist();
+    get3rdPartyLogisticList();
     getContractList();
     getRecycType();
   }, []);

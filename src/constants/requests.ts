@@ -223,6 +223,11 @@ export const GET_LOGISTICLIST = (
   url: `api/v1/${realmApiRoute}/logisticlist/${table}?size=1000`
 })
 
+export const GET_3RDPARTY_LOGISTICLIST = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/logisticlistWithThirdParty/${table}?size=1000`
+})
+
 export const GET_COLLECTORLIST = (
   realmApiRoute: string,
   table: string
