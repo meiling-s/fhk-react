@@ -547,7 +547,7 @@ const CreateProcessOrder = ({}: {}) => {
     }
 
     validate()
-  }, [processOrderDtlSource, processStartAt])
+  }, [processOrderDtlSource, processStartAt, i18n.language])
 
   const mappingProcessOrderDtl = (
     updatedSource: CreateProcessOrderDetailPairs[]
