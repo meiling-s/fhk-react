@@ -209,7 +209,8 @@
       "enter_text": "Please enter text",
       "water_bottle": "Water Bottle",
       "film": "Film",
-      "edit": "Edit"
+      "edit": "Edit",
+      "already_exists": "already exists"
     }
   },
   "warehouse_page": {

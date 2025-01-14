@@ -254,7 +254,6 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
     }
   };
 
-  console.log(validation, "validation");
   const handleEditStaff = async () => {
     try {
       setTrySubmited(false);
@@ -343,9 +342,9 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
 
   const handleDuplicateErrorMessage = (input: string) => {
     const replacements: { [key: string]: string } = {
-      "[tchi]": "Traditional Chinese Name",
-      "[eng]": "English Name",
-      "[schi]": "Simplified Chinese Name",
+      "[tchi]": t("common.traditionalChineseName"),
+      "[eng]": t("common.englishName"),
+      "[schi]": t("common.simplifiedChineseName"),
     };
 
     const matches = input.match(/\[(tchi|eng|schi)\]/g);
@@ -355,17 +354,12 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
       matches.map((match) => {
         tempV.push({
           field: replacements[match],
-          problem: "already exists",
+          problem: t("settings_page.recycling.already_exists"),
           type: "error",
         });
       });
       setValidation(tempV);
       return tempV.length === 0;
-      // return matches.map((match) => ({
-      //   field: replacements[match],
-      //   problem: "already exists", // Customize this message as needed
-      //   type: "error",
-      // }));
     }
 
     return [];
