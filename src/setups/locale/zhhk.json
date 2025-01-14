@@ -1617,7 +1617,7 @@
     "porCategory": "處理類別",
     "orderNumber": "訂單編號",
     "workshop": "工場",
-    "createdate": "處理日期及地點",
+    "createdate": "處理日期及時間",
     "create": {
       "classification": "分類",
       "sol": "溶膠",
