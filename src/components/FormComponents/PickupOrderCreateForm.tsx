@@ -57,6 +57,8 @@ import {
   getProductTypeFromDataRow,
   getProductSubTypeFromDataRow,
 } from "src/pages/Collector/PickupOrder/utils";
+import { getThirdPartyLogisticData } from "src/APICalls/Collector/pickupOrder/pickupOrder";
+import { logisticList } from "src/interfaces/common";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -206,6 +208,8 @@ const PickupOrderCreateForm = ({
   const navigate = useNavigate();
   const { localeTextDataGrid } = useLocaleTextDataGrid();
   const logisticCompany = logisticList;
+  const [thirdPartyLogisticList, setThirdPartyLogisticList] =
+    useState<logisticList[]>();
   const contractRole = contractType;
   const [index, setIndex] = useState<number | null>(null);
   const { validateData, errorsField, changeTouchField } =
@@ -274,8 +278,15 @@ const PickupOrderCreateForm = ({
   };
   //-- end custom style --
 
+  const get3rdPartyLogisticList = async () => {
+    const result = await getThirdPartyLogisticData();
+    if (result) {
+      setThirdPartyLogisticList(result.data.content);
+    }
+  };
+
   useEffect(() => {
-    getLogisticlist();
+    get3rdPartyLogisticList();
     getContractList();
     getRecycType();
   }, []);
@@ -837,12 +848,13 @@ const PickupOrderCreateForm = ({
                       ? true
                       : true
                   }
-                  setState={(value) =>
+                  setState={(value) => {
                     formik.setFieldValue(
                       "picoType",
                       value ? "ROUTINE" : "AD_HOC"
-                    )
-                  }
+                    );
+                    formik.setFieldValue("logisticName", "");
+                  }}
                   value={formik.values.picoType}
                   dataTestId="astd-create-edit-pickup-order-type-select-button-2449"
                 />
@@ -916,15 +928,25 @@ const PickupOrderCreateForm = ({
                 <CustomAutoComplete
                   placeholder={t("pick_up_order.enter_company_name")}
                   option={
-                    logisticCompany?.map((option) => {
-                      if (i18n.language === Languages.ENUS) {
-                        return option.logisticNameEng;
-                      } else if (i18n.language === Languages.ZHCH) {
-                        return option.logisticNameSchi;
-                      } else {
-                        return option.logisticNameTchi;
-                      }
-                    }) ?? []
+                    formik.values.picoType === "AD_HOC"
+                      ? thirdPartyLogisticList?.map((option) => {
+                          if (i18n.language === Languages.ENUS) {
+                            return option.logisticNameEng;
+                          } else if (i18n.language === Languages.ZHCH) {
+                            return option.logisticNameSchi;
+                          } else {
+                            return option.logisticNameTchi;
+                          }
+                        }) ?? []
+                      : logisticCompany?.map((option) => {
+                          if (i18n.language === Languages.ENUS) {
+                            return option.logisticNameEng;
+                          } else if (i18n.language === Languages.ZHCH) {
+                            return option.logisticNameSchi;
+                          } else {
+                            return option.logisticNameTchi;
+                          }
+                        }) ?? []
                   }
                   sx={{ width: "400px" }}
                   onChange={(_: SyntheticEvent, newValue: string | null) => {
