@@ -41,6 +41,7 @@ import {
   STATUS_CODE,
   localStorgeKeyName,
   Languages,
+  thirdPartyLogisticId,
 } from "../../../constants/constant";
 
 import dayjs from "dayjs";
@@ -537,7 +538,7 @@ const PickupOrders = () => {
       if (data && data.length > 0) {
         console.log(data, "dataaa");
         data = data.map((item: any) => {
-          if (item.logisticId) {
+          if (item.logisticId && item.logisticId != thirdPartyLogisticId) {
             const logistic = companies.find(
               (company) => company.id == item.logisticId
             );
