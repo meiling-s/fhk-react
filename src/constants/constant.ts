@@ -41,6 +41,8 @@ export const format = {
 
 export const configDateFormatFull = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
 
+export const thirdPartyLogisticId = '999999'
+
 export const formErr = {
   empty: 'empty',
   wrongFormat: 'wrongFormat',

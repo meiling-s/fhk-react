@@ -287,6 +287,13 @@ const PickupOrderForm = ({
     return t("pick_up_order.every") + " " + delivery.join(",");
   };
 
+  const getSpecificDate = (specificDates: string[]) => {
+    const formattedDates = specificDates?.map((date) =>
+      dayjs(date).format(dateFormat)
+    );
+    return formattedDates?.join(", ");
+  };
+
   return (
     <div className="add-vehicle">
       <Drawer
@@ -416,13 +423,12 @@ const PickupOrderForm = ({
           {selectedPickupOrder?.picoType !== "AD_HOC" && (
             <CustomField label={t("pick_up_order.table.delivery_datetime")}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {/* {selectedPickupOrder?.routine
-                  .map((routineItem) => routineItem)
-                  .join(' ')} */}
                 {selectedPickupOrder?.routineType === "daily" &&
                   t("pick_up_order.daily")}
                 {selectedPickupOrder?.routineType === "weekly" &&
                   getDeliveryDate(selectedPickupOrder.routine)}
+                {selectedPickupOrder?.routineType === "specificDate" &&
+                  getSpecificDate(selectedPickupOrder.specificDates ?? [])}
               </Typography>
             </CustomField>
           )}

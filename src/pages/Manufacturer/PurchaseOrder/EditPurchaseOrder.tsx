@@ -119,15 +119,15 @@ const EditPurchaseOrder = () => {
         receiverAddrGps: item.receiverAddrGps,
         version: poInfo.version,
         status: item.status,
-        productType: item?.productType, // => id
+        productType: item?.productTypeId ?? "", // => id
         productNameTchi: item?.productNameTchi,
         productNameSchi: item?.productNameSchi,
         productNameEng: item?.productNameEng,
-        productSubType: item?.productSubType, // => id
+        productSubType: item?.productSubTypeId ?? "", // => id
         productSubNameTchi: item?.productSubNameTchi,
         productSubNameSchi: item?.productSubNameSchi,
         productSubNameEng: item?.productSubNameEng,
-        productAddonType: item?.productAddonType, // => id
+        productAddonType: item?.productAddonTypeId ?? "", // => id
         productAddonNameTchi: item?.productAddonNameTchi,
         productAddonNameSchi: item?.productAddonNameSchi,
         productAddonNameEng: item?.productAddonNameEng,

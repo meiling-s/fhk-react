@@ -209,7 +209,8 @@
       "enter_text": "Please enter text",
       "water_bottle": "Water Bottle",
       "film": "Film",
-      "edit": "Edit"
+      "edit": "Edit",
+      "already_exists": "already exists"
     }
   },
   "warehouse_page": {
@@ -1623,7 +1624,7 @@
     "porCategory": "Processing category",
     "orderNumber": "Order number",
     "workshop": "Factory",
-    "createdate": "Date and place of processing",
+    "createdate": "Processing date and time",
     "create": {
       "classification": "Classification",
       "sol": "Sol",
@@ -1645,7 +1646,9 @@
     "table": {
       "startOrFinishDate": "Start / Finish date",
       "processIn": "Pending",
-      "processOut": "After Processing"
+      "processOut": "After Processing",
+      "showMore": "Show More",
+      "showLess": "Show Less"
     }
   },
   "factory": {

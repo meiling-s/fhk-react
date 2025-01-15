@@ -1,27 +1,42 @@
-import { FunctionComponent, useState, useEffect } from 'react'
-import { Box, Divider, Grid } from '@mui/material'
-import RightOverlayForm from '../../../components/RightOverlayForm'
-import CustomField from '../../../components/FormComponents/CustomField'
-import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { useTranslation } from 'react-i18next'
-import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
-import { formValidate } from '../../../interfaces/common'
-import { createStaffTitle, editStaffTitle } from '../../../APICalls/Collector/staffTitle'
-import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
-import { STATUS_CODE, formErr, localStorgeKeyName } from '../../../constants/constant'
-import { StaffTitle, CreateStaffTitle as CreateStaffTitleItem, UpdateStaffTitle } from '../../../interfaces/staffTitle'
-import { useNavigate } from 'react-router-dom'
+import { FunctionComponent, useState, useEffect } from "react";
+import { Box, Divider, Grid } from "@mui/material";
+import RightOverlayForm from "../../../components/RightOverlayForm";
+import CustomField from "../../../components/FormComponents/CustomField";
+import CustomTextField from "../../../components/FormComponents/CustomTextField";
+import { useTranslation } from "react-i18next";
+import { FormErrorMsg } from "../../../components/FormComponents/FormErrorMsg";
+import { formValidate } from "../../../interfaces/common";
+import {
+  createStaffTitle,
+  editStaffTitle,
+} from "../../../APICalls/Collector/staffTitle";
+import {
+  extractError,
+  returnErrorMsg,
+  showErrorToast,
+} from "../../../utils/utils";
+import {
+  STATUS_CODE,
+  formErr,
+  localStorgeKeyName,
+} from "../../../constants/constant";
+import {
+  StaffTitle,
+  CreateStaffTitle as CreateStaffTitleItem,
+  UpdateStaffTitle,
+} from "../../../interfaces/staffTitle";
+import { useNavigate } from "react-router-dom";
 
 interface CreateStaffTitle {
-  drawerOpen: boolean
-  handleDrawerClose: () => void
-  action: 'add' | 'edit' | 'delete' | 'none'
-  onSubmitData: (type: string, msg: string) => void
-  selectedItem?: StaffTitle | null
+  drawerOpen: boolean;
+  handleDrawerClose: () => void;
+  action: "add" | "edit" | "delete" | "none";
+  onSubmitData: (type: string, msg: string) => void;
+  selectedItem?: StaffTitle | null;
 }
 
 interface FormValues {
-  [key: string]: string
+  [key: string]: string;
 }
 
 const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
@@ -29,154 +44,158 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
   handleDrawerClose,
   action,
   onSubmitData,
-  selectedItem
+  selectedItem,
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const initialFormValues = {
-    titleNameTchi: '',
-    titleNameSchi: '',
-    titleNameEng: '',
-    duty: '',
-    description: '',
-    remark: '',
-  }
-  const [formData, setFormData] = useState<FormValues>(initialFormValues)
-  const [trySubmited, setTrySubmited] = useState<boolean>(false)
-  const [validation, setValidation] = useState<formValidate[]>([])
-  const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
-  const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
+    titleNameTchi: "",
+    titleNameSchi: "",
+    titleNameEng: "",
+    duty: "",
+    description: "",
+    remark: "",
+  };
+  const [formData, setFormData] = useState<FormValues>(initialFormValues);
+  const [trySubmited, setTrySubmited] = useState<boolean>(false);
+  const [validation, setValidation] = useState<formValidate[]>([]);
+  const loginName = localStorage.getItem(localStorgeKeyName.username) || "";
+  const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || "";
   const navigate = useNavigate();
 
   const staffField = [
     {
-      label: t('common.traditionalChineseName'),
-      placeholder: t('common.enterName'),
-      field: 'titleNameTchi',
-      type: 'text',
-      dataTestId: 'astd-staff-form-tc-input-field-9644'
+      label: t("common.traditionalChineseName"),
+      placeholder: t("common.enterName"),
+      field: "titleNameTchi",
+      type: "text",
+      dataTestId: "astd-staff-form-tc-input-field-9644",
     },
     {
-      label: t('common.simplifiedChineseName'),
-      placeholder: t('common.enterName'),
-      field: 'titleNameSchi',
-      type: 'text',
-      dataTestId: 'astd-staff-form-sc-input-field-7457'
+      label: t("common.simplifiedChineseName"),
+      placeholder: t("common.enterName"),
+      field: "titleNameSchi",
+      type: "text",
+      dataTestId: "astd-staff-form-sc-input-field-7457",
     },
     {
-      label: t('common.englishName'),
-      placeholder: t('common.enterName'),
-      field: 'titleNameEng',
-      type: 'text',
-      dataTestId: 'astd-staff-form-en-input-field-4721'
+      label: t("common.englishName"),
+      placeholder: t("common.enterName"),
+      field: "titleNameEng",
+      type: "text",
+      dataTestId: "astd-staff-form-en-input-field-4721",
     },
     {
-      label: t('staff_title.duty'),
-      placeholder: t('staff_title.enter_duty'),
-      field: 'duty',
-      type: 'text',
-      dataTestId: 'astd-staff-form-duty-input-field-2652'
+      label: t("staff_title.duty"),
+      placeholder: t("staff_title.enter_duty"),
+      field: "duty",
+      type: "text",
+      dataTestId: "astd-staff-form-duty-input-field-2652",
     },
     {
-      label: t('common.description'),
-      placeholder: t('common.enterText'),
-      field: 'description',
-      type: 'text-not-mandatory',
-      dataTestId: 'astd-staff-form-desc-input-field-2523'
+      label: t("common.description"),
+      placeholder: t("common.enterText"),
+      field: "description",
+      type: "text",
+      dataTestId: "astd-staff-form-desc-input-field-2523",
     },
     {
-      label: t('common.remark'),
-      placeholder: t('common.enterText'),
-      field: 'remark',
-      type: 'text-not-mandatory',
-      dataTestId: 'astd-staff-form-remark-input-field-1867'
-    }
-  ]
+      label: t("common.remark"),
+      placeholder: t("common.enterText"),
+      field: "remark",
+      type: "text",
+      dataTestId: "astd-staff-form-remark-input-field-1867",
+    },
+  ];
 
   const mappingData = () => {
     if (selectedItem != null) {
       setFormData({
         titleId: selectedItem.titleId,
-        duty: selectedItem.duty.length > 0 ? selectedItem.duty[0] : '',
+        duty: selectedItem.duty.length > 0 ? selectedItem.duty[0] : "",
         titleNameTchi: selectedItem.titleNameTchi,
         titleNameEng: selectedItem.titleNameEng,
         titleNameSchi: selectedItem.titleNameSchi,
         description: selectedItem.description,
         remark: selectedItem.remark,
-      })
+      });
     }
-  }
+  };
 
   const resetFormData = () => {
-    setFormData(initialFormValues)
-    setValidation([])
-    setTrySubmited(false)
-  }
+    setFormData(initialFormValues);
+    setValidation([]);
+    setTrySubmited(false);
+  };
 
   useEffect(() => {
-    if (action !== 'add') {
-      mappingData()
+    if (action !== "add") {
+      mappingData();
     } else {
-      resetFormData()
+      resetFormData();
     }
-  }, [drawerOpen])
+  }, [drawerOpen]);
 
-  const checkString = (s: string) => {
-    if (!trySubmited) {
-      return false
+  const checkString = (s: string, field: string) => {
+    if (trySubmited) {
+      if (s === "") {
+        return true;
+      } else {
+        return validation.some((val) => val.field === field);
+      }
     }
-    return s == ''
-  }
+    return false;
+  };
 
   const validationTestId: FormValues = {
-    titleNameTchi: 'astd-staff-form-tc-err-warning-5437',
-    titleNameSchi: 'astd-staff-form-sc-err-warning-3344',
-    titleNameEng: 'astd-staff-form-en-err-warning-1010',
-    duty: 'astd-staff-form-duty-err-warning-7195',
-    description: 'astd-staff-form-description-err-warning',
-    remark: 'astd-staff-form-remark-err-warning',
-  }
+    titleNameTchi: "astd-staff-form-tc-err-warning-5437",
+    titleNameSchi: "astd-staff-form-sc-err-warning-3344",
+    titleNameEng: "astd-staff-form-en-err-warning-1010",
+    duty: "astd-staff-form-duty-err-warning-7195",
+    description: "astd-staff-form-description-err-warning",
+    remark: "astd-staff-form-remark-err-warning",
+  };
 
   const validate = async () => {
-    const tempV: formValidate[] = []
+    const tempV: formValidate[] = [];
     const fieldMapping: FormValues = {
-      titleNameTchi: t('common.traditionalChineseName'),
-      titleNameSchi: t('common.simplifiedChineseName'),
-      titleNameEng: t('common.englishName'),
-      duty: t('staff_title.duty'),
-      description: t('common.description'),
-      remark: t('common.remark')
-    }
+      titleNameTchi: t("common.traditionalChineseName"),
+      titleNameSchi: t("common.simplifiedChineseName"),
+      titleNameEng: t("common.englishName"),
+      duty: t("staff_title.duty"),
+      description: t("common.description"),
+      remark: t("common.remark"),
+    };
     Object.keys(formData).forEach((fieldName) => {
-      formData[fieldName as keyof FormValues].trim() === '' &&
+      formData[fieldName as keyof FormValues].trim() === "" &&
         tempV.push({
           field: fieldMapping[fieldName as keyof FormValues],
-          problem: formErr.empty,
-          type: 'error',
+          problem: t("form.error.shouldNotBeEmpty"),
+          type: "error",
           dataTestId: validationTestId[fieldName],
-        })
-    })
-    setValidation(tempV)
+        });
+    });
+    setValidation(tempV);
     return tempV.length === 0;
-  }
+  };
 
   useEffect(() => {
-    validate()
+    validate();
   }, [
     formData.titleNameTchi,
     formData.titleNameEng,
     formData.titleNameSchi,
     formData.duty,
     formData.description,
-    formData.remark
-  ])
+    formData.remark,
+  ]);
 
   const handleFieldChange = (field: keyof FormValues, value: string) => {
     setFormData({
       ...formData,
-      [field]: value
-    })
-  }
+      [field]: value,
+    });
+  };
 
   const handleSubmit = async () => {
     const isValid = await validate();
@@ -188,155 +207,166 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
         titleNameEng: formData.titleNameEng,
         description: formData.description,
         duty: [formData.duty],
-        status: 'ACTIVE',
+        status: "ACTIVE",
         remark: formData.remark,
         createdBy: loginName,
-        updatedBy: loginName
-      }
+        updatedBy: loginName,
+      };
 
-      if (action === 'add') {
-        handleCreateStaff(staffData)
+      if (action === "add") {
+        handleCreateStaff(staffData);
       } else {
-        handleEditStaff()
+        handleEditStaff();
       }
     } else {
       setTrySubmited(true);
     }
-  }
+  };
 
   const handleCreateStaff = async (staffData: CreateStaffTitleItem) => {
     try {
-      validate()
+      setTrySubmited(false);
+      validate();
       if (validation.length === 0) {
-        const result = await createStaffTitle(staffData)
+        const result = await createStaffTitle(staffData);
         if (result?.data) {
-          onSubmitData('success', t('common.saveSuccessfully'))
-          resetFormData()
-          handleDrawerClose()
+          onSubmitData("success", t("common.saveSuccessfully"));
+          resetFormData();
+          handleDrawerClose();
         } else {
-          setTrySubmited(true)
-          onSubmitData('error', t('common.saveFailed'))
+          setTrySubmited(true);
+          onSubmitData("error", t("common.saveFailed"));
         }
       } else {
-        setTrySubmited(true)
+        setTrySubmited(true);
       }
-    } catch (error:any) {
-      const {state} =  extractError(error)
-      if(state.code === STATUS_CODE[503] ){
-        navigate('/maintenance')
+    } catch (error: any) {
+      const { state } = extractError(error);
+
+      if (state.code === STATUS_CODE[503]) {
+        navigate("/maintenance");
       } else if (state.code === STATUS_CODE[409]) {
-        const errorMessage = error.response.data.message
-        if (errorMessage.includes('[titleNameDuplicate]')) {
-          showErrorToast(handleDuplicateErrorMessage(errorMessage))
+        const errorMessage = error.response.data.message;
+
+        if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
+          setTrySubmited(true);
+          handleDuplicateErrorMessage(errorMessage);
         } else {
           showErrorToast(error.response.data.message);
         }
       }
     }
-  }
+  };
 
   const handleEditStaff = async () => {
-   try {
-    const editData: UpdateStaffTitle = {
-      titleId: selectedItem?.titleId || '',
-      titleNameTchi: formData.titleNameTchi,
-      titleNameSchi: formData.titleNameSchi,
-      titleNameEng: formData.titleNameEng,
-      description: formData.description,
-      duty: [formData.duty],
-      status: 'ACTIVE',
-      remark: formData.remark,
-      updatedBy: loginName,
-      version: selectedItem?.version ?? 0
-    }
-    if (validation.length === 0) {
-      if (selectedItem != null) {
-        const result = await editStaffTitle(selectedItem.titleId, editData)
-        if (result) {
-          onSubmitData('success', t('common.editSuccessfully'))
-          resetFormData()
-          handleDrawerClose()
-        }
-      }
-    } else {
-      setTrySubmited(true)
-    }
-   } catch (error:any) {
-    const {state} =  extractError(error)
-      if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
-      } else if (state.code === STATUS_CODE[409]) {
-        const errorMessage = error.response.data.message
-        if (errorMessage.includes('[titleNameDuplicate]')) {
-          showErrorToast(handleDuplicateErrorMessage(errorMessage))
-        } else {
-          showErrorToast(error.response.data.message);
-        }
-      }
-    }
-  }
-
-  const handleDelete = async () => {
     try {
+      setTrySubmited(false);
       const editData: UpdateStaffTitle = {
-        titleId: selectedItem?.titleId || '',
+        titleId: selectedItem?.titleId || "",
         titleNameTchi: formData.titleNameTchi,
         titleNameSchi: formData.titleNameSchi,
         titleNameEng: formData.titleNameEng,
         description: formData.description,
         duty: [formData.duty],
-        status: 'DELETED',
+        status: "ACTIVE",
         remark: formData.remark,
         updatedBy: loginName,
-        version: selectedItem?.version ?? 0
+        version: selectedItem?.version ?? 0,
+      };
+      if (validation.length === 0) {
+        if (selectedItem != null) {
+          const result = await editStaffTitle(selectedItem.titleId, editData);
+          if (result) {
+            onSubmitData("success", t("common.editSuccessfully"));
+            resetFormData();
+            handleDrawerClose();
+          }
+        }
+      } else {
+        setTrySubmited(true);
       }
+    } catch (error: any) {
+      const { state } = extractError(error);
+
+      if (state.code === STATUS_CODE[503]) {
+        navigate("/maintenance");
+      } else if (state.code === STATUS_CODE[409]) {
+        const errorMessage = error.response.data.message;
+
+        if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
+          setTrySubmited(true);
+          handleDuplicateErrorMessage(errorMessage);
+        } else {
+          showErrorToast(error.response.data.message);
+        }
+      }
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      setTrySubmited(false);
+      const editData: UpdateStaffTitle = {
+        titleId: selectedItem?.titleId || "",
+        titleNameTchi: formData.titleNameTchi,
+        titleNameSchi: formData.titleNameSchi,
+        titleNameEng: formData.titleNameEng,
+        description: formData.description,
+        duty: [formData.duty],
+        status: "DELETED",
+        remark: formData.remark,
+        updatedBy: loginName,
+        version: selectedItem?.version ?? 0,
+      };
       if (selectedItem != null) {
-        const result = await editStaffTitle(selectedItem.titleId, editData)
+        const result = await editStaffTitle(selectedItem.titleId, editData);
         if (result) {
-          onSubmitData('success', t('common.deletedSuccessfully'))
-          resetFormData()
-          handleDrawerClose()
+          onSubmitData("success", t("common.deletedSuccessfully"));
+          resetFormData();
+          handleDrawerClose();
         }
       }
     } catch (error: any) {
-      const {state} =  extractError(error)
+      const { state } = extractError(error);
+
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       } else if (state.code === STATUS_CODE[409]) {
-        showErrorToast(error?.response?.data?.message)
+        const errorMessage = error.response.data.message;
+
+        if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
+          setTrySubmited(true);
+          handleDuplicateErrorMessage(errorMessage);
+        } else {
+          showErrorToast(error.response.data.message);
+        }
       }
     }
-  }
+  };
 
   const handleDuplicateErrorMessage = (input: string) => {
     const replacements: { [key: string]: string } = {
-      '[tchi]': 'Traditional Chinese Name',
-      '[eng]': 'English Name',
-      '[schi]': 'Simplified Chinese Name'
+      "[tchi]": t("common.traditionalChineseName"),
+      "[eng]": t("common.englishName"),
+      "[schi]": t("common.simplifiedChineseName"),
     };
-  
-    let result = input.replace(/\[titleNameDuplicate\]/, '');
-  
-    const matches = result.match(/\[(tchi|eng|schi)\]/g);
-  
+
+    const matches = input.match(/\[(tchi|eng|schi)\]/g);
+
     if (matches) {
-      const replaced = matches.map(match => replacements[match as keyof typeof replacements]);
-  
-      let formatted: string;
-      if (replaced.length === 1) {
-        formatted = replaced[0];
-      } else if (replaced.length === 2) {
-        formatted = replaced.join(' and ');
-      } else if (replaced.length === 3) {
-        formatted = `${replaced[0]}, ${replaced[1]} and ${replaced[2]}`;
-      }
-  
-      result = result.replace(/\[(tchi|eng|schi)\]+/, formatted!);
-  
-      result = result.replace(/\[(tchi|eng|schi)\]/g, '');
+      const tempV: formValidate[] = [];
+      matches.map((match) => {
+        tempV.push({
+          field: replacements[match],
+          problem: t("settings_page.recycling.already_exists"),
+          type: "error",
+        });
+      });
+      setValidation(tempV);
+      return tempV.length === 0;
     }
-  
-    return result.trim();
+
+    return [];
   };
 
   return (
@@ -344,67 +374,50 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
       <RightOverlayForm
         open={drawerOpen}
         onClose={handleDrawerClose}
-        anchor={'right'}
+        anchor={"right"}
         action={action}
         headerProps={{
           title:
-            action == 'add'
-              ? t('top_menu.add_new')
-              : action == 'delete'
-              ? t('add_warehouse_page.delete')
+            action == "add"
+              ? t("top_menu.add_new")
+              : action == "delete"
+              ? t("add_warehouse_page.delete")
               : selectedItem?.titleNameTchi,
           subTitle:
-            action == 'add'
-              ? t('top_menu.staff_positions')
+            action == "add"
+              ? t("top_menu.staff_positions")
               : selectedItem?.titleId,
-          submitText: t('add_warehouse_page.save'),
-          cancelText: t('add_warehouse_page.delete'),
+          submitText: t("add_warehouse_page.save"),
+          cancelText: t("add_warehouse_page.delete"),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
           onDelete: handleDelete,
-          deleteText: t('common.deleteMessage')
+          deleteText: t("common.deleteMessage"),
         }}
       >
         <Divider></Divider>
         <Box sx={{ PaddingX: 2 }}>
           <Grid
             container
-            direction={'column'}
+            direction={"column"}
             spacing={4}
             sx={{
-              width: { xs: '100%' },
+              width: { xs: "100%" },
               marginTop: { sm: 2, xs: 6 },
               marginLeft: {
-                xs: 0
+                xs: 0,
               },
-              paddingRight: 2
+              paddingRight: 2,
             }}
             className="sm:ml-0 mt-o w-full"
           >
-            {staffField.map((item, index) =>
-            item.type === 'text-not-mandatory' ?
-              (<Grid item key={index}>
-                <CustomField label={item.label}>
-                  <CustomTextField
-                    id={item.label}
-                    value={formData[item.field as keyof FormValues]}
-                    disabled={action === 'delete'}
-                    placeholder={item.placeholder}
-                    dataTestId={item.dataTestId}
-                    onChange={(event) =>
-                      handleFieldChange(
-                        item.field as keyof FormValues,
-                        event.target.value
-                      )
-                    }
-                  />
-                </CustomField>
-              </Grid>) : (<Grid item key={index}>
+            {staffField.map((item, index) => (
+              <Grid item key={index}>
                 <CustomField label={item.label} mandatory>
                   <CustomTextField
                     id={item.label}
                     value={formData[item.field as keyof FormValues]}
-                    disabled={action === 'delete'}
+                    disabled={action === "delete"}
                     placeholder={item.placeholder}
                     dataTestId={item.dataTestId}
                     onChange={(event) =>
@@ -414,34 +427,32 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
                       )
                     }
                     error={checkString(
-                      formData[item.field as keyof FormValues]
+                      formData[item.field as keyof FormValues],
+                      item.label
                     )}
                   />
                 </CustomField>
-              </Grid>)
-            )}
-            <Grid item sx={{ width: '100%' }}>
+              </Grid>
+            ))}
+            <Grid item sx={{ width: "100%" }}>
               {trySubmited &&
                 validation.map((val, index) => {
-                  if (val.field !== t('common.description') && val.field !== t('common.remark')) {
-                    return (
-                      <FormErrorMsg
-                        key={index}
-                        field={t(val.field)}
-                        errorMsg={returnErrorMsg(val.problem, t)}
-                        type={val.type}
-                        dataTestId={val.dataTestId}
-                      />
-                    )
-                  }
-                  return null;
+                  return (
+                    <FormErrorMsg
+                      key={index}
+                      field={t(val.field)}
+                      errorMsg={val.problem} // Display the error message directly
+                      type={val.type}
+                      dataTestId={val.dataTestId}
+                    />
+                  );
                 })}
             </Grid>
           </Grid>
         </Box>
       </RightOverlayForm>
     </div>
-  )
-}
+  );
+};
 
-export default CreateStaff
+export default CreateStaff;
