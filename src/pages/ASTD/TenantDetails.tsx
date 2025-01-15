@@ -291,23 +291,8 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   const getReasonList = async () => {
     const token = returnApiToken();
     const result = await getReasonTenant(0, 100, token.tenantId, 1);
-    const reasonList = [
-      {
-        id: "1",
-        reasonEn: "Photo is blurry",
-        reasonSchi: '照片模糊"',
-        reasonTchi: "照片模糊",
-      },
-      {
-        id: "2",
-        reasonEn: "Business number does not match",
-        reasonSchi: "商业编号不匹配",
-        reasonTchi: "商業編號不匹配",
-      },
-    ];
     const data = result?.data;
     if (data) {
-      console.log(data, "data");
       let tempReasons: il_item[] = [];
       data.content.map((item: any) => {
         tempReasons.push({
