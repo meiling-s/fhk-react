@@ -159,11 +159,15 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
     }
   }, [drawerOpen]);
 
-  const checkString = (s: string) => {
-    if (!trySubmited) {
-      return false;
+  const checkString = (s: string, field: string) => {
+    if (trySubmited) {
+      if (s === "") {
+        return true;
+      } else {
+        return validation.some((val) => val.field === field);
+      }
     }
-    return s == "";
+    return false;
   };
 
   const validate = async () => {
@@ -180,7 +184,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       formData[fieldName as keyof FormValues].trim() === "" &&
         tempV.push({
           field: fieldMapping[fieldName as keyof FormValues],
-          problem: formErr.empty,
+          problem: t("form.error.shouldNotBeEmpty"),
           type: "error",
         });
     });
@@ -421,7 +425,8 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
                       )
                     }
                     error={checkString(
-                      formData[item.field as keyof FormValues]
+                      formData[item.field as keyof FormValues],
+                      item.label
                     )}
                   />
                 </CustomField>
