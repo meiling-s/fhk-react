@@ -75,7 +75,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
       value: selectedCheckOut?.logisticName,
     },
     {
-      label: t("check_out.shipping_company"),
+      label: t("check_in.sender_company"),
       value: selectedCheckOut?.senderCompany,
     },
     {
@@ -313,16 +313,17 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
             >
               <div className="delivery-loc">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {t("check_out.sender_addr")}
+                  {t("check_out.shipping_location")}
                 </div>
                 <div className="text-mini text-black font-bold tracking-widest">
-                  {selectedCheckOut?.senderAddr}
+                  {selectedCheckOut?.senderAddr ??
+                    selectedCheckOut?.senderAddress}
                 </div>
               </div>
               <ArrowForwardIcon className="text-gray" />
               <div className="arrived">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {t("check_out.arrival_location")}
+                  {t("pick_up_order.detail.arrived")}
                 </div>
                 <div className="text-mini text-black font-bold tracking-widest">
                   {selectedCheckOut?.receiverAddr}

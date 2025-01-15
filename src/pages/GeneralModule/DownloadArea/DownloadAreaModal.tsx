@@ -236,10 +236,19 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   }, [startDate, endDate, i18n.language]);
 
   const formatUtcStartDate = (value: dayjs.Dayjs) => {
-    return dayjs(value).utc().format("YYYY-MM-DD[T]00:00:00.000[Z]");
+    return dayjs(value)
+      .utc()
+      .startOf("day")
+      .subtract(8, "hours")
+      .format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]");
   };
+
   const formatUtcEndDate = (value: dayjs.Dayjs) => {
-    return dayjs(value).utc().format("YYYY-MM-DD[T]23:59:59.999[Z]");
+    return dayjs(value)
+      .utc()
+      .endOf("day")
+      .subtract(8, "hours")
+      .format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]");
   };
 
   const generateDateRangeLink = (reportId: string) => {
