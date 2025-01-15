@@ -37,6 +37,9 @@ export type PurchaseOrderDetail = {
   productAddonNameEng: string
   productSubTypeRemark: string
   productAddonTypeRemark: string
+  productSubTypeId?: string
+  productAddonTypeId?: string
+  productTypeId?: string
 }
 
 export type PurChaseOrder = {

@@ -133,6 +133,7 @@ const CreatePickupOrder = () => {
   }, [createPickupOrder.values.picoType]);
 
   const setPickupOrderDetail = () => {
+    console.log(poInfo, "poInfo");
     const picoDetails: CreatePicoDetail[] =
       poInfo?.purchaseOrderDetail?.map((item) => ({
         id: item?.poDtlId,
@@ -151,6 +152,9 @@ const CreatePickupOrder = () => {
         pickupAt: dayjs(item?.pickupAt).format("hh:mm:ss") ?? "",
         recycType: item?.recycTypeId ?? "",
         recycSubType: item?.recycSubTypeId ?? "",
+        productType: item?.productTypeId ?? "",
+        productSubType: item?.productSubTypeId ?? "",
+        productAddonType: item?.productAddonTypeId ?? "",
         weight: item.weight.toString(),
       })) || [];
 
