@@ -66,7 +66,9 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
     41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
     60
   ]
-  const [duplicateName, setDuplicatedName] = useState<boolean>(false)
+  const [duplicateNameTc, setDuplicatedNameTc] = useState<boolean>(false)
+  const [duplicateNameSc, setDuplicatedNameSc] = useState<boolean>(false)
+  const [duplicateNameEn, setDuplicatedNameEn] = useState<boolean>(false)
   const time = [
     {
       id: 'D',
@@ -187,7 +189,9 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
   ])
 
   useEffect(() => {
-    setDuplicatedName(false)
+    setDuplicatedNameTc(false)
+    setDuplicatedNameSc(false)
+    setDuplicatedNameEn(false)
   }, [tChineseName, sChineseName, englishName])
 
   const checkString = (s: string) => {
@@ -198,14 +202,36 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
     return s == ''
   }
 
-  const nameExisting = () => {
+  const nameExisting = (errorMsg: string) => {
+    const fieldMappings: Record<string, string> = {
+      'English Name': t('process_type.english_name'),
+      'Traditional Chinese Name': t('process_type.traditional_chinese_name'),
+      'Simplified Chinese Name': t('process_type.simplified_chinese_name')
+    }
+
+    const checkErrorField = (errorMsg: string): string | undefined =>
+      Object.keys(fieldMappings).find((field) =>
+        errorMsg.includes(`${field} already exist`)
+      )
+
+    const errField = checkErrorField(errorMsg)
     const tempV: formValidate[] = []
-    tempV.push({
-      field: t('processRecord.handleName'),
-      problem: formErr.alreadyExist,
-      type: 'error'
-    })
+
+    if (errField) {
+      errField === 'Traditional Chinese Name'
+        ? setDuplicatedNameTc(true)
+        : errField === 'Simplified Chinese Name'
+        ? setDuplicatedNameSc(true)
+        : setDuplicatedNameEn(true)
+
+      tempV.push({
+        field: fieldMappings[errField!!],
+        problem: formErr.alreadyExist,
+        type: 'error'
+      })
+    }
     setValidation(tempV)
+    console.log('validation', tempV)
   }
 
   const handleSubmit = () => {
@@ -252,8 +278,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
       } else {
         if (error?.response?.data?.status === STATUS_CODE[409]) {
           //showErrorToast(error?.response?.data?.message)
-          nameExisting()
-          setDuplicatedName(true)
+          nameExisting(error?.response?.data?.message)
           setTrySubmited(true)
         }
         // if (error?.response?.data?.status === STATUS_CODE[500] ||
@@ -295,8 +320,8 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
         navigate('/maintenance')
       } else {
         if (error?.response?.data?.status === STATUS_CODE[409]) {
-          nameExisting()
-          setDuplicatedName(true)
+          nameExisting(error?.response?.data?.message)
+          setTrySubmited(true)
           //showErrorToast(error?.response?.data?.message)
         }
       }
@@ -362,7 +387,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                 )}
                 onChange={(event) => setTChineseName(event.target.value)}
                 error={
-                  checkString(tChineseName) || (duplicateName && trySubmited)
+                  checkString(tChineseName) || (duplicateNameTc && trySubmited)
                 }
                 dataTestId="astd-product-type-form-tc-input-field-1266"
               />
@@ -383,7 +408,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                 )}
                 onChange={(event) => setSChineseName(event.target.value)}
                 error={
-                  checkString(sChineseName) || (duplicateName && trySubmited)
+                  checkString(sChineseName) || (duplicateNameSc && trySubmited)
                 }
                 dataTestId="astd-product-type-form-sc-input-field-6727"
               />
@@ -399,7 +424,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
                 placeholder={t('process_type.english_name_placeholder')}
                 onChange={(event) => setEnglishName(event.target.value)}
                 error={
-                  checkString(englishName) || (duplicateName && trySubmited)
+                  checkString(englishName) || (duplicateNameEn && trySubmited)
                 }
                 dataTestId="astd-product-type-form-en-input-field-4655"
               />
