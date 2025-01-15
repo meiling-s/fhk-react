@@ -74,7 +74,7 @@ axiosInstance?.interceptors.request.use(
             console.log('Refresh token expired. Redirecting to login page...')
           if (ipAddress) {
             const userActivity: UserActivity = {
-              operation: 'Logout',
+              operation: '登出',
               ip: ipAddress,
               createdBy: loginId,
               updatedBy: loginId
@@ -116,7 +116,7 @@ const __apiNewToken = async () => {
     if (e?.response?.status === STATUS_CODE[500]) {
       if (ipAddress) {
         const userActivity: UserActivity = {
-          operation: 'Logout',
+          operation: '登出',
           ip: ipAddress,
           createdBy: loginId,
           updatedBy: loginId
