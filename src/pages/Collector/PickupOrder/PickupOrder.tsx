@@ -1,110 +1,110 @@
-import { Button, Modal, Typography, Pagination, Divider } from '@mui/material'
-import { Box, Stack } from '@mui/system'
-import { useLocation, useNavigate } from 'react-router'
+import { Button, Modal, Typography, Pagination, Divider } from "@mui/material";
+import { Box, Stack } from "@mui/system";
+import { useLocation, useNavigate } from "react-router";
 import {
   DataGrid,
   GridColDef,
   GridRowParams,
-  GridRowSpacingParams
-} from '@mui/x-data-grid'
-import React, { useEffect, useState } from 'react'
-import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
-import PickupOrderForm from '../../../components/FormComponents/PickupOrderFormCustom'
-import StatusCard from '../../../components/StatusCard'
-import CircularLoading from '../../../components/CircularLoading'
-import { PickupOrder, queryPickupOrder } from '../../../interfaces/pickupOrder'
-import { useContainer } from 'unstated-next'
-import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { ToastContainer, toast } from 'react-toastify'
-import { useTranslation } from 'react-i18next'
+  GridRowSpacingParams,
+} from "@mui/x-data-grid";
+import React, { useEffect, useState } from "react";
+import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
+import PickupOrderForm from "../../../components/FormComponents/PickupOrderFormCustom";
+import StatusCard from "../../../components/StatusCard";
+import CircularLoading from "../../../components/CircularLoading";
+import { PickupOrder, queryPickupOrder } from "../../../interfaces/pickupOrder";
+import { useContainer } from "unstated-next";
+import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
+import { ToastContainer, toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import CustomItemList, {
-  il_item
-} from '../../../components/FormComponents/CustomItemList'
+  il_item,
+} from "../../../components/FormComponents/CustomItemList";
 import {
   getAllPickUpOrder,
   getAllLogisticsPickUpOrder,
   getAllReason,
-  editPickupOrderDetailStatus
-} from '../../../APICalls/Collector/pickupOrder/pickupOrder'
-import { editPickupOrderStatus } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
-import i18n from '../../../setups/i18n'
+  editPickupOrderDetailStatus,
+} from "../../../APICalls/Collector/pickupOrder/pickupOrder";
+import { editPickupOrderStatus } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
+import i18n from "../../../setups/i18n";
 import {
   displayCreatedDate,
   extractError,
   getPrimaryColor,
   showErrorToast,
   showSuccessToast,
-  debounce
-} from '../../../utils/utils'
-import TableOperation from '../../../components/TableOperation'
+  debounce,
+} from "../../../utils/utils";
+import TableOperation from "../../../components/TableOperation";
 import {
   STATUS_CODE,
   localStorgeKeyName,
   Languages,
-  thirdPartyLogisticId
-} from '../../../constants/constant'
+  thirdPartyLogisticId,
+} from "../../../constants/constant";
 
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
-import useLocaleText from '../../../hooks/useLocaleTextDataGrid'
-import { weekDs } from '../../../components/SpecializeComponents/RoutineSelect/predefinedOption'
-import RejectForm from '../../../components/logistic/RejectForm'
-import { getAllTenant } from '../../../APICalls/tenantManage'
-import { useNavigation } from 'react-router-dom'
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import useLocaleText from "../../../hooks/useLocaleTextDataGrid";
+import { weekDs } from "../../../components/SpecializeComponents/RoutineSelect/predefinedOption";
+import RejectForm from "../../../components/logistic/RejectForm";
+import { getAllTenant } from "../../../APICalls/tenantManage";
+import { useNavigation } from "react-router-dom";
 
-dayjs.extend(utc)
-dayjs.extend(timezone)
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 type Approve = {
-  open: boolean
-  onClose: () => void
-  selectedRow: any
-  navigate: (url: string) => void
-}
+  open: boolean;
+  onClose: () => void;
+  selectedRow: any;
+  navigate: (url: string) => void;
+};
 
 const ApproveModal: React.FC<Approve> = ({
   open,
   onClose,
   selectedRow,
-  navigate
+  navigate,
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const onApprove = async () => {
     const updatePoStatus = {
-      status: 'CONFIRMED',
+      status: "CONFIRMED",
       reason: selectedRow.reason,
       updatedBy: selectedRow.updatedBy,
-      version: selectedRow.version
-    }
+      version: selectedRow.version,
+    };
     try {
       const result = await editPickupOrderStatus(
         selectedRow.picoId,
         updatePoStatus
-      )
+      );
       if (result) {
-        toast.info(t('pick_up_order.approved_success'), {
-          position: 'top-center',
+        toast.info(t("pick_up_order.approved_success"), {
+          position: "top-center",
           autoClose: 3000,
           hideProgressBar: true,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-          theme: 'light'
-        })
-        onClose()
+          theme: "light",
+        });
+        onClose();
       }
     } catch (error: any) {
-      const { state } = extractError(error)
+      const { state } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       } else if (state.code === STATUS_CODE[409]) {
-        showErrorToast(error.response.data.message)
+        showErrorToast(error.response.data.message);
       }
     }
-  }
+  };
 
   return (
     <Modal
@@ -120,56 +120,56 @@ const ApproveModal: React.FC<Approve> = ({
               id="modal-modal-title"
               variant="h6"
               component="h2"
-              sx={{ fontWeight: 'bold' }}
+              sx={{ fontWeight: "bold" }}
             >
-              {t('pick_up_order.confirm_approve_title')}
+              {t("pick_up_order.confirm_approve_title")}
             </Typography>
           </Box>
           <Divider />
-          <Box sx={{ alignSelf: 'center' }}>
+          <Box sx={{ alignSelf: "center" }}>
             <button
               className="primary-btn mr-2 cursor-pointer"
               onClick={() => {
-                onApprove()
+                onApprove();
               }}
             >
-              {t('pick_up_order.confirm_approve')}
+              {t("pick_up_order.confirm_approve")}
             </button>
             <button
               className="secondary-btn mr-2 cursor-pointer"
               onClick={() => {
-                onClose()
+                onClose();
               }}
             >
-              {t('pick_up_order.cancel')}
+              {t("pick_up_order.cancel")}
             </button>
           </Box>
         </Stack>
       </Box>
     </Modal>
-  )
-}
+  );
+};
 
 const Required = () => {
   return (
     <Typography
       sx={{
-        color: 'red',
-        ml: '5px'
+        color: "red",
+        ml: "5px",
       }}
     >
       *
     </Typography>
-  )
-}
+  );
+};
 
 type rejectForm = {
-  open: boolean
-  onClose: () => void
-  selectedRow: any
-  reasonList: any
-  navigate: (url: string) => void
-}
+  open: boolean;
+  onClose: () => void;
+  selectedRow: any;
+  reasonList: any;
+  navigate: (url: string) => void;
+};
 
 // function RejectForm({ open, onClose, selectedRow, reasonList, navigate }: rejectForm) {
 //   const { t } = useTranslation();
@@ -272,86 +272,87 @@ type rejectForm = {
 // }
 
 interface Option {
-  value: string
-  label: string
+  value: string;
+  label: string;
 }
 
 interface StatusPickUpOrder {
-  value: string
-  labelEng: string
-  labelSchi: string
-  labelTchi: string
+  value: string;
+  labelEng: string;
+  labelSchi: string;
+  labelTchi: string;
 }
 
 interface Company {
-  id?: number
-  nameEng?: string
-  nameSchi?: string
-  nameTchi?: string
+  id?: number;
+  nameEng?: string;
+  nameSchi?: string;
+  nameTchi?: string;
 }
 
 const PickupOrders = () => {
-  const { t } = useTranslation()
-  const [page, setPage] = useState(1)
-  const pageSize = 10
-  const [totalData, setTotalData] = useState<number>(0)
-  const [showOperationColumn, setShowOperationColumn] = useState<Boolean>(false)
-  const role = localStorage.getItem(localStorgeKeyName.role)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { t } = useTranslation();
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const [totalData, setTotalData] = useState<number>(0);
+  const [showOperationColumn, setShowOperationColumn] =
+    useState<Boolean>(false);
+  const role = localStorage.getItem(localStorgeKeyName.role);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   let columns: GridColDef[] = [
     {
-      field: 'createdAt',
-      headerName: t('pick_up_order.table.created_datetime'),
+      field: "createdAt",
+      headerName: t("pick_up_order.table.created_datetime"),
       width: 150,
       renderCell: (params) => {
         return dayjs
           .utc(params.row.createdAt)
-          .tz('Asia/Hong_Kong')
-          .format(`${dateFormat} HH:mm`)
-      }
+          .tz("Asia/Hong_Kong")
+          .format(`${dateFormat} HH:mm`);
+      },
     },
     {
-      field: 'logisticCompany',
-      headerName: t('pick_up_order.table.logistic_company'),
+      field: "logisticCompany",
+      headerName: t("pick_up_order.table.logistic_company"),
       width: 250,
-      editable: true
+      editable: true,
     },
     {
-      field: 'picoId',
-      headerName: t('pick_up_order.table.pico_id'),
-      type: 'string',
+      field: "picoId",
+      headerName: t("pick_up_order.table.pico_id"),
+      type: "string",
       width: 220,
-      editable: true
+      editable: true,
     },
     {
-      field: 'deliveryDate',
-      headerName: t('pick_up_order.table.delivery_date'),
-      type: 'string',
+      field: "deliveryDate",
+      headerName: t("pick_up_order.table.delivery_date"),
+      type: "string",
       width: 200,
-      editable: true
+      editable: true,
     },
     {
-      field: 'senderCompany',
-      headerName: t('pick_up_order.table.sender_company'),
-      type: 'sring',
+      field: "senderCompany",
+      headerName: t("pick_up_order.table.sender_company"),
+      type: "sring",
       width: 260,
-      editable: true
+      editable: true,
     },
     {
-      field: 'receiver',
-      headerName: t('pick_up_order.table.receiver'),
-      type: 'string',
+      field: "receiver",
+      headerName: t("pick_up_order.table.receiver"),
+      type: "string",
       width: 260,
-      editable: true
+      editable: true,
     },
     {
-      field: 'status',
-      headerName: t('pick_up_order.table.status'),
-      type: 'string',
+      field: "status",
+      headerName: t("pick_up_order.table.status"),
+      type: "string",
       width: 120,
       editable: true,
-      renderCell: (params) => <StatusCard status={params.value} />
-    }
+      renderCell: (params) => <StatusCard status={params.value} />,
+    },
     // showOperationColumn && {
     //   field: "operation",
     //   headerName: t('pick_up_order.table.operation'),
@@ -368,15 +369,15 @@ const PickupOrders = () => {
     //     />
     //   ),
     // },
-  ]
+  ];
 
-  if (role === 'logistic') {
+  if (role === "logistic") {
     columns = [
       ...columns,
       {
-        field: 'operation',
-        headerName: t('pick_up_order.table.operation'),
-        type: 'string',
+        field: "operation",
+        headerName: t("pick_up_order.table.operation"),
+        type: "string",
         width: 220,
         editable: true,
         filterable: false,
@@ -387,9 +388,9 @@ const PickupOrders = () => {
             onReject={showRejectModal}
             navigateToJobOrder={navigateToJobOrder}
           />
-        )
-      }
-    ]
+        ),
+      },
+    ];
   }
   const {
     recycType,
@@ -397,41 +398,41 @@ const PickupOrders = () => {
     manuList,
     collectorList,
     logisticList,
-    companies
-  } = useContainer(CommonTypeContainer)
-  const [actions, setActions] = useState<'add' | 'edit' | 'delete'>('add')
+    companies,
+  } = useContainer(CommonTypeContainer);
+  const [actions, setActions] = useState<"add" | "edit" | "delete">("add");
   // const {pickupOrder} = useContainer(CheckInRequestContainer)
-  const [recycItem, setRecycItem] = useState<il_item[]>([])
-  const location = useLocation()
-  const action: string = location.state
-  const [pickupOrder, setPickupOrder] = useState<PickupOrder[]>()
-  const [rows, setRows] = useState<Row[]>([])
-  const [filteredPico, setFilteredPico] = useState<Row[]>([])
+  const [recycItem, setRecycItem] = useState<il_item[]>([]);
+  const location = useLocation();
+  const action: string = location.state;
+  const [pickupOrder, setPickupOrder] = useState<PickupOrder[]>();
+  const [rows, setRows] = useState<Row[]>([]);
+  const [filteredPico, setFilteredPico] = useState<Row[]>([]);
   const [query, setQuery] = useState<queryPickupOrder>({
-    picoId: '',
-    effFromDate: '',
-    effToDate: '',
-    logisticName: '',
-    recycType: '',
-    senderName: '',
-    status: null
-  })
-  const [approveModal, setApproveModal] = useState(false)
-  const [rejectModal, setRejectModal] = useState(false)
+    picoId: "",
+    effFromDate: "",
+    effToDate: "",
+    logisticName: "",
+    recycType: "",
+    senderName: "",
+    status: null,
+  });
+  const [approveModal, setApproveModal] = useState(false);
+  const [rejectModal, setRejectModal] = useState(false);
   const [reasonList, setReasonList] = useState<
     { reasonId: string; name: string }[]
-  >([])
-  const [openDelete, setOpenDelete] = useState<boolean>(false)
-  let listCompany: Company[] = []
+  >([]);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
+  let listCompany: Company[] = [];
   if (collectorList && collectorList?.length >= 1) {
     const collectors: Company[] = collectorList?.map((item) => {
       return {
         nameEng: item.collectorNameEng,
         nameSchi: item.collectorNameSchi,
-        nameTchi: item.collectorNameTchi
-      }
-    })
-    listCompany = [...listCompany, ...collectors]
+        nameTchi: item.collectorNameTchi,
+      };
+    });
+    listCompany = [...listCompany, ...collectors];
   }
 
   if (manuList && manuList.length >= 1) {
@@ -439,145 +440,146 @@ const PickupOrders = () => {
       return {
         nameEng: item.manufacturerNameEng,
         nameSchi: item.manufacturerNameSchi,
-        nameTchi: item.manufacturerNameTchi
-      }
-    })
-    listCompany = [...listCompany, ...manus]
+        nameTchi: item.manufacturerNameTchi,
+      };
+    });
+    listCompany = [...listCompany, ...manus];
   }
   // const [companies, setCompanies] = useState<Company[]>([])
   const statusList: StatusPickUpOrder[] = [
     {
-      value: '0',
-      labelEng: 'CREATED',
-      labelSchi: '待处理',
-      labelTchi: '待處理'
+      value: "0",
+      labelEng: "CREATED",
+      labelSchi: "待处理",
+      labelTchi: "待處理",
     },
     {
-      value: '1',
-      labelEng: 'STARTED',
-      labelSchi: '处理中',
-      labelTchi: '處理中'
+      value: "1",
+      labelEng: "STARTED",
+      labelSchi: "处理中",
+      labelTchi: "處理中",
     },
     {
-      value: '2',
-      labelEng: 'CONFIRMED',
-      labelSchi: '已确认',
-      labelTchi: '已確認'
+      value: "2",
+      labelEng: "CONFIRMED",
+      labelSchi: "已确认",
+      labelTchi: "已確認",
     },
     {
-      value: '3',
-      labelEng: 'REJECTED',
-      labelSchi: '已拒绝',
-      labelTchi: '已拒絕'
+      value: "3",
+      labelEng: "REJECTED",
+      labelSchi: "已拒绝",
+      labelTchi: "已拒絕",
     },
     {
-      value: '4',
-      labelEng: 'COMPLETED',
-      labelSchi: '已完成',
-      labelTchi: '已完成'
+      value: "4",
+      labelEng: "COMPLETED",
+      labelSchi: "已完成",
+      labelTchi: "已完成",
     },
     {
-      value: '5',
-      labelEng: 'CLOSED',
-      labelSchi: '已取消',
-      labelTchi: '已取消'
+      value: "5",
+      labelEng: "CLOSED",
+      labelSchi: "已取消",
+      labelTchi: "已取消",
     },
     {
-      value: '6',
-      labelEng: 'OUTSTANDING',
-      labelSchi: '已逾期',
-      labelTchi: '已逾期'
+      value: "6",
+      labelEng: "OUTSTANDING",
+      labelSchi: "已逾期",
+      labelTchi: "已逾期",
     },
     {
-      value: '',
-      labelEng: t('localizedTexts.filterValueAny'),
-      labelSchi: '任何',
-      labelTchi: '任何'
-    }
-  ]
-  const { localeTextDataGrid } = useLocaleText()
+      value: "",
+      labelEng: t("localizedTexts.filterValueAny"),
+      labelSchi: "任何",
+      labelTchi: "任何",
+    },
+  ];
+  const { localeTextDataGrid } = useLocaleText();
 
   async function initCompaniesData() {
     try {
-      const result = await getAllTenant(1 - 1, 1000)
+      const result = await getAllTenant(1 - 1, 1000);
       if (result) {
-        const data = result?.data.content
+        const data = result?.data.content;
         const mappingData: Company[] = data.map((item: any) => {
           return {
             id: item?.tenantId,
             nameEng: item?.companyNameEng,
             nameSchi: item?.companyNameSchi,
-            nameTchi: item?.companyNameTchi
-          }
-        })
+            nameTchi: item?.companyNameTchi,
+          };
+        });
         if (data.length > 0) {
           // setCompanies(mappingData)
         }
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
   }
 
   const initPickupOrderRequest = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       // setPickupOrder([])
-      setTotalData(0)
-      let result = null
-      if (role === 'logistic') {
-        result = await getAllLogisticsPickUpOrder(page - 1, pageSize, query)
+      setTotalData(0);
+      let result = null;
+      if (role === "logistic") {
+        result = await getAllLogisticsPickUpOrder(page - 1, pageSize, query);
       } else {
-        result = await getAllPickUpOrder(page - 1, pageSize, query)
+        result = await getAllPickUpOrder(page - 1, pageSize, query);
       }
-      let data = result?.data.content
+      let data = result?.data.content;
       if (data && data.length > 0) {
+        console.log(data, "dataaa");
         data = data.map((item: any) => {
           if (item.logisticId && item.logisticId != thirdPartyLogisticId) {
             const logistic = companies.find(
               (company) => company.id == item.logisticId
-            )
+            );
             if (logistic) {
               if (i18n.language === Languages.ENUS)
-                item.logisticName = logistic.nameEng
+                item.logisticName = logistic.nameEng;
               if (i18n.language === Languages.ZHCH)
-                item.logisticName = logistic.nameSchi
+                item.logisticName = logistic.nameSchi;
               if (i18n.language === Languages.ZHHK)
-                item.logisticName = logistic.nameTchi
+                item.logisticName = logistic.nameTchi;
             }
           }
 
           for (let detail of item?.pickupOrderDetail) {
-            const { receiverId, senderId } = detail
+            const { receiverId, senderId } = detail;
 
             if (receiverId) {
               const receiverName = companies.find(
                 (company) => company.id == receiverId
-              )
+              );
               if (receiverName) {
                 if (i18n.language === Languages.ENUS)
-                  detail.receiverName = receiverName.nameEng
+                  detail.receiverName = receiverName.nameEng;
                 if (i18n.language === Languages.ZHCH)
-                  detail.receiverName = receiverName.nameSchi
+                  detail.receiverName = receiverName.nameSchi;
                 if (i18n.language === Languages.ZHHK)
-                  detail.receiverName = receiverName.nameTchi
+                  detail.receiverName = receiverName.nameTchi;
               }
             }
 
             if (senderId) {
               const senderName = companies.find(
                 (company) => company.id == senderId
-              )
+              );
               if (senderName) {
                 if (i18n.language === Languages.ENUS)
-                  detail.senderName = senderName.nameEng
+                  detail.senderName = senderName.nameEng;
                 if (i18n.language === Languages.ZHCH)
-                  detail.senderName = senderName.nameSchi
+                  detail.senderName = senderName.nameSchi;
                 if (i18n.language === Languages.ZHHK)
-                  detail.senderName = senderName.nameTchi
+                  detail.senderName = senderName.nameTchi;
               }
             }
           }
@@ -664,44 +666,44 @@ const PickupOrders = () => {
 
           //set picoItem details
           // item.pickupOrderDetail[0] = pickupOrderDetail
-          return item
-        })
+          return item;
+        });
 
-        setPickupOrder(data)
+        setPickupOrder(data);
       } else {
-        setPickupOrder([])
+        setPickupOrder([]);
       }
-      setTotalData(result?.data.totalPages)
+      setTotalData(result?.data.totalPages);
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   const showApproveModal = (row: any) => {
-    setSelectedRow(row)
-    setApproveModal(true)
-  }
+    setSelectedRow(row);
+    setApproveModal(true);
+  };
   const showRejectModal = (row: any) => {
-    setSelectedRow(row)
-    setRejectModal(true)
-  }
+    setSelectedRow(row);
+    setRejectModal(true);
+  };
   const navigateToJobOrder = (row: any) => {
     if (row?.picoId)
-      navigate(`/logistic/createJobOrder/${row.picoId}?isEdit=false`)
-  }
+      navigate(`/logistic/createJobOrder/${row.picoId}?isEdit=false`);
+  };
   const resetPage = async () => {
-    setApproveModal(false)
-    setRejectModal(false)
-    initPickupOrderRequest()
-  }
+    setApproveModal(false);
+    setRejectModal(false);
+    initPickupOrderRequest();
+  };
 
   const getRejectReason = async () => {
     try {
-      let result = await getAllReason()
+      let result = await getAllReason();
       if (result && result?.data && result?.data?.content.length > 0) {
         // let reasonName = ''
         // switch (i18n.language) {
@@ -724,145 +726,152 @@ const PickupOrders = () => {
             if (i18n.language === Languages.ENUS) {
               return {
                 id: item.reasonId,
-                name: item.reasonNameEng
-              }
+                name: item.reasonNameEng,
+              };
             } else if (i18n.language === Languages.ZHCH) {
               return {
                 id: item.reasonId,
-                name: item.reasonNameSchi
-              }
+                name: item.reasonNameSchi,
+              };
             } else {
               return {
                 id: item.reasonId,
-                name: item.reasonNameTchi
-              }
+                name: item.reasonNameTchi,
+              };
             }
-          })
-        setReasonList(reasons)
+          });
+        setReasonList(reasons);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-  }
+  };
 
   useEffect(() => {
-    setShowOperationColumn(role === 'logistic')
-  }, [role, columns, i18n.language])
+    setShowOperationColumn(role === "logistic");
+  }, [role, columns, i18n.language]);
 
   useEffect(() => {
-    initPickupOrderRequest()
-    getRejectReason()
+    initPickupOrderRequest();
+    getRejectReason();
     // initCompaniesData()
-  }, [i18n.language])
+  }, [i18n.language]);
 
   useEffect(() => {
-    initPickupOrderRequest()
-    getRejectReason()
+    initPickupOrderRequest();
+    getRejectReason();
     if (action) {
-      var toastMsg = ''
+      var toastMsg = "";
       switch (action) {
-        case 'created':
-          toastMsg = t('pick_up_order.created_pickup_order')
-          break
-        case 'updated':
-          toastMsg = t('pick_up_order.changed_pickup_order')
-          break
+        case "created":
+          toastMsg = t("pick_up_order.created_pickup_order");
+          break;
+        case "updated":
+          toastMsg = t("pick_up_order.changed_pickup_order");
+          break;
       }
       toast.info(toastMsg, {
-        position: 'top-right',
+        position: "top-right",
         autoClose: 3000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: 'light'
-      })
+        theme: "light",
+      });
     }
-    navigate(location.pathname, { replace: true })
-  }, [page, query])
+    navigate(location.pathname, { replace: true });
+  }, [page, query]);
 
   useEffect(() => {
-    const recycItems: il_item[] = []
+    const recycItems: il_item[] = [];
     recycType?.forEach((item) => {
-      var name = ''
+      var name = "";
       switch (i18n.language) {
         case Languages.ENUS:
-          name = item.recyclableNameEng
-          break
+          name = item.recyclableNameEng;
+          break;
         case Languages.ZHCH:
-          name = item.recyclableNameSchi
-          break
+          name = item.recyclableNameSchi;
+          break;
         case Languages.ZHHK:
-          name = item.recyclableNameTchi
-          break
+          name = item.recyclableNameTchi;
+          break;
         default:
-          name = item.recyclableNameTchi
-          break
+          name = item.recyclableNameTchi;
+          break;
       }
       recycItems.push({
         name: name,
-        id: item.recycTypeId.toString()
-      })
-    })
+        id: item.recycTypeId.toString(),
+      });
+    });
 
-    setRecycItem(recycItems)
-  }, [i18n.language])
+    setRecycItem(recycItems);
+  }, [i18n.language]);
 
   const getDeliveryDay = (deliveryDate: string[]) => {
-    const weeks = ['mon', 'tue', 'wed', 'thur', 'fri', 'sat', 'sun']
-    let delivery = deliveryDate.map((item) => item.trim())
-    let isWeek = false
+    const weeks = ["mon", "tue", "wed", "thur", "fri", "sat", "sun"];
+    let delivery = deliveryDate.map((item) => item.trim());
+    let isWeek = false;
 
     for (let deliv of delivery) {
       if (weeks.includes(deliv)) {
-        isWeek = true
+        isWeek = true;
       }
     }
 
     if (isWeek) {
       delivery = delivery.map((item) => {
-        const days = weekDs.find((day) => day.id === item)
+        const days = weekDs.find((day) => day.id === item);
         if (days) {
           if (i18n.language === Languages.ENUS) {
-            return days.engName
+            return days.engName;
           } else if (i18n.language === Languages.ZHCH) {
-            return days.schiName
+            return days.schiName;
           } else {
-            return days.tchiName
+            return days.tchiName;
           }
         } else {
-          return ''
+          return "";
         }
-      })
+      });
     }
-    return delivery.join(',')
-  }
+    return delivery.join(",");
+  };
 
   const getDeliveryDate = (row: PickupOrder) => {
-    if (row.picoType === 'AD_HOC') {
+    if (row.picoType === "AD_HOC") {
       return `${dayjs
         .utc(row.effFrmDate)
-        .tz('Asia/Hong_Kong')
+        .tz("Asia/Hong_Kong")
         .format(`${dateFormat}`)} - ${dayjs
         .utc(row.effToDate)
-        .tz('Asia/Hong_Kong')
-        .format(`${dateFormat}`)}`
-    } else if (row.routineType === 'daily') {
+        .tz("Asia/Hong_Kong")
+        .format(`${dateFormat}`)}`;
+    } else if (row.routineType === "daily") {
       if (i18n.language === Languages.ENUS) {
-        return 'Daily'
+        return "Daily";
       } else if (i18n.language === Languages.ZHCH) {
-        return '每日'
+        return "每日";
       } else {
-        return '每日'
+        return "每日";
       }
-    } else {
-      return t('pick_up_order.every') + ' ' + getDeliveryDay(row.routine)
+    } else if (row.picoType === "ROUTINE") {
+      if (row.specificDates && row.specificDates.length > 0) {
+        const formattedDates = row.specificDates?.map((date) =>
+          dayjs(date).format(dateFormat)
+        );
+        return formattedDates?.join(", ");
+      } else {
+        return t("pick_up_order.every") + " " + getDeliveryDay(row.routine);
+      }
     }
-  }
+  };
 
   useEffect(() => {
     const tempRows: any[] = (
@@ -880,178 +889,178 @@ const PickupOrders = () => {
             ? query.senderName
             : item.pickupOrderDetail.length > 0
             ? item.pickupOrderDetail[0].senderName
-            : '-',
+            : "-",
         receiver: item.pickupOrderDetail[0]?.receiverName,
         status: item.status,
         recyType: item.pickupOrderDetail.map((item) => {
-          return item.recycType
+          return item.recycType;
         }),
-        operation: ''
+        operation: "",
 
         //}))??[])
       })) ?? []
-    ).filter((item) => item.status !== 'CLOSED')
+    ).filter((item) => item.status !== "CLOSED");
 
-    setRows(tempRows)
-    setFilteredPico(tempRows)
+    setRows(tempRows);
+    setFilteredPico(tempRows);
     // }
-  }, [pickupOrder])
+  }, [pickupOrder]);
 
   interface Row {
-    id: number
-    tenantId: string
-    createdAt: string
-    logisticCompany: string
-    picoId: number
-    deliveryDate: string
-    senderCompany: string
-    receiver: string
-    status: string
-    recyType: string[]
+    id: number;
+    tenantId: string;
+    createdAt: string;
+    logisticCompany: string;
+    picoId: number;
+    deliveryDate: string;
+    senderCompany: string;
+    receiver: string;
+    status: string;
+    recyType: string[];
   }
   const searchfield = [
     {
-      label: t('purchase_order.table.pico_id'),
-      placeholder: t('check_in.search_input'),
-      field: 'picoId',
-      width: '260px'
+      label: t("purchase_order.table.pico_id"),
+      placeholder: t("check_in.search_input"),
+      field: "picoId",
+      width: "260px",
     },
     {
-      label: t('pick_up_order.filter.dateby'),
-      field: 'effFromDate',
-      inputType: 'date'
+      label: t("pick_up_order.filter.dateby"),
+      field: "effFromDate",
+      inputType: "date",
     },
     {
-      label: t('pick_up_order.filter.to'),
-      field: 'effToDate',
-      inputType: 'date'
+      label: t("pick_up_order.filter.to"),
+      field: "effToDate",
+      inputType: "date",
     },
     {
-      label: t('pick_up_order.filter.logistic_company'),
-      options: getUniqueOptions('logisticCompany'),
-      field: 'logisticName'
+      label: t("pick_up_order.filter.logistic_company"),
+      options: getUniqueOptions("logisticCompany"),
+      field: "logisticName",
     },
     {
-      label: t('check_in.location'),
-      options: getUniqueOptions('senderCompany'),
-      field: 'senderName'
+      label: t("check_in.location"),
+      options: getUniqueOptions("senderCompany"),
+      field: "senderName",
     },
     {
-      label: t('pick_up_order.filter.recycling_category'),
+      label: t("pick_up_order.filter.recycling_category"),
       options: getReycleOption(),
-      field: 'recycType'
+      field: "recycType",
     },
     {
-      label: t('pick_up_order.filter.status'),
+      label: t("pick_up_order.filter.status"),
       options: getStatusOpion(),
-      field: 'status'
-    }
-  ]
+      field: "status",
+    },
+  ];
 
-  const navigate = useNavigate()
-  const [openModal, setOpenModal] = useState<boolean>(false)
-  const [selectedRow, setSelectedRow] = useState<PickupOrder | null>(null)
+  const navigate = useNavigate();
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [selectedRow, setSelectedRow] = useState<PickupOrder | null>(null);
   function getUniqueOptions(propertyName: keyof Row) {
-    const optionMap = new Map()
+    const optionMap = new Map();
 
     rows.forEach((row) => {
-      optionMap.set(row[propertyName], row[propertyName])
-    })
+      optionMap.set(row[propertyName], row[propertyName]);
+    });
 
     let options: Option[] = Array.from(optionMap.values()).map((option) => ({
       value: option,
-      label: option
-    }))
+      label: option,
+    }));
     options.push({
-      value: '',
-      label: t('localizedTexts.filterValueAny')
-    })
-    return options
+      value: "",
+      label: t("localizedTexts.filterValueAny"),
+    });
+    return options;
   }
 
   function getReycleOption() {
     const options: Option[] = recycItem.map((item) => ({
       value: item.id,
-      label: item.name
-    }))
+      label: item.name,
+    }));
     options.push({
-      value: '',
-      label: t('localizedTexts.filterValueAny')
-    })
-    return options
+      value: "",
+      label: t("localizedTexts.filterValueAny"),
+    });
+    return options;
   }
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
-      top: params.isFirstVisible ? 0 : 10
-    }
-  }, [])
+      top: params.isFirstVisible ? 0 : 10,
+    };
+  }, []);
   const handleCloses = () => {
-    setSelectedRow(null)
-    setOpenModal(false)
-  }
+    setSelectedRow(null);
+    setOpenModal(false);
+  };
   const handleRowClick = (params: GridRowParams) => {
-    const row = params.row as PickupOrder
-    setSelectedRow(row)
-    setOpenModal(true)
-  }
+    const row = params.row as PickupOrder;
+    setSelectedRow(row);
+    setOpenModal(true);
+  };
 
   const updateQuery = (newQuery: Partial<queryPickupOrder>) => {
-    setQuery({ ...query, ...newQuery })
-  }
+    setQuery({ ...query, ...newQuery });
+  };
 
   const handleSearch = debounce((keyName: string, value: string) => {
-    setPage(1)
-    if (keyName == 'status') {
-      const mappedStatus = value != '' ? parseInt(value) : null
-      updateQuery({ ...query, [keyName]: mappedStatus })
+    setPage(1);
+    if (keyName == "status") {
+      const mappedStatus = value != "" ? parseInt(value) : null;
+      updateQuery({ ...query, [keyName]: mappedStatus });
     } else {
-      updateQuery({ [keyName]: value })
+      updateQuery({ [keyName]: value });
     }
-  }, 1000)
+  }, 1000);
 
   function getStatusOpion() {
     const options: Option[] = statusList.map((item) => {
       if (i18n.language === Languages.ENUS) {
         return {
           value: item.value,
-          label: item.labelEng
-        }
+          label: item.labelEng,
+        };
       } else if (i18n.language === Languages.ZHCH) {
         return {
           value: item.value,
-          label: item.labelSchi
-        }
+          label: item.labelSchi,
+        };
       } else {
         return {
           value: item.value,
-          label: item.labelTchi
-        }
+          label: item.labelTchi,
+        };
       }
-    })
-    return options
+    });
+    return options;
   }
   const onDeleteModal = () => {
-    setOpenDelete((prev) => !prev)
-  }
+    setOpenDelete((prev) => !prev);
+  };
 
   const onDeleteClick = async () => {
     if (selectedRow) {
       const updatePoStatus = {
-        status: 'CLOSED',
+        status: "CLOSED",
         reason: selectedRow.reason,
         updatedBy: selectedRow.updatedBy,
-        version: selectedRow.version
-      }
+        version: selectedRow.version,
+      };
       const updatePoDtlStatus = {
-        status: 'CLOSED',
+        status: "CLOSED",
         updatedBy: selectedRow.updatedBy,
-        version: selectedRow.version
-      }
+        version: selectedRow.version,
+      };
       try {
         const result = await editPickupOrderStatus(
           selectedRow.picoId,
           updatePoStatus
-        )
+        );
         if (result) {
           const detailUpdatePromises = selectedRow.pickupOrderDetail.map(
             (detail) =>
@@ -1059,39 +1068,39 @@ const PickupOrders = () => {
                 detail.picoDtlId.toString(),
                 updatePoDtlStatus
               )
-          )
-          await Promise.all(detailUpdatePromises)
-          await initPickupOrderRequest()
-          onDeleteModal()
-          setOpenModal(false)
-          showSuccessToast(t('pick_up_order.error.succeedDeletePickupOrder'))
+          );
+          await Promise.all(detailUpdatePromises);
+          await initPickupOrderRequest();
+          onDeleteModal();
+          setOpenModal(false);
+          showSuccessToast(t("pick_up_order.error.succeedDeletePickupOrder"));
         }
 
         // navigate('/collector/PickupOrder')
       } catch (error: any) {
-        const { state } = extractError(error)
+        const { state } = extractError(error);
         if (state.code === STATUS_CODE[503]) {
-          navigate('/maintenance')
+          navigate("/maintenance");
         } else if (state.code === STATUS_CODE[409]) {
-          showErrorToast(error.response.data.message)
+          showErrorToast(error.response.data.message);
         }
       }
     } else {
-      alert('No selected pickup order')
+      alert("No selected pickup order");
     }
-  }
+  };
 
   useEffect(() => {
     if (pickupOrder && pickupOrder.length === 0 && page > 1) {
       // move backward to previous page once data deleted from last page (no data left on last page)
-      setPage((prev) => prev - 1)
+      setPage((prev) => prev - 1);
     }
-  }, [pickupOrder])
+  }, [pickupOrder]);
 
   return (
     <>
       <ToastContainer />
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ display: "flex", flexDirection: "column" }}>
         {/* <Modal open={openModal} onClose={handleCloses}> */}
         <PickupOrderForm
           openModal={openModal}
@@ -1103,27 +1112,27 @@ const PickupOrders = () => {
           onDeleteModal={onDeleteModal}
         />
         {/* </Modal> */}
-        <Box sx={{ display: 'flex', alignItems: 'center', ml: '6px' }}>
+        <Box sx={{ display: "flex", alignItems: "center", ml: "6px" }}>
           <Typography fontSize={20} color="black" fontWeight="bold">
-            {t('pick_up_order.enquiry_pickup_order')}
+            {t("pick_up_order.enquiry_pickup_order")}
           </Typography>
           <Button
             onClick={() => {
-              const routeName = role
-              navigate(`/${routeName}/createPickupOrder`)
+              const routeName = role;
+              navigate(`/${routeName}/createPickupOrder`);
             }}
             sx={{
-              borderRadius: '20px',
+              borderRadius: "20px",
               backgroundColor: getPrimaryColor(),
-              '&.MuiButton-root:hover': { bgcolor: getPrimaryColor() },
-              width: 'fit-content',
-              height: '40px',
-              marginLeft: '20px'
+              "&.MuiButton-root:hover": { bgcolor: getPrimaryColor() },
+              width: "fit-content",
+              height: "40px",
+              marginLeft: "20px",
             }}
             variant="contained"
-            data-testId={'astd-pickup-order-new-button-5743'}
+            data-testId={"astd-pickup-order-new-button-5743"}
           >
-            + {t('col.create')}
+            + {t("col.create")}
           </Button>
         </Box>
         <Box />
@@ -1156,38 +1165,38 @@ const PickupOrders = () => {
                 localeText={localeTextDataGrid}
                 getRowClassName={(params) =>
                   selectedRow && params.id === selectedRow.picoId
-                    ? 'selected-row'
-                    : ''
+                    ? "selected-row"
+                    : ""
                 }
                 sx={{
-                  border: 'none',
-                  '& .MuiDataGrid-cell': {
-                    border: 'none' // Remove the borders from the cells
+                  border: "none",
+                  "& .MuiDataGrid-cell": {
+                    border: "none", // Remove the borders from the cells
                   },
-                  '& .MuiDataGrid-row': {
-                    bgcolor: 'white',
-                    borderRadius: '10px'
+                  "& .MuiDataGrid-row": {
+                    bgcolor: "white",
+                    borderRadius: "10px",
                   },
-                  '&>.MuiDataGrid-main': {
-                    '&>.MuiDataGrid-columnHeaders': {
-                      borderBottom: 'none'
-                    }
+                  "&>.MuiDataGrid-main": {
+                    "&>.MuiDataGrid-columnHeaders": {
+                      borderBottom: "none",
+                    },
                   },
-                  '.MuiDataGrid-columnHeaderTitle': {
-                    fontWeight: 'bold !important',
-                    overflow: 'visible !important'
+                  ".MuiDataGrid-columnHeaderTitle": {
+                    fontWeight: "bold !important",
+                    overflow: "visible !important",
                   },
-                  '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
+                  "& .selected-row": {
+                    backgroundColor: "#F6FDF2 !important",
+                    border: "1px solid #79CA25",
+                  },
                 }}
               />
               <Pagination
                 count={Math.ceil(totalData)}
                 page={page}
                 onChange={(_, newPage) => {
-                  setPage(newPage)
+                  setPage(newPage);
                 }}
               />
             </Box>
@@ -1203,8 +1212,8 @@ const PickupOrders = () => {
         <RejectForm
           open={rejectModal}
           onClose={() => {
-            setRejectModal(false)
-            resetPage()
+            setRejectModal(false);
+            resetPage();
           }}
           selectedRow={selectedRow}
           reasonList={reasonList}
@@ -1218,23 +1227,23 @@ const PickupOrders = () => {
         />
       </Box>
     </>
-  )
-}
+  );
+};
 
 type DeleteModalProps = {
-  open: boolean
-  selectedRow?: PickupOrder | null
-  onClose: () => void
-  onDelete: () => void
-}
+  open: boolean;
+  selectedRow?: PickupOrder | null;
+  onClose: () => void;
+  onDelete: () => void;
+};
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
   open,
   selectedRow,
   onClose,
-  onDelete
+  onDelete,
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return (
     <Modal
       open={open}
@@ -1249,117 +1258,117 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               id="modal-modal-title"
               variant="h6"
               component="h2"
-              sx={{ fontWeight: 'bold' }}
+              sx={{ fontWeight: "bold" }}
             >
-              {t('pick_up_order.delete_msg')}
+              {t("pick_up_order.delete_msg")}
             </Typography>
           </Box>
           <Divider />
-          <Box sx={{ alignSelf: 'center', paddingBottom: 3 }}>
+          <Box sx={{ alignSelf: "center", paddingBottom: 3 }}>
             <button
               className="primary-btn mr-2 cursor-pointer"
               onClick={() => {
-                if (selectedRow) onDelete()
+                if (selectedRow) onDelete();
               }}
               data-testId="astd-pickup-order-sidebar-confirm-delete-button-5711"
             >
-              {t('check_in.confirm')}
+              {t("check_in.confirm")}
             </button>
             <button
               className="secondary-btn mr-2 cursor-pointer"
               onClick={() => {
-                onClose()
+                onClose();
               }}
               data-testId="astd-pickup-order-sidebar-cancel-delete-button-9361"
             >
-              {t('check_out.cancel')}
+              {t("check_out.cancel")}
             </button>
           </Box>
         </Stack>
       </Box>
     </Modal>
-  )
-}
+  );
+};
 
-export default PickupOrders
+export default PickupOrders;
 
 let localstyles = {
   btn_WhiteGreenTheme: {
-    borderRadius: '20px',
+    borderRadius: "20px",
     borderWidth: 1,
-    borderColor: '#79ca25',
-    backgroundColor: 'white',
-    color: '#79ca25',
-    fontWeight: 'bold',
-    '&.MuiButton-root:hover': {
-      bgcolor: '#F4F4F4',
-      borderColor: '#79ca25'
-    }
+    borderColor: "#79ca25",
+    backgroundColor: "white",
+    color: "#79ca25",
+    fontWeight: "bold",
+    "&.MuiButton-root:hover": {
+      bgcolor: "#F4F4F4",
+      borderColor: "#79ca25",
+    },
   },
   table: {
     minWidth: 750,
-    borderCollapse: 'separate',
-    borderSpacing: '0px 10px'
+    borderCollapse: "separate",
+    borderSpacing: "0px 10px",
   },
   headerRow: {
     //backgroundColor: "#97F33B",
     borderRadius: 10,
     mb: 1,
-    'th:first-child': {
-      borderRadius: '10px 0 0 10px'
+    "th:first-child": {
+      borderRadius: "10px 0 0 10px",
     },
-    'th:last-child': {
-      borderRadius: '0 10px 10px 0'
-    }
+    "th:last-child": {
+      borderRadius: "0 10px 10px 0",
+    },
   },
   row: {
-    backgroundColor: '#FBFBFB',
+    backgroundColor: "#FBFBFB",
     borderRadius: 10,
     mb: 1,
-    'td:first-child': {
-      borderRadius: '10px 0 0 10px'
+    "td:first-child": {
+      borderRadius: "10px 0 0 10px",
     },
-    'td:last-child': {
-      borderRadius: '0 10px 10px 0'
-    }
+    "td:last-child": {
+      borderRadius: "0 10px 10px 0",
+    },
   },
   headCell: {
-    border: 'none',
-    fontWeight: 'bold'
+    border: "none",
+    fontWeight: "bold",
   },
   bodyCell: {
-    border: 'none'
+    border: "none",
   },
   typo: {
-    color: '#ACACAC',
+    color: "#ACACAC",
     fontSize: 13,
     // fontWeight: "bold",
-    display: 'flex'
+    display: "flex",
   },
   textField: {
-    borderRadius: '10px',
-    fontWeight: '500',
-    '& .MuiOutlinedInput-input': {
-      padding: '10px'
-    }
+    borderRadius: "10px",
+    fontWeight: "500",
+    "& .MuiOutlinedInput-input": {
+      padding: "10px",
+    },
   },
   modal: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%,-50%)',
-    width: '34%',
-    height: 'fit-content',
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%,-50%)",
+    width: "34%",
+    height: "fit-content",
     padding: 4,
-    backgroundColor: 'white',
-    border: 'none',
-    borderRadius: 5
+    backgroundColor: "white",
+    border: "none",
+    borderRadius: 5,
   },
   textArea: {
-    width: '100%',
-    height: '100px',
-    padding: '10px',
-    borderColor: '#ACACAC',
-    borderRadius: 5
-  }
-}
+    width: "100%",
+    height: "100px",
+    padding: "10px",
+    borderColor: "#ACACAC",
+    borderRadius: 5,
+  },
+};
