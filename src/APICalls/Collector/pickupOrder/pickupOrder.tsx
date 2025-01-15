@@ -219,7 +219,7 @@ export const getThirdPartyLogisticData = async () => {
   try {
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...GET_3RDPARTY_LOGISTICLIST(auth.realmApiRoute, auth.tenantId),
+      ...GET_3RDPARTY_LOGISTICLIST(auth.realmApiRoute, auth.decodeKeycloack),
     });
 
     return response;

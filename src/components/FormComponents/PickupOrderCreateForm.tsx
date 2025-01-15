@@ -281,7 +281,6 @@ const PickupOrderCreateForm = ({
   const get3rdPartyLogisticList = async () => {
     const result = await getThirdPartyLogisticData();
     if (result) {
-      console.log(result, "result");
       setThirdPartyLogisticList(result.data.content);
     }
   };
@@ -849,12 +848,13 @@ const PickupOrderCreateForm = ({
                       ? true
                       : true
                   }
-                  setState={(value) =>
+                  setState={(value) => {
                     formik.setFieldValue(
                       "picoType",
                       value ? "ROUTINE" : "AD_HOC"
-                    )
-                  }
+                    );
+                    formik.setFieldValue("logisticName", "");
+                  }}
                   value={formik.values.picoType}
                   dataTestId="astd-create-edit-pickup-order-type-select-button-2449"
                 />
@@ -928,15 +928,25 @@ const PickupOrderCreateForm = ({
                 <CustomAutoComplete
                   placeholder={t("pick_up_order.enter_company_name")}
                   option={
-                    logisticCompany?.map((option) => {
-                      if (i18n.language === Languages.ENUS) {
-                        return option.logisticNameEng;
-                      } else if (i18n.language === Languages.ZHCH) {
-                        return option.logisticNameSchi;
-                      } else {
-                        return option.logisticNameTchi;
-                      }
-                    }) ?? []
+                    formik.values.picoType === "AD_HOC"
+                      ? thirdPartyLogisticList?.map((option) => {
+                          if (i18n.language === Languages.ENUS) {
+                            return option.logisticNameEng;
+                          } else if (i18n.language === Languages.ZHCH) {
+                            return option.logisticNameSchi;
+                          } else {
+                            return option.logisticNameTchi;
+                          }
+                        }) ?? []
+                      : logisticCompany?.map((option) => {
+                          if (i18n.language === Languages.ENUS) {
+                            return option.logisticNameEng;
+                          } else if (i18n.language === Languages.ZHCH) {
+                            return option.logisticNameSchi;
+                          } else {
+                            return option.logisticNameTchi;
+                          }
+                        }) ?? []
                   }
                   sx={{ width: "400px" }}
                   onChange={(_: SyntheticEvent, newValue: string | null) => {
