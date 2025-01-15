@@ -40,7 +40,8 @@ import TableOperation from '../../../components/TableOperation'
 import {
   STATUS_CODE,
   localStorgeKeyName,
-  Languages
+  Languages,
+  thirdPartyLogisticId
 } from '../../../constants/constant'
 
 import dayjs from 'dayjs'
@@ -535,7 +536,7 @@ const PickupOrders = () => {
       let data = result?.data.content
       if (data && data.length > 0) {
         data = data.map((item: any) => {
-          if (item.logisticId) {
+          if (item.logisticId && item.logisticId != thirdPartyLogisticId) {
             const logistic = companies.find(
               (company) => company.id == item.logisticId
             )
