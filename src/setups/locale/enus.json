@@ -1623,7 +1623,7 @@
     "porCategory": "Processing category",
     "orderNumber": "Order number",
     "workshop": "Factory",
-    "createdate": "Date and place of processing",
+    "createdate": "Processing date and time",
     "create": {
       "classification": "Classification",
       "sol": "Sol",

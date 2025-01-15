@@ -162,7 +162,9 @@ const CreateProcessOrder = ({}: {}) => {
   const navigate = useNavigate()
   const [inputProcessDrawer, setInputProcessDrawer] = useState<boolean>(false)
   const [warehouseList, setWarehouseList] = useState<il_item[]>([])
-  const [processStartAt, setProcessStartAt] = useState<dayjs.Dayjs>(dayjs())
+  const [processStartAt, setProcessStartAt] = useState<dayjs.Dayjs | null>(
+    dayjs()
+  )
   const [factoryList, setFactoryList] = useState<il_item[]>([])
   const [selectedFactory, setSelectedFactory] = useState<il_item | null>(null)
   const [processOrderDtlSource, setProcessOrderDtlSource] = useState<
@@ -194,6 +196,7 @@ const CreateProcessOrder = ({}: {}) => {
   const [openDelete, setOpenDelete] = useState<boolean>(false)
   const [selectedDeletedItem, setSelectedDeletedItem] =
     useState<ProcessInDtlData | null>(null)
+  const [errCreatedDate, setErrCreatedDate] = useState<boolean>(false)
   const buttonFilledCustom = {
     borderRadius: '40px',
     borderColor: '#7CE495',
@@ -478,22 +481,23 @@ const CreateProcessOrder = ({}: {}) => {
   const updateDateOnProcessDetail = async (
     dataSet: CreateProcessOrderDetailPairs[]
   ) => {
-    for (let index = 0; index < dataSet.length; index++) {
-      const detail = dataSet[index]
+    if (processStartAt && processStartAt.isValid())
+      for (let index = 0; index < dataSet.length; index++) {
+        const detail = dataSet[index]
 
-      if (index == 0) {
-        detail.processIn.plannedStartAt = formattedDate(processStartAt)
-      } else {
-        detail.processIn.plannedStartAt =
-          dataSet[index - 1].processOut.plannedEndAt
+        if (index == 0) {
+          detail.processIn.plannedStartAt = formattedDate(processStartAt)
+        } else {
+          detail.processIn.plannedStartAt =
+            dataSet[index - 1].processOut.plannedEndAt
+        }
+
+        detail.processOut.plannedEndAt = await getEstimateEndDate(
+          detail.processIn.processTypeId,
+          processStartAt.toISOString(),
+          detail.processIn.estInWeight as string
+        )
       }
-
-      detail.processOut.plannedEndAt = await getEstimateEndDate(
-        detail.processIn.processTypeId,
-        processStartAt.toISOString(),
-        detail.processIn.estInWeight as string
-      )
-    }
     mappingProcessOrderDtl(dataSet)
   }
 
@@ -518,6 +522,20 @@ const CreateProcessOrder = ({}: {}) => {
   useEffect(() => {
     const validate = async () => {
       const tempV: formValidate[] = []
+      if (processStartAt === null) {
+        tempV.push({
+          field: t('processOrder.createdate'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      } else {
+        !processStartAt?.isValid() &&
+          tempV.push({
+            field: t('processOrder.createdate'),
+            problem: formErr.wrongFormat,
+            type: 'error'
+          })
+      }
       processOrderDtlSource.length === 0 &&
         tempV.push({
           field: t('processOrder.porCategory'),
@@ -529,7 +547,7 @@ const CreateProcessOrder = ({}: {}) => {
     }
 
     validate()
-  }, [processOrderDtlSource])
+  }, [processOrderDtlSource, processStartAt, i18n.language])
 
   const mappingProcessOrderDtl = (
     updatedSource: CreateProcessOrderDetailPairs[]
@@ -702,24 +720,25 @@ const CreateProcessOrder = ({}: {}) => {
     const processedDetailsPair = processOrderDetailTemp(processOrderDtlSource)
 
     // temporary solution since the productAddonId type field is used on many components and changes it directly might cause bugs
-    for (const value of processedDetailsPair) {
-      if (value.processIn.processOrderDetailProduct.length > 0) {
-        value.processIn.processOrderDetailProduct.map((item) => {
-          item.productAddonTypeId = item.productAddonId
-          return item
-        })
+    if (processStartAt)
+      for (const value of processedDetailsPair) {
+        if (value.processIn.processOrderDetailProduct.length > 0) {
+          value.processIn.processOrderDetailProduct.map((item) => {
+            item.productAddonTypeId = item.productAddonId
+            return item
+          })
+        }
+        if (value.processOut.processOrderDetailProduct.length > 0) {
+          value.processOut.processOrderDetailProduct.map((item) => {
+            item.productAddonTypeId = item.productAddonId
+            return item
+          })
+        }
       }
-      if (value.processOut.processOrderDetailProduct.length > 0) {
-        value.processOut.processOrderDetailProduct.map((item) => {
-          item.productAddonTypeId = item.productAddonId
-          return item
-        })
-      }
-    }
 
     const formData: CreatePorForm = {
       factoryId: selectedFactory ? parseInt(selectedFactory.id) : null,
-      processStartAt: formattedDate(processStartAt),
+      processStartAt: formattedDate(processStartAt!!),
       createdBy: role,
       processOrderDetailPairs: processedDetailsPair
     }
@@ -988,6 +1007,21 @@ const CreateProcessOrder = ({}: {}) => {
     )
   }
 
+  const onChangeCreatedDate = (value: dayjs.Dayjs | null) => {
+    if (value) {
+      if (value?.isValid()) {
+        setProcessStartAt(value!!)
+        setErrCreatedDate(false)
+      } else {
+        setProcessStartAt(value)
+        setErrCreatedDate(true)
+      }
+    } else {
+      setErrCreatedDate(true)
+      setProcessStartAt(null)
+    }
+  }
+
   return (
     <>
       <Box sx={[styles.innerScreen_container, { paddingRight: 0 }]}>
@@ -1015,14 +1049,14 @@ const CreateProcessOrder = ({}: {}) => {
                   <DatePicker
                     defaultValue={dayjs(processStartAt)}
                     format={dateFormat}
-                    onChange={(value) => setProcessStartAt(value!!)}
+                    onChange={(value) => onChangeCreatedDate(value)}
                     sx={{ ...localstyles.datePicker }}
                   />
                 </Box>
                 <Box sx={{ ...localstyles.timePeriodItem }}>
                   <TimePicker
                     value={processStartAt}
-                    onChange={(value) => setProcessStartAt(value!!)}
+                    onChange={(value) => onChangeCreatedDate(value)}
                     sx={{ ...localstyles.timePicker }}
                   />
                 </Box>
@@ -1143,7 +1177,9 @@ const CreateProcessOrder = ({}: {}) => {
                 drawerOpen={inputProcessDrawer}
                 action={action}
                 handleDrawerClose={() => setInputProcessDrawer(false)}
-                plannedStartAtInput={formattedDate(processStartAt)}
+                plannedStartAtInput={
+                  processStartAt ? formattedDate(processStartAt) : ''
+                }
                 dataSet={processOrderDtlSource}
                 onSave={onSaveProcessDtl}
                 editedValue={selectedDetailPOR}
@@ -1160,6 +1196,7 @@ const CreateProcessOrder = ({}: {}) => {
                   setAction('add')
                   setInputProcessDrawer(true)
                 }}
+                disabled={errCreatedDate}
                 sx={{
                   height: '40px',
                   width: '100%',

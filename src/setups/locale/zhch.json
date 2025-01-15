@@ -1624,7 +1624,7 @@
     "porCategory": "处理类别",
     "orderNumber": "订单编号",
     "workshop": "工场",
-    "createdate": "处理日期及地点",
+    "createdate": "处理日期及时间",
     "create": {
       "classification": "分类",
       "sol": "溶胶",
