@@ -8,6 +8,7 @@ import {
   UPDATE_TENANT_STATUS,
   SEND_EMAIL_INVITATION,
   UPDATE_TENANT_INFO,
+  GET_REGISTER_LINK_STATUS,
 } from '../constants/requests'
 import { CREATE_TENANT } from 'src/constants/requestsSocif'
 import { RegisterItem } from '../interfaces/account'
@@ -196,5 +197,18 @@ export const updateTenantDetail = async (data: any, tenantId: string) => {
   } catch (e) {
     console.error('Tenant info details update failed:', e)
     throw (e)
+  }
+}
+
+export const getRegisterLinkStatus = async (tenantId: string) => {
+  try {
+    const response = await axiosInstance({
+      baseURL: window.baseURL.account,
+      ...GET_REGISTER_LINK_STATUS(tenantId)
+    })
+
+    return response
+  } catch (error) {
+    throw (error)
   }
 }
