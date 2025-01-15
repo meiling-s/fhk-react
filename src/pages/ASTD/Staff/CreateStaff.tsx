@@ -96,14 +96,14 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
       label: t("common.description"),
       placeholder: t("common.enterText"),
       field: "description",
-      type: "text-not-mandatory",
+      type: "text",
       dataTestId: "astd-staff-form-desc-input-field-2523",
     },
     {
       label: t("common.remark"),
       placeholder: t("common.enterText"),
       field: "remark",
-      type: "text-not-mandatory",
+      type: "text",
       dataTestId: "astd-staff-form-remark-input-field-1867",
     },
   ];
@@ -411,67 +411,41 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
             }}
             className="sm:ml-0 mt-o w-full"
           >
-            {staffField.map((item, index) =>
-              item.type === "text-not-mandatory" ? (
-                <Grid item key={index}>
-                  <CustomField label={item.label}>
-                    <CustomTextField
-                      id={item.label}
-                      value={formData[item.field as keyof FormValues]}
-                      disabled={action === "delete"}
-                      placeholder={item.placeholder}
-                      dataTestId={item.dataTestId}
-                      onChange={(event) =>
-                        handleFieldChange(
-                          item.field as keyof FormValues,
-                          event.target.value
-                        )
-                      }
-                    />
-                  </CustomField>
-                </Grid>
-              ) : (
-                <Grid item key={index}>
-                  <CustomField label={item.label} mandatory>
-                    <CustomTextField
-                      id={item.label}
-                      value={formData[item.field as keyof FormValues]}
-                      disabled={action === "delete"}
-                      placeholder={item.placeholder}
-                      dataTestId={item.dataTestId}
-                      onChange={(event) =>
-                        handleFieldChange(
-                          item.field as keyof FormValues,
-                          event.target.value
-                        )
-                      }
-                      error={checkString(
-                        formData[item.field as keyof FormValues],
-                        item.label
-                      )}
-                    />
-                  </CustomField>
-                </Grid>
-              )
-            )}
+            {staffField.map((item, index) => (
+              <Grid item key={index}>
+                <CustomField label={item.label} mandatory>
+                  <CustomTextField
+                    id={item.label}
+                    value={formData[item.field as keyof FormValues]}
+                    disabled={action === "delete"}
+                    placeholder={item.placeholder}
+                    dataTestId={item.dataTestId}
+                    onChange={(event) =>
+                      handleFieldChange(
+                        item.field as keyof FormValues,
+                        event.target.value
+                      )
+                    }
+                    error={checkString(
+                      formData[item.field as keyof FormValues],
+                      item.label
+                    )}
+                  />
+                </CustomField>
+              </Grid>
+            ))}
             <Grid item sx={{ width: "100%" }}>
               {trySubmited &&
                 validation.map((val, index) => {
-                  if (
-                    val.field !== t("common.description") &&
-                    val.field !== t("common.remark")
-                  ) {
-                    return (
-                      <FormErrorMsg
-                        key={index}
-                        field={t(val.field)}
-                        errorMsg={val.problem} // Display the error message directly
-                        type={val.type}
-                        dataTestId={val.dataTestId}
-                      />
-                    );
-                  }
-                  return null;
+                  return (
+                    <FormErrorMsg
+                      key={index}
+                      field={t(val.field)}
+                      errorMsg={val.problem} // Display the error message directly
+                      type={val.type}
+                      dataTestId={val.dataTestId}
+                    />
+                  );
                 })}
             </Grid>
           </Grid>
