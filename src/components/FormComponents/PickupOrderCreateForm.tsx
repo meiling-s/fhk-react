@@ -183,7 +183,6 @@ const PickupOrderCreateForm = ({
   state: CreatePicoDetail[];
   editMode: boolean;
 }) => {
-  console.log(state, "state");
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [editRowId, setEditRowId] = useState<number | null>(null);
@@ -743,8 +742,6 @@ const PickupOrderCreateForm = ({
   };
 
   const getCurrentLogisticName = (value: string) => {
-    console.log(value, "valuee");
-    console.log(prevLang, "prevlang");
     let logisticName: string = "";
     if (!logisticCompany) return logisticName;
     const logisticSimplified = logisticCompany.find(
@@ -797,7 +794,6 @@ const PickupOrderCreateForm = ({
     const isValid = validateData(param);
     if (isValid == true) {
       formik.handleSubmit();
-      console.log(isValid, "a");
     }
   };
 
