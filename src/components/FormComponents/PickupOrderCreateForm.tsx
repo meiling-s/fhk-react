@@ -839,11 +839,13 @@ const PickupOrderCreateForm = ({
                   onText={t("pick_up_order.regular_shipping")}
                   offText={t("pick_up_order.one-transport")}
                   defaultValue={
-                    selectedPo?.picoType === "AD_HOC"
-                      ? false
-                      : selectedPo?.picoType === "ROUTINE"
-                      ? true
-                      : true
+                    selectedPo !== undefined
+                      ? selectedPo?.picoType === "AD_HOC"
+                        ? false
+                        : selectedPo?.picoType === "ROUTINE"
+                        ? true
+                        : true
+                      : false
                   }
                   setState={(value) => {
                     formik.setFieldValue(
