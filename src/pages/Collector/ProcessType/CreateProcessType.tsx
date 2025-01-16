@@ -231,7 +231,6 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
       })
     }
     setValidation(tempV)
-    console.log('validation', tempV)
   }
 
   const handleSubmit = () => {
