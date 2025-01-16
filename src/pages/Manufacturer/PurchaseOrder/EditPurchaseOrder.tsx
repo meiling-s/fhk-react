@@ -86,7 +86,20 @@ const EditPurchaseOrder = () => {
     },
     // validationSchema: validateSchema,
     onSubmit: async (values: PurChaseOrder) => {
-      values.purchaseOrderDetail = refactorPurchaseOrderDetail(addRow);
+      const refactorDetail = refactorPurchaseOrderDetail(addRow);
+      refactorDetail.map((value) => {
+        if (value.productType) {
+          value.productTypeId = value.productType;
+        }
+        if (value.productSubType) {
+          value.productSubTypeId = value.productSubType;
+        }
+        if (value.productAddonType) {
+          value.productAddonTypeId = value.productAddonType;
+        }
+      });
+      values.purchaseOrderDetail = refactorDetail;
+
       const result = await submitUpdatePurchaseOrder(values.poId, values);
       if (result) {
         navigate(`/${realm}/purchaseOrder`, { state: "updated" });
