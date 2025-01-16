@@ -494,7 +494,8 @@ const CreateProcessOrder = ({}: {}) => {
 
         detail.processOut.plannedEndAt = await getEstimateEndDate(
           detail.processIn.processTypeId,
-          processStartAt.toISOString(),
+          // processStartAt.toISOString(),
+          detail.processIn.plannedStartAt,
           detail.processIn.estInWeight as string
         )
       }
@@ -517,7 +518,7 @@ const CreateProcessOrder = ({}: {}) => {
 
   useEffect(() => {
     updateDateOnProcessDetail(processOrderDtlSource)
-  }, [processStartAt])
+  }, [processStartAt, processOrderDtlSource])
 
   useEffect(() => {
     const validate = async () => {

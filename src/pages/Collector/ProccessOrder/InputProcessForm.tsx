@@ -808,10 +808,13 @@ const InputProcessForm = ({
 
     let tempRandomId = Math.floor(Math.random() * 90000) + 10000
     let isUpdate = false
+    let isProcessTypeChanges = false
     if (processOrderDetail[0].processIn.idPair) {
       tempRandomId = processOrderDetail[0].processIn.idPair
       isUpdate = true
+      isProcessTypeChanges = processOrderDetail[0].processIn.processTypeId != processTypeId
     }
+   
 
     /** note :
      * eg: PAIR A
@@ -822,9 +825,9 @@ const InputProcessForm = ({
      * and continues sequence
      * **/
 
-    if (!isUpdate) {
+    if (!isUpdate || isProcessTypeChanges) {
       const plannedStartAtData =
-        dataSet.length === 0
+        (dataSet.length === 0 || isProcessTypeChanges)
           ? plannedStartAtInput
           : dataSet[dataSet.length - 1].processOut.plannedEndAt
 
