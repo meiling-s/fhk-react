@@ -191,6 +191,7 @@ const CreateProcessOrder = ({}: {}) => {
   const [selectedDetailPOR, setSelectedPOR] = useState<
     CreateProcessOrderDetailPairs[] | null
   >(null)
+  const [editedIndex, setEditedIndex] =useState<number | null>(null)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [openDelete, setOpenDelete] = useState<boolean>(false)
@@ -250,13 +251,10 @@ const CreateProcessOrder = ({}: {}) => {
         if (params.row.processAction !== '') {
           if (params.row.processAction === 'PROCESS_IN') {
             dateTime = params.row.datetime
-              ? dayjs.utc(params.row.datetime).format(`${dateFormat} HH:mm`)
-              : dayjs.utc(params.row?.datetime).format(`${dateFormat} HH:mm`)
+              ? dayjs(params.row.datetime).format(`${dateFormat} HH:mm`)
+              : dayjs(params.row?.datetime).format(`${dateFormat} HH:mm`)
           } else {
-            dateTime = dayjs
-              .utc(params.row?.datetime)
-
-              .format(`${dateFormat} HH:mm`)
+            dateTime = dayjs(params.row?.datetime).format(`${dateFormat} HH:mm`)
           }
         }
 
@@ -467,7 +465,7 @@ const CreateProcessOrder = ({}: {}) => {
     const params: QueryEstEndDatetime = {
       processTypeId: processTypeId,
       estInWeight: parseInt(estInWeight),
-      plannedStartAt: dayjs(plannedStartAt).format('YYYY-MM-DDTHH:mm:ss')
+      plannedStartAt: dayjs.utc(plannedStartAt).format('YYYY-MM-DDTHH:mm:ss')
     }
     let plannedEndAt = ''
     const result = await getEstimateEndTime(params)
@@ -478,6 +476,12 @@ const CreateProcessOrder = ({}: {}) => {
     return plannedEndAt
   }
 
+  // const updateDateAfterEdit = async (
+  //   dataSet: CreateProcessOrderDetailPairs[]
+  // ) => {
+  //   console.log('data', dataSet)
+  // }
+
   const updateDateOnProcessDetail = async (
     dataSet: CreateProcessOrderDetailPairs[]
   ) => {
@@ -485,7 +489,7 @@ const CreateProcessOrder = ({}: {}) => {
       for (let index = 0; index < dataSet.length; index++) {
         const detail = dataSet[index]
 
-        if (index == 0) {
+        if (index === 0) {
           detail.processIn.plannedStartAt = formattedDate(processStartAt)
         } else {
           detail.processIn.plannedStartAt =
@@ -494,7 +498,7 @@ const CreateProcessOrder = ({}: {}) => {
 
         detail.processOut.plannedEndAt = await getEstimateEndDate(
           detail.processIn.processTypeId,
-          // processStartAt.toISOString(),
+          //processStartAt.toISOString(),
           detail.processIn.plannedStartAt,
           detail.processIn.estInWeight as string
         )
@@ -518,7 +522,12 @@ const CreateProcessOrder = ({}: {}) => {
 
   useEffect(() => {
     updateDateOnProcessDetail(processOrderDtlSource)
-  }, [processStartAt, processOrderDtlSource])
+  }, [processStartAt])
+
+  useEffect(() => {
+    if (processOrderDtlSource.length > 1)
+      updateDateOnProcessDetail(processOrderDtlSource)
+  }, [processOrderDtlSource])
 
   useEffect(() => {
     const validate = async () => {
@@ -757,12 +766,12 @@ const CreateProcessOrder = ({}: {}) => {
     return dayjs(dateData).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
   }
 
-  const handleEdit = (item: ProcessInDtlData) => {
+  const handleEdit = (item: ProcessInDtlData, index: number) => {
     setAction('edit')
     const selectedProcessOrderDtlSource = processOrderDtlSource.filter(
       (it) => it.processIn.idPair === item.idPair
     )
-
+    setEditedIndex(index)
     setSelectedPOR(selectedProcessOrderDtlSource)
     setInputProcessDrawer(true)
   }
@@ -777,6 +786,7 @@ const CreateProcessOrder = ({}: {}) => {
     )
     setProcessInDetailData(updatedProcessInDetailData)
     setProcessOrderDtlSource(updatedProcessOrderDtlSource)
+
     // update plannedAt and plannedEnd
     updateDateOnProcessDetail(updatedProcessOrderDtlSource)
     setSelectedDeletedItem(null)
@@ -1138,7 +1148,7 @@ const CreateProcessOrder = ({}: {}) => {
                         className="cursor-pointer text-grey-dark mr-2"
                         onClick={(event) => {
                           setAction('edit')
-                          handleEdit(item)
+                          handleEdit(item, index)
                         }}
                         style={{ cursor: 'pointer' }}
                       />
@@ -1184,6 +1194,7 @@ const CreateProcessOrder = ({}: {}) => {
                 dataSet={processOrderDtlSource}
                 onSave={onSaveProcessDtl}
                 editedValue={selectedDetailPOR}
+                editedIndex={editedIndex}
               ></InputProcessForm>
               <Button
                 variant="outlined"
