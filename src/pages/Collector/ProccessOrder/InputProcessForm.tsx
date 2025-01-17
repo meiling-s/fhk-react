@@ -831,13 +831,15 @@ const InputProcessForm = ({
       let plannedStartAtData = ''
 
       if (editedIndex) {
+        console.log('masulll')
         plannedStartAtData =
           editedIndex > 0
             ? dataSet[editedIndex - 1].processOut.plannedEndAt
             : plannedStartAtInput
       } else {
         plannedStartAtData =
-          dataSet.length === 0 && !isProcessTypeChanges
+          (dataSet.length === 0 && !isProcessTypeChanges) ||
+          dataSet.length === 1
             ? plannedStartAtInput
             : dataSet[dataSet.length - 1].processOut.plannedEndAt
       }
@@ -847,7 +849,8 @@ const InputProcessForm = ({
         'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
       )
 
-      console.log('dataSet', dataSet)
+      console.log('plannedStartAtInput', plannedStartAtInput)
+      console.log('plannedStartAtData', plannedStartAtData)
       console.log('plannedStartAtData', plannedStartAtData)
       console.log('plannedEndAtData', plannedEndAtData)
 
