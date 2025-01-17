@@ -811,11 +811,15 @@ const InputProcessForm = ({
     let tempRandomId = Math.floor(Math.random() * 90000) + 10000
     let isUpdate = false
     let isProcessTypeChanges = false
+    let isWeightChanges = false
     if (processOrderDetail[0].processIn.idPair) {
       tempRandomId = processOrderDetail[0].processIn.idPair
       isUpdate = true
       isProcessTypeChanges =
         processOrderDetail[0].processIn.processTypeId != processTypeId
+      isWeightChanges =
+        dataSet[editedIndex!!].processIn.estInWeight !=
+        processOrderDetail[0].processIn.estInWeight
     }
 
     /** note :
@@ -827,7 +831,7 @@ const InputProcessForm = ({
      * and continues sequence
      * **/
 
-    if (!isUpdate || isProcessTypeChanges) {
+    if (!isUpdate || isProcessTypeChanges || isWeightChanges) {
       let plannedStartAtData = ''
 
       if (editedIndex) {
