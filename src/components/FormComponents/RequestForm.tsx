@@ -350,7 +350,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
               {t("check_in.receiver_company")}
             </Typography>
             <Typography sx={localstyles.typo_fieldContent}>
-              {selectedItem?.recipientCompany ?? "-"}
+              {selectedItem?.receiverName ?? "-"}
             </Typography>
           </Box>
 
@@ -378,7 +378,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
                   {t("pick_up_order.detail.arrived")}
                 </Typography>
                 <Typography sx={localstyles.typo_fieldContent}>
-                  {selectedItem?.deliveryAddress ?? "-"}
+                  {selectedItem?.receiverAddr ?? "-"}
                 </Typography>
               </Box>
             </Box>

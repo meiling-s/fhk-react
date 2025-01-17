@@ -736,10 +736,12 @@ const CheckoutRequest: FunctionComponent = () => {
           item.createdAt = createdAt;
           if (item.picoId) {
             const picoDetail = await getPicoDetail(item.picoId);
-            if (picoDetail?.pickupOrderDetail[0]) {
-              const pico = picoDetail?.pickupOrderDetail[0];
-              item.senderName = pico.senderName;
-              item.senderAddr = pico.senderAddr;
+            const choosenPicoDetail = picoDetail?.pickupOrderDetail?.find(
+              (value: { picoDtlId: any }) => value.picoDtlId === item.picoDtlId
+            );
+            if (choosenPicoDetail) {
+              item.senderName = choosenPicoDetail.senderName;
+              item.senderAddr = choosenPicoDetail.senderAddr;
             }
           }
           if (item?.logisticId) {

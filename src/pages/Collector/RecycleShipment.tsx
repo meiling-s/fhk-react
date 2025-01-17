@@ -579,8 +579,10 @@ function ShipmentManage() {
 
   const getPicoDetail = async (picoId: string) => {
     try {
-      const picoDetail = await getPicoById(picoId);
-      return picoDetail;
+      const pico = await getPicoById(picoId);
+      if (pico) {
+        return pico.data;
+      }
     } catch (error) {
       return null;
     }
@@ -642,11 +644,22 @@ function ShipmentManage() {
       if (result) {
         const data = result?.data?.content;
         if (data && data.length > 0) {
-          console.log(data, "result");
           const newData: CheckIn[] = [];
           for (let item of data) {
             const dateInHK = dayjs.utc(item.createdAt).tz("Asia/Hong_Kong");
             item.createdAt = dateInHK.format(`${dateFormat} HH:mm`);
+            if (item.picoId) {
+              const picoDetail = await getPicoDetail(item.picoId);
+              const choosenPicoDetail = picoDetail?.pickupOrderDetail?.find(
+                (value: { picoDtlId: any }) =>
+                  value.picoDtlId === item.picoDtlId
+              );
+
+              if (choosenPicoDetail) {
+                item.receiverName = choosenPicoDetail.receiverName;
+                item.receiverAddr = choosenPicoDetail.receiverAddr;
+              }
+            }
 
             if (item?.logisticId) {
               const companyName = getCompanyNameById(Number(item.logisticId));
@@ -831,7 +844,7 @@ function ShipmentManage() {
       width: 200,
     },
     {
-      field: "deliveryAddress",
+      field: "receiverAddr",
       type: "string",
       headerName: t("pick_up_order.detail.arrived"),
       width: 200,
