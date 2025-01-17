@@ -1,4 +1,4 @@
-import { FunctionComponent, useState, useEffect } from 'react'
+import { FunctionComponent, useState, useEffect } from "react";
 import {
   Box,
   Divider,
@@ -11,49 +11,53 @@ import {
   TextField,
   FormControl,
   InputLabel,
-  MenuItem
-} from '@mui/material'
-import { CAMERA_OUTLINE_ICON } from '../../../../themes/icons'
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
-import ImageUploading, { ImageListType } from 'react-images-uploading'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
-import RightOverlayForm from '../../../../components/RightOverlayForm'
-import CustomField from '../../../../components/FormComponents/CustomField'
-import CustomTextField from '../../../../components/FormComponents/CustomTextField'
-import { styles } from '../../../../constants/styles'
-import { useTranslation } from 'react-i18next'
-import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg'
-import { formValidate } from '../../../../interfaces/common'
+  MenuItem,
+} from "@mui/material";
+import { CAMERA_OUTLINE_ICON } from "../../../../themes/icons";
+import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
+import ImageUploading, { ImageListType } from "react-images-uploading";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import RightOverlayForm from "../../../../components/RightOverlayForm";
+import CustomField from "../../../../components/FormComponents/CustomField";
+import CustomTextField from "../../../../components/FormComponents/CustomTextField";
+import { styles } from "../../../../constants/styles";
+import { useTranslation } from "react-i18next";
+import { FormErrorMsg } from "../../../../components/FormComponents/FormErrorMsg";
+import { formValidate } from "../../../../interfaces/common";
 import {
   LogisticVehicle,
-  CreateLogisticVehicle
-} from '../../../../interfaces/vehicles'
-import { STATUS_CODE, formErr } from '../../../../constants/constant'
-import { returnErrorMsg, ImageToBase64, extractError } from '../../../../utils/utils'
-import { localStorgeKeyName } from '../../../../constants/constant'
+  CreateLogisticVehicle,
+} from "../../../../interfaces/vehicles";
+import { STATUS_CODE, formErr } from "../../../../constants/constant";
+import {
+  returnErrorMsg,
+  ImageToBase64,
+  extractError,
+} from "../../../../utils/utils";
+import { localStorgeKeyName } from "../../../../constants/constant";
 import {
   createVehicles,
   deleteVehicle,
-  editVehicle
-} from '../../../../APICalls/Logistic/vehicles'
-import i18n from '../../../../setups/i18n'
-import { il_item } from '../../../../components/FormComponents/CustomItemList'
-import { useContainer } from 'unstated-next'
-import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
-import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
-import Switcher from '../../../../components/FormComponents/CustomSwitch'
-import LabelField from '../../../../components/FormComponents/CustomField'
+  editVehicle,
+} from "../../../../APICalls/Logistic/vehicles";
+import i18n from "../../../../setups/i18n";
+import { il_item } from "../../../../components/FormComponents/CustomItemList";
+import { useContainer } from "unstated-next";
+import CommonTypeContainer from "../../../../contexts/CommonTypeContainer";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import Switcher from "../../../../components/FormComponents/CustomSwitch";
+import LabelField from "../../../../components/FormComponents/CustomField";
 
 interface CreateVehicleProps {
-  drawerOpen: boolean
-  handleDrawerClose: () => void
-  action: 'add' | 'edit' | 'delete' | 'none'
-  onSubmitData: (type: string, msg: string) => void
-  rowId?: number
-  selectedItem?: LogisticVehicle | null
-  plateListExist: string[]
-  deviceIdListExist: string[]
+  drawerOpen: boolean;
+  handleDrawerClose: () => void;
+  action: "add" | "edit" | "delete" | "none";
+  onSubmitData: (type: string, msg: string) => void;
+  rowId?: number;
+  selectedItem?: LogisticVehicle | null;
+  plateListExist: string[];
+  deviceIdListExist: string[];
 }
 
 const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
@@ -64,122 +68,122 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   rowId,
   selectedItem,
   plateListExist,
-  deviceIdListExist
+  deviceIdListExist,
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   // console.log('selected', selectedItem)
-  const [vehicleTypeId, setVehicleTypeId] = useState<string>('')
+  const [vehicleTypeId, setVehicleTypeId] = useState<string>("");
   const [selectedVehicle, setSelectedVehicle] = useState<il_item>({
-    id: '1',
-    name: 'Van'
-  })
-  const [licensePlate, setLicensePlate] = useState('')
-  const [deviceId, setDeviceId] = useState<string>('')
-  const [pictures, setPictures] = useState<ImageListType>([])
-  const [trySubmited, setTrySubmited] = useState<boolean>(false)
-  const [validation, setValidation] = useState<formValidate[]>([])
-  const [vehicleWeight, setVehicleWeight] = useState<string>('')
-  const [isCompactor, setIsCompactor] = useState<boolean>(false)
-  const { vehicleType, imgSettings } = useContainer(CommonTypeContainer)
-  const [vehicleTypeList, setVehicleType] = useState<il_item[]>([])
-  const [version, setVersion] = useState<number>(0)
+    id: "1",
+    name: "Van",
+  });
+  const [licensePlate, setLicensePlate] = useState("");
+  const [deviceId, setDeviceId] = useState<string>("");
+  const [pictures, setPictures] = useState<ImageListType>([]);
+  const [trySubmited, setTrySubmited] = useState<boolean>(false);
+  const [validation, setValidation] = useState<formValidate[]>([]);
+  const [vehicleWeight, setVehicleWeight] = useState<string>("");
+  const [isCompactor, setIsCompactor] = useState<boolean>(false);
+  const { vehicleType, imgSettings } = useContainer(CommonTypeContainer);
+  const [vehicleTypeList, setVehicleType] = useState<il_item[]>([]);
+  const [version, setVersion] = useState<number>(0);
   const navigate = useNavigate();
   const mappingData = () => {
     if (selectedItem != null) {
-      setLicensePlate(selectedItem.plateNo)
-      setDeviceId(selectedItem.deviceId)
-      setVehicleTypeId(selectedItem.vehicleTypeId)
-      setVehicleWeight(selectedItem.netWeight.toString())
-      setVersion(selectedItem.version)
-      setIsCompactor(selectedItem.compactor === 1)
+      setLicensePlate(selectedItem.plateNo);
+      setDeviceId(selectedItem.deviceId);
+      setVehicleTypeId(selectedItem.vehicleTypeId);
+      setVehicleWeight(selectedItem.netWeight.toString());
+      setVersion(selectedItem.version);
+      setIsCompactor(selectedItem.compactor === 1);
 
       const imageList: any = selectedItem.photo.map(
         (url: string, index: number) => {
-          const format = url.startsWith('data:image/png') ? 'png' : 'jpeg'
-          const imgdata = `data:image/${format};base64,${url}`
+          const format = url.startsWith("data:image/png") ? "png" : "jpeg";
+          const imgdata = `data:image/${format};base64,${url}`;
 
           return {
             data_url: imgdata,
             file: {
               name: `image${index + 1}`,
               size: 0,
-              type: 'image/jpeg'
-            }
-          }
+              type: "image/jpeg",
+            },
+          };
         }
-      )
+      );
 
-      setPictures(imageList)
+      setPictures(imageList);
     }
-  }
+  };
 
   useEffect(() => {
-    setTrySubmited(false)
-    getserviceList()
-    getVehiclesLogisticType()
-    setValidation([])
-    if (action !== 'add') {
-      mappingData()
+    setTrySubmited(false);
+    getserviceList();
+    getVehiclesLogisticType();
+    setValidation([]);
+    if (action !== "add") {
+      mappingData();
     } else {
-      setTrySubmited(false)
-      resetData()
+      setTrySubmited(false);
+      resetData();
     }
-    console.log("id list", deviceIdListExist)
-  }, [drawerOpen])
+    console.log("id list", deviceIdListExist);
+  }, [drawerOpen]);
 
-  const getserviceList = () => {}
+  const getserviceList = () => {};
 
   const resetData = () => {
-    setLicensePlate('')
-    setVehicleTypeId('')
-    setVehicleWeight('')
-    setDeviceId('')
-    setIsCompactor(false)
-    setPictures([])
-    setValidation([])
-  }
+    setLicensePlate("");
+    setVehicleTypeId("");
+    setVehicleWeight("");
+    setDeviceId("");
+    setIsCompactor(false);
+    setPictures([]);
+    setValidation([]);
+  };
 
   const getVehiclesLogisticType = () => {
     if (vehicleType) {
-      const carType: il_item[] = []
+      const carType: il_item[] = [];
       vehicleType?.forEach((vehicle) => {
-        var name = ''
+        var name = "";
         switch (i18n.language) {
-          case 'enus':
-            name = vehicle.vehicleTypeNameEng
-            break
-          case 'zhch':
-            name = vehicle.vehicleTypeNameSchi
-            break
-          case 'zhhk':
-            name = vehicle.vehicleTypeNameTchi
-            break
+          case "enus":
+            name = vehicle.vehicleTypeNameEng;
+            break;
+          case "zhch":
+            name = vehicle.vehicleTypeNameSchi;
+            break;
+          case "zhhk":
+            name = vehicle.vehicleTypeNameTchi;
+            break;
           default:
-            name = vehicle.vehicleTypeNameTchi
-            break
+            name = vehicle.vehicleTypeNameTchi;
+            break;
         }
         const vehicleType: il_item = {
           id: vehicle.vehicleTypeId,
-          name: name
-        }
-        carType.push(vehicleType)
-      })
-      setVehicleType(carType)
+          name: name,
+        };
+        carType.push(vehicleType);
+      });
+      setVehicleType(carType);
     }
-  }
+  };
 
   const onImageChange = (
     imageList: ImageListType,
     addUpdateIndex: number[] | undefined
   ) => {
-    const maxFileSize = imgSettings?.ImgSize; 
+    const maxFileSize = imgSettings?.ImgSize;
 
     const oversizedImages = imageList.filter(
       (image) => image.file && image.file.size > maxFileSize
     );
 
     if (oversizedImages.length > 0) {
-      toast.error(t('vehicle.imageSizeExceeded'), {
+      toast.error(t("vehicle.imageSizeExceeded"), {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -200,132 +204,145 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
 
   const removeImage = (index: number) => {
     // Remove the image at the specified index
-    const newPictures = [...pictures]
-    newPictures.splice(index, 1)
-    setPictures(newPictures)
-  }
+    const newPictures = [...pictures];
+    newPictures.splice(index, 1);
+    setPictures(newPictures);
+  };
 
   const checkString = (s: string) => {
     if (!trySubmited) {
       //before first submit, don't check the validation
-      return false
+      return false;
     }
-    return s == ''
-  }
+    return s == "";
+  };
 
   useEffect(() => {
     const validate = async () => {
       //do validation here
-      const tempV: formValidate[] = []
-      if (licensePlate?.toString() === '') {
+      const tempV: formValidate[] = [];
+      if (licensePlate?.toString() === "") {
         tempV.push({
-          field: t('driver.vehicleMenu.license_plate_number'),
+          field: t("driver.vehicleMenu.license_plate_number"),
           problem: formErr.empty,
-          type: 'error',
-          dataTestId:"logistic-vehicles-form-plate-no-err-warning-5910"
-        })
-      } if (plateListExist && action === 'add' && plateListExist.includes(licensePlate)) {
+          type: "error",
+          dataTestId: "logistic-vehicles-form-plate-no-err-warning-5910",
+        });
+      }
+      if (
+        plateListExist &&
+        action === "add" &&
+        plateListExist.includes(licensePlate)
+      ) {
         tempV.push({
-          field: t('driver.vehicleMenu.license_plate_number'),
+          field: t("driver.vehicleMenu.license_plate_number"),
           problem: formErr.alreadyExist,
-          type: 'error',
-          dataTestId: 'logistic-vehicles-form-plate-no-err-warning-5910'
-        })
-      } if (deviceIdListExist && action === 'add' && deviceId && deviceIdListExist.includes(deviceId)) {
-        tempV.push({
-          field: t('driver.vehicleMenu.imei'),
-          problem: formErr.alreadyExist,
-          type: 'error',
-          dataTestId: 'logistic-vehicles-form-imei-err-warning-7562'
-        })
-      } if (plateListExist && action === 'edit' && selectedItem) {
-        if (licensePlate !== selectedItem.plateNo && plateListExist.includes(licensePlate)) {
+          type: "error",
+          dataTestId: "logistic-vehicles-form-plate-no-err-warning-5910",
+        });
+      }
+      if (plateListExist && action === "edit" && selectedItem) {
+        if (
+          licensePlate !== selectedItem.plateNo &&
+          plateListExist.includes(licensePlate)
+        ) {
           tempV.push({
-            field: t('driver.vehicleMenu.license_plate_number'),
+            field: t("driver.vehicleMenu.license_plate_number"),
             problem: formErr.alreadyExist,
-            type: 'error',
-            dataTestId: 'logistic-vehicles-form-plate-no-err-warning-5910'
-          })
+            type: "error",
+            dataTestId: "logistic-vehicles-form-plate-no-err-warning-5910",
+          });
         }
-      } if ( deviceIdListExist && action === 'edit' && selectedItem && deviceId) {
-        if (deviceId !== selectedItem.deviceId && deviceIdListExist.includes(deviceId)) {
+      }
+      if (deviceIdListExist && action === "edit" && selectedItem && deviceId) {
+        if (
+          deviceId !== selectedItem.deviceId &&
+          deviceIdListExist.includes(deviceId)
+        ) {
           tempV.push({
-            field: t('driver.vehicleMenu.imei'),
+            field: t("driver.vehicleMenu.imei"),
             problem: formErr.alreadyExist,
-            type: 'error',
-            dataTestId: 'logistic-vehicles-form-imei-err-warning-7562'
-          })
+            type: "error",
+            dataTestId: "logistic-vehicles-form-imei-err-warning-7562",
+          });
         }
       }
       pictures.length == 0 &&
         tempV.push({
-          field: t('driver.vehicleMenu.picture'),
+          field: t("driver.vehicleMenu.picture"),
           problem: formErr.empty,
-          type: 'error'
-        })
+          type: "error",
+        });
       pictures.length < 2 &&
         tempV.push({
-          field: t('driver.vehicleMenu.picture'),
+          field: t("driver.vehicleMenu.picture"),
           problem: formErr.minMoreOneImgUploded,
-          type: 'error'
-        })
-      if(vehicleWeight?.toString() == '0' || vehicleWeight === ''){
+          type: "error",
+        });
+      if (vehicleWeight?.toString() == "0" || vehicleWeight === "") {
         tempV.push({
-          field: t('driver.vehicleMenu.vehicle_cargo_capacity'),
+          field: t("driver.vehicleMenu.vehicle_cargo_capacity"),
           problem: formErr.empty,
-          type: 'error'
-        })
+          type: "error",
+        });
       }
-      vehicleTypeId?.toString() == '' &&
+      vehicleTypeId?.toString() == "" &&
         tempV.push({
-          field: t('driver.vehicleMenu.vehicle_type'),
+          field: t("driver.vehicleMenu.vehicle_type"),
           problem: formErr.empty,
-          type: 'error'
-        })
-      setValidation(tempV)
-    }
+          type: "error",
+        });
+      setValidation(tempV);
+    };
 
-    validate()
-  }, [licensePlate, pictures, vehicleWeight, vehicleTypeId, deviceId, i18n.language])
+    validate();
+  }, [
+    licensePlate,
+    pictures,
+    vehicleWeight,
+    vehicleTypeId,
+    deviceId,
+    i18n.language,
+  ]);
 
   const handleSubmit = () => {
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || "";
 
     const formData: CreateLogisticVehicle = {
       plateNo: licensePlate,
       photo: ImageToBase64(pictures),
-      status: 'ACTIVE',
+      status: "ACTIVE",
       createdBy: loginId,
       updatedBy: loginId,
       vehicleTypeId: vehicleTypeId,
       deviceId: deviceId,
       compactor: isCompactor ? 1 : 0,
       netWeight: Number(vehicleWeight),
-      ...(action === 'edit' && {version: version}),
-      ...(action === 'delete' && {version: version})
-    }
+      ...(action === "edit" && { version: version }),
+      ...(action === "delete" && { version: version }),
+    };
     //console.log('iamge', ImageToBase64(pictures))
-    if (action == 'add') {
-      handleCreateVehicle(formData)
+    if (action == "add") {
+      handleCreateVehicle(formData);
     } else {
-      handleEditVehicle(formData)
+      handleEditVehicle(formData);
     }
-  }
+  };
 
   const handleCreateVehicle = async (formData: CreateLogisticVehicle) => {
     if (validation.length === 0) {
-      const result = await createVehicles(formData)
+      const result = await createVehicles(formData);
       if (result) {
-        onSubmitData('success', t('common.saveSuccessfully'))
-        resetData()
-        handleDrawerClose()
+        onSubmitData("success", t("common.saveSuccessfully"));
+        resetData();
+        handleDrawerClose();
       } else {
-        onSubmitData('error', t('common.saveFailed'))
+        onSubmitData("error", t("common.saveFailed"));
       }
     } else {
-      setTrySubmited(true)
+      setTrySubmited(true);
     }
-  }
+  };
 
   const showErrorToast = (msg: string) => {
     toast.error(msg, {
@@ -344,95 +361,98 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     if (validation.length === 0) {
       try {
         if (selectedItem != null) {
-          const result = await editVehicle(formData, selectedItem.vehicleId)
+          const result = await editVehicle(formData, selectedItem.vehicleId);
           if (result) {
-            onSubmitData('success', t('common.editSuccessfully'))
-            resetData()
-            handleDrawerClose()
+            onSubmitData("success", t("common.editSuccessfully"));
+            resetData();
+            handleDrawerClose();
           }
         }
       } catch (error: any) {
-        const {state} = extractError(error);
+        const { state } = extractError(error);
         if (state.code === STATUS_CODE[503]) {
-          navigate('/maintenance')
-        } else if (state.code === STATUS_CODE[409]){
+          navigate("/maintenance");
+        } else if (state.code === STATUS_CODE[409]) {
           showErrorToast(error.response.data.message);
         }
       }
     } else {
-      setTrySubmited(true)
+      setTrySubmited(true);
     }
-  }
+  };
 
   const handleDelete = async () => {
     const formData = {
-      status: 'DELETED',
+      status: "DELETED",
       version: version,
-    }
+    };
     try {
       if (selectedItem != null) {
-        const result = await deleteVehicle(formData, selectedItem.vehicleId)
+        const result = await deleteVehicle(formData, selectedItem.vehicleId);
         if (result) {
-          onSubmitData('success', t('common.deletedSuccessfully'))
-          resetData()
-          handleDrawerClose()
+          onSubmitData("success", t("common.deletedSuccessfully"));
+          resetData();
+          handleDrawerClose();
         }
       }
     } catch (error: any) {
-      const {state} = extractError(error);
+      const { state } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
-      } else if (state.code === STATUS_CODE[409]){
+        navigate("/maintenance");
+      } else if (state.code === STATUS_CODE[409]) {
         showErrorToast(error.response.data.message);
       }
     }
-  }
+  };
 
   return (
     <div className="add-vehicle">
       <RightOverlayForm
         open={drawerOpen}
         onClose={handleDrawerClose}
-        anchor={'right'}
+        anchor={"right"}
         action={action}
         headerProps={{
           title:
-            action == 'add'
-              ? t('top_menu.add_new')
-              : action == 'delete'
-              ? t('add_warehouse_page.delete')
-              : t('userGroup.change'),
-          submitText: t('add_warehouse_page.save'),
-          cancelText: t('add_warehouse_page.delete'),
+            action == "add"
+              ? t("top_menu.add_new")
+              : action == "delete"
+              ? t("add_warehouse_page.delete")
+              : t("userGroup.change"),
+          submitText: t("add_warehouse_page.save"),
+          cancelText: t("add_warehouse_page.delete"),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
         }}
       >
         <Divider></Divider>
         <Box sx={{ PaddingX: 2 }}>
           <Grid
             container
-            direction={'column'}
+            direction={"column"}
             spacing={4}
             sx={{
-              width: { xs: '100%' },
+              width: { xs: "100%" },
               marginTop: { sm: 2, xs: 6 },
               marginLeft: {
-                xs: 0
+                xs: 0,
               },
-              paddingRight: 2
+              paddingRight: 2,
             }}
             className="sm:ml-0 mt-o w-full"
           >
-            <CustomField label={t('driver.vehicleMenu.license_plate_number')} mandatory>
+            <CustomField
+              label={t("driver.vehicleMenu.license_plate_number")}
+              mandatory
+            >
               <CustomTextField
                 id="licensePlate"
-                dataTestId='logistic-vehicles-form-plate-no-input-field-3843'
+                dataTestId="logistic-vehicles-form-plate-no-input-field-3843"
                 value={licensePlate}
-                disabled={action === 'delete'}
+                disabled={action === "delete"}
                 placeholder={t(
-                  'driver.vehicleMenu.license_plate_number_placeholder'
+                  "driver.vehicleMenu.license_plate_number_placeholder"
                 )}
                 onChange={(event) => setLicensePlate(event.target.value)}
                 error={checkString(licensePlate)}
@@ -440,24 +460,25 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
             </CustomField>
             <Grid item className="vehicle_type">
               <CustomField
-                label={t('driver.vehicleMenu.vehicle_type')} mandatory
+                label={t("driver.vehicleMenu.vehicle_type")}
+                mandatory
               ></CustomField>
-              <FormControl sx={{ ...localstyles.dropdown, width: '100%' }}>
+              <FormControl sx={{ ...localstyles.dropdown, width: "100%" }}>
                 <Select
                   labelId="vehicleType"
                   id="vehicleType"
                   value={vehicleTypeId}
                   displayEmpty
                   sx={{
-                    borderRadius: '12px'
+                    borderRadius: "12px",
                   }}
-                  disabled={action === 'delete'}
+                  disabled={action === "delete"}
                   onChange={(event: SelectChangeEvent<string>) => {
                     const selectedValue = vehicleTypeList.find(
                       (item) => item.id === event.target.value
-                    )
+                    );
                     if (selectedValue) {
-                      setVehicleTypeId(selectedValue.id)
+                      setVehicleTypeId(selectedValue.id);
                     }
                   }}
                   error={checkString(vehicleTypeId)}
@@ -465,15 +486,17 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   data-testid="logistic-vehicles-form-vehicle-type-select-button-7024"
                 >
                   <MenuItem value="">
-                    <em>{t('check_in.any')}</em>
+                    <em>{t("check_in.any")}</em>
                   </MenuItem>
-                  {vehicleTypeList.length > 0 ? (vehicleTypeList.map((item, index) => (
-                    <MenuItem key={index} value={item.id}>
-                      {item.name}
-                    </MenuItem>
-                  ))) : (
+                  {vehicleTypeList.length > 0 ? (
+                    vehicleTypeList.map((item, index) => (
+                      <MenuItem key={index} value={item.id}>
+                        {item.name}
+                      </MenuItem>
+                    ))
+                  ) : (
                     <MenuItem disabled value="">
-                      <em>{t('common.noOptions')}</em>
+                      <em>{t("common.noOptions")}</em>
                     </MenuItem>
                   )}
                 </Select>
@@ -481,68 +504,72 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
             </Grid>
             <Grid item>
               <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
-                <LabelField label={t('driver.vehicleMenu.isCompactor')} />
+                <LabelField label={t("driver.vehicleMenu.isCompactor")} />
                 <Switcher
-                  onText={t('common.yes')}
-                  offText={t('common.no')}
-                  disabled={action === 'delete'}
+                  onText={t("common.yes")}
+                  offText={t("common.no")}
+                  disabled={action === "delete"}
                   defaultValue={isCompactor}
                   setState={(newValue) => {
-                    setIsCompactor(newValue)
+                    setIsCompactor(newValue);
                   }}
                 />
               </div>
             </Grid>
             <Grid item>
-              <CustomField label={t('driver.vehicleMenu.imei')}>
+              <CustomField label={t("driver.vehicleMenu.imei")}>
                 <CustomTextField
-                  dataTestId='logistic-vehicles-form-imei-input-field-9942'
+                  dataTestId="logistic-vehicles-form-imei-input-field-9942"
                   id="deviceId"
                   value={deviceId}
-                  placeholder={t(
-                    'driver.vehicleMenu.imei'
-                  )}
+                  placeholder={t("driver.vehicleMenu.imei")}
                   onChange={(event) => {
-                    const valueWithoutSpaces = event.target.value.replace(/\s/g, '');
-                    setDeviceId(valueWithoutSpaces);}}
+                    const valueWithoutSpaces = event.target.value.replace(
+                      /\s/g,
+                      ""
+                    );
+                    setDeviceId(valueWithoutSpaces);
+                  }}
                 />
               </CustomField>
             </Grid>
             <Grid item>
               <CustomField
-                label={t('driver.vehicleMenu.vehicle_cargo_capacity')} mandatory
+                label={t("driver.vehicleMenu.vehicle_cargo_capacity")}
+                mandatory
               ></CustomField>
               <TextField
                 data-
                 id="vehicleWeight"
                 value={vehicleWeight}
                 onChange={(event) => {
-                  const numericValue = event.target.value.replace(/\D/g, '')
-                  event.target.value = numericValue
-                  setVehicleWeight(numericValue)
+                  const numericValue = event.target.value.replace(/\D/g, "");
+                  event.target.value = numericValue;
+                  setVehicleWeight(numericValue);
                 }}
-                disabled={action === 'delete'}
+                disabled={action === "delete"}
                 sx={{ ...localstyles.inputState, margin: 0 }}
                 placeholder={t(
-                  'driver.vehicleMenu.vehicle_cargo_capacity_placeholder'
+                  "driver.vehicleMenu.vehicle_cargo_capacity_placeholder"
                 )}
                 error={checkString(vehicleWeight.toString())}
                 inputProps={{
-                  inputMode: 'numeric',
-                  pattern: '[0-9]*'
+                  inputMode: "numeric",
+                  pattern: "[0-9]*",
                 }}
                 InputProps={{
-                  endAdornment: <Typography>kg</Typography>
+                  endAdornment: <Typography>kg</Typography>,
                 }}
                 data-testid="logistic-vehicles-form-cargo-capacity-input-field-6355"
               />
             </Grid>
             <Grid item>
               {/* image field */}
-              <Box key={t('report.picture')}>
-              <CustomField
-                label= {t('report.picture')} mandatory
-              ></CustomField>
+              <Box key={t("report.picture")}>
+                <CustomField
+                  label={t("report.picture")}
+                  mandatory
+                ></CustomField>
                 <ImageUploading
                   multiple
                   value={pictures}
@@ -552,8 +579,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   maxNumber={imgSettings?.ImgQuantity}
                   maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
-                  acceptType={['jpg', 'jpeg', 'png']}
-                  
+                  acceptType={["jpg", "jpeg", "png"]}
                 >
                   {({ imageList, onImageUpload, onImageRemove, errors }) => (
                     <Box className="box">
@@ -562,7 +588,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                           ...localstyles.cardImg,
                           ...(trySubmited &&
                             (imageList.length === 0 || imageList.length < 2) &&
-                            localstyles.imgError)
+                            localstyles.imgError),
                         }}
                       >
                         <ButtonBase
@@ -570,46 +596,51 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                           onClick={(event) => onImageUpload()}
                           data-testid="logistic-vehicles-form-upload-images-5746"
                         >
-                          <CAMERA_OUTLINE_ICON style={{ color: '#ACACAC' }} />
+                          <CAMERA_OUTLINE_ICON style={{ color: "#ACACAC" }} />
                           <Typography
-                            sx={[styles.labelField, { fontWeight: 'bold' }]}
+                            sx={[styles.labelField, { fontWeight: "bold" }]}
                           >
-                            {t('report.uploadPictures')}
+                            {t("report.uploadPictures")}
                           </Typography>
                         </ButtonBase>
                       </Card>
                       {errors && (
                         <div>
-                        {errors.maxFileSize && (
-                          <span style={{color: "red"}}>
-                            {t('driver.vehicleMenu.max_size_upload')} {imgSettings?.ImgSize/1000000} MB
-                          </span>
-                        )}
-                        {errors.maxNumber && <span style={{color: "red"}}>{t('driver.vehicleMenu.max_number_photo')}</span>}
+                          {errors.maxFileSize && (
+                            <span style={{ color: "red" }}>
+                              {t("driver.vehicleMenu.max_size_upload")}{" "}
+                              {imgSettings?.ImgSize / 1000000} MB
+                            </span>
+                          )}
+                          {errors.maxNumber && (
+                            <span style={{ color: "red" }}>
+                              {t("driver.vehicleMenu.max_number_photo")}
+                            </span>
+                          )}
                         </div>
                       )}
                       <ImageList sx={localstyles.imagesContainer} cols={4}>
                         {imageList.map((image, index) => (
                           <ImageListItem
-                            key={image['file']?.name}
-                            style={{ position: 'relative', width: '100px' }}
+                            key={image["file"]?.name}
+                            style={{ position: "relative", width: "100px" }}
                           >
                             <img
                               style={localstyles.image}
-                              src={image['data_url']}
-                              alt={image['file']?.name}
+                              src={image["data_url"]}
+                              alt={image["file"]?.name}
                               loading="lazy"
                             />
                             <ButtonBase
                               onClick={(event) => {
-                                onImageRemove(index)
-                                removeImage(index)
+                                onImageRemove(index);
+                                removeImage(index);
                               }}
                               style={{
-                                position: 'absolute',
-                                top: '2px',
-                                right: '2px',
-                                padding: '4px'
+                                position: "absolute",
+                                top: "2px",
+                                right: "2px",
+                                padding: "4px",
                               }}
                             >
                               <CancelRoundedIcon className="text-white" />
@@ -622,9 +653,9 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 </ImageUploading>
               </Box>
               <div className="note">
-                <p className="text-sm text-gray">{t('vehicle.imgNote')}</p>
+                <p className="text-sm text-gray">{t("vehicle.imgNote")}</p>
               </div>
-              <Grid item sx={{ width: '100%' }}>
+              <Grid item sx={{ width: "100%" }}>
                 {trySubmited &&
                   validation.map((val, index) => (
                     <FormErrorMsg
@@ -632,7 +663,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                       field={t(val.field)}
                       errorMsg={returnErrorMsg(val.problem, t)}
                       type={val.type}
-                      dataTestId=''
+                      dataTestId=""
                     />
                   ))}
               </Grid>
@@ -641,94 +672,94 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
         </Box>
       </RightOverlayForm>
     </div>
-  )
-}
+  );
+};
 
 const localstyles = {
   typo: {
-    color: '#ACACAC',
+    color: "#ACACAC",
     fontSize: 13,
-    fontWeight: '500'
+    fontWeight: "500",
   },
   textField: {
-    borderRadius: '10px',
-    fontWeight: '500',
-    '& .MuiOutlinedInput-input': {
-      padding: '10px'
-    }
+    borderRadius: "10px",
+    fontWeight: "500",
+    "& .MuiOutlinedInput-input": {
+      padding: "10px",
+    },
   },
   imagesContainer: {
-    width: '100%',
-    height: 'fit-content'
+    width: "100%",
+    height: "fit-content",
   },
   image: {
-    aspectRatio: '1/1',
-    width: '100px',
-    borderRadius: 2
+    aspectRatio: "1/1",
+    width: "100px",
+    borderRadius: 2,
   },
   cardImg: {
     borderRadius: 2,
-    backgroundColor: '#E3E3E3',
-    width: '100%',
+    backgroundColor: "#E3E3E3",
+    width: "100%",
     height: 150,
-    boxShadow: 'none'
+    boxShadow: "none",
   },
   btnBase: {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center'
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
   container: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    borderRadius: 10
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    borderRadius: 10,
   },
   imgError: {
-    border: '1px solid red'
+    border: "1px solid red",
   },
   inputState: {
     mt: 0,
-    width: '100%',
+    width: "100%",
 
-    borderRadius: '10px',
-    bgcolor: 'white',
-    '& .MuiOutlinedInput-root': {
-      borderRadius: '10px',
-      '& fieldset': {
-        borderColor: '#C4C4C4'
+    borderRadius: "10px",
+    bgcolor: "white",
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px",
+      "& fieldset": {
+        borderColor: "#C4C4C4",
       },
-      '&:hover fieldset': {
-        borderColor: '#79CA25'
+      "&:hover fieldset": {
+        borderColor: "#79CA25",
       },
-      '&.Mui-focused fieldset': {
-        borderColor: '#79CA25'
+      "&.Mui-focused fieldset": {
+        borderColor: "#79CA25",
       },
-      '& label.Mui-focused': {
-        color: '#79CA25'
-      }
-    }
+      "& label.Mui-focused": {
+        color: "#79CA25",
+      },
+    },
   },
   dropdown: {
-    borderRadius: '10px',
-    width: '100%',
-    bgcolor: 'white',
-    '& .MuiOutlinedInput-root': {
-      borderRadius: '10px',
-      '& fieldset': {
-        borderColor: 'rgba(0, 0, 0, 0.23)'
+    borderRadius: "10px",
+    width: "100%",
+    bgcolor: "white",
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px",
+      "& fieldset": {
+        borderColor: "rgba(0, 0, 0, 0.23)",
       },
-      '&:hover fieldset': {
-        borderColor: '#79CA25'
+      "&:hover fieldset": {
+        borderColor: "#79CA25",
       },
-      '&.Mui-focused fieldset': {
-        borderColor: '#79CA25'
-      }
-    }
-  }
-}
+      "&.Mui-focused fieldset": {
+        borderColor: "#79CA25",
+      },
+    },
+  },
+};
 
-export default CreateVehicle
+export default CreateVehicle;

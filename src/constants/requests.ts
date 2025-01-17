@@ -73,6 +73,11 @@ export const ASTD_UPDATE_TENANT_STATUS = (operatorId: string, tenantId: number):
   url: `api/v1/account/t/statusWithOperatorId/${operatorId}/${tenantId}`
 })
 
+export const GET_REGISTER_LINK_STATUS = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/account/t/str/${tenantId}`
+})
+
 export const GET_CURRENCY_LIST: AxiosRequestConfig = {
   method: 'get',
   url: 'api/v1/administrator/currencyList'
@@ -226,6 +231,11 @@ export const GET_LOGISTICLIST = (
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApiRoute}/logisticlist/${table}?size=1000`
+})
+
+export const GET_3RDPARTY_LOGISTICLIST = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/logisticlistWithThirdParty/${table}?size=1000`
 })
 
 export const GET_COLLECTORLIST = (

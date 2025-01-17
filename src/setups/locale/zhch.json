@@ -209,7 +209,8 @@
       "enter_text": "请输入文字",
       "water_bottle": "水瓶",
       "film": "胶片",
-      "edit": "修改"
+      "edit": "修改",
+      "already_exists": "已经存在"
     }
   },
   "warehouse_page": {
@@ -1624,7 +1625,7 @@
     "porCategory": "处理类别",
     "orderNumber": "订单编号",
     "workshop": "工场",
-    "createdate": "处理日期及地点",
+    "createdate": "处理日期及时间",
     "create": {
       "classification": "分类",
       "sol": "溶胶",

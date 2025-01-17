@@ -184,7 +184,7 @@ const Login = () => {
           const ipAddress = localStorage.getItem("ipAddress");
           if (ipAddress) {
             const userActivity: UserActivity = {
-              operation: "Login",
+              operation: "登入",
               ip: ipAddress,
               createdBy: userName,
               updatedBy: userName,
