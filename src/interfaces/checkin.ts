@@ -154,6 +154,8 @@ export type CheckIn = {
     recipientCompany?: string;
     deliveryAddress?: string;
     version: number;
+    receiverName: string;
+    receiverAddr: string;
   }
   
   export type queryCheckIn = {
