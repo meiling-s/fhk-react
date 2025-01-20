@@ -84,7 +84,8 @@ const InputProcessForm = ({
   action = 'add',
   onSave,
   dataSet,
-  editedValue
+  editedValue,
+  editedIndex = null
 }: {
   drawerOpen: boolean
   handleDrawerClose: () => void
@@ -98,6 +99,7 @@ const InputProcessForm = ({
 
   dataSet: CreateProcessOrderDetailPairs[]
   editedValue: CreateProcessOrderDetailPairs[] | null
+  editedIndex: number | null
 }) => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
@@ -808,9 +810,16 @@ const InputProcessForm = ({
 
     let tempRandomId = Math.floor(Math.random() * 90000) + 10000
     let isUpdate = false
+    let isProcessTypeChanges = false
+    let isWeightChanges = false
     if (processOrderDetail[0].processIn.idPair) {
       tempRandomId = processOrderDetail[0].processIn.idPair
       isUpdate = true
+      isProcessTypeChanges =
+        processOrderDetail[0].processIn.processTypeId != processTypeId
+      isWeightChanges =
+        dataSet[editedIndex!!].processIn.estInWeight !=
+        processOrderDetail[0].processIn.estInWeight
     }
 
     /** note :
@@ -822,16 +831,32 @@ const InputProcessForm = ({
      * and continues sequence
      * **/
 
-    if (!isUpdate) {
-      const plannedStartAtData =
-        dataSet.length === 0
-          ? plannedStartAtInput
-          : dataSet[dataSet.length - 1].processOut.plannedEndAt
+    if (!isUpdate || isProcessTypeChanges || isWeightChanges) {
+      let plannedStartAtData = ''
+
+      if (editedIndex) {
+        console.log('masulll')
+        plannedStartAtData =
+          editedIndex > 0
+            ? dataSet[editedIndex - 1].processOut.plannedEndAt
+            : plannedStartAtInput
+      } else {
+        plannedStartAtData =
+          (dataSet.length === 0 && !isProcessTypeChanges) ||
+          dataSet.length === 1
+            ? plannedStartAtInput
+            : dataSet[dataSet.length - 1].processOut.plannedEndAt
+      }
 
       const estEndTime = await getEstimateEndDate(plannedStartAtData)
       const plannedEndAtData = dayjs(estEndTime).format(
         'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
       )
+
+      console.log('plannedStartAtInput', plannedStartAtInput)
+      console.log('plannedStartAtData', plannedStartAtData)
+      console.log('plannedStartAtData', plannedStartAtData)
+      console.log('plannedEndAtData', plannedEndAtData)
 
       // Only update processOrderDetail's plannedStartAt and plannedEndAt when not updating
       processOrderDetail[0].processIn.plannedStartAt = plannedStartAtData

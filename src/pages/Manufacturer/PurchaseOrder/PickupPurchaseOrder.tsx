@@ -96,6 +96,19 @@ const CreatePickupOrder = () => {
     },
     onSubmit: async (values: CreatePO) => {
       values.createPicoDetail = addRow;
+      const refactorDetail = values.createPicoDetail;
+      refactorDetail.map((value) => {
+        if (value.productType) {
+          value.productTypeId = value.productType;
+        }
+        if (value.productSubType) {
+          value.productSubTypeId = value.productSubType;
+        }
+        if (value.productAddon) {
+          value.productAddonTypeId = value.productAddon;
+        }
+      });
+      values.createPicoDetail = refactorDetail;
       const result = await submitPickUpOrder(values);
       const data = result?.data;
 
