@@ -772,7 +772,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                         )}`}
                       {i18n.language === "zhhk" &&
                         `由於 ${tenantDetail?.rejectReason?.flatMap(
-                          (value) => value.zhch
+                          (value) => value.zhhk
                         )}, ${tenantDetail?.rejectedBy} 於 ${
                           tenantDetail?.rejectedAt
                         } 拒絕了申請。`}
@@ -798,7 +798,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                         )}`}
                       {i18n.language === "zhhk" &&
                         `由於 ${tenantDetail?.deactiveReason?.flatMap(
-                          (value) => value.zhch
+                          (value) => value.zhhk
                         )}, ${tenantDetail?.updatedBy} 於 ${
                           tenantDetail?.updatedAt
                         } 拒絕了申請。`}
