@@ -53,6 +53,7 @@ export type Tenant = {
   updatedBy: string
   updatedAt: string
   rejectReason: CompanyRejectReason[]
+  deactiveReason: CompanyRejectReason[]
 }
 
 export type UpdateTenantForm = {
