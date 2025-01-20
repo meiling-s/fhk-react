@@ -143,7 +143,7 @@ function RejectModal({
   reasons,
 }: rejectModal) {
   const { t } = useTranslation();
-  const [rejectReasonId, setRejectReasonId] = useState<string>("");
+  const [rejectReasonId, setRejectReasonId] = useState<string[]>([]);
   const navigate = useNavigate();
 
   const handleRejectRequest = async () => {
@@ -200,7 +200,7 @@ function RejectModal({
             <Typography sx={localstyles.typo}>
               {t("check_out.reject_reasons")}
             </Typography>
-            <CustomItemList items={reasons} singleSelect={setRejectReasonId} />
+            <CustomItemList items={reasons} multiSelect={setRejectReasonId} />
           </Box>
 
           <Box sx={{ alignSelf: "center", paddingY: 3 }}>

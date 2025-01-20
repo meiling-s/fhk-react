@@ -757,14 +757,18 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
             <Box>
               <div className="field-tenant-footer">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-5">
-                  {footerTenant}
-                  {/* {i18n.language === "enus" &&
+                  {/* {footerTenant} */}
+                  {i18n.language === "enus" &&
                     `The application was rejected ${
                       tenantDetail?.rejectedBy
                     } at ${dayjs
-                      .utc(tenantDetail?.updatedAt)
+                      .utc(tenantDetail?.rejectedAt)
                       .tz("Asia/Hong_Kong")
-                      .format(`${dateFormat} HH:mm`)} due to reason...`} */}
+                      .format(`${dateFormat} HH:mm`)} due to ${tenantDetail?.rejectReason.flatMap(value => value.enus)}`}
+                      {i18n.language === "zhhk" &&
+                    `由於 ${tenantDetail?.rejectReason.flatMap(value => value.zhch)}, ${tenantDetail?.rejectedBy} 於 ${tenantDetail?.rejectedAt} 拒絕了申請。`}
+                      {i18n.language === "zhch" &&
+                    `由于 ${tenantDetail?.rejectReason.flatMap(value => value.zhch)}, ${tenantDetail?.rejectedBy} 于 ${tenantDetail?.rejectedAt} 拒绝了申请。`}
                 </div>
               </div>
             </Box>
