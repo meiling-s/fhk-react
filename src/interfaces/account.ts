@@ -15,6 +15,12 @@ export type RegisterItem = {
   version: number
 }
 
+export type CompanyRejectReason = {
+  zhhk: string
+  zhch: string
+  enus: string
+}
+
 export type Tenant = {
   tenantId: number
   companyNameTchi: string
@@ -46,6 +52,8 @@ export type Tenant = {
   createdAt: string
   updatedBy: string
   updatedAt: string
+  rejectReason: CompanyRejectReason[]
+  deactiveReason: CompanyRejectReason[]
 }
 
 export type UpdateTenantForm = {

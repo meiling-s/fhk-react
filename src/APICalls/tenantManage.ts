@@ -8,6 +8,7 @@ import {
   UPDATE_TENANT_STATUS,
   SEND_EMAIL_INVITATION,
   UPDATE_TENANT_INFO,
+  ASTD_UPDATE_TENANT_STATUS,
   GET_REGISTER_LINK_STATUS,
 } from '../constants/requests'
 import { CREATE_TENANT } from 'src/constants/requestsSocif'
@@ -199,6 +200,19 @@ export const updateTenantDetail = async (data: any, tenantId: string) => {
     throw (e)
   }
 }
+
+export const astdUpdateTenantStatus = async (data: any, operatorId: string, tenantId: number) => {
+  try {
+    const response = await axiosInstance({
+      baseURL: window.baseURL.account,
+      ...ASTD_UPDATE_TENANT_STATUS(operatorId, tenantId),
+      data: data
+    })
+     return response
+    } catch (error) {
+      throw (error)
+    }
+  }
 
 export const getRegisterLinkStatus = async (tenantId: string) => {
   try {
