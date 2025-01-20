@@ -757,7 +757,6 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
             <Box>
               <div className="field-tenant-footer">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-5">
-                  {/* {footerTenant} */}
                   {tenantDetail?.rejectReason !== null ? (
                     <>
                       {i18n.language === "enus" &&
@@ -773,7 +772,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                         )}`}
                       {i18n.language === "zhhk" &&
                         `由於 ${tenantDetail?.rejectReason?.flatMap(
-                          (value) => value.zhch
+                          (value) => value.zhhk
                         )}, ${tenantDetail?.rejectedBy} 於 ${
                           tenantDetail?.rejectedAt
                         } 拒絕了申請。`}
@@ -799,15 +798,15 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                         )}`}
                       {i18n.language === "zhhk" &&
                         `由於 ${tenantDetail?.deactiveReason?.flatMap(
-                          (value) => value.zhch
-                        )}, ${tenantDetail?.rejectedBy} 於 ${
-                          tenantDetail?.rejectedAt
+                          (value) => value.zhhk
+                        )}, ${tenantDetail?.updatedBy} 於 ${
+                          tenantDetail?.updatedAt
                         } 拒絕了申請。`}
                       {i18n.language === "zhch" &&
                         `由于 ${tenantDetail?.deactiveReason?.flatMap(
                           (value) => value.zhch
-                        )}, ${tenantDetail?.rejectedBy} 于 ${
-                          tenantDetail?.rejectedAt
+                        )}, ${tenantDetail?.updatedBy} 于 ${
+                          tenantDetail?.updatedAt
                         } 拒绝了申请。`}
                     </>
                   )}
