@@ -260,8 +260,6 @@ export default function ProductListMultiSelect({
         productS.push({ productTypeId: prod, productSubType: [] })
       }
     })
-
-    console.log('productslalal', productS)
     return productS
   }
 
