@@ -137,7 +137,7 @@ const SelectReasonModal: React.FC<ReasonForm> = ({
       (value: any) => value.reasonNameEng === "Others"
     );
     const selectedReason = rejectReasonId.find(
-      (value) => value == findOthersReason.reasonId
+      (value) => value == findOthersReason?.reasonId
     );
     if (!selectedReason) {
       setOtherRemark("");
