@@ -33,8 +33,13 @@ import {
   updateTenantStatus,
   sendEmailInvitation,
   createNewTenant,
+  astdUpdateTenantStatus,
 } from "../../APICalls/tenantManage";
-import { STATUS_CODE, defaultPath } from "../../constants/constant";
+import {
+  STATUS_CODE,
+  defaultPath,
+  localStorgeKeyName,
+} from "../../constants/constant";
 import { styles } from "../../constants/styles";
 import CircularLoading from "../../components/CircularLoading";
 import dayjs from "dayjs";
@@ -59,6 +64,8 @@ import {
   showSuccessToast,
   validateEmail,
   debounce,
+  returnApiToken,
+  getFormatId,
 } from "../../utils/utils";
 import { ToastContainer } from "react-toastify";
 import utc from "dayjs/plugin/utc";
@@ -69,6 +76,7 @@ import i18n from "../../setups/i18n";
 import useLocaleTextDataGrid from "../../hooks/useLocaleTextDataGrid";
 import ConfirmModal from "../../components/SpecializeComponents/ConfirmationModal";
 import { errorState } from "../../interfaces/common";
+import { getReasonTenant } from "src/APICalls/Collector/denialReason";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -123,6 +131,7 @@ type rejectModal = {
   open: boolean;
   onClose: () => void;
   onSubmit: () => void;
+  reasons: il_item[];
 };
 
 function RejectModal({
@@ -131,60 +140,30 @@ function RejectModal({
   open,
   onClose,
   onSubmit,
+  reasons,
 }: rejectModal) {
   const { t } = useTranslation();
-  const [, setRejectReasonId] = useState<string[]>([]);
+  const [rejectReasonId, setRejectReasonId] = useState<string[]>([]);
   const navigate = useNavigate();
 
-  const getReason = () => {
-    const reasonList = [
-      {
-        id: "1",
-        reasonEn: "Photo is blurry",
-        reasonSchi: '照片模糊"',
-        reasonTchi: "照片模糊",
-      },
-      {
-        id: "2",
-        reasonEn: "Business number does not match",
-        reasonSchi: "商业编号不匹配",
-        reasonTchi: "商業編號不匹配",
-      },
-    ];
-    const reasons: il_item[] = [];
-    reasonList.forEach((item) => {
-      let name = "";
-      switch (i18n.language) {
-        case "enus":
-          name = item.reasonEn;
-          break;
-        case "zhch":
-          name = item.reasonSchi;
-          break;
-        case "zhhk":
-          name = item.reasonTchi;
-          break;
-        default:
-          name = item.reasonTchi; //default fallback language is zhhk
-          break;
-      }
-      const reasonItem: il_item = {
-        id: item.id,
-        name: name,
-      };
-      reasons.push(reasonItem);
-    });
-    return reasons;
-  };
   const handleRejectRequest = async () => {
     try {
       const statData: UpdateStatus = {
         status: "REJECTED",
+        reasonId: rejectReasonId,
         updatedBy: "admin",
         version: version,
       };
 
-      const result = await updateTenantStatus(statData, tenantId);
+      const operatorId = getFormatId(
+        localStorage.getItem(localStorgeKeyName.tenantId) ?? ""
+      );
+
+      const result = await astdUpdateTenantStatus(
+        statData,
+        operatorId,
+        tenantId
+      );
       // const data = result?.data
       if (result.status === 200) {
         onSubmit();
@@ -221,10 +200,7 @@ function RejectModal({
             <Typography sx={localstyles.typo}>
               {t("check_out.reject_reasons")}
             </Typography>
-            <CustomItemList
-              items={getReason() || []}
-              multiSelect={setRejectReasonId}
-            />
+            <CustomItemList items={reasons} multiSelect={setRejectReasonId} />
           </Box>
 
           <Box sx={{ alignSelf: "center", paddingY: 3 }}>
@@ -963,6 +939,7 @@ function CompanyManage() {
   const [duplicatedType, setDuplicatedType] = useState<string>("");
   const [tenantIdErr, setTenantIdErr] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [reasons, setReasons] = useState<il_item[]>([]);
   const realmOptions = [
     {
       key: "collector",
@@ -1006,6 +983,27 @@ function CompanyManage() {
       if (state.code === STATUS_CODE[503]) {
         navigate("/maintenance");
       }
+    }
+  };
+
+  const getReasonList = async () => {
+    const token = returnApiToken();
+    const result = await getReasonTenant(0, 100, token.tenantId, 1);
+    const data = result?.data;
+    if (data) {
+      let tempReasons: il_item[] = [];
+      data.content.map((item: any) => {
+        tempReasons.push({
+          id: item.reasonId,
+          name:
+            i18n.language === "zhhk"
+              ? item?.reasonNameTchi
+              : i18n.language === "zhch"
+              ? item?.reasonNameSchi
+              : item?.reasonNameEng,
+        });
+      });
+      setReasons(tempReasons);
     }
   };
 
@@ -1157,6 +1155,7 @@ function CompanyManage() {
 
   useEffect(() => {
     initCompaniesData();
+    getReasonList();
   }, [page]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1515,6 +1514,7 @@ function CompanyManage() {
           open={rejectModal}
           onClose={() => setRejectModal(false)}
           onSubmit={onRejectModal}
+          reasons={reasons}
         />
         {selectedTenanId != 0 && (
           <TenantDetails

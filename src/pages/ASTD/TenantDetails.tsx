@@ -30,11 +30,13 @@ import {
   showErrorToast,
   extractError,
   returnApiToken,
+  getFormatId,
 } from "../../utils/utils";
 import { styles } from "../../constants/styles";
 import { ImageToBase64 } from "../../utils/utils";
 import CommonTypeContainer from "../../contexts/CommonTypeContainer";
 import {
+  astdUpdateTenantStatus,
   getTenantById,
   updateTenantDetail,
   updateTenantStatus,
@@ -71,7 +73,7 @@ function ClosedTenantModal({
   reasons = [],
 }: closedTenantModalProps) {
   const { t } = useTranslation();
-  const [reasonId, setReasonId] = useState<string | null>(null);
+  const [reasonId, setReasonId] = useState<string[]>([]);
   const loginId = localStorage.getItem(localStorgeKeyName.username) || "";
 
   const handleRejectRequest = async () => {
@@ -81,9 +83,13 @@ function ClosedTenantModal({
       updatedBy: loginId,
       version: version,
     };
+    const operatorId = getFormatId(
+      localStorage.getItem(localStorgeKeyName.tenantId) ?? ""
+    );
 
-    const result = await updateTenantStatus(statData, tenantId);
+    const result = await astdUpdateTenantStatus(statData, operatorId, tenantId);
     const data = result?.data;
+
     onSubmit();
   };
 
@@ -111,7 +117,7 @@ function ClosedTenantModal({
             <Typography sx={localstyles.typo}>
               {t("tenant.detail.deactivated_reason")}
             </Typography>
-            <CustomItemList items={reasons} singleSelect={setReasonId} />
+            <CustomItemList items={reasons} multiSelect={setReasonId} />
           </Box>
 
           <Box sx={{ alignSelf: "center", paddingY: 3 }}>
@@ -176,6 +182,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     .tz("Asia/Hong_Kong")
     .format(`${dateFormat} HH:mm`)} `;
 
+  console.log(tenantDetail, "aaa");
   useEffect(() => {
     getCompanyDetail();
     getReasonList();
@@ -284,23 +291,8 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   const getReasonList = async () => {
     const token = returnApiToken();
     const result = await getReasonTenant(0, 100, token.tenantId, 1);
-    const reasonList = [
-      {
-        id: "1",
-        reasonEn: "Photo is blurry",
-        reasonSchi: '照片模糊"',
-        reasonTchi: "照片模糊",
-      },
-      {
-        id: "2",
-        reasonEn: "Business number does not match",
-        reasonSchi: "商业编号不匹配",
-        reasonTchi: "商業編號不匹配",
-      },
-    ];
     const data = result?.data;
     if (data) {
-      console.log(data, "data");
       let tempReasons: il_item[] = [];
       data.content.map((item: any) => {
         tempReasons.push({
@@ -764,8 +756,60 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
 
             <Box>
               <div className="field-tenant-footer">
-                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {footerTenant}
+                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-5">
+                  {tenantDetail?.rejectReason !== null ? (
+                    <>
+                      {i18n.language === "enus" &&
+                        `The application was rejected ${
+                          tenantDetail?.rejectedBy
+                        } at ${dayjs
+                          .utc(tenantDetail?.rejectedAt)
+                          .tz("Asia/Hong_Kong")
+                          .format(
+                            `${dateFormat} HH:mm`
+                          )} due to ${tenantDetail?.rejectReason?.flatMap(
+                          (value) => value.enus
+                        )}`}
+                      {i18n.language === "zhhk" &&
+                        `由於 ${tenantDetail?.rejectReason?.flatMap(
+                          (value) => value.zhhk
+                        )}, ${tenantDetail?.rejectedBy} 於 ${
+                          tenantDetail?.rejectedAt
+                        } 拒絕了申請。`}
+                      {i18n.language === "zhch" &&
+                        `由于 ${tenantDetail?.rejectReason?.flatMap(
+                          (value) => value.zhch
+                        )}, ${tenantDetail?.rejectedBy} 于 ${
+                          tenantDetail?.rejectedAt
+                        } 拒绝了申请。`}
+                    </>
+                  ) : (
+                    <>
+                      {i18n.language === "enus" &&
+                        `The application was rejected ${
+                          tenantDetail?.updatedBy
+                        } at ${dayjs
+                          .utc(tenantDetail?.updatedAt)
+                          .tz("Asia/Hong_Kong")
+                          .format(
+                            `${dateFormat} HH:mm`
+                          )} due to ${tenantDetail?.deactiveReason?.flatMap(
+                          (value) => value.enus
+                        )}`}
+                      {i18n.language === "zhhk" &&
+                        `由於 ${tenantDetail?.deactiveReason?.flatMap(
+                          (value) => value.zhhk
+                        )}, ${tenantDetail?.updatedBy} 於 ${
+                          tenantDetail?.updatedAt
+                        } 拒絕了申請。`}
+                      {i18n.language === "zhch" &&
+                        `由于 ${tenantDetail?.deactiveReason?.flatMap(
+                          (value) => value.zhch
+                        )}, ${tenantDetail?.updatedBy} 于 ${
+                          tenantDetail?.updatedAt
+                        } 拒绝了申请。`}
+                    </>
+                  )}
                 </div>
               </div>
             </Box>
