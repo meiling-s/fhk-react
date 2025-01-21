@@ -88,10 +88,13 @@ function CustomTimePicker({
     if (value != null) {
       if (index >= 0) {
         const TP = timePeriod[index]
-        const isValidStartTime = start ? (value.isBefore(TP.endAt) || value.isSame(TP.endAt)) : true
-        const isValidEndTime = !start ? (value.isAfter(TP.startFrom) || value.isSame(TP.startFrom)) : true
+        const isValidStartTime = start
+          ? value.isBefore(TP.endAt) || value.isSame(TP.endAt)
+          : true
+        const isValidEndTime = !start
+          ? value.isAfter(TP.startFrom) || value.isSame(TP.startFrom)
+          : true
 
-        
         // keep set time if invalid
         if (start) {
           TP.startFrom = value
@@ -113,8 +116,7 @@ function CustomTimePicker({
         //   const updatedErrorMessages = [...errorMessages]
         //   updatedErrorMessages[index] = '' // Clear the error message for this index
         //   setErrorMessages(updatedErrorMessages)
-        // } 
-        // else {
+        // } else {
         //   const errorMessage = t('form.error.startDateBehindEndDate')
         //   const updatedErrorMessages = [...errorMessages]
         //   updatedErrorMessages[index] = errorMessage
@@ -217,7 +219,7 @@ function CustomTimePicker({
 
 const localstyles = {
   timePicker: {
-    width: 72,
+    width: 84,
     borderRadius: 5,
     backgroundColor: 'white',
     '& fieldset': {

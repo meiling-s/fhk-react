@@ -104,6 +104,58 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
     case formErr.cantBeSame:
       msg = t('form.error.cantBeSame')
       break
+    case formErr.specificDateOutOfRange:
+      msg = t('form.error.specificDateOutOfRange')
+      break
+  }
+  return msg
+}
+
+export const returnErrorMsgCP = (error: string, t: (key: string) => string) => {
+  var msg = ''
+  switch (error) {
+    case formErr.empty:
+      msg = t('form.error.shouldNotBeEmpty')
+      break
+    case formErr.wrongFormat:
+      msg = t('form.error.isInWrongFormat')
+      break
+    case formErr.numberSmallThanZero:
+      msg = t('form.error.shouldNotSmallerThanZero')
+      break
+    case formErr.withInColPt_Period:
+      msg = t('form.error.withInColPt_Period')
+      break
+    case formErr.notWithInContractEffDate:
+      msg = t('form.error.isNotWithInContractEffDate')
+      break
+    case formErr.alreadyExist:
+      msg = t('form.error.alreadyExist')
+      break
+    case formErr.hasBeenUsed:
+      msg = t('form.error.hasBeenUsed')
+      break
+    case formErr.timeCantDuplicate:
+      msg = t('form.error.timeCantDuplicate')
+      break
+    case formErr.endTimeBehindStartTime:
+      msg = t('form.error.endTimeBehindStartTime')
+      break
+    case formErr.incorrectAddress:
+      msg = t('form.error.incorrectAddress')
+      break
+    case formErr.dateOutOfRange:
+      msg = t('form.error.dateOutOfRange')
+      break
+    case formErr.effectiveDateLess:
+      msg = t('form.error.effectiveDateLess')
+      break
+    case formErr.dateSpesificIsWrong:
+      msg = t('form.error.dateSpesificIsWrong')
+      break
+    case formErr.specificDateOutOfRange:
+      msg = t('form.error.specificDateOutOfRange')
+      break
   }
   return msg
 }
