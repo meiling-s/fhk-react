@@ -298,6 +298,21 @@ function CreateCollectionPoint() {
     })
   }
 
+  const checkSpesificDateInRange = () => {
+    if (colPtRoutine?.routineType !== 'specificDate') {
+      return true
+    }
+
+    const openingStart = dayjs(openingPeriod.startDate)
+    const openingEnd = dayjs(openingPeriod.endDate)
+
+    return colPtRoutine.routineContent.every((content) => {
+      const contentDate = dayjs(content.id)
+
+      return contentDate.isBetween(openingStart, openingEnd, 'day', '[]')
+    })
+  }
+
   const checkEffectiveDate = () => {
     const startDate = dayjs(openingPeriod.startDate).startOf('day')
     const endDate = dayjs(openingPeriod.endDate).endOf('day')
@@ -436,6 +451,12 @@ function CreateCollectionPoint() {
         tempV.push({
           field: 'date',
           problem: formErr.dateSpesificIsWrong,
+          type: 'error'
+        })
+      !checkSpesificDateInRange() &&
+        tempV.push({
+          field: 'date',
+          problem: formErr.specificDateOutOfRange,
           type: 'error'
         })
       !checkRecyclable() &&
