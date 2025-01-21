@@ -39,4 +39,5 @@ export type UpdateStatus = {
   status: string
   updatedBy: string
   version: number
+  reasonId?: string[]
 }
