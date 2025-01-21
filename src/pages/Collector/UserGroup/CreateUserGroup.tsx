@@ -175,6 +175,13 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     validate()
   }, [roleName, description, functions, i18n.language])
 
+  const isUserExisting = () => {
+    return (
+      groupList.some((item) => item.toLowerCase() == roleName.toLowerCase()) &&
+      trySubmited
+    )
+  }
+
   const handleSubmit = () => {
     const token = returnApiToken()
 
@@ -334,7 +341,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
                 disabled={action === 'delete'}
                 placeholder={t('userGroup.pleaseEnterName')}
                 onChange={(event) => setRoleName(event.target.value)}
-                error={checkString(roleName)}
+                error={checkString(roleName) || isUserExisting()}
               />
             </CustomField>
             <CustomField label={t('userGroup.description')} mandatory>
