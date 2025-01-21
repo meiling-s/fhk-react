@@ -120,10 +120,6 @@ function CreateCollectionPoint() {
     initType()
   }, [])
 
-  useEffect(() => {
-    console.log('routine', RoutineSelect, openingPeriod)
-  }, [RoutineSelect])
-
   const initType = async () => {
     try {
       const result = await getCommonTypes()
@@ -452,7 +448,7 @@ function CreateCollectionPoint() {
             problem: formErr.empty,
             type: 'warning'
           })
-        : !checkContractisEff(contractNo) &&
+        : checkContractisEff(contractNo) &&
           !skipValidation.includes('col.contractNo') &&
           tempV.push({
             field: 'col.contractNo',
