@@ -183,6 +183,7 @@ function CreateCollectionPoint() {
   }
 
   const checkTimePeriod = () => {
+    console.log('checkTimePeriod', colPtRoutine?.routineContent)
     return colPtRoutine?.routineContent.every(
       (item) => item.startTime.length > 0 && item.endTime.length > 0
     )
