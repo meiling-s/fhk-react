@@ -468,7 +468,7 @@ function CreateCollectionPoint() {
             problem: formErr.empty,
             type: 'warning'
           })
-        : checkContractisEff(contractNo) &&
+        : !checkContractisEff(contractNo) &&
           !skipValidation.includes('col.contractNo') &&
           tempV.push({
             field: 'col.contractNo',
@@ -589,15 +589,21 @@ function CreateCollectionPoint() {
   }
 
   const checkContractisEff = (contractNo: string) => {
-    // console.log('checkContractisEff')
     const contract = contractList.find((contract) => {
       return contract.contractNo == contractNo
     })
     var isBetween = false
     if (contract) {
+      const contractStart = dayjs(contract.frmDate)
+      const contractEnd = dayjs(contract.toDate)
+      const openingStart = dayjs(openingPeriod.startDate)
+      const openingEnd = dayjs(openingPeriod.endDate)
+
       isBetween =
-        dayjs(contract.frmDate).isBefore(openingPeriod.startDate) &&
-        dayjs(contract.toDate).isAfter(openingPeriod.endDate)
+        (contractStart.isSame(openingStart, 'day') ||
+          contractStart.isBefore(openingStart, 'day')) &&
+        (contractEnd.isSame(openingEnd, 'day') ||
+          contractEnd.isAfter(openingEnd, 'day'))
     }
     return isBetween
   }
