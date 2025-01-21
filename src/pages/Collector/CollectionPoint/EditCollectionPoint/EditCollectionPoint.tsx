@@ -61,6 +61,7 @@ import CustomItemList from '../../../../components/FormComponents/CustomItemList
 import {
   displayCreatedDate,
   extractError,
+  returnErrorMsgCP,
   showErrorToast,
   validDayjsISODate
 } from '../../../../utils/utils'
@@ -365,17 +366,23 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      colPtRoutine?.routineContent.length == 0 ||
-        (!checkTimePeriod() &&
-          tempV.push({
-            field: 'time_Period',
-            problem: formErr.empty,
-            type: 'error'
-          }))
+      colPtRoutine?.routineType == 'weekly' &&
+        colPtRoutine?.routineContent.length === 0 &&
+        tempV.push({
+          field: 'component.routine.everyWeekDay',
+          problem: formErr.empty,
+          type: 'error'
+        })
+      ;(colPtRoutine?.routineContent.length == 0 || !checkTimePeriod()) &&
+        tempV.push({
+          field: 'time_Period',
+          problem: formErr.empty,
+          type: 'error'
+        })
       !checkTimePeriodNotInvalid() &&
         tempV.push({
           field: 'time_Period',
-          problem: formErr.startDateBehindEndDate,
+          problem: formErr.endTimeBehindStartTime,
           type: 'error'
         })
 
@@ -530,53 +537,6 @@ function CreateCollectionPoint() {
     var tempSkipValid = Object.assign([], skipValidation)
     tempSkipValid.push(skip)
     setSkipValidation(tempSkipValid)
-  }
-
-  const returnErrorMsg = (error: string) => {
-    var msg = ''
-    // console.log(error)
-    switch (error) {
-      case formErr.empty:
-        msg = t('form.error.shouldNotBeEmpty')
-        break
-      case formErr.wrongFormat:
-        msg = t('form.error.isInWrongFormat')
-        break
-      case formErr.numberSmallThanZero:
-        msg = t('form.error.shouldNotSmallerThanZero')
-        break
-      case formErr.withInColPt_Period:
-        msg = t('form.error.withInColPt_Period')
-        break
-      case formErr.notWithInContractEffDate:
-        msg = t('form.error.isNotWithInContractEffDate')
-        break
-      case formErr.alreadyExist:
-        msg = t('form.error.alreadyExist')
-        break
-      case formErr.hasBeenUsed:
-        msg = t('form.error.hasBeenUsed')
-        break
-      case formErr.timeCantDuplicate:
-        msg = t('form.error.timeCantDuplicate')
-        break
-      case formErr.startDateBehindEndDate:
-        msg = t('form.error.startDateBehindEndDate')
-        break
-      case formErr.incorrectAddress:
-        msg = t('form.error.incorrectAddress')
-        break
-      case formErr.dateOutOfRange:
-        msg = t('form.error.dateOutOfRange')
-        break
-      case formErr.effectiveDateLess:
-        msg = t('form.error.effectiveDateLess')
-        break
-      case formErr.dateSpesificIsWrong:
-        msg = t('form.error.dateSpesificIsWrong')
-        break
-    }
-    return msg
   }
 
   const checkEPD = (contractNo: string) => {
@@ -1058,7 +1018,7 @@ function CreateCollectionPoint() {
                   <FormErrorMsg
                     key={index}
                     field={t(val.field)}
-                    errorMsg={returnErrorMsg(val.problem)}
+                    errorMsg={returnErrorMsgCP(val.problem, t)}
                     type={val.type}
                     setContinue={() => addSkipValidation(val.field)}
                   />

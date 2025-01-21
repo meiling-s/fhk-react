@@ -60,7 +60,11 @@ import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg
 import { localStorgeKeyName } from '../../../../constants/constant'
 import { dayjsToLocalDate, toGpsCode } from '../../../../components/Formatter'
 import CustomItemList from '../../../../components/FormComponents/CustomItemList'
-import { extractError, validDayjsISODate } from '../../../../utils/utils'
+import {
+  extractError,
+  returnErrorMsgCP,
+  validDayjsISODate
+} from '../../../../utils/utils'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
 
@@ -183,7 +187,6 @@ function CreateCollectionPoint() {
   }
 
   const checkTimePeriod = () => {
-    console.log('checkTimePeriod', colPtRoutine?.routineContent)
     return colPtRoutine?.routineContent.every(
       (item) => item.startTime.length > 0 && item.endTime.length > 0
     )
@@ -259,6 +262,21 @@ function CreateCollectionPoint() {
     return colPtRoutine.routineContent.every((content) => {
       const contentDate = dayjs(content.id)
       return contentDate.isAfter(startDate) && contentDate.isBefore(endDate)
+    })
+  }
+
+  const checkSpesificDateInRange = () => {
+    if (colPtRoutine?.routineType !== 'specificDate') {
+      return true
+    }
+
+    const openingStart = dayjs(openingPeriod.startDate)
+    const openingEnd = dayjs(openingPeriod.endDate)
+
+    return colPtRoutine.routineContent.every((content) => {
+      const contentDate = dayjs(content.id)
+
+      return contentDate.isBetween(openingStart, openingEnd, 'day', '[]')
     })
   }
 
@@ -347,6 +365,13 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
+      colPtRoutine?.routineType == 'weekly' &&
+        colPtRoutine?.routineContent.length === 0 &&
+        tempV.push({
+          field: 'component.routine.everyWeekDay',
+          problem: formErr.empty,
+          type: 'error'
+        })
       isOpeningPeriodEmpty() &&
         tempV.push({
           field: `${t('col.effFromDate')}`,
@@ -367,6 +392,12 @@ function CreateCollectionPoint() {
           problem: formErr.dateSpesificIsWrong,
           type: 'error'
         })
+      !checkSpesificDateInRange() &&
+        tempV.push({
+          field: 'date',
+          problem: formErr.specificDateOutOfRange,
+          type: 'error'
+        })
       ;(colPtRoutine?.routineContent.length == 0 || !checkTimePeriod()) &&
         tempV.push({
           field: 'time_Period',
@@ -377,7 +408,7 @@ function CreateCollectionPoint() {
       !checkTimePeriodNotInvalid() &&
         tempV.push({
           field: 'time_Period',
-          problem: formErr.startDateBehindEndDate,
+          problem: formErr.endTimeBehindStartTime,
           type: 'error'
         })
       !checkTimeNotOverlapping() &&
@@ -511,56 +542,6 @@ function CreateCollectionPoint() {
     var tempSkipValid = Object.assign([], skipValidation)
     tempSkipValid.push(skip)
     setSkipValidation(tempSkipValid)
-  }
-
-  const returnErrorMsg = (error: string) => {
-    var msg = ''
-
-    switch (error) {
-      case formErr.empty:
-        msg = t('form.error.shouldNotBeEmpty')
-        break
-      case formErr.wrongFormat:
-        msg = t('form.error.isInWrongFormat')
-        break
-      case formErr.numberSmallThanZero:
-        msg = t('form.error.shouldNotSmallerThanZero')
-        break
-      case formErr.withInColPt_Period:
-        msg = t('form.error.withInColPt_Period')
-        break
-      case formErr.notWithInContractEffDate:
-        msg = t('form.error.isNotWithInContractEffDate')
-        break
-      case formErr.alreadyExist:
-        msg = t('form.error.alreadyExist')
-        break
-      case formErr.hasBeenUsed:
-        msg = t('form.error.hasBeenUsed')
-        break
-      case formErr.exceedsMaxLength:
-        msg = t('form.error.exceedsMaxLength')
-        break
-      case formErr.timeCantDuplicate:
-        msg = t('form.error.timeCantDuplicate')
-        break
-      case formErr.startDateBehindEndDate:
-        msg = t('form.error.startDateBehindEndDate')
-        break
-      case formErr.incorrectAddress:
-        msg = t('form.error.incorrectAddress')
-        break
-      case formErr.dateOutOfRange:
-        msg = t('form.error.dateOutOfRange')
-        break
-      case formErr.effectiveDateLess:
-        msg = t('form.error.effectiveDateLess')
-        break
-      case formErr.dateSpesificIsWrong:
-        msg = t('form.error.dateSpesificIsWrong')
-        break
-    }
-    return msg
   }
 
   const checkEPD = (contractNo: string) => {
@@ -1031,7 +1012,7 @@ function CreateCollectionPoint() {
                 validation.map((val) => (
                   <FormErrorMsg
                     field={t(val.field)}
-                    errorMsg={returnErrorMsg(val.problem)}
+                    errorMsg={returnErrorMsgCP(val.problem, t)}
                     type={val.type}
                     setContinue={() => addSkipValidation(val.field)}
                   />

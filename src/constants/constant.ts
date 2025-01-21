@@ -54,6 +54,7 @@ export const formErr = {
   exceedsMaxLength: 'exceedsMaxLength',
   minMoreOneImgUploded: 'minMoreOneImgUploded',
   startDateBehindEndDate: 'startDateBehidEndDate',
+  endTimeBehindStartTime: 'endTimeBehindStartTime',
   endDateEarlyThanStartDate: 'endDateEarlyThanStartDate',
   timeCantDuplicate: 'timeCantDuplicate',
   loginIdCantContainAdmin: 'loginIdCantContainAdmin',
@@ -68,7 +69,8 @@ export const formErr = {
   dateSpesificIsWrong: 'dateSpesificIsWrong',
   effectiveDateLess: 'effectiveDateLess',
   cannotBeSame: 'cannotBeSame',
-  cantBeSame: 'cantBeSame'
+  cantBeSame: 'cantBeSame',
+  specificDateOutOfRange: 'specificDateOutOfRange'
 }
 
 export const Notiftemplate = {
@@ -103,34 +105,63 @@ export const RealmApi = {
 }
 
 export const Status = {
-  CREATED : 'CREATED',
-  CONFIRMED : "CONFIRMED",
-  REJECTED : "REJECTED"
+  CREATED: 'CREATED',
+  CONFIRMED: 'CONFIRMED',
+  REJECTED: 'REJECTED'
 }
 
 export const Languages = {
-  ENUS : 'enus',
-  ZHCH : 'zhch',
-  ZHHK : 'zhhk'
+  ENUS: 'enus',
+  ZHCH: 'zhch',
+  ZHHK: 'zhhk'
 }
 
-export type fieldNameRecycables = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard' | 'Metals';
-type ColorNameRecycables = '#EFE72F' | '#4FB5F5' | '#7ADFF1' | '#ECAB05' | '#5AE9D8'| '#FF9FB7' | '#F9B8FF' | '#C69AFF';
-export type months = 'January' | 'February' | 'March' | 'April' | 'May'| 'June' | 'Juli' | 'August'| 'September'| 'October' | 'November' | 'December';
-export type monthSequence = 0| 1 | 2| 3 | 4| 5| 6 | 7 | 8 | 9| 10 | 11;
+export type fieldNameRecycables =
+  | 'Rechargeable Batteries'
+  | 'Glass Bottles'
+  | 'Paper'
+  | 'Fluorescent Lamps and Tubes'
+  | 'Small Electrical Appliances'
+  | 'Plastics'
+  | 'Non-recyclable'
+  | 'Cardboard'
+  | 'Metals'
+type ColorNameRecycables =
+  | '#EFE72F'
+  | '#4FB5F5'
+  | '#7ADFF1'
+  | '#ECAB05'
+  | '#5AE9D8'
+  | '#FF9FB7'
+  | '#F9B8FF'
+  | '#C69AFF'
+export type months =
+  | 'January'
+  | 'February'
+  | 'March'
+  | 'April'
+  | 'May'
+  | 'June'
+  | 'Juli'
+  | 'August'
+  | 'September'
+  | 'October'
+  | 'November'
+  | 'December'
+export type monthSequence = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11
 type TypeRecycable = {
-  'RECHARGEABLE_BATTERIES'?: fieldNameRecycables;
-  'GLASS_BOTTLES'?: fieldNameRecycables;
-  'PAPER'?: fieldNameRecycables;
-  'FLUORESCENT_LAMPS_AND_TUBES'?: fieldNameRecycables;
-  'SMALL_ELETRICAL_APPLIANCES'?: fieldNameRecycables;
-  'PLASTICS'?: fieldNameRecycables;
-  'NON_RECYCLABLE'?: fieldNameRecycables;
-  'CARDBOARD'?: fieldNameRecycables;
-  'Metals'?: fieldNameRecycables;
-};
+  RECHARGEABLE_BATTERIES?: fieldNameRecycables
+  GLASS_BOTTLES?: fieldNameRecycables
+  PAPER?: fieldNameRecycables
+  FLUORESCENT_LAMPS_AND_TUBES?: fieldNameRecycables
+  SMALL_ELETRICAL_APPLIANCES?: fieldNameRecycables
+  PLASTICS?: fieldNameRecycables
+  NON_RECYCLABLE?: fieldNameRecycables
+  CARDBOARD?: fieldNameRecycables
+  Metals?: fieldNameRecycables
+}
 
-export const TypeRecycables:TypeRecycable = {
+export const TypeRecycables: TypeRecycable = {
   RECHARGEABLE_BATTERIES: 'Rechargeable Batteries',
   GLASS_BOTTLES: 'Glass Bottles',
   PAPER: 'Paper',
@@ -142,11 +173,24 @@ export const TypeRecycables:TypeRecycable = {
   Metals: 'Metals'
 }
 
-export const indexMonths: string[] = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+export const indexMonths: string[] = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec'
+]
 
 export const MAINTENANCE_STATUS = {
-  NOT_UNDER_MAINTENANCE : 'NOT_UNDER_MAINTENANCE',
-  UNDER_MAINTENANCE : 'UNDER_MAINTENANCE'
+  NOT_UNDER_MAINTENANCE: 'NOT_UNDER_MAINTENANCE',
+  UNDER_MAINTENANCE: 'UNDER_MAINTENANCE'
 }
 
 export const STATUS_CODE = {
@@ -164,5 +208,5 @@ export const STATUS_CODE = {
   502: 502,
   503: 503,
   504: 504,
-  511: 511,
+  511: 511
 }

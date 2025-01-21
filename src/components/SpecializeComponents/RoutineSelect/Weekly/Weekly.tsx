@@ -207,7 +207,7 @@ export default function Weekly({
 
     return(
         <>
-            <CustomField label={t("component.routine.everyWeekDay")}>
+            <CustomField label={t("component.routine.everyWeekDay")} mandatory>
                 <CustomItemList
                     items={getWeekDays()}
                     multiSelect={setWeekD}

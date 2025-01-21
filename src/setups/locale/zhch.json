@@ -117,6 +117,7 @@
       "exceedsMaxLength": "不可超过一百个字符",
       "minMoreOneImgUploded": "至少需要上传2张车辆图片",
       "startDateBehindEndDate": "如果开始日期晚于截止日期，则不允许开始日期",
+      "endTimeBehindStartTime": "开始时间不得晚于结束时间",
       "endDateEarlyThanStartDate": "如果“截止日期”早于“开始日期”，则不允许截止日期",
       "loginIdCantContainAdmin": "'admin' 中不允许有单词",
       "tenatIdShouldBeSixDigit": "租户 ID 应为六位数字",
@@ -131,7 +132,8 @@
       "cannotBeSame": "不能相同",
       "shouldGreaterThanZero": "可存容量大于零",
       "cantBeSame": "不能相同",
-      "selectFirst": "请先选择，然后才能添加新的。"
+      "selectFirst": "请先选择，然后才能添加新的。",
+      "specificDateOutOfRange": "指定的日期超出范围生效起始日期"
     }
   },
   "component": {
