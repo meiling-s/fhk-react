@@ -1081,7 +1081,25 @@ const CreateProcessOrder = ({}: {}) => {
                   <TimePicker
                     value={processStartAt}
                     onChange={(value) => onChangeCreatedDate(value)}
-                    sx={{ ...localstyles.timePicker }}
+                    sx={{
+                      ...localstyles.timePicker
+                    }}
+                    slotProps={{
+                      layout: {
+                        sx: {
+                          width: '216px',
+                          '& .MuiMultiSectionDigitalClockSection-root': {
+                            flexGrow: 1,
+                            scrollbarGutter: 'stable'
+                          }
+                        }
+                      },
+                      digitalClockSectionItem: {
+                        sx: {
+                          width: 'auto'
+                        }
+                      }
+                    }}
                   />
                 </Box>
               </Box>
@@ -1322,7 +1340,7 @@ const localstyles = {
   },
 
   timePicker: {
-    width: '100%',
+    //width: '100%',
     borderRadius: 5,
     backgroundColor: 'white',
     '& fieldset': {
@@ -1333,6 +1351,15 @@ const localstyles = {
     },
     '& .MuiIconButton-edgeEnd': {
       color: getPrimaryColor()
+    },
+    '& .MuiMultiSectionDigitalClock-root': {
+      width: '100% !important' // Ensure full width for the dropdown
+    },
+    '& .MuiMultiSectionDigitalClock-column': {
+      width: '33.33% !important' // Make columns equally spaced
+    },
+    '& .MuiMultiSectionDigitalClock-item': {
+      justifyContent: 'center' // Center-align text
     }
   },
   timePeriodItem: {
