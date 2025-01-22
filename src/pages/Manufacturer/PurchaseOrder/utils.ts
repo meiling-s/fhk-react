@@ -73,9 +73,9 @@ export const ValidateSchemaCreateRecycleFormPurchaseOrder = ({
           .moreThan(0, t('pick_up_order.error.weightGreaterThanZero'))
           .required(t('pick_up_order.error.weight')),
           unitId: Yup.number()
-          .typeError(`${t("purchase_order.create.unit")} ${t('form.error.shouldNotBeEmpty')}`) // Ensures it's a valid number
-          .moreThan(0, `${t("purchase_order.create.unit")} ${t('form.error.shouldNotBeEmpty')}`) // Ensures the value is greater than 0
-          .required(`${t("purchase_order.create.unit")} ${t('form.error.shouldNotBeEmpty')}`), // Handles undefined or null values
+          .typeError(`${t("purchase_order.create.unit")} ${t('form.error.shouldNotBeEmpty')}`) 
+          .moreThan(0, `${t("purchase_order.create.unit")} ${t('form.error.shouldNotBeEmpty')}`)
+          .required(`${t("purchase_order.create.unit")} ${t('form.error.shouldNotBeEmpty')}`),
       })
     } else {
       return Yup.object().shape({
@@ -128,9 +128,9 @@ export const ValidateSchemaCreateRecycleFormPurchaseOrder = ({
           .moreThan(0, t('pick_up_order.error.weightGreaterThanZero'))
           .required(t('pick_up_order.error.weight')),
           unitId: Yup.number()
-          .typeError(t('pick_up_order.error.weight')) // Ensures it's a valid number
-          .moreThan(0, t('pick_up_order.error.weight')) // Ensures the value is greater than 0
-          .required(t('pick_up_order.error.weight')), // Handles undefined or null values
+          .typeError(`${t("purchase_order.create.unit")} ${t('form.error.shouldNotBeEmpty')}`)
+          .moreThan(0, `${t("purchase_order.create.unit")} ${t('form.error.shouldNotBeEmpty')}`)
+          .required(`${t("purchase_order.create.unit")} ${t('form.error.shouldNotBeEmpty')}`),
       })
     }
 

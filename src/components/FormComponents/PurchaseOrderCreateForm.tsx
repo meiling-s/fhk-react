@@ -532,23 +532,23 @@ const PurchaseOrderCreateForm = ({
   const onChangePaymentType = (value: string) => {
     if (!value) {
       formik.setFieldValue("paymentType", "");
-      setErrors((prev: any) => {
+      setErrorsField((prev) => {
         return {
           ...prev,
-          ["paymentType"]: {
+          paymentType: {
+            ...prev.paymentType,
             status: true,
-            required: true,
           },
         };
       });
       return;
     } else {
-      setErrors((prev: any) => {
+      setErrorsField((prev) => {
         return {
           ...prev,
-          ["paymentType"]: {
+          paymentType: {
+            ...prev.paymentType,
             status: false,
-            required: true,
           },
         };
       });
@@ -839,8 +839,9 @@ const PurchaseOrderCreateForm = ({
     const filteredRecycData = state.filter(
       (value) => value.status !== "DELETED"
     );
+    console.log(filteredRecycData, "aa");
     if (filteredRecycData.length > 0) {
-      setErrors((prev) => {
+      setErrorsField((prev) => {
         return {
           ...prev,
           details: {
@@ -1048,7 +1049,7 @@ const PurchaseOrderCreateForm = ({
                       if (value) {
                         setCurrentPayment(value);
                         formik.setFieldValue("paymentType", value.value);
-                        // onChangePaymentType(value?.value)
+                        onChangePaymentType(value?.value);
                       }
                     }}
                     renderInput={(params) => (
