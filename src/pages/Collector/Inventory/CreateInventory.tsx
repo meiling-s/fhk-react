@@ -264,7 +264,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
               matchProductSubType?.productAddonType &&
               matchProductSubType.productAddonType.length > 0;
 
-            if (hasAddonType && productAddonRemark && !productAddon) {
+            if (hasAddonType && !productAddon) {
               tempV.push({
                 field: t("pick_up_order.error.productAddon"),
                 problem: formErr.empty,
