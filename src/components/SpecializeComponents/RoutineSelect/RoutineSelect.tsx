@@ -51,7 +51,7 @@ export default function RoutineSelect({
       routineType: rType,
       routineContent: rContent,
     };
-    console.log(colPtRoutine);
+    console.log("returnColPtRoutine",colPtRoutine);
     return colPtRoutine;
   };
 

@@ -448,7 +448,10 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 disabled={action === 'delete' || action === 'edit'}
                 placeholder={t('userAccount.pleaseEnterName')}
                 onChange={(event) => setLoginId(event.target.value.trim())}
-                error={checkString(loginId)}
+                error={
+                  checkString(loginId) ||
+                  (userList?.includes(loginId) && trySubmited)
+                }
               />
             </CustomField>
             {action == 'add' && (
