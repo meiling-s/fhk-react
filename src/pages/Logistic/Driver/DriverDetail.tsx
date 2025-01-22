@@ -319,14 +319,6 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
 
   const mappingData = useCallback(() => {
     if (driver !== null && driver) {
-      setFormData({
-        loginId: driver.loginId,
-        driverNameTchi: driver.driverNameTchi,
-        driverNameEng: driver.driverNameEng,
-        driverNameSchi: driver.driverNameSchi,
-        licenseNo: driver.licenseNo,
-        contactNo: driver.contactNo,
-      });
       if (driver.driverDetail.length > 0) {
         setDriverDetailList([...driver.driverDetail]);
       }
@@ -347,6 +339,16 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
       });
 
       setPictures(imageList);
+
+      setFormData({
+        loginId: driver.loginId,
+        driverNameTchi: driver.driverNameTchi,
+        driverNameEng: driver.driverNameEng,
+        driverNameSchi: driver.driverNameSchi,
+        licenseNo: driver.licenseNo,
+        contactNo: driver.contactNo,
+        photo: imageList,
+      });
     }
   }, [driver]);
 
