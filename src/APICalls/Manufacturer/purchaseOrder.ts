@@ -6,7 +6,8 @@ import {
   GET_ALL_REASON_MANUFACTURER,
   CREATE_PICK_UP_ORDER,
   GET_MANULIST,
-  GET_CUSTOMERLIST
+  GET_CUSTOMERLIST,
+  SEARCH_TENANT_BY_COMPANY_NAME
 } from '../../constants/requests'
 
 import { getBaseUrl, returnApiToken } from '../../utils/utils'
@@ -154,6 +155,18 @@ export const getCustomerList = async () => {
       ...GET_CUSTOMERLIST(auth.realmApiRoute, auth.decodeKeycloack)
     })
     return response
+  } catch (error) {
+    return null
+  }
+}
+
+export const getCompanyData = async (companyName: string) => {
+  try {
+    const response = await axiosInstance({
+      baseURL: window.baseURL.account,
+          ...SEARCH_TENANT_BY_COMPANY_NAME(companyName),
+      });
+      return response
   } catch (error) {
     return null
   }
