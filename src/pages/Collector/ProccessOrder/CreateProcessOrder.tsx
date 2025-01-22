@@ -191,7 +191,7 @@ const CreateProcessOrder = ({}: {}) => {
   const [selectedDetailPOR, setSelectedPOR] = useState<
     CreateProcessOrderDetailPairs[] | null
   >(null)
-  const [editedIndex, setEditedIndex] =useState<number | null>(null)
+  const [editedIndex, setEditedIndex] = useState<number | null>(null)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [openDelete, setOpenDelete] = useState<boolean>(false)
@@ -476,12 +476,6 @@ const CreateProcessOrder = ({}: {}) => {
     return plannedEndAt
   }
 
-  // const updateDateAfterEdit = async (
-  //   dataSet: CreateProcessOrderDetailPairs[]
-  // ) => {
-  //   console.log('data', dataSet)
-  // }
-
   const updateDateOnProcessDetail = async (
     dataSet: CreateProcessOrderDetailPairs[]
   ) => {
@@ -564,7 +558,7 @@ const CreateProcessOrder = ({}: {}) => {
   ) => {
     let rawProcessOrderInDtl: ProcessInDtlData[] = []
     let rowData: rowPorDtl[] = []
-    console.log('updated source', updatedSource)
+    //console.log('updated source', updatedSource)
 
     let processNameFirst: string = ''
     updatedSource.map((item: CreateProcessOrderDetailPairs) => {
@@ -672,7 +666,7 @@ const CreateProcessOrder = ({}: {}) => {
     })
 
     setProcessInDetailData(rawProcessOrderInDtl)
-    console.log('setProcessInDetailData', rawProcessOrderInDtl)
+    //console.log('setProcessInDetailData', rawProcessOrderInDtl)
   }
 
   const onSaveProcessDtl = (
@@ -1018,6 +1012,25 @@ const CreateProcessOrder = ({}: {}) => {
     )
   }
 
+  const getProcessName = (id: string) => {
+    const processType = processTypeListData?.find(
+      (type) => type.processTypeId === id
+    )
+
+    let name = ''
+
+    if (processType) {
+      name =
+        i18n.language === 'zhhk'
+          ? processType.processTypeNameTchi
+          : i18n.language === 'zhch'
+          ? processType.processTypeNameSchi
+          : processType.processTypeNameEng
+    }
+
+    return name
+  }
+
   const onChangeCreatedDate = (value: dayjs.Dayjs | null) => {
     if (value) {
       if (value?.isValid()) {
@@ -1133,7 +1146,7 @@ const CreateProcessOrder = ({}: {}) => {
                 >
                   <div className="flex justify-between items-center">
                     <Typography variant="h6" gutterBottom>
-                      {item.name}
+                      {getProcessName(item.id)}
                     </Typography>
 
                     <div
