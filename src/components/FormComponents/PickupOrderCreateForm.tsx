@@ -845,7 +845,7 @@ const PickupOrderCreateForm = ({
                         : selectedPo?.picoType === "ROUTINE"
                         ? true
                         : true
-                      : false
+                      : true
                   }
                   setState={(value) => {
                     formik.setFieldValue(
