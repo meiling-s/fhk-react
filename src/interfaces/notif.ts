@@ -66,10 +66,19 @@ export interface Option {
 }
 
 export type Broadcast = {
-  title: string
-  content: string
-  effFromDate: string
-  effToDate: string
+  title_schi?: string
+  title_tchi?: string
+  title_enus?: string
+  content_schi?: string
+  content_tchi?: string
+  content_enus?: string
+  effFromDate?: string
+  effToDate?: string
+}
+
+export type BroadcastMessage = {
+  title?: string
+  content?: string
 }
 
 export type queryNotiTemplate = {
