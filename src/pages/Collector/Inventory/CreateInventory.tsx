@@ -853,9 +853,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
           <Grid item>
             {/* image field */}
             <Box key={t('report.picture')}>
-              <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
-                {t('report.picture')}
-              </Typography>
+              <CustomField label={t('report.picture')} mandatory></CustomField>
               <ImageUploading
                 multiple
                 value={pictures}
