@@ -4,10 +4,10 @@ import { Broadcast, Notif } from '../interfaces/notif'
 import {
   getNumUnreadNotif,
   getNotifByUserId,
-  updateFlagNotif,
   getBroadcastMessage
 } from '../APICalls/notify'
-import { returnApiToken } from '../utils/utils'
+import { getSelectedLanguange, returnApiToken } from '../utils/utils'
+import { Languages } from '../constants/constant'
 import dayjs from 'dayjs'
 
 const Notification = () => {
@@ -81,28 +81,40 @@ const Notification = () => {
   const initBroadcastMessage = async () => {
     const result = await getBroadcastMessage()
       if (result?.length >= 1) {
-        let broadcast: Broadcast | null = null
+        let broadcast: Broadcast = {}
         for(let message of result){
           const isBefore = dayjs().isBefore(message.effToDate, 'day');
           const isSame = dayjs().isSame(message.effToDate, 'day');
           if(isSame || isBefore){
-            broadcast = {
-              title: message?.title,
-              content: message.content,
-              effFromDate: message.effFromDate,
-              effToDate: message.effToDate
+            broadcast.effFromDate = message.effFromDate;
+            broadcast.effToDate = message.effToDate;
+
+            switch (message.lang) {
+              case getSelectedLanguange(Languages.ZHCH):
+                broadcast.title_schi = message.title;
+                broadcast.content_schi = message.content;
+                break;
+              case getSelectedLanguange(Languages.ZHHK):
+                broadcast.title_tchi = message.title;
+                broadcast.content_tchi = message.content;
+                break;
+              default:
+                broadcast.title_enus = message.title;
+                broadcast.content_enus = message.content;
+                break;
             }
+          }
         }
-          setBroadcast(prev => {
-            if(prev?.content === broadcast?.content && prev?.title === broadcast?.title){
-              return prev
-            } else {
-              setShowBroadcast(true)
-              setMarginTop('30px')
-              return broadcast
-            }
-          })
-        }
+        
+        setBroadcast(prev => {
+          if(prev?.title_enus == broadcast?.title_enus && prev?.content_enus == broadcast?.content_enus){
+            return prev
+          } else {
+            setShowBroadcast(true)
+            setMarginTop('30px')
+            return broadcast
+          }
+        })
       }  else {
         setShowBroadcast(false)
         setMarginTop('0px')
