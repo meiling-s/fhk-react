@@ -1,8 +1,6 @@
 import { LOGIN } from '../constants/requests'
 import axiosInstance from '../constants/axiosInstance'
 import { LoginItem } from '../interfaces/account'
-import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
-import { STATUS_CODE } from '../constants/constant'
 
 
 
@@ -20,7 +18,6 @@ export const login = async (item: LoginItem) => {
         password: item.password
       }
     })
-    console.log(response, 'response')
     // console.log('Login user Success:', JSON.stringify(response.data))
     if (response?.status === 200) {
       return {

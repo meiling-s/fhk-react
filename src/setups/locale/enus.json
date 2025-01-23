@@ -1331,7 +1331,7 @@
       "is_required": "is required",
       "required_field": "this field is required",
       "senderNameEqualToReceiverName": "Sender name can not equal to receiver name",
-      "unit": "unit"
+      "unit": "Unit"
     }
   },
   "purchase_order_customer": {
