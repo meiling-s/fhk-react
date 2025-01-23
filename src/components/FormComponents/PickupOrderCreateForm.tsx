@@ -998,39 +998,7 @@ const PickupOrderCreateForm = ({
                   dataTestId="astd-create-edit-pickup-order-vehicle-type-select-button-9679"
                 />
               </CustomField>
-              {/* {errorsField.vehicleTypeId.status ? (
-                <ErrorMessage message={errorsField.vehicleTypeId.message} />
-              ) : (
-                ''
-              )} */}
             </Grid>
-
-            {/* {formik.values.picoType === 'AD_HOC' && (
-              <Grid item>
-                <CustomField
-                  label={t('pick_up_order.plat_number')}
-                  mandatory={false}
-                >
-                  <CustomTextField
-                    id="platNo"
-                    placeholder={t('pick_up_order.enter_plat_number')}
-                    onChange={(event) => {
-                      formik.setFieldValue('platNo', event.target.value)
-                      changeTouchField('platNo')
-                    }}
-                    value={formik.values.platNo}
-                    sx={{ width: '400px' }}
-                    error={formik.errors.platNo && formik.touched.platNo}
-                    dataTestId="astd-create-edit-pickup-order-vehicle-plate-input-field-9795"
-                  />
-                </CustomField>
-                {errorsField.platNo.status ? (
-                  <ErrorMessage message={errorsField.platNo.message} />
-                  ) : (
-                    ''
-                  )} 
-              </Grid>
-            )} */}
             <Grid item>
               <CustomField
                 label={t("pick_up_order.contact_number")}
@@ -1040,7 +1008,6 @@ const PickupOrderCreateForm = ({
                   id="contactNo"
                   placeholder={t("pick_up_order.enter_contact_number")}
                   onChange={(event) => {
-                    // formik.handleChange(event.target.value)
                     formik.setFieldValue("contactNo", event.target.value);
                     changeTouchField("contactNo");
                   }}
