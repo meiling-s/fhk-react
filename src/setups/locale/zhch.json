@@ -748,7 +748,12 @@
     "process_out": "处理输出",
     "process_in": "处理输入",
     "pickup_order_record": "回收运单纪录",
-    "compactor": "压缩车纪录"
+    "compactor": "压缩车纪录",
+    "recycType": "回收物类别",
+    "recycSubType": "回收物次类别",
+    "productType": "产品类别",
+    "productSubType": "产品次类别",
+    "productAddonType": "产品追加类别"
   },
   "processRecord": {
     "processing": "处理中",

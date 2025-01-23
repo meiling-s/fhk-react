@@ -748,7 +748,12 @@
     "process_out": "Process Out",
     "process_in": "Process In",
     "pickup_order_record": "Pickup Order Record",
-    "compactor": "Compression Car Record"
+    "compactor": "Compression Car Record",
+    "recycType": "Recyclable Type",
+    "recycSubType": "Recyclable Subtype",
+    "productType": "Product Type",
+    "productSubType": "Product Subtype",
+    "productAddonType": "Product Addon Type"
   },
   "processRecord": {
     "processing": "Processing",
