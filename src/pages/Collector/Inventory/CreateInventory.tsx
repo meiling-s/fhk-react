@@ -196,12 +196,20 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
       if (!packagingUnitValue) {
         tempV.push({
           field: t('packaging_unit.packaging_unit'),
-          problem: formErr.empty,
+          problem: '',
           type: 'error'
         })
       }
 
       if (isRecyc) {
+        if (selectedRecycType === '') {
+          tempV.push({
+            field: t('pick_up_order.error.recycType'),
+            problem: '',
+            type: 'error'
+          })
+        }
+
         const matchingRecycType = recycType?.find(
           (recyc) => selectedRecycType === recyc.recycTypeId
         )
@@ -214,7 +222,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
           if (!selectedRecycType) {
             tempV.push({
               field: t('pick_up_order.error.recycType'),
-              problem: formErr.empty,
+              problem: '',
               type: 'error'
             })
           }
@@ -222,12 +230,20 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
           if (hasSubType && !selectedRecycSubType) {
             tempV.push({
               field: t('pick_up_order.error.recycSubType'),
-              problem: formErr.empty,
+              problem: '',
               type: 'error'
             })
           }
         }
       } else {
+        if (!productTypeId) {
+          tempV.push({
+            field: t('pick_up_order.error.productType'),
+            problem: '',
+            type: 'error'
+          })
+        }
+
         const matchingProductType = productType?.find(
           (product) => product.productTypeId === productTypeId
         )
@@ -240,7 +256,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
           if (!productTypeId) {
             tempV.push({
               field: t('pick_up_order.error.productType'),
-              problem: formErr.empty,
+              problem: '',
               type: 'error'
             })
           }
@@ -248,7 +264,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
           if (hasSubType && !productSubTypeId) {
             tempV.push({
               field: t('pick_up_order.error.productSubType'),
-              problem: formErr.empty,
+              problem: '',
               type: 'error'
             })
           }
@@ -263,10 +279,10 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
               matchProductSubType?.productAddonType &&
               matchProductSubType.productAddonType.length > 0
 
-            if (hasAddonType && productAddonRemark && !productAddon) {
+            if (hasAddonType && !productAddon) {
               tempV.push({
                 field: t('pick_up_order.error.productAddon'),
-                problem: formErr.empty,
+                problem: '',
                 type: 'error'
               })
             }
@@ -450,6 +466,11 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
     return s == ''
   }
 
+  const isRequiredSub = (currfield: string) => {
+    // const currfield = t('pick_up_order.error.recycSubType')
+    return validation.some((item) => item.field === currfield)
+  }
+
   return (
     <RightOverlayForm
       open={drawerOpen}
@@ -602,6 +623,10 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                   defaultRecycL={defaultRecyc}
                   key={selectedRecycSubType}
                   showError={selectedRecycType === '' && trySubmited && isRecyc}
+                  showErrorSubtype={
+                    isRequiredSub(t('pick_up_order.error.recycSubType')) &&
+                    trySubmited
+                  }
                 />
               </CustomField>
             ) : (
@@ -610,7 +635,6 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                 mandatory
               >
                 <ProductListSingleSelect
-                  showError={undefined}
                   label={t('pick_up_order.product_type.product')}
                   options={productType ?? []}
                   setState={(values) => handleProductChange(values)}
@@ -624,6 +648,15 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                   }}
                   defaultProduct={defaultProduct}
                   key={productTypeId}
+                  showError={productTypeId === '' && trySubmited}
+                  showErrorSubtype={
+                    isRequiredSub(t('pick_up_order.error.productSubType')) &&
+                    trySubmited
+                  }
+                  showErrorAddon={
+                    isRequiredSub(t('pick_up_order.error.productAddon')) &&
+                    trySubmited
+                  }
                 />
               </CustomField>
             )}

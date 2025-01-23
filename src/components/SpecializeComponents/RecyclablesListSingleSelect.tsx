@@ -19,6 +19,7 @@ export type itemList = {
 
 type props = {
   showError?: boolean
+  showErrorSubtype?: boolean
   defaultRecycL?: singleRecyclable
   recycL: recycType[]
   setState: (s: singleRecyclable) => void
@@ -28,6 +29,7 @@ type props = {
 
 export default function RecyclablesListSingleSelect({
   showError,
+  showErrorSubtype,
   defaultRecycL,
   recycL,
   setState,
@@ -37,17 +39,20 @@ export default function RecyclablesListSingleSelect({
   const [curRecyc, setCurRecyc] = useState<string>(' ') //Current selected recyclables
   const [recycType, setRecycType] = useState<string>('')
   const [subType, setSubType] = useState<string>('') //selected sub type
-  const [choosenRecycType, setChoosenRecycType] = useState<recycType | null>(null)
-  const { t, i18n } = useTranslation()  
+  const [choosenRecycType, setChoosenRecycType] = useState<recycType | null>(
+    null
+  )
+  const { t, i18n } = useTranslation()
 
   useEffect(() => {
     if (curRecyc !== null) {
-      const filteredRecyc = recycL.filter(value => value.recycTypeId === curRecyc) as recycType[]
+      const filteredRecyc = recycL.filter(
+        (value) => value.recycTypeId === curRecyc
+      ) as recycType[]
       if (filteredRecyc !== undefined && filteredRecyc.length > 0) {
         setChoosenRecycType(filteredRecyc[0])
       }
     }
-
   }, [curRecyc])
   useEffect(() => {
     //console.log("defaultRecycL:",defaultRecycL);
@@ -57,7 +62,7 @@ export default function RecyclablesListSingleSelect({
       setCurRecyc(defaultRecycL.recycTypeId)
     }
   }, [defaultRecycL])
-  
+
   useEffect(() => {
     setState(toSingleRecyclable())
     // console.log(toSingleRecyclable());
@@ -174,18 +179,25 @@ export default function RecyclablesListSingleSelect({
         setLastSelect={setCurRecyc}
         error={showError && recycType.length == 0}
         defaultSelected={defaultRecycL ? defaultRecycL.recycTypeId : []}
-        dataTestId='astd-create-edit-pickup-order-form-recyc-main-category-select-button-5238'
+        dataTestId="astd-create-edit-pickup-order-form-recyc-main-category-select-button-5238"
       />
       <Collapse
         sx={{ mt: 1 }}
-        in={curRecyc != ' ' && recycType.length > 0 && choosenRecycType?.recycSubType !== undefined && choosenRecycType?.recycSubType.length > 0}
+        in={
+          curRecyc != ' ' &&
+          recycType.length > 0 &&
+          choosenRecycType?.recycSubType !== undefined &&
+          choosenRecycType?.recycSubType.length > 0
+        }
         unmountOnExit
       >
         <CustomField
           label={
             curRecyc == ' '
               ? ''
-              : getNameFromRecycId(curRecyc) + ' ' + t('pick_up_order.detail.subcategory')
+              : getNameFromRecycId(curRecyc) +
+                ' ' +
+                t('pick_up_order.detail.subcategory')
           }
           key={recycType}
           mandatory={true}
@@ -195,7 +207,8 @@ export default function RecyclablesListSingleSelect({
             singleSelect={setSubType}
             defaultSelected={subType}
             itemColor={itemColor ? itemColor : null}
-            dataTestId='astd-create-edit-pickup-order-form-recyc-sub-category-select-button-1689'
+            dataTestId="astd-create-edit-pickup-order-form-recyc-sub-category-select-button-1689"
+            error={showErrorSubtype && subType === ''}
           />
         </CustomField>
       </Collapse>
