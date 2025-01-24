@@ -208,7 +208,6 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
 
   const mappingData = () => {
     if (selectedItem != null) {
-      console.log("selectedItem", selectedItem);
       const selectedValue = functionList.find(
         (el) => el.functionId === selectedItem.functionId
       );
@@ -297,11 +296,10 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       // description: t('denial_reason.description'),
       //remark: t('denial_reason.remark')
     };
+
     const filteredDenialReasons = existingDenialReason.filter(
       (item) => item.functionName === formData.functionId
     );
-
-    console.log(filteredDenialReasons, "aa");
 
     Object.keys(formData).forEach((fieldName) => {
       if (typeof formData[fieldName as keyof FormValues] !== "number") {
@@ -465,7 +463,6 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
               editData as UpdateDenialReason
             );
           }
-          console.log("result", result);
 
           if (result) {
             onSubmitData("success", t("common.editSuccessfully"));
@@ -478,7 +475,6 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       }
     } catch (error: any) {
       const { state } = extractError(error);
-      console.log("state", state);
       if (state.code === STATUS_CODE[503]) {
         navigate("/maintenance");
       } else if (state.code === STATUS_CODE[409]) {
@@ -539,7 +535,6 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     }
   };
 
-  console.log(validation, "validation");
   return (
     <div>
       <RightOverlayForm
