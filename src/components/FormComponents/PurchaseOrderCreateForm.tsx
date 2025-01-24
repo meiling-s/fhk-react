@@ -46,6 +46,7 @@ import {
 } from "../../utils/utils";
 import { customerList, manuList } from "../../interfaces/common";
 import {
+  getCompanyData,
   getCustomerList,
   getManuList,
 } from "../../APICalls/Manufacturer/purchaseOrder";
@@ -531,23 +532,23 @@ const PurchaseOrderCreateForm = ({
   const onChangePaymentType = (value: string) => {
     if (!value) {
       formik.setFieldValue("paymentType", "");
-      setErrors((prev: any) => {
+      setErrorsField((prev) => {
         return {
           ...prev,
-          ["paymentType"]: {
+          paymentType: {
+            ...prev.paymentType,
             status: true,
-            required: true,
           },
         };
       });
       return;
     } else {
-      setErrors((prev: any) => {
+      setErrorsField((prev) => {
         return {
           ...prev,
-          ["paymentType"]: {
+          paymentType: {
+            ...prev.paymentType,
             status: false,
-            required: true,
           },
         };
       });
@@ -711,6 +712,15 @@ const PurchaseOrderCreateForm = ({
     }
   };
 
+  const handleUpdateSellerTenantId = async (value: string | null) => {
+    if (value !== null) {
+      const result = await getCompanyData(value);
+      if (result?.data) {
+        formik.setFieldValue("sellerTenantId", result?.data.tenantId);
+      }
+    }
+  };
+
   const validateData = () => {
     let isValid = true;
     const filteredRecycData = state.filter(
@@ -829,8 +839,9 @@ const PurchaseOrderCreateForm = ({
     const filteredRecycData = state.filter(
       (value) => value.status !== "DELETED"
     );
+    console.log(filteredRecycData, "aa");
     if (filteredRecycData.length > 0) {
-      setErrors((prev) => {
+      setErrorsField((prev) => {
         return {
           ...prev,
           details: {
@@ -1038,7 +1049,7 @@ const PurchaseOrderCreateForm = ({
                       if (value) {
                         setCurrentPayment(value);
                         formik.setFieldValue("paymentType", value.value);
-                        // onChangePaymentType(value?.value)
+                        onChangePaymentType(value?.value);
                       }
                     }}
                     renderInput={(params) => (
@@ -1084,8 +1095,14 @@ const PurchaseOrderCreateForm = ({
                     disablePortal
                     id="senderName"
                     sx={{ width: 400 }}
-                    defaultValue={getManufacturerBasedLang(formik.values.senderName, manuList)}
-                    value={getManufacturerBasedLang(formik.values.senderName, manuList)}
+                    defaultValue={getManufacturerBasedLang(
+                      formik.values.senderName,
+                      manuList
+                    )}
+                    value={getManufacturerBasedLang(
+                      formik.values.senderName,
+                      manuList
+                    )}
                     options={
                       manuList?.map((option) => {
                         if (i18n.language === Languages.ENUS) {
@@ -1098,6 +1115,7 @@ const PurchaseOrderCreateForm = ({
                       }) ?? []
                     }
                     onChange={(event, value) => {
+                      handleUpdateSellerTenantId(value);
                       formik.setFieldValue("senderName", value);
                     }}
                     renderInput={(params) => (

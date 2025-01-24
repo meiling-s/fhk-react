@@ -480,10 +480,10 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
       action="add"
       useConfirmModal={true}
       headerProps={{
-        title: t('top_menu.add_new'),
-        subTitle: t('inventory.inventory'),
-        submitText: t('common.save'),
-        cancelText: t('common.cancel'),
+        title: t("top_menu.add_new"),
+        subTitle: t("inventory.inventory"),
+        submitText: t("common.save"),
+        cancelText: "",
         onCloseHeader: handleDrawerClose,
         onSubmit: handleSubmit
       }}
@@ -853,83 +853,84 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
           </Grid>
           <Grid item>
             {/* image field */}
-            <Box key={t('report.picture')}>
-              <CustomField label={t('report.picture')} mandatory></CustomField>
-              <ImageUploading
-                multiple
-                value={pictures}
-                onChange={(imageList, addUpdateIndex) =>
-                  onImageChange(imageList, addUpdateIndex)
-                }
-                maxNumber={imgSettings?.ImgQuantity}
-                maxFileSize={imgSettings?.ImgSize}
-                dataURLKey="data_url"
-                acceptType={['jpg', 'jpeg', 'png']}
-              >
-                {({ imageList, onImageUpload, onImageRemove, errors }) => (
-                  <Box className="box">
-                    <Card
-                      sx={{
-                        ...localstyles.cardImg,
-                        ...(trySubmited &&
-                          imageList.length === 0 &&
-                          localstyles.imgError)
-                      }}
-                    >
-                      <ButtonBase
-                        sx={localstyles.btnBase}
-                        onClick={(event) => onImageUpload()}
+            <Box key={t("report.picture")} mb={10}>
+              <CustomField label={t("report.picture")} mandatory>
+                <ImageUploading
+                  multiple
+                  value={pictures}
+                  onChange={(imageList, addUpdateIndex) =>
+                    onImageChange(imageList, addUpdateIndex)
+                  }
+                  maxNumber={imgSettings?.ImgQuantity}
+                  maxFileSize={imgSettings?.ImgSize}
+                  dataURLKey="data_url"
+                  acceptType={["jpg", "jpeg", "png"]}
+                >
+                  {({ imageList, onImageUpload, onImageRemove, errors }) => (
+                    <Box className="box">
+                      <Card
+                        sx={{
+                          ...localstyles.cardImg,
+                          ...(trySubmited &&
+                            imageList.length === 0 &&
+                            localstyles.imgError),
+                        }}
                       >
-                        <CAMERA_OUTLINE_ICON style={{ color: '#ACACAC' }} />
-                        <Typography
-                          sx={[styles.labelField, { fontWeight: 'bold' }]}
+                        <ButtonBase
+                          sx={localstyles.btnBase}
+                          onClick={(event) => onImageUpload()}
                         >
-                          {t('report.uploadPictures')}
-                        </Typography>
-                      </ButtonBase>
-                    </Card>
-                    {errors && (
-                      <div>
-                        {errors.maxFileSize && (
-                          <span style={{ color: 'red' }}>
-                            Selected file size exceeds maximum file size{' '}
-                            {imgSettings?.ImgSize / 1000000} mb
-                          </span>
-                        )}
-                      </div>
-                    )}
-                    <ImageList sx={localstyles.imagesContainer} cols={4}>
-                      {imageList.map((image, index) => (
-                        <ImageListItem
-                          key={image['file']?.name}
-                          style={{ position: 'relative', width: '100px' }}
-                        >
-                          <img
-                            style={localstyles.image}
-                            src={image['data_url']}
-                            alt={image['file']?.name}
-                            loading="lazy"
-                          />
-                          <ButtonBase
-                            onClick={(event) => {
-                              onImageRemove(index)
-                              removeImage(index)
-                            }}
-                            style={{
-                              position: 'absolute',
-                              top: '2px',
-                              right: '2px',
-                              padding: '4px'
-                            }}
+                          <CAMERA_OUTLINE_ICON style={{ color: "#ACACAC" }} />
+                          <Typography
+                            sx={[styles.labelField, { fontWeight: "bold" }]}
                           >
-                            <CancelRoundedIcon className="text-white" />
-                          </ButtonBase>
-                        </ImageListItem>
-                      ))}
-                    </ImageList>
-                  </Box>
-                )}
-              </ImageUploading>
+                            {t("report.uploadPictures")}
+                          </Typography>
+                        </ButtonBase>
+                      </Card>
+                      {errors && (
+                        <div>
+                          {errors.maxFileSize && (
+                            <span style={{ color: "red" }}>
+                              Selected file size exceeds maximum file size{" "}
+                              {imgSettings?.ImgSize / 1000000} mb
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      <ImageList sx={localstyles.imagesContainer} cols={4}>
+                        {imageList.map((image, index) => (
+                          <ImageListItem
+                            key={image["file"]?.name}
+                            style={{ position: "relative", width: "100px" }}
+                          >
+                            <img
+                              style={localstyles.image}
+                              src={image["data_url"]}
+                              alt={image["file"]?.name}
+                              loading="lazy"
+                            />
+                            <ButtonBase
+                              onClick={(event) => {
+                                onImageRemove(index);
+                                removeImage(index);
+                              }}
+                              style={{
+                                position: "absolute",
+                                top: "2px",
+                                right: "2px",
+                                padding: "4px",
+                              }}
+                            >
+                              <CancelRoundedIcon className="text-white" />
+                            </ButtonBase>
+                          </ImageListItem>
+                        ))}
+                      </ImageList>
+                    </Box>
+                  )}
+                </ImageUploading>
+              </CustomField>
             </Box>
             <Grid item sx={{ width: '100%' }}>
               {trySubmited &&

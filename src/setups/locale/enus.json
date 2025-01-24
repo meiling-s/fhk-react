@@ -117,6 +117,7 @@
       "exceedsMaxLength": "should not exceed 100 characters",
       "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded",
       "startDateBehindEndDate": "Start Date is not allowed if the Start Date is later than to Date",
+      "endTimeBehindStartTime": "Start Time is not allowed later than To Time",
       "endDateEarlyThanStartDate": "To date not allowed if To Date is earlier than Start Date",
       "loginIdCantContainAdmin": "not allowed have words in 'admin'",
       "tenatIdShouldBeSixDigit": "Tenant Id should be six digit",
@@ -131,7 +132,8 @@
       "cannotBeSame": "cannot be the same",
       "shouldGreaterThanZero": "Storage capacity should be greater than Zero",
       "cantBeSame": "cannot be the same",
-      "selectFirst": "Please select first before adding a new one."
+      "selectFirst": "Please select first before adding a new one.",
+      "specificDateOutOfRange": "Specify date(s) out of range Effective From Date"
     }
   },
   "component": {
@@ -746,7 +748,12 @@
     "process_out": "Process Out",
     "process_in": "Process In",
     "pickup_order_record": "Pickup Order Record",
-    "compactor": "Compression Car Record"
+    "compactor": "Compression Car Record",
+    "recycType": "Recyclable Type",
+    "recycSubType": "Recyclable Subtype",
+    "productType": "Product Type",
+    "productSubType": "Product Subtype",
+    "productAddonType": "Product Addon Type"
   },
   "processRecord": {
     "processing": "Processing",
@@ -1329,7 +1336,7 @@
       "is_required": "is required",
       "required_field": "this field is required",
       "senderNameEqualToReceiverName": "Sender name can not equal to receiver name",
-      "unit": "unit"
+      "unit": "Unit"
     }
   },
   "purchase_order_customer": {
