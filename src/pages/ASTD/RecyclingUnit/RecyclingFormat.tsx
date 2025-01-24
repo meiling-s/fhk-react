@@ -436,7 +436,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         }}
       >
         <Divider></Divider>
-        <Box sx={{ marginX: 2 }}>
+        <Box sx={{ marginX: 2, paddingBottom: 10 }}>
           <Box sx={{ marginY: 2 }}>
             <CustomField
               label={t("packaging_unit.traditional_chinese_name")}
@@ -564,7 +564,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
               dataTestId="astd-recyclable-form-remark-input-field-3725"
             />
           </CustomField>
-          <Grid item sx={{ width: "92%", mb: 5 }}>
+          <Grid item sx={{ width: "92%" }}>
             {trySubmited &&
               validation.map((val, index) => (
                 <FormErrorMsg
