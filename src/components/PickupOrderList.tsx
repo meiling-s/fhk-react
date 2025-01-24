@@ -1,139 +1,141 @@
-import { FunctionComponent, SyntheticEvent, useState, useEffect } from 'react'
+import { FunctionComponent, SyntheticEvent, useState, useEffect } from "react";
 
 import {
   Box,
   Divider,
   InputAdornment,
   IconButton,
-  TextField
-} from '@mui/material'
-import { SEARCH_ICON, ARRPW_FORWARD_ICON } from '../themes/icons'
-import RightOverlayForm from '../components/RightOverlayForm'
+  TextField,
+} from "@mui/material";
+import { SEARCH_ICON, ARRPW_FORWARD_ICON } from "../themes/icons";
+import RightOverlayForm from "../components/RightOverlayForm";
 import {
   PickupOrder,
   PickupOrderDetail,
-  PicoRefrenceList
-} from '../interfaces/pickupOrder'
-import { useTranslation } from 'react-i18next'
-import CustomField from './FormComponents/CustomField'
-import CustomAutoComplete from './FormComponents/CustomAutoComplete'
-import { useContainer } from 'unstated-next'
-import { getAllPickUpOrder } from '../APICalls/Collector/pickupOrder/pickupOrder'
-import { queryPickupOrder } from '../interfaces/pickupOrder'
-import { localStorgeKeyName } from '../constants/constant'
-import { getAllLogisticsPickUpOrder } from '../APICalls/Collector/pickupOrder/pickupOrder'
+  PicoRefrenceList,
+} from "../interfaces/pickupOrder";
+import { useTranslation } from "react-i18next";
+import CustomField from "./FormComponents/CustomField";
+import CustomAutoComplete from "./FormComponents/CustomAutoComplete";
+import { useContainer } from "unstated-next";
+import { getAllPickUpOrder } from "../APICalls/Collector/pickupOrder/pickupOrder";
+import { queryPickupOrder } from "../interfaces/pickupOrder";
+import { localStorgeKeyName } from "../constants/constant";
+import { getAllLogisticsPickUpOrder } from "../APICalls/Collector/pickupOrder/pickupOrder";
 interface AddWarehouseProps {
-  drawerOpen: boolean
-  handleDrawerClose: () => void
+  drawerOpen: boolean;
+  handleDrawerClose: () => void;
   selectPicoDetail?: (
     pickupOrderDetail: PickupOrderDetail[],
     picoId: string
-  ) => void
-  picoId?: string
+  ) => void;
+  picoId?: string;
 }
 
 const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   drawerOpen,
   handleDrawerClose,
   selectPicoDetail,
-  picoId
+  picoId,
 }) => {
-
-  const { t } = useTranslation()
-  const [picoList, setPicoList] = useState<PicoRefrenceList[]>([])
-  const [filteredPico, setFilteredPico] = useState<PicoRefrenceList[]>([])
-  const [pickupOrder, setPickupOrder] = useState<PickupOrder[]>()
+  const { t } = useTranslation();
+  const [picoList, setPicoList] = useState<PicoRefrenceList[]>([]);
+  const [filteredPico, setFilteredPico] = useState<PicoRefrenceList[]>([]);
+  const [pickupOrder, setPickupOrder] = useState<PickupOrder[]>();
   const [query, setQuery] = useState<queryPickupOrder>({
-    picoId: '',
-    effFromDate: '',
-    effToDate: '',
-    logisticName: '',
-    recycType: '',
-    senderName: '',
-    status: null
-  })
-  const role = localStorage.getItem(localStorgeKeyName.role)
-  const [selectedPico, setSelectedPico] = useState<string>('')
-  const [searchInput, setSearchInput] = useState<string>('')
+    picoId: "",
+    effFromDate: "",
+    effToDate: "",
+    logisticName: "",
+    recycType: "",
+    senderName: "",
+    status: null,
+  });
+  const role = localStorage.getItem(localStorgeKeyName.role);
+  const [selectedPico, setSelectedPico] = useState<string>("");
+  const [searchInput, setSearchInput] = useState<string>("");
 
   const initPickupOrderRequest = async () => {
-    let result = null
-    if (role !== 'collectoradmin') {
-      result = await getAllLogisticsPickUpOrder(0, 1000, query)
+    let result = null;
+    if (role !== "collectoradmin") {
+      result = await getAllLogisticsPickUpOrder(0, 1000, query);
     } else {
-      result = await getAllPickUpOrder(0, 1000, query)
+      result = await getAllPickUpOrder(0, 1000, query);
     }
-    const data = result?.data.content
-    
+    const data = result?.data.content;
+
     if (data && data.length > 0) {
-      setPickupOrder(data)
-      assignData(data)
+      setPickupOrder(data);
+      assignData(data);
     }
-  }
+  };
 
   const assignData = (newData?: PickupOrder[]) => {
-    const newList:any =(newData || pickupOrder)?.flatMap((item) =>
-          item?.pickupOrderDetail.map((detailPico) => ({
-            type: item.picoType,
-            picoId: item.picoId,
-            status: item.status,
-            effFrmDate: item.effFrmDate,
-            effToDate: item.effToDate,
-            routine: `${item.routineType}, ${item.routine.join(', ')}`,
-            senderName: detailPico.senderName,
-            receiver: detailPico.receiverName,
-            pickupOrderDetail: detailPico
-          }))
-        )
-        
-    const picoDetailList = newList?.filter((picoDetail:any) => picoId ? (picoDetail.picoId !== picoId) : true)
+    const newList: any = (newData || pickupOrder)?.flatMap((item) =>
+      item?.pickupOrderDetail.map((detailPico) => ({
+        type: item.picoType,
+        picoId: item.picoId,
+        status: item.status,
+        effFrmDate: item.effFrmDate,
+        effToDate: item.effToDate,
+        routine: `${item.routineType}, ${item.routine.join(", ")}`,
+        senderName: detailPico.senderName,
+        receiver: detailPico.receiverName,
+        pickupOrderDetail: detailPico,
+      }))
+    );
 
-    const picoDetailListDistinguished = 
-      picoDetailList?.filter((value: any, index: any, self: any[]) => 
-        self.map((x: any) => x.picoId).indexOf(value.picoId) === index)
-    
-    setPicoList(picoDetailListDistinguished)
-    setFilteredPico(picoDetailListDistinguished)
-  }
+    const picoDetailList = newList?.filter((picoDetail: any) =>
+      picoId ? picoDetail.picoId !== picoId : true
+    );
 
-  useEffect(() => {
-    initPickupOrderRequest()
-  }, [])
+    const picoDetailListDistinguished = picoDetailList?.filter(
+      (value: any, index: any, self: any[]) =>
+        self.map((x: any) => x.picoId).indexOf(value.picoId) === index
+    );
 
-  useEffect(() => {
-    assignData()
-  }, [drawerOpen, searchInput === ''])
+    setPicoList(picoDetailListDistinguished);
+    setFilteredPico(picoDetailListDistinguished);
+  };
 
   useEffect(() => {
-    handleSearch(searchInput)
-  }, [searchInput])
+    initPickupOrderRequest();
+  }, []);
 
-  const handleSelectedPicoId = (
-    picoId: string
-  ) => {
-    const pickupOrderDetails = pickupOrder?.find((value: PickupOrder) => value?.picoId === picoId)?.pickupOrderDetail
+  useEffect(() => {
+    assignData();
+  }, [drawerOpen, searchInput === ""]);
+
+  useEffect(() => {
+    handleSearch(searchInput);
+  }, [searchInput]);
+
+  const handleSelectedPicoId = (picoId: string) => {
+    const pickupOrderDetails = pickupOrder?.find(
+      (value: PickupOrder) => value?.picoId === picoId
+    )?.pickupOrderDetail;
     if (selectPicoDetail) {
-      selectPicoDetail(pickupOrderDetails || [], picoId)
+      selectPicoDetail(pickupOrderDetails || [], picoId);
     }
-  }
+  };
 
   const handleSearch = async (searchWord: string) => {
-    console.log('searchWord', searchWord)
+    console.log("searchWord", searchWord);
 
-    if (searchWord !== '') {
+    if (searchWord !== "") {
       const updatedQuery = {
         ...query,
-        senderName: searchWord
-      }
+        senderName: searchWord,
+      };
 
-      let result = null
-      if (role !== 'collectoradmin') {
-        result = await getAllLogisticsPickUpOrder(0, 1000, updatedQuery)
+      let result = null;
+      if (role !== "collectoradmin") {
+        result = await getAllLogisticsPickUpOrder(0, 1000, updatedQuery);
       } else {
-        result = await getAllPickUpOrder(0, 1000, updatedQuery)
+        result = await getAllPickUpOrder(0, 1000, updatedQuery);
       }
 
-      const data = result?.data.content
+      const data = result?.data.content;
       if (data && data.length > 0) {
         const picoDetailList =
           data.flatMap((item: any) =>
@@ -151,28 +153,28 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                 status: detailPico.status,
                 effFrmDate: item.effFrmDate,
                 effToDate: item.effToDate,
-                routine: `${item.routineType}, ${item.routine.join(', ')}`,
+                routine: `${item.routineType}, ${item.routine.join(", ")}`,
                 senderName: detailPico.senderName,
                 receiver: detailPico.receiverName,
-                pickupOrderDetail: detailPico
+                pickupOrderDetail: detailPico,
               }))
-          ) ?? []
+          ) ?? [];
 
-        setFilteredPico(picoDetailList)
+        setFilteredPico(picoDetailList);
       } else {
-        setFilteredPico([])
+        setFilteredPico([]);
       }
     } else {
-      setFilteredPico(picoList)
-      setSelectedPico('')
+      setFilteredPico(picoList);
+      setSelectedPico("");
     }
-  }
+  };
 
   const handleCompositionEnd = (event: SyntheticEvent) => {
-    const target = event.target as HTMLInputElement
-    setSearchInput(target.value)
-    handleSearch(target.value)
-  }
+    const target = event.target as HTMLInputElement;
+    setSearchInput(target.value);
+    handleSearch(target.value);
+  };
 
   return (
     <>
@@ -180,12 +182,12 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
         <RightOverlayForm
           open={drawerOpen}
           onClose={handleDrawerClose}
-          anchor={'right'}
+          anchor={"right"}
           action="none"
           headerProps={{
-            title: t('pick_up_order.select_po'),
-            subTitle: '',
-            onCloseHeader: handleDrawerClose
+            title: t("pick_up_order.select_po"),
+            subTitle: "",
+            onCloseHeader: handleDrawerClose,
           }}
         >
           <Divider />
@@ -194,51 +196,52 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
               <Box>
                 <div className="filter-section  mb-6">
                   <CustomField
-                    label={t('pick_up_order.choose_logistic')}
+                    label={t("pick_up_order.choose_logistic")}
                     mandatory
                   >
                     <CustomAutoComplete
-                      placeholder={t('pick_up_order.enter_company_name')}
+                      placeholder={t("pick_up_order.enter_company_name")}
                       option={
                         Array.from(
                           new Set(
                             filteredPico
-                              ?.filter((item) => item.status === 'OUTSTANDING')
+                              ?.filter((item) => item.status === "OUTSTANDING")
                               .map((item) => item.senderName)
                           )
                         ) ?? []
                       }
-                      sx={{ width: '100%' }}
+                      sx={{ width: "100%" }}
                       onChange={(
                         _: SyntheticEvent,
                         newValue: string | null
                       ) => {
                         // handleSearch(newValue || '')
-                        setSearchInput(newValue || '')
-                        setSelectedPico(newValue || '')
+                        setSearchInput(newValue || "");
+                        setSelectedPico(newValue || "");
                       }}
                       onCompositionEnd={handleCompositionEnd}
                       onInputChange={(event: any, newInputValue: string) => {
-                        setSearchInput(newInputValue)
-                        setSelectedPico(event.target.value)
+                        setSearchInput(newInputValue);
+                        setSelectedPico(event.target.value);
                       }}
                       value={selectedPico}
                       inputValue={selectedPico}
-                      dataTestId='astd-create-edit-pickup-order-related-po-form-choose-logistic-2149'
+                      dataTestId="astd-create-edit-pickup-order-related-po-form-choose-logistic-2149"
                     />
                   </CustomField>
                 </div>
                 <Box>
-                  {filteredPico.map((item, index) =>
-                    item.status === 'OUTSTANDING' ? (
+                  {filteredPico?.map((item, index) =>
+                    item.status === "OUTSTANDING" ? (
                       <div
                         key={index}
                         onClick={() => {
-                          handleSelectedPicoId(
-                            item.picoId
-                          )
+                          handleSelectedPicoId(item.picoId);
                         }}
-                        data-testid={'astd-create-edit-pickup-order-related-po-form-choose-po-9526' + index}
+                        data-testid={
+                          "astd-create-edit-pickup-order-related-po-form-choose-po-9526" +
+                          index
+                        }
                         className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4 w-[450px]"
                       >
                         <div className="font-bold text-mini mb-2">
@@ -255,7 +258,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                             {item.effFrmDate}
                           </div>
                           <div className="text-smi text-[#717171]">
-                            {t('pick_up_order.to')}
+                            {t("pick_up_order.to")}
                           </div>
                           <div className="text-smi text-[#717171]">
                             {item.effToDate}
@@ -276,36 +279,36 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
         </RightOverlayForm>
       </div>
     </>
-  )
-}
+  );
+};
 
 let styles = {
   typo: {
-    color: 'grey',
-    fontSize: 14
+    color: "grey",
+    fontSize: 14,
   },
   inputState: {
     mt: 3,
-    width: '100%',
+    width: "100%",
 
-    borderRadius: '10px',
-    bgcolor: 'white',
-    '& .MuiOutlinedInput-root': {
-      borderRadius: '10px',
-      '& fieldset': {
-        borderColor: '#79CA25'
+    borderRadius: "10px",
+    bgcolor: "white",
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px",
+      "& fieldset": {
+        borderColor: "#79CA25",
       },
-      '&:hover fieldset': {
-        borderColor: '#79CA25'
+      "&:hover fieldset": {
+        borderColor: "#79CA25",
       },
-      '&.Mui-focused fieldset': {
-        borderColor: '#79CA25'
+      "&.Mui-focused fieldset": {
+        borderColor: "#79CA25",
       },
-      '& label.Mui-focused': {
-        color: '#79CA25'
-      }
-    }
-  }
-}
+      "& label.Mui-focused": {
+        color: "#79CA25",
+      },
+    },
+  },
+};
 
-export default PickupOrderList
+export default PickupOrderList;
