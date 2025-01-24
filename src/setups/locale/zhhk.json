@@ -467,7 +467,10 @@
       "contract_number": "合約編號",
       "enter_contract": "請輸入編號",
       "period": "時期",
-      "period_should_not_empty": "經期日期"
+      "period_should_not_empty": "經期日期",
+      "daily" : "每天",
+      "weekly": "每星期",
+      "specificDate": "指定日期"
     },
     "adhoc": {
       "reason_get_off": "下單原因",

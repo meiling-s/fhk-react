@@ -468,7 +468,10 @@
       "contract_number": "合约编号",
       "enter_contract": "请输入编号",
       "period": "时期",
-      "period_should_not_empty": "期间日期"
+      "period_should_not_empty": "期间日期",
+      "daily" : "每天",
+      "weekly": "每星期",
+      "specificDate": "指定日期"
     },
     "adhoc": {
       "reason_get_off": "下单原因",

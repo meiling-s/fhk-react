@@ -92,9 +92,10 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
 
     const picoDetailListDistinguished = picoDetailList?.filter(
       (value: any, index: any, self: any[]) =>
+        value.status === 'OUTSTANDING' &&
         self.map((x: any) => x.picoId).indexOf(value.picoId) === index
     )
-
+    console.log('picoDetailListDistinguished', picoDetailListDistinguished)
     setPicoList(picoDetailListDistinguished)
     setFilteredPico(picoDetailListDistinguished)
   }
@@ -179,6 +180,27 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
     handleSearch(target.value)
   }
 
+  const getPicoType = (type: string) => {
+    let typeLabel = ''
+    typeLabel =
+      type === 'ROUTINE'
+        ? t('pick_up_order.regular_shipping')
+        : t('pick_up_order.one-transport')
+
+    return typeLabel
+  }
+
+  const getRoutineLabel = (routine: string) => {
+    let routineLabel = ''
+    routineLabel =
+      routine === 'daily'
+        ? t('pick_up_order.routine.daily')
+        : routine.includes('specificDate')
+        ? t('pick_up_order.routine.specificDate')
+        : t('pick_up_order.routine.weekly')
+    return routineLabel
+  }
+
   return (
     <>
       <div>
@@ -248,14 +270,16 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                         className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4 w-[450px]"
                       >
                         <div className="font-bold text-mini mb-2">
-                          {item.type}
+                          {getPicoType(item.type)}
                         </div>
                         <div className="text-smi mb-2 text-[#717171]">
                           {item.picoId}
                         </div>
                         <div className="date-type mb-2 flex items-center gap-2">
-                          <div className="text-smi bg-green-200 text-green-600 px-2 py-3 rounded-[50%]">
-                            {item.status}
+                          <div className="text-smi bg-green-200 text-green-600 px-2 py-3 rounded-[8px]">
+                            {item.status === 'OUTSTANDING'
+                              ? t('status.outstanding').toLocaleUpperCase()
+                              : ''}
                           </div>
                           <div className="text-smi text-[#717171]">
                             {item.effFrmDate}
@@ -267,7 +291,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                             {item.effToDate}
                           </div>
                           <div className="text-smi text-[#717171]">
-                            {item.routine}
+                            {getRoutineLabel(item.routine)}
                           </div>
                         </div>
                       </div>
