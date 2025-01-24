@@ -424,6 +424,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
   }
 
   const handleRecycChange = (values: any) => {
+    console.log('handleRecycChange', values)
     if (values && values.recycTypeId) {
       const newDefaultRecyc: singleRecyclable = {
         recycTypeId: values.recycTypeId,
@@ -432,7 +433,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
 
       setSelectedRecycType(values.recycTypeId)
 
-      if (values.recycSubTypeId) {
+      if (values.recycSubTypeId != '') {
         setSelectedRecycSubType(values.recycSubTypeId)
       }
 
@@ -480,10 +481,10 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
       action="add"
       useConfirmModal={true}
       headerProps={{
-        title: t("top_menu.add_new"),
-        subTitle: t("inventory.inventory"),
-        submitText: t("common.save"),
-        cancelText: "",
+        title: t('top_menu.add_new'),
+        subTitle: t('inventory.inventory'),
+        submitText: t('common.save'),
+        cancelText: '',
         onCloseHeader: handleDrawerClose,
         onSubmit: handleSubmit
       }}
@@ -651,12 +652,14 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                   key={productTypeId}
                   showError={productTypeId === '' && trySubmited}
                   showErrorSubtype={
-                    isRequiredSub(t('pick_up_order.card_detail.sub_product_type_label')) &&
-                    trySubmited
+                    isRequiredSub(
+                      t('pick_up_order.card_detail.sub_product_type_label')
+                    ) && trySubmited
                   }
                   showErrorAddon={
-                    isRequiredSub(t('pick_up_order.card_detail.addon_product_type_label')) &&
-                    trySubmited
+                    isRequiredSub(
+                      t('pick_up_order.card_detail.addon_product_type_label')
+                    ) && trySubmited
                   }
                 />
               </CustomField>
@@ -788,7 +791,9 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
             <CustomField label={t('inventory.weight')} mandatory>
               <CustomTextField
                 id="weight"
-                placeholder={t('inventory.enterWeight')}
+                placeholder={t(
+                  'driver.vehicleMenu.vehicle_cargo_capacity_placeholder'
+                )}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   const input = event.target
                   const rawValue = input.value
@@ -853,8 +858,8 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
           </Grid>
           <Grid item>
             {/* image field */}
-            <Box key={t("report.picture")} mb={10}>
-              <CustomField label={t("report.picture")} mandatory>
+            <Box key={t('report.picture')} mb={10}>
+              <CustomField label={t('report.picture')} mandatory>
                 <ImageUploading
                   multiple
                   value={pictures}
@@ -864,7 +869,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                   maxNumber={imgSettings?.ImgQuantity}
                   maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
-                  acceptType={["jpg", "jpeg", "png"]}
+                  acceptType={['jpg', 'jpeg', 'png']}
                 >
                   {({ imageList, onImageUpload, onImageRemove, errors }) => (
                     <Box className="box">
@@ -873,26 +878,26 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                           ...localstyles.cardImg,
                           ...(trySubmited &&
                             imageList.length === 0 &&
-                            localstyles.imgError),
+                            localstyles.imgError)
                         }}
                       >
                         <ButtonBase
                           sx={localstyles.btnBase}
                           onClick={(event) => onImageUpload()}
                         >
-                          <CAMERA_OUTLINE_ICON style={{ color: "#ACACAC" }} />
+                          <CAMERA_OUTLINE_ICON style={{ color: '#ACACAC' }} />
                           <Typography
-                            sx={[styles.labelField, { fontWeight: "bold" }]}
+                            sx={[styles.labelField, { fontWeight: 'bold' }]}
                           >
-                            {t("report.uploadPictures")}
+                            {t('report.uploadPictures')}
                           </Typography>
                         </ButtonBase>
                       </Card>
                       {errors && (
                         <div>
                           {errors.maxFileSize && (
-                            <span style={{ color: "red" }}>
-                              Selected file size exceeds maximum file size{" "}
+                            <span style={{ color: 'red' }}>
+                              Selected file size exceeds maximum file size{' '}
                               {imgSettings?.ImgSize / 1000000} mb
                             </span>
                           )}
@@ -901,25 +906,25 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                       <ImageList sx={localstyles.imagesContainer} cols={4}>
                         {imageList.map((image, index) => (
                           <ImageListItem
-                            key={image["file"]?.name}
-                            style={{ position: "relative", width: "100px" }}
+                            key={image['file']?.name}
+                            style={{ position: 'relative', width: '100px' }}
                           >
                             <img
                               style={localstyles.image}
-                              src={image["data_url"]}
-                              alt={image["file"]?.name}
+                              src={image['data_url']}
+                              alt={image['file']?.name}
                               loading="lazy"
                             />
                             <ButtonBase
                               onClick={(event) => {
-                                onImageRemove(index);
-                                removeImage(index);
+                                onImageRemove(index)
+                                removeImage(index)
                               }}
                               style={{
-                                position: "absolute",
-                                top: "2px",
-                                right: "2px",
-                                padding: "4px",
+                                position: 'absolute',
+                                top: '2px',
+                                right: '2px',
+                                padding: '4px'
                               }}
                             >
                               <CancelRoundedIcon className="text-white" />
