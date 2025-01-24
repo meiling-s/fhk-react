@@ -229,18 +229,6 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           dataTestId: "logistic-vehicles-form-plate-no-err-warning-5910",
         });
       }
-      if (
-        plateListExist &&
-        action === "add" &&
-        plateListExist.includes(licensePlate)
-      ) {
-        tempV.push({
-          field: t("driver.vehicleMenu.license_plate_number"),
-          problem: formErr.alreadyExist,
-          type: "error",
-          dataTestId: "logistic-vehicles-form-plate-no-err-warning-5910",
-        });
-      }
       if (plateListExist && action === "edit" && selectedItem) {
         if (
           licensePlate !== selectedItem.plateNo &&
@@ -329,15 +317,62 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     }
   };
 
+  const checkErrorMessage = (message: string) => {
+    const tempV: formValidate[] = [];
+    if (message.includes("ImeiAlreadyExists")) {
+      const tenantId = message.split("|");
+      const IMEIErrorMessageEN = `Duplicate IMEI ID is found in the system. Please contact ASTD for details. (Error code: E-${tenantId[1]})`;
+      const IMEIErrorMessageTC = `系統找到相同的IMEI ID，請向ASTD職員查詢。(Error code: E-${tenantId[1]})`;
+      const IMEIErrorMessageCH = `系统找到相同的IMEI ID，请向ASTD职员查询。(Error code: E-${tenantId[1]})`;
+      tempV.push({
+        field: "",
+        problem:
+          i18n.language === "enus"
+            ? IMEIErrorMessageEN
+            : i18n.language === "zhhk"
+            ? IMEIErrorMessageTC
+            : IMEIErrorMessageCH,
+        type: "error",
+      });
+      setValidation(tempV);
+    } else if (message.includes("RegNumberAlreadyExists")) {
+      const tenantId = message.split("|");
+      const PlateErrorMessageEN = `Duplicate Plate No is found in the system. Please contact ASTD for details. (Error code: E-${tenantId[1]})`;
+      const PlateErrorMessageTC = `系統找到相同的車牌號碼，請向ASTD職員查詢。(Error code: E-${tenantId[1]})`;
+      const PlateErrorMessageCH = `系统找到相同车牌号码，请向ASTD职员查询。(Error code: E-${tenantId[1]})`;
+
+      tempV.push({
+        field: "",
+        problem:
+          i18n.language === "enus"
+            ? PlateErrorMessageEN
+            : i18n.language === "zhhk"
+            ? PlateErrorMessageTC
+            : PlateErrorMessageCH,
+        type: "error",
+      });
+      setValidation(tempV);
+    }
+    return null;
+  };
+
   const handleCreateVehicle = async (formData: CreateLogisticVehicle) => {
     if (validation.length === 0) {
-      const result = await createVehicles(formData);
-      if (result) {
-        onSubmitData("success", t("common.saveSuccessfully"));
-        resetData();
-        handleDrawerClose();
-      } else {
-        onSubmitData("error", t("common.saveFailed"));
+      try {
+        const result = await createVehicles(formData);
+        if (result) {
+          onSubmitData("success", t("common.saveSuccessfully"));
+          resetData();
+          handleDrawerClose();
+        }
+      } catch (error: any) {
+        const { state } = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate("/maintenance");
+        } else if (state.code === STATUS_CODE[409]) {
+          setTrySubmited(true);
+          checkErrorMessage(error.response.data.message);
+        }
       }
     } else {
       setTrySubmited(true);
@@ -661,7 +696,11 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                     <FormErrorMsg
                       key={index}
                       field={t(val.field)}
-                      errorMsg={returnErrorMsg(val.problem, t)}
+                      errorMsg={
+                        typeof val.problem === "string"
+                          ? val.problem
+                          : returnErrorMsg(val.problem, t)
+                      }
                       type={val.type}
                       dataTestId=""
                     />
