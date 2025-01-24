@@ -749,7 +749,12 @@
     "process_out": "處理輸出",
     "process_in": "處理輸入",
     "pickup_order_record": "回收運單紀錄",
-    "compactor": "壓縮車紀錄"
+    "compactor": "壓縮車紀錄",
+    "recycType": "回收物類別",
+    "recycSubType": "回收物次類別",
+    "productType": "產品類別",
+    "productSubType": "產品次類別",
+    "productAddonType": "產品追加類別"
   },
   "processRecord": {
     "processing": "處理中",

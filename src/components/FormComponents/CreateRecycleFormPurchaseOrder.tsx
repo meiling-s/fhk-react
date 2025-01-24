@@ -800,6 +800,9 @@ const CreateRecycleForm = ({
                               InputProps={{
                                 ...params.InputProps,
                               }}
+                              error={Boolean(
+                                formik.touched?.unitId && formik.errors?.unitId
+                              )}
                             />
                           )}
                           noOptionsText={t("common.noOptions")}

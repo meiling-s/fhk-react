@@ -751,7 +751,12 @@
     "process_out": "Process Out",
     "process_in": "Process In",
     "pickup_order_record": "Pickup Order Record",
-    "compactor": "Compression Car Record"
+    "compactor": "Compression Car Record",
+    "recycType": "Recyclable Type",
+    "recycSubType": "Recyclable Subtype",
+    "productType": "Product Type",
+    "productSubType": "Product Subtype",
+    "productAddonType": "Product Addon Type"
   },
   "processRecord": {
     "processing": "Processing",
@@ -1334,7 +1339,7 @@
       "is_required": "is required",
       "required_field": "this field is required",
       "senderNameEqualToReceiverName": "Sender name can not equal to receiver name",
-      "unit": "unit"
+      "unit": "Unit"
     }
   },
   "purchase_order_customer": {

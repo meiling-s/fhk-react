@@ -39,6 +39,11 @@ export const SEARCH_TENANT = (tenantId: number): AxiosRequestConfig => ({
   url: `api/v1/account/t/searching/${tenantId}`
 })
 
+export const SEARCH_TENANT_BY_COMPANY_NAME = (companyName: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/account/t/companyname/${companyName}`
+})
+
 // export const GET_TENANT_BY_TENANT_ID: AxiosRequestConfig = {
 //   method: 'get',
 //   url: 'api/v1/account/tenantInvite'
