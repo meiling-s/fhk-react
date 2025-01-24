@@ -22,6 +22,7 @@ import { getAllPickUpOrder } from '../APICalls/Collector/pickupOrder/pickupOrder
 import { queryPickupOrder } from '../interfaces/pickupOrder'
 import { localStorgeKeyName } from '../constants/constant'
 import { getAllLogisticsPickUpOrder } from '../APICalls/Collector/pickupOrder/pickupOrder'
+import i18n from 'src/setups/i18n'
 interface AddWarehouseProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
@@ -38,7 +39,6 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   selectPicoDetail,
   picoId
 }) => {
-
   const { t } = useTranslation()
   const [picoList, setPicoList] = useState<PicoRefrenceList[]>([])
   const [filteredPico, setFilteredPico] = useState<PicoRefrenceList[]>([])
@@ -64,7 +64,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
       result = await getAllPickUpOrder(0, 1000, query)
     }
     const data = result?.data.content
-    
+
     if (data && data.length > 0) {
       setPickupOrder(data)
       assignData(data)
@@ -72,54 +72,59 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   }
 
   const assignData = (newData?: PickupOrder[]) => {
-    const newList:any =(newData || pickupOrder)?.flatMap((item) =>
-          item?.pickupOrderDetail.map((detailPico) => ({
-            type: item.picoType,
-            picoId: item.picoId,
-            status: item.status,
-            effFrmDate: item.effFrmDate,
-            effToDate: item.effToDate,
-            routine: `${item.routineType}, ${item.routine.join(', ')}`,
-            senderName: detailPico.senderName,
-            receiver: detailPico.receiverName,
-            pickupOrderDetail: detailPico
-          }))
-        )
-        
-    const picoDetailList = newList?.filter((picoDetail:any) => picoId ? (picoDetail.picoId !== picoId) : true)
+    const newList: any = (newData || pickupOrder)?.flatMap((item) =>
+      item?.pickupOrderDetail.map((detailPico) => ({
+        type: item.picoType,
+        picoId: item.picoId,
+        status: item.status,
+        effFrmDate: item.effFrmDate,
+        effToDate: item.effToDate,
+        routine: `${item.routineType}, ${item.routine.join(', ')}`,
+        senderName: detailPico.senderName,
+        receiver: detailPico.receiverName,
+        pickupOrderDetail: detailPico
+      }))
+    )
 
-    const picoDetailListDistinguished = 
-      picoDetailList?.filter((value: any, index: any, self: any[]) => 
-        self.map((x: any) => x.picoId).indexOf(value.picoId) === index)
-    
+    const picoDetailList = newList?.filter((picoDetail: any) =>
+      picoId ? picoDetail.picoId !== picoId : true
+    )
+
+    const picoDetailListDistinguished = picoDetailList?.filter(
+      (value: any, index: any, self: any[]) =>
+        self.map((x: any) => x.picoId).indexOf(value.picoId) === index
+    )
+
     setPicoList(picoDetailListDistinguished)
     setFilteredPico(picoDetailListDistinguished)
   }
 
   useEffect(() => {
     initPickupOrderRequest()
-  }, [])
+  }, [i18n.language])
 
   useEffect(() => {
     assignData()
   }, [drawerOpen, searchInput === ''])
 
   useEffect(() => {
+    setSearchInput('')
+  }, [drawerOpen])
+
+  useEffect(() => {
     handleSearch(searchInput)
   }, [searchInput])
 
-  const handleSelectedPicoId = (
-    picoId: string
-  ) => {
-    const pickupOrderDetails = pickupOrder?.find((value: PickupOrder) => value?.picoId === picoId)?.pickupOrderDetail
+  const handleSelectedPicoId = (picoId: string) => {
+    const pickupOrderDetails = pickupOrder?.find(
+      (value: PickupOrder) => value?.picoId === picoId
+    )?.pickupOrderDetail
     if (selectPicoDetail) {
       selectPicoDetail(pickupOrderDetails || [], picoId)
     }
   }
 
   const handleSearch = async (searchWord: string) => {
-    console.log('searchWord', searchWord)
-
     if (searchWord !== '') {
       const updatedQuery = {
         ...query,
@@ -224,7 +229,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                       }}
                       value={selectedPico}
                       inputValue={selectedPico}
-                      dataTestId='astd-create-edit-pickup-order-related-po-form-choose-logistic-2149'
+                      dataTestId="astd-create-edit-pickup-order-related-po-form-choose-logistic-2149"
                     />
                   </CustomField>
                 </div>
@@ -234,11 +239,12 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                       <div
                         key={index}
                         onClick={() => {
-                          handleSelectedPicoId(
-                            item.picoId
-                          )
+                          handleSelectedPicoId(item.picoId)
                         }}
-                        data-testid={'astd-create-edit-pickup-order-related-po-form-choose-po-9526' + index}
+                        data-testid={
+                          'astd-create-edit-pickup-order-related-po-form-choose-po-9526' +
+                          index
+                        }
                         className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4 w-[450px]"
                       >
                         <div className="font-bold text-mini mb-2">
