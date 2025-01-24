@@ -56,6 +56,7 @@ import {
   ProcessInType,
   ProcessOutType
 } from 'src/interfaces/inventory'
+import { error } from 'console'
 
 interface CreateInventoryItemProps {
   drawerOpen: boolean
@@ -196,7 +197,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
       if (!packagingUnitValue) {
         tempV.push({
           field: t('packaging_unit.packaging_unit'),
-          problem: '',
+          problem: formErr.empty,
           type: 'error'
         })
       }
@@ -204,8 +205,8 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
       if (isRecyc) {
         if (selectedRecycType === '') {
           tempV.push({
-            field: t('pick_up_order.error.recycType'),
-            problem: '',
+            field: t('pick_up_order.card_detail.main_category'),
+            problem: formErr.empty,
             type: 'error'
           })
         }
@@ -221,16 +222,16 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
 
           if (!selectedRecycType) {
             tempV.push({
-              field: t('pick_up_order.error.recycType'),
-              problem: '',
+              field: t('pick_up_order.card_detail.main_category'),
+              problem: formErr.empty,
               type: 'error'
             })
           }
 
           if (hasSubType && !selectedRecycSubType) {
             tempV.push({
-              field: t('pick_up_order.error.recycSubType'),
-              problem: '',
+              field: t('pick_up_order.card_detail.subcategory'),
+              problem: formErr.empty,
               type: 'error'
             })
           }
@@ -238,8 +239,8 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
       } else {
         if (!productTypeId) {
           tempV.push({
-            field: t('pick_up_order.error.productType'),
-            problem: '',
+            field: t('pick_up_order.card_detail.product_type_label'),
+            problem: formErr.empty,
             type: 'error'
           })
         }
@@ -255,16 +256,16 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
 
           if (!productTypeId) {
             tempV.push({
-              field: t('pick_up_order.error.productType'),
-              problem: '',
+              field: t('pick_up_order.card_detail.product_type_label'),
+              problem: formErr.empty,
               type: 'error'
             })
           }
 
           if (hasSubType && !productSubTypeId) {
             tempV.push({
-              field: t('pick_up_order.error.productSubType'),
-              problem: '',
+              field: t('pick_up_order.card_detail.sub_product_type_label'),
+              problem: formErr.empty,
               type: 'error'
             })
           }
@@ -281,8 +282,8 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
 
             if (hasAddonType && !productAddon) {
               tempV.push({
-                field: t('pick_up_order.error.productAddon'),
-                problem: '',
+                field: t('pick_up_order.card_detail.addon_product_type_label'),
+                problem: formErr.empty,
                 type: 'error'
               })
             }
@@ -624,7 +625,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                   key={selectedRecycSubType}
                   showError={selectedRecycType === '' && trySubmited && isRecyc}
                   showErrorSubtype={
-                    isRequiredSub(t('pick_up_order.error.recycSubType')) &&
+                    isRequiredSub(t('pick_up_order.card_detail.subcategory')) &&
                     trySubmited
                   }
                 />
@@ -650,11 +651,11 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                   key={productTypeId}
                   showError={productTypeId === '' && trySubmited}
                   showErrorSubtype={
-                    isRequiredSub(t('pick_up_order.error.productSubType')) &&
+                    isRequiredSub(t('pick_up_order.card_detail.sub_product_type_label')) &&
                     trySubmited
                   }
                   showErrorAddon={
-                    isRequiredSub(t('pick_up_order.error.productAddon')) &&
+                    isRequiredSub(t('pick_up_order.card_detail.addon_product_type_label')) &&
                     trySubmited
                   }
                 />
