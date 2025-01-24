@@ -195,40 +195,32 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
             <div className="">
               <Box>
                 <div className="filter-section  mb-6">
-                  <CustomField
-                    label={t("pick_up_order.choose_logistic")}
-                    mandatory
-                  >
-                    <CustomAutoComplete
-                      placeholder={t("pick_up_order.enter_company_name")}
-                      option={
-                        Array.from(
-                          new Set(
-                            filteredPico
-                              ?.filter((item) => item.status === "OUTSTANDING")
-                              .map((item) => item.senderName)
-                          )
-                        ) ?? []
-                      }
-                      sx={{ width: "100%" }}
-                      onChange={(
-                        _: SyntheticEvent,
-                        newValue: string | null
-                      ) => {
-                        // handleSearch(newValue || '')
-                        setSearchInput(newValue || "");
-                        setSelectedPico(newValue || "");
-                      }}
-                      onCompositionEnd={handleCompositionEnd}
-                      onInputChange={(event: any, newInputValue: string) => {
-                        setSearchInput(newInputValue);
-                        setSelectedPico(event.target.value);
-                      }}
-                      value={selectedPico}
-                      inputValue={selectedPico}
-                      dataTestId="astd-create-edit-pickup-order-related-po-form-choose-logistic-2149"
-                    />
-                  </CustomField>
+                  <CustomAutoComplete
+                    placeholder={t("pick_up_order.enter_company_name")}
+                    option={
+                      Array.from(
+                        new Set(
+                          filteredPico
+                            ?.filter((item) => item.status === "OUTSTANDING")
+                            .map((item) => item.senderName)
+                        )
+                      ) ?? []
+                    }
+                    sx={{ width: "100%" }}
+                    onChange={(_: SyntheticEvent, newValue: string | null) => {
+                      // handleSearch(newValue || '')
+                      setSearchInput(newValue || "");
+                      setSelectedPico(newValue || "");
+                    }}
+                    onCompositionEnd={handleCompositionEnd}
+                    onInputChange={(event: any, newInputValue: string) => {
+                      setSearchInput(newInputValue);
+                      setSelectedPico(event.target.value);
+                    }}
+                    value={selectedPico}
+                    inputValue={selectedPico}
+                    dataTestId="astd-create-edit-pickup-order-related-po-form-choose-logistic-2149"
+                  />
                 </div>
                 <Box>
                   {filteredPico?.map((item, index) =>
