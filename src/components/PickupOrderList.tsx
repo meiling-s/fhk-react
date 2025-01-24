@@ -72,19 +72,22 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   }
 
   const assignData = (newData?: PickupOrder[]) => {
-    const newList: any = (newData || pickupOrder)?.flatMap((item) =>
-      item?.pickupOrderDetail.map((detailPico) => ({
-        type: item.picoType,
-        picoId: item.picoId,
-        status: item.status,
-        effFrmDate: item.effFrmDate,
-        effToDate: item.effToDate,
-        routine: `${item.routineType}, ${item.routine.join(', ')}`,
-        senderName: detailPico.senderName,
-        receiver: detailPico.receiverName,
-        pickupOrderDetail: detailPico
-      }))
-    )
+    const newList: any = (newData || pickupOrder)
+      ?.filter((item) => !item.isRef)
+      ?.flatMap((item) =>
+        item?.pickupOrderDetail.map((detailPico) => ({
+          type: item.picoType,
+          picoId: item.picoId,
+          status: item.status,
+          effFrmDate: item.effFrmDate,
+          effToDate: item.effToDate,
+          routine: `${item.routineType}, ${item.routine.join(', ')}`,
+          senderName: detailPico.senderName,
+          receiver: detailPico.receiverName,
+          pickupOrderDetail: detailPico,
+          isRef: item.isRef
+        }))
+      )
 
     const picoDetailList = newList?.filter((picoDetail: any) =>
       picoId ? picoDetail.picoId !== picoId : true
@@ -95,7 +98,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
         value.status === 'OUTSTANDING' &&
         self.map((x: any) => x.picoId).indexOf(value.picoId) === index
     )
-    console.log('picoDetailListDistinguished', picoDetailListDistinguished)
+
     setPicoList(picoDetailListDistinguished)
     setFilteredPico(picoDetailListDistinguished)
   }
@@ -140,29 +143,33 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
       }
 
       const data = result?.data.content
+
       if (data && data.length > 0) {
         const picoDetailList =
-          data.flatMap((item: any) =>
-            item?.pickupOrderDetail
-              .filter(
-                (detailPico: any) =>
-                  detailPico.senderName &&
-                  detailPico.senderName
-                    .toLowerCase()
-                    .includes(searchWord.toLowerCase())
-              )
-              .map((detailPico: any) => ({
-                type: item.picoType,
-                picoId: item.picoId,
-                status: detailPico.status,
-                effFrmDate: item.effFrmDate,
-                effToDate: item.effToDate,
-                routine: `${item.routineType}, ${item.routine.join(', ')}`,
-                senderName: detailPico.senderName,
-                receiver: detailPico.receiverName,
-                pickupOrderDetail: detailPico
-              }))
-          ) ?? []
+          data
+            ?.filter((it: PickupOrder) => !it.isRef)
+            .flatMap((item: any) =>
+              item?.pickupOrderDetail
+                .filter(
+                  (detailPico: any) =>
+                    detailPico.senderName &&
+                    detailPico.senderName
+                      .toLowerCase()
+                      .includes(searchWord.toLowerCase())
+                )
+                .map((detailPico: any) => ({
+                  type: item.picoType,
+                  picoId: item.picoId,
+                  status: detailPico.status,
+                  effFrmDate: item.effFrmDate,
+                  effToDate: item.effToDate,
+                  routine: `${item.routineType}, ${item.routine.join(', ')}`,
+                  senderName: detailPico.senderName,
+                  receiver: detailPico.receiverName,
+                  pickupOrderDetail: detailPico,
+                  isRef: item.isRef
+                }))
+            ) ?? []
 
         setFilteredPico(picoDetailList)
       } else {
@@ -231,7 +238,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                           new Set(
                             filteredPico
                               ?.filter((item) => item.status === 'OUTSTANDING')
-                              .map((item) => item.senderName)
+                              ?.map((item) => item.senderName)
                           )
                         ) ?? []
                       }
@@ -256,7 +263,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                   </CustomField>
                 </div>
                 <Box>
-                  {filteredPico.map((item, index) =>
+                  {filteredPico?.map((item, index) =>
                     item.status === 'OUTSTANDING' ? (
                       <div
                         key={index}
