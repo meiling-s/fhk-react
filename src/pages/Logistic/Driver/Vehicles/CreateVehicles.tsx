@@ -229,32 +229,32 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           dataTestId: "logistic-vehicles-form-plate-no-err-warning-5910",
         });
       }
-      if (plateListExist && action === "edit" && selectedItem) {
-        if (
-          licensePlate !== selectedItem.plateNo &&
-          plateListExist.includes(licensePlate)
-        ) {
-          tempV.push({
-            field: t("driver.vehicleMenu.license_plate_number"),
-            problem: formErr.alreadyExist,
-            type: "error",
-            dataTestId: "logistic-vehicles-form-plate-no-err-warning-5910",
-          });
-        }
-      }
-      if (deviceIdListExist && action === "edit" && selectedItem && deviceId) {
-        if (
-          deviceId !== selectedItem.deviceId &&
-          deviceIdListExist.includes(deviceId)
-        ) {
-          tempV.push({
-            field: t("driver.vehicleMenu.imei"),
-            problem: formErr.alreadyExist,
-            type: "error",
-            dataTestId: "logistic-vehicles-form-imei-err-warning-7562",
-          });
-        }
-      }
+      // if (plateListExist && action === "edit" && selectedItem) {
+      //   if (
+      //     licensePlate !== selectedItem.plateNo &&
+      //     plateListExist.includes(licensePlate)
+      //   ) {
+      //     tempV.push({
+      //       field: t("driver.vehicleMenu.license_plate_number"),
+      //       problem: formErr.alreadyExist,
+      //       type: "error",
+      //       dataTestId: "logistic-vehicles-form-plate-no-err-warning-5910",
+      //     });
+      //   }
+      // }
+      // if (deviceIdListExist && action === "edit" && selectedItem && deviceId) {
+      //   if (
+      //     deviceId !== selectedItem.deviceId &&
+      //     deviceIdListExist.includes(deviceId)
+      //   ) {
+      //     tempV.push({
+      //       field: t("driver.vehicleMenu.imei"),
+      //       problem: formErr.alreadyExist,
+      //       type: "error",
+      //       dataTestId: "logistic-vehicles-form-imei-err-warning-7562",
+      //     });
+      //   }
+      // }
       pictures.length == 0 &&
         tempV.push({
           field: t("driver.vehicleMenu.picture"),
@@ -408,7 +408,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
         if (state.code === STATUS_CODE[503]) {
           navigate("/maintenance");
         } else if (state.code === STATUS_CODE[409]) {
-          showErrorToast(error.response.data.message);
+          setTrySubmited(true);
+          checkErrorMessage(error.response.data.message);
         }
       }
     } else {
