@@ -47,7 +47,7 @@ const RecycleCard = ({
   return (
     <Box
       sx={{
-        height: showImage ? "160px" : "50px",
+        // height: "100%",
         borderRadius: "10px",
         borderColor: "#cacaca",
         borderWidth: "1px",
