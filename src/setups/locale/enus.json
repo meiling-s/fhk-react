@@ -549,7 +549,7 @@
       "receiverName": "This receiver Name should not be empty",
       "receiverAddr": "This receiver address should not be empty",
       "recycType": "This recyclable type should not be empty",
-      "recycSubType": "This recyclable sub type should not be empty",
+      "recycSubType": "This recyclable sub type  should not be empty",
       "productType": "This product type should not be empty",
       "productSubType": "This product sub type should not be empty",
       "productAddon": "This product addon should not be empty",
