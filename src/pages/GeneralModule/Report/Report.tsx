@@ -1,49 +1,47 @@
-import { FunctionComponent, useState } from 'react'
-import Tabs from '../../../components/Tabs'
-import { Box } from '@mui/material'
-import { useTranslation } from 'react-i18next'
-import BasicServicePicture from '../../Collector/EventRecording/BasicServicePict'
-import AdditionalServicePict from '../../Collector/EventRecording/AdditionalServicePict'
-import OtherPict from '../../Collector/EventRecording/OtherPict'
-import DownloadArea from '../DownloadArea/DownloadArea'
-import { Roles, localStorgeKeyName } from '../../../constants/constant'
+import { FunctionComponent, useState } from "react";
+import Tabs from "../../../components/Tabs";
+import { Box } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import BasicServicePicture from "../../Collector/EventRecording/BasicServicePict";
+import AdditionalServicePict from "../../Collector/EventRecording/AdditionalServicePict";
+import OtherPict from "../../Collector/EventRecording/OtherPict";
+import DownloadArea from "../DownloadArea/DownloadArea";
+import { Roles, localStorgeKeyName } from "../../../constants/constant";
 
 const Report: FunctionComponent = () => {
-  const { t } = useTranslation()
-  const [selectedTab, setSelectedTab] = useState(0)
-  const role = localStorage.getItem(localStorgeKeyName.role) || '';
+  const { t } = useTranslation();
+  const [selectedTab, setSelectedTab] = useState(0);
+  const role = localStorage.getItem(localStorgeKeyName.role) || "";
 
   const handleTabChange = (value: number) => {
-    setSelectedTab(value)
-  }
+    setSelectedTab(value);
+  };
 
-  const titlePage = t('report.report')
+  const titlePage = t("report.report");
   let tabSettings = [
-    t('report.downloadArea'),
-    t('report.basicServicePictures'),
-    t('report.additionalServicePictures'),
-    t('report.otherPictures')
-  ]
+    t("report.downloadArea"),
+    t("report.basicServicePictures"),
+    t("report.additionalServicePicturesTitle"),
+    t("report.otherPictures"),
+  ];
 
-  if(role === Roles.logisticAdmin || role === Roles.astd){
-    tabSettings = [
-      t('report.downloadArea'),
-    ]
+  if (role === Roles.logisticAdmin || role === Roles.astd) {
+    tabSettings = [t("report.downloadArea")];
   }
 
-  let activeTab = <DownloadArea />
+  let activeTab = <DownloadArea />;
   switch (selectedTab) {
     case 1:
-      activeTab = <BasicServicePicture />
-      break
+      activeTab = <BasicServicePicture />;
+      break;
     case 2:
-      activeTab = <AdditionalServicePict />
-      break
+      activeTab = <AdditionalServicePict />;
+      break;
     case 3:
-      activeTab = <OtherPict />
-      break
+      activeTab = <OtherPict />;
+      break;
     default:
-      break
+      break;
   }
 
   return (
@@ -59,7 +57,7 @@ const Report: FunctionComponent = () => {
         {activeTab}
       </div>
     </Box>
-  )
-}
+  );
+};
 
-export default Report
+export default Report;
