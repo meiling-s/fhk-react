@@ -254,6 +254,17 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           });
         }
       }
+      if (
+        deviceIdListExist &&
+        action === "add" &&
+        deviceIdListExist.includes(deviceId)
+      ) {
+        tempV.push({
+          field: t("driver.vehicleMenu.imei"),
+          problem: formErr.alreadyExist,
+          type: "error",
+        });
+      }
       if (deviceIdListExist && action === "edit" && selectedItem && deviceId) {
         if (
           deviceId !== selectedItem.deviceId &&
