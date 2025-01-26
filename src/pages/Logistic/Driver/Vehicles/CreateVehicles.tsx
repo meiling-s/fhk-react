@@ -229,32 +229,44 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           dataTestId: "logistic-vehicles-form-plate-no-err-warning-5910",
         });
       }
-      // if (plateListExist && action === "edit" && selectedItem) {
-      //   if (
-      //     licensePlate !== selectedItem.plateNo &&
-      //     plateListExist.includes(licensePlate)
-      //   ) {
-      //     tempV.push({
-      //       field: t("driver.vehicleMenu.license_plate_number"),
-      //       problem: formErr.alreadyExist,
-      //       type: "error",
-      //       dataTestId: "logistic-vehicles-form-plate-no-err-warning-5910",
-      //     });
-      //   }
-      // }
-      // if (deviceIdListExist && action === "edit" && selectedItem && deviceId) {
-      //   if (
-      //     deviceId !== selectedItem.deviceId &&
-      //     deviceIdListExist.includes(deviceId)
-      //   ) {
-      //     tempV.push({
-      //       field: t("driver.vehicleMenu.imei"),
-      //       problem: formErr.alreadyExist,
-      //       type: "error",
-      //       dataTestId: "logistic-vehicles-form-imei-err-warning-7562",
-      //     });
-      //   }
-      // }
+      if (
+        plateListExist &&
+        action === "add" &&
+        plateListExist.includes(licensePlate)
+      ) {
+        tempV.push({
+          field: t("driver.vehicleMenu.license_plate_number"),
+          problem: formErr.alreadyExist,
+          type: "error",
+          dataTestId: "logistic-vehicles-form-plate-no-err-warning-5910",
+        });
+      }
+      if (plateListExist && action === "edit" && selectedItem) {
+        if (
+          licensePlate !== selectedItem.plateNo &&
+          plateListExist.includes(licensePlate)
+        ) {
+          tempV.push({
+            field: t("driver.vehicleMenu.license_plate_number"),
+            problem: formErr.alreadyExist,
+            type: "error",
+            dataTestId: "logistic-vehicles-form-plate-no-err-warning-5910",
+          });
+        }
+      }
+      if (deviceIdListExist && action === "edit" && selectedItem && deviceId) {
+        if (
+          deviceId !== selectedItem.deviceId &&
+          deviceIdListExist.includes(deviceId)
+        ) {
+          tempV.push({
+            field: t("driver.vehicleMenu.imei"),
+            problem: formErr.alreadyExist,
+            type: "error",
+            dataTestId: "logistic-vehicles-form-imei-err-warning-7562",
+          });
+        }
+      }
       pictures.length == 0 &&
         tempV.push({
           field: t("driver.vehicleMenu.picture"),
@@ -325,7 +337,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       const IMEIErrorMessageTC = `系統找到相同的IMEI ID，請向ASTD職員查詢。(Error code: E-${tenantId[1]})`;
       const IMEIErrorMessageCH = `系统找到相同的IMEI ID，请向ASTD职员查询。(Error code: E-${tenantId[1]})`;
       tempV.push({
-        field: "",
+        field: "socif",
         problem:
           i18n.language === "enus"
             ? IMEIErrorMessageEN
@@ -342,7 +354,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       const PlateErrorMessageCH = `系统找到相同车牌号码，请向ASTD职员查询。(Error code: E-${tenantId[1]})`;
 
       tempV.push({
-        field: "",
+        field: "socif",
         problem:
           i18n.language === "enus"
             ? PlateErrorMessageEN
@@ -696,9 +708,9 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   validation.map((val, index) => (
                     <FormErrorMsg
                       key={index}
-                      field={t(val.field)}
+                      field={val.field === "socif" ? "" : t(val.field)}
                       errorMsg={
-                        typeof val.problem === "string"
+                        val.field === "socif"
                           ? val.problem
                           : returnErrorMsg(val.problem, t)
                       }
