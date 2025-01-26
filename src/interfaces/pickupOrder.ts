@@ -73,7 +73,8 @@ export interface PickupOrder {
     refPicoId?:         string;
     pickupOrderDetail: PickupOrderDetail[];
     version?: number;
-    specificDates?: string[]
+    specificDates?: string[],
+    isRef?: boolean
 }
 
 export interface PickupOrderItem {

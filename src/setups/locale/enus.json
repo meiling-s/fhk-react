@@ -468,7 +468,10 @@
       "contract_number": "Contract no.",
       "enter_contract": "Please input contract no.",
       "period": "Period",
-      "period_should_not_empty": "Period date"
+      "period_should_not_empty": "Period date",
+      "daily" : "Daily",
+      "weekly": "Weekly",
+      "specificDate": "Specific Date"
     },
     "adhoc": {
       "reason_get_off": "Ad-hoc Reason",
