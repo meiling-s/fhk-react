@@ -216,14 +216,6 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       //do validation here
       const tempV: formValidate[] = [];
 
-      const filteredPlateList = listedPlate.find(
-        (value) => value === licensePlate
-      );
-      console.log(filteredPlateList, "aaaaaaa");
-
-      console.log(listedPlate, "listedPlate");
-      console.log(licensePlate, "licencesplate");
-
       selectedService?.toString() == "" &&
         tempV.push({
           field: t("vehicle.serviceType"),
@@ -491,7 +483,10 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 disabled={action === "delete"}
                 placeholder={t("vehicle.please_enter_pla_number")}
                 onChange={(event) => setLicensePlate(event.target.value)}
-                error={checkString(licensePlate)}
+                error={
+                  checkString(licensePlate) ||
+                  (listedPlate?.includes(licensePlate) && trySubmited)
+                }
               />
             </CustomField>
             <Grid item>
