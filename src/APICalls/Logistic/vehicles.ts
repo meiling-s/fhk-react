@@ -53,8 +53,7 @@ export const createVehicles = async (data: CreateLogisticVehicle) => {
     })
     return response
   } catch (e) {
-    console.error('Create a vehicle failed:', e)
-    return null
+    throw (e)
   }
 }
 
