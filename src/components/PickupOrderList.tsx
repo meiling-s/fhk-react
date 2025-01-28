@@ -50,7 +50,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
     logisticName: '',
     recycType: '',
     senderName: '',
-    status: null
+    status: 6
   })
   const role = localStorage.getItem(localStorgeKeyName.role)
   const [selectedPico, setSelectedPico] = useState<string>('')
@@ -148,9 +148,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
       if (data && data.length > 0) {
         const picoDetailList =
           data
-            ?.filter(
-              (it: PickupOrder) => !it.isRef && it.status === 'OUTSTANDING'
-            )
+            ?.filter((it: PickupOrder) => !it.isRef)
             .flatMap((item: any) =>
               item?.pickupOrderDetail
                 .filter(
