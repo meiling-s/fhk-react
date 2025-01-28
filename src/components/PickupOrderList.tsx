@@ -73,7 +73,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
 
   const assignData = (newData?: PickupOrder[]) => {
     const newList: any = (newData || pickupOrder)
-      ?.filter((item) => item.isRef)
+      ?.filter((item) => !item.isRef)
       ?.flatMap((item) =>
         item?.pickupOrderDetail.map((detailPico) => ({
           type: item.picoType,
@@ -147,7 +147,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
       if (data && data.length > 0) {
         const picoDetailList =
           data
-            ?.filter((it: PickupOrder) => it.isRef)
+            ?.filter((it: PickupOrder) => !it.isRef)
             .flatMap((item: any) =>
               item?.pickupOrderDetail
                 .filter(
