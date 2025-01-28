@@ -9,7 +9,7 @@ import {
   ImageList,
   ImageListItem
 } from '@mui/material'
-import ImageUploading, {ImageListType} from 'react-images-uploading'
+import ImageUploading, { ImageListType } from 'react-images-uploading'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useTranslation } from 'react-i18next'
@@ -27,14 +27,13 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
 import { format } from '../../../constants/constant'
-import { localStorgeKeyName } from "../../../constants/constant";
+import { localStorgeKeyName } from '../../../constants/constant'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useNavigate } from 'react-router-dom'
 import { extractError, getPrimaryColor } from '../../../utils/utils'
 import utc from 'dayjs/plugin/utc'
 import i18n from 'src/setups/i18n'
-
 
 dayjs.extend(utc)
 
@@ -48,8 +47,8 @@ const BasicServicePicture = () => {
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const loginId = localStorage.getItem(localStorgeKeyName.username)
-  const {imgSettings, dateFormat} = useContainer(CommonTypeContainer)
-  const navigate = useNavigate();
+  const { imgSettings, dateFormat } = useContainer(CommonTypeContainer)
+  const navigate = useNavigate()
 
   const ImageToBase64 = (images: ImageListType) => {
     var base64: string[] = []
@@ -112,18 +111,21 @@ const BasicServicePicture = () => {
           type: 'error'
         })
 
-        if(dayjs(startDate).format('YYYY-MM-DD HH:mm') >= dayjs(endDate).format('YYYY-MM-DD HH:mm')) {
-          tempV.push({
-            field: `${t('report.collectionPoints')} ${t('report.dateAndTime')}`,
-            problem: formErr.startDateBehindEndDate,
-            type: 'error'
-          })
-        }
+      if (
+        dayjs(startDate).format('YYYY-MM-DD HH:mm') >=
+        dayjs(endDate).format('YYYY-MM-DD HH:mm')
+      ) {
+        tempV.push({
+          field: `${t('report.collectionPoints')} ${t('report.dateAndTime')}`,
+          problem: formErr.startDateBehindEndDate,
+          type: 'error'
+        })
+      }
       setValidation(tempV)
     }
 
     validate()
-  }, [startDate, endDate, place, serviceImages,numberOfPeople, i18n.language])
+  }, [startDate, endDate, place, serviceImages, numberOfPeople, i18n.language])
 
   const formattedDate = (dateData: dayjs.Dayjs) => {
     return dateData.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
@@ -133,11 +135,9 @@ const BasicServicePicture = () => {
     // console.log(formattedDate(startDate))
     // console.log(formattedDate(endDate))
     if (validation.length == 0) {
-      const imgList: string[] = ImageToBase64(serviceImages).map(
-        (item) => {
-          return item
-        }
-      )
+      const imgList: string[] = ImageToBase64(serviceImages).map((item) => {
+        return item
+      })
 
       const formData: ServiceInfo = {
         serviceId: 0,
@@ -162,9 +162,9 @@ const BasicServicePicture = () => {
         } else {
           showErrorToast()
         }
-      } catch (error:any) {
-        const { state, realm } = extractError(error);
-        if(state.code === STATUS_CODE[503] ){
+      } catch (error: any) {
+        const { state, realm } = extractError(error)
+        if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
         } else {
           showErrorToast()
@@ -173,11 +173,10 @@ const BasicServicePicture = () => {
     } else {
       setTrySubmited(true)
     }
-    
   }
 
   const showErrorToast = () => {
-    const toastMsg = 'failed created event recording'
+    const toastMsg = t('report.basicServicePictures') + ' ' + t('common.saveFailed')
     toast.error(toastMsg, {
       position: 'top-center',
       autoClose: 3000,
@@ -191,7 +190,8 @@ const BasicServicePicture = () => {
   }
 
   const showSuccessToast = () => {
-    const toastMsg = 'event recording created'
+    const toastMsg =
+      t('report.basicServicePictures') + ' ' + t('common.saveSuccessfully')
     toast.info(toastMsg, {
       position: 'top-center',
       autoClose: 3000,

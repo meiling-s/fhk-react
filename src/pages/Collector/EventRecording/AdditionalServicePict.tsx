@@ -38,6 +38,7 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { extractError, getPrimaryColor } from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
+import i18n from 'src/setups/i18n'
 
 type ServiceName = 'SRV00001' | 'SRV00002' | 'SRV00003' | 'SRV00004'
 const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
@@ -234,7 +235,7 @@ const AdditionalServicePict = () => {
     }
 
     validate()
-  }, [serviceData])
+  }, [serviceData, i18n.language])
 
   const onHandleError = (
     serviceName: ServiceName,
@@ -418,7 +419,7 @@ const AdditionalServicePict = () => {
           const result = await createServiceInfo(formData)
           if (result) {
             itemData++
-            const toastMsg = 'created additional service success'
+            const toastMsg =  t("report.additionalServicePicturesTitle") + ' ' + t('common.saveSuccessfully')
             toast.info(toastMsg, {
               position: 'top-center',
               autoClose: 3000,
