@@ -33,6 +33,7 @@ import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useNavigate } from 'react-router-dom'
 import { extractError, getPrimaryColor } from '../../../utils/utils'
 import utc from 'dayjs/plugin/utc'
+import i18n from 'src/setups/i18n'
 
 
 dayjs.extend(utc)
@@ -122,7 +123,7 @@ const BasicServicePicture = () => {
     }
 
     validate()
-  }, [startDate, endDate, place, serviceImages,numberOfPeople])
+  }, [startDate, endDate, place, serviceImages,numberOfPeople, i18n.language])
 
   const formattedDate = (dateData: dayjs.Dayjs) => {
     return dateData.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
