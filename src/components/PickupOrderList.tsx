@@ -101,6 +101,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
 
     setPicoList(picoDetailListDistinguished)
     setFilteredPico(picoDetailListDistinguished)
+    console.log('picoDetailListDistinguished', picoDetailListDistinguished)
   }
 
   useEffect(() => {
@@ -147,7 +148,9 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
       if (data && data.length > 0) {
         const picoDetailList =
           data
-            ?.filter((it: PickupOrder) => !it.isRef)
+            ?.filter(
+              (it: PickupOrder) => !it.isRef && it.status === 'OUTSTANDING'
+            )
             .flatMap((item: any) =>
               item?.pickupOrderDetail
                 .filter(
@@ -160,7 +163,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                 .map((detailPico: any) => ({
                   type: item.picoType,
                   picoId: item.picoId,
-                  status: detailPico.status,
+                  status: item.status,
                   effFrmDate: item.effFrmDate,
                   effToDate: item.effToDate,
                   routine: `${item.routineType}, ${item.routine.join(', ')}`,
@@ -170,6 +173,8 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                   isRef: item.isRef
                 }))
             ) ?? []
+
+        console.log('picoDetailList', picoDetailList)
 
         setFilteredPico(picoDetailList)
       } else {
