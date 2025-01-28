@@ -129,11 +129,15 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
     setTrySubmited(false)
   }
 
+  const isEmptyOrWhitespace = (value: string) => {
+    return value.toString() === '' || /^\s*$/.test(value.toString())
+  }
+
   useEffect(() => {
     const validate = async () => {
       const tempV: formValidate[] = []
 
-      tChineseName.toString() == '' &&
+      isEmptyOrWhitespace(tChineseName) &&
         tempV.push({
           field: t('packaging_unit.traditional_chinese_name'),
           problem: formErr.empty,
@@ -147,7 +151,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
           problem: formErr.alreadyExist,
           type: 'error'
         })
-      sChineseName.toString() == '' &&
+      isEmptyOrWhitespace(sChineseName) &&
         tempV.push({
           field: t('packaging_unit.simplified_chinese_name'),
           problem: formErr.empty,
@@ -161,7 +165,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
           problem: formErr.alreadyExist,
           type: 'error'
         })
-      englishName.toString() == '' &&
+      isEmptyOrWhitespace(englishName) &&
         tempV.push({
           field: t('packaging_unit.english_name'),
           problem: formErr.empty,
@@ -187,14 +191,14 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
     }
 
     validate()
-  }, [tChineseName, sChineseName, englishName, i18n.language])
+  }, [tChineseName, sChineseName, englishName, status, i18n.language])
 
   const checkString = (s: string) => {
     if (!trySubmited) {
       //before first submit, don't check the validation
       return false
     }
-    return s == ''
+    return s == '' || isEmptyOrWhitespace(s)
   }
 
   const handleSubmit = () => {
