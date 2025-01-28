@@ -31,7 +31,11 @@ import { localStorgeKeyName } from '../../../constants/constant'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useNavigate } from 'react-router-dom'
-import { extractError, getPrimaryColor } from '../../../utils/utils'
+import {
+  extractError,
+  getPrimaryColor,
+  onChangeWeight
+} from '../../../utils/utils'
 import utc from 'dayjs/plugin/utc'
 import i18n from 'src/setups/i18n'
 
@@ -47,9 +51,10 @@ const BasicServicePicture = () => {
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const loginId = localStorage.getItem(localStorgeKeyName.username)
-  const { imgSettings, dateFormat } = useContainer(CommonTypeContainer)
+  const { imgSettings, dateFormat, decimalVal } =
+    useContainer(CommonTypeContainer)
   const navigate = useNavigate()
-
+  const [disableState, setDisableState] = useState<boolean>(false)
   const ImageToBase64 = (images: ImageListType) => {
     var base64: string[] = []
     images.map((image) => {
@@ -139,6 +144,7 @@ const BasicServicePicture = () => {
         return item
       })
 
+      setDisableState(true)
       const formData: ServiceInfo = {
         serviceId: 0,
         address: place,
@@ -158,6 +164,7 @@ const BasicServicePicture = () => {
         if (result) {
           showSuccessToast()
           setTrySubmited(false)
+
           resetData()
         } else {
           showErrorToast()
@@ -173,10 +180,12 @@ const BasicServicePicture = () => {
     } else {
       setTrySubmited(true)
     }
+    setDisableState(false)
   }
 
   const showErrorToast = () => {
-    const toastMsg = t('report.basicServicePictures') + ' ' + t('common.saveFailed')
+    const toastMsg =
+      t('report.basicServicePictures') + ' ' + t('common.saveFailed')
     toast.error(toastMsg, {
       position: 'top-center',
       autoClose: 3000,
@@ -336,7 +345,15 @@ const BasicServicePicture = () => {
                 id="numberOfPeople"
                 placeholder={t('report.pleaseEnterNumberOfPeople')}
                 value={numberOfPeople}
-                onChange={(event) => setNumberOfPeople(event.target.value)}
+                onChange={(event) => {
+                  onChangeWeight(
+                    event.target.value,
+                    decimalVal,
+                    (value: string) => {
+                      setNumberOfPeople(value)
+                    }
+                  )
+                }}
                 error={checkNumber(numberOfPeople)}
               />
             </CustomField>
@@ -417,6 +434,7 @@ const BasicServicePicture = () => {
                     marginTop: 2
                   }
                 ]}
+                disabled={disableState}
                 onClick={() => submitServiceInfo()}
               >
                 {t('report.save')}

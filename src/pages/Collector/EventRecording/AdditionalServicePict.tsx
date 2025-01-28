@@ -36,7 +36,11 @@ import { localStorgeKeyName } from '../../../constants/constant'
 import CustomItemListBoolean from '../../../components/FormComponents/CustomItemListBoolean'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { extractError, getPrimaryColor } from '../../../utils/utils'
+import {
+  extractError,
+  getPrimaryColor,
+  onChangeWeight
+} from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
 import i18n from 'src/setups/i18n'
 
@@ -142,7 +146,8 @@ const AdditionalServicePict = () => {
   const [activeObj, setActiveObj] = useState<string>('')
   const [nature, setNature] = useState<string>('')
   const [speaker, setSpeaker] = useState<string>('')
-  const { imgSettings, dateFormat } = useContainer(CommonTypeContainer)
+  const { imgSettings, dateFormat, decimalVal } =
+    useContainer(CommonTypeContainer)
   const [errorsOptions, setErrorOptions] = useState({
     targetParticipants: { status: false, message: '' },
     eventName: { status: false, message: '' },
@@ -168,6 +173,7 @@ const AdditionalServicePict = () => {
       label: t('report.promotionalAndEducationalEventLocations')
     }
   ]
+  const [disableState, setDisableState] = useState<boolean>(false)
 
   const navigate = useNavigate()
 
@@ -376,6 +382,10 @@ const AdditionalServicePict = () => {
 
   const resetServiceData = () => {
     setServiceData(initialServiceData)
+    setEventName('')
+    setNature('')
+    setSpeaker('')
+    setActiveObj('')
   }
 
   const submitServiceInfo = async () => {
@@ -396,6 +406,7 @@ const AdditionalServicePict = () => {
             return item
           }
         )
+        setDisableState(true)
 
         const formData: ServiceInfo = {
           serviceId: serviceItem.serviceId,
@@ -419,7 +430,10 @@ const AdditionalServicePict = () => {
           const result = await createServiceInfo(formData)
           if (result) {
             itemData++
-            const toastMsg =  t("report.additionalServicePicturesTitle") + ' ' + t('common.saveSuccessfully')
+            const toastMsg =
+              t('report.additionalServicePicturesTitle') +
+              ' ' +
+              t('common.saveSuccessfully')
             toast.info(toastMsg, {
               position: 'top-center',
               autoClose: 3000,
@@ -430,6 +444,7 @@ const AdditionalServicePict = () => {
               progress: undefined,
               theme: 'light'
             })
+            resetServiceData()
           }
         } catch (error: any) {
           const { state, realm } = extractError(error)
@@ -437,6 +452,9 @@ const AdditionalServicePict = () => {
             navigate('/maintenance')
           }
         }
+
+        setDisableState(false)
+        resetServiceData()
       }
     }
 
@@ -484,7 +502,6 @@ const AdditionalServicePict = () => {
     // } else {
     //   setTrySubmited(true)
     // }
-    resetServiceData()
   }
 
   const serviceTypeList = [
@@ -579,13 +596,13 @@ const AdditionalServicePict = () => {
                       />
                     </Box>
                   </Box>
-                  <Typography style={{ color: 'red', fontWeight: '500' }}>
+                  {/* <Typography style={{ color: 'red', fontWeight: '500' }}>
                     {errors[item.serviceName as keyof ErrorsServiceData]
                       .startDate.status
                       ? errors[item.serviceName as keyof ErrorsServiceData]
                           .startDate.message
                       : ''}
-                  </Typography>
+                  </Typography> */}
                 </Grid>
                 <Grid item>
                   <Typography sx={styles.header3}>{t('report.to')}</Typography>
@@ -630,13 +647,13 @@ const AdditionalServicePict = () => {
                       />
                     </Box>
                   </Box>
-                  <Typography style={{ color: 'red', fontWeight: '500' }}>
+                  {/* <Typography style={{ color: 'red', fontWeight: '500' }}>
                     {errors[item.serviceName as keyof ErrorsServiceData].endDate
                       .status
                       ? errors[item.serviceName as keyof ErrorsServiceData]
                           .endDate.message
                       : ''}
-                  </Typography>
+                  </Typography> */}
                 </Grid>
                 <Grid item style={{ display: 'flex', flexDirection: 'column' }}>
                   <CustomField label={t('report.address')}>
@@ -650,19 +667,22 @@ const AdditionalServicePict = () => {
                           event.target.value
                         )
                       }}
+                      value={
+                        serviceData[item.serviceName as keyof ServiceData].place
+                      }
                       multiline={true}
                       error={checkString(
                         serviceData[item.serviceName as keyof ServiceData].place
                       )}
                     />
                   </CustomField>
-                  <Typography style={{ color: 'red', fontWeight: '500' }}>
+                  {/* <Typography style={{ color: 'red', fontWeight: '500' }}>
                     {errors[item.serviceName as keyof ErrorsServiceData].place
                       .status
                       ? errors[item.serviceName as keyof ErrorsServiceData]
                           .place.message
                       : ''}
-                  </Typography>
+                  </Typography> */}
                 </Grid>
                 {index === 3 && (
                   <Grid item>
@@ -671,6 +691,7 @@ const AdditionalServicePict = () => {
                         <CustomTextField
                           id="eventName"
                           placeholder={t('report.pleaseEnterEventName')}
+                          value={eventName}
                           onChange={(event) => {
                             if (event.target.value) {
                               setEventName(event.target.value)
@@ -695,11 +716,11 @@ const AdditionalServicePict = () => {
                           error={checkString(eventName)}
                         />
                       </CustomField>
-                      <Typography style={{ color: 'red', fontWeight: '500' }}>
+                      {/* <Typography style={{ color: 'red', fontWeight: '500' }}>
                         {errorsOptions.eventName.status
                           ? errorsOptions.eventName.message
                           : ''}
-                      </Typography>
+                      </Typography> */}
                     </div>
 
                     <div className="mb-4">
@@ -707,6 +728,7 @@ const AdditionalServicePict = () => {
                         <CustomTextField
                           id="nature"
                           placeholder={t('report.enterNature')}
+                          value={nature}
                           onChange={(event) => {
                             if (event.target.value) {
                               setNature(event.target.value)
@@ -731,11 +753,11 @@ const AdditionalServicePict = () => {
                           error={checkString(nature)}
                         />
                       </CustomField>
-                      <Typography style={{ color: 'red', fontWeight: '500' }}>
+                      {/* <Typography style={{ color: 'red', fontWeight: '500' }}>
                         {errorsOptions.nature.status
                           ? errorsOptions.nature.message
                           : ''}
-                      </Typography>
+                      </Typography> */}
                     </div>
 
                     <div className="mb-4">
@@ -743,6 +765,7 @@ const AdditionalServicePict = () => {
                         <CustomTextField
                           id="speaker"
                           placeholder={t('report.enterSpeaker')}
+                          value={speaker}
                           onChange={(event) => {
                             if (event.target.value) {
                               setSpeaker(event.target.value)
@@ -767,11 +790,11 @@ const AdditionalServicePict = () => {
                           error={checkString(speaker)}
                         />
                       </CustomField>
-                      <Typography style={{ color: 'red', fontWeight: '500' }}>
+                      {/* <Typography style={{ color: 'red', fontWeight: '500' }}>
                         {errorsOptions.speaker.status
                           ? errorsOptions.speaker.message
                           : ''}
-                      </Typography>
+                      </Typography> */}
                     </div>
 
                     <Grid
@@ -784,6 +807,7 @@ const AdditionalServicePict = () => {
                           placeholder={t(
                             'report.pleaseEnterTargetParticipants'
                           )}
+                          value={activeObj}
                           onChange={(event) => {
                             if (event.target.value) {
                               setActiveObj(event.target.value)
@@ -811,11 +835,11 @@ const AdditionalServicePict = () => {
                           error={checkString(activeObj)}
                         />
                       </CustomField>
-                      <Typography style={{ color: 'red', fontWeight: '500' }}>
+                      {/* <Typography style={{ color: 'red', fontWeight: '500' }}>
                         {errorsOptions.targetParticipants.status
                           ? errorsOptions.targetParticipants.message
                           : ''}
-                      </Typography>
+                      </Typography> */}
                     </Grid>
                   </Grid>
                 )}
@@ -824,11 +848,27 @@ const AdditionalServicePict = () => {
                     <CustomTextField
                       id="numberOfPeople"
                       placeholder={t('report.pleaseEnterNumberOfPeople')}
+                      value={
+                        serviceData[item.serviceName as keyof ServiceData]
+                          .numberOfPeople
+                      }
                       onChange={(event) => {
-                        updateData(
-                          item.serviceName as ServiceName,
-                          'numberOfPeople',
-                          parseInt(event.target.value, 10) || 0
+                        // updateData(
+                        //   item.serviceName as ServiceName,
+                        //   'numberOfPeople',
+                        //   parseInt(event.target.value, 10) || 0
+                        // )
+
+                        onChangeWeight(
+                          event.target.value,
+                          decimalVal,
+                          (value: string) => {
+                            updateData(
+                              item.serviceName as ServiceName,
+                              'numberOfPeople',
+                              value
+                            )
+                          }
                         )
                       }}
                       error={checkNumber(
@@ -837,13 +877,13 @@ const AdditionalServicePict = () => {
                       )}
                     />
                   </CustomField>
-                  <Typography style={{ color: 'red', fontWeight: '500' }}>
+                  {/* <Typography style={{ color: 'red', fontWeight: '500' }}>
                     {errors[item.serviceName as keyof ErrorsServiceData]
                       .numberOfPeople.status
                       ? errors[item.serviceName as keyof ErrorsServiceData]
                           .numberOfPeople.message
                       : ''}
-                  </Typography>
+                  </Typography> */}
                 </Grid>
 
                 {index === 3 && (
@@ -921,13 +961,13 @@ const AdditionalServicePict = () => {
                       )}
                     </ImageUploading>
                   </Box>
-                  <Typography style={{ color: 'red', fontWeight: '500' }}>
+                  {/* <Typography style={{ color: 'red', fontWeight: '500' }}>
                     {errors[item.serviceName as keyof ErrorsServiceData]
                       .photoImage.status
                       ? errors[item.serviceName as keyof ErrorsServiceData]
                           .photoImage.message
                       : ''}
-                  </Typography>
+                  </Typography> */}
                 </Grid>
               </Grid>
               <Divider />
@@ -951,6 +991,7 @@ const AdditionalServicePict = () => {
                 localstyles.localButton,
                 { marginBottom: { md: 0, xs: 2 }, marginTop: 2 }
               ]}
+              disabled={disableState}
               onClick={() => submitServiceInfo()}
             >
               {t('col.create')}
