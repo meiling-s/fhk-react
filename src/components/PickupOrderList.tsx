@@ -50,7 +50,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
     logisticName: '',
     recycType: '',
     senderName: '',
-    status: null
+    status: 6
   })
   const role = localStorage.getItem(localStorgeKeyName.role)
   const [selectedPico, setSelectedPico] = useState<string>('')
@@ -73,7 +73,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
 
   const assignData = (newData?: PickupOrder[]) => {
     const newList: any = (newData || pickupOrder)
-      ?.filter((item) => item.isRef)
+      ?.filter((item) => !item.isRef)
       ?.flatMap((item) =>
         item?.pickupOrderDetail.map((detailPico) => ({
           type: item.picoType,
@@ -101,6 +101,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
 
     setPicoList(picoDetailListDistinguished)
     setFilteredPico(picoDetailListDistinguished)
+    console.log('picoDetailListDistinguished', picoDetailListDistinguished)
   }
 
   useEffect(() => {
@@ -147,7 +148,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
       if (data && data.length > 0) {
         const picoDetailList =
           data
-            ?.filter((it: PickupOrder) => it.isRef)
+            ?.filter((it: PickupOrder) => !it.isRef)
             .flatMap((item: any) =>
               item?.pickupOrderDetail
                 .filter(
@@ -160,7 +161,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                 .map((detailPico: any) => ({
                   type: item.picoType,
                   picoId: item.picoId,
-                  status: detailPico.status,
+                  status: item.status,
                   effFrmDate: item.effFrmDate,
                   effToDate: item.effToDate,
                   routine: `${item.routineType}, ${item.routine.join(', ')}`,
@@ -170,6 +171,8 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                   isRef: item.isRef
                 }))
             ) ?? []
+
+        console.log('picoDetailList', picoDetailList)
 
         setFilteredPico(picoDetailList)
       } else {
