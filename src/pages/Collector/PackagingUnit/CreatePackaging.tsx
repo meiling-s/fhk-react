@@ -5,7 +5,7 @@ import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import {  styles } from '../../../constants/styles'
+import { styles } from '../../../constants/styles'
 
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
@@ -15,7 +15,11 @@ import {
   CreateVehicle as CreateVehicleForm
 } from '../../../interfaces/vehicles'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
-import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
+import {
+  extractError,
+  returnErrorMsg,
+  showErrorToast
+} from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
@@ -63,14 +67,14 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
   const [description, setDescription] = useState('')
   const [remark, setRemark] = useState('')
   const [packagingTypeId, setPackagingTypeId] = useState('')
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState('ACTIVE')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [engNameExisting, setEngNameExisting] = useState<string[]>([])
   const [schiNameExisting, setSchiNameExisting] = useState<string[]>([])
   const [tchiNameExisting, setTchiNameExisting] = useState<string[]>([])
   const [version, setVersion] = useState<number>(0)
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const statusList = () => {
     const colList: il_item[] = [
       {
@@ -80,7 +84,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
       {
         name: t('status.inactive'),
         id: 'INACTIVE'
-      },
+      }
     ]
     return colList
   }
@@ -200,7 +204,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
       status: status,
       createdBy: loginId,
       updatedBy: loginId,
-      ...(action === 'edit' && {version: version})
+      ...(action === 'edit' && { version: version })
     }
 
     if (action == 'add') {
@@ -226,22 +230,22 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
       } else {
         setTrySubmited(true)
       }
-    } catch (error:any) {
-      const {state} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
-        if(error?.response?.data?.status === STATUS_CODE[500] ||
-          error?.response?.data?.status === STATUS_CODE[409]){
-          setValidation(
-            [
-              {
-                field: t('common.packageName'),
-                problem: '',
-                type: 'error'
-              }
-            ]
-          )
+        if (
+          error?.response?.data?.status === STATUS_CODE[500] ||
+          error?.response?.data?.status === STATUS_CODE[409]
+        ) {
+          setValidation([
+            {
+              field: t('common.packageName'),
+              problem: '',
+              type: 'error'
+            }
+          ])
         }
         setTrySubmited(true)
         // onSubmitData('error', t('common.saveFailed'))
@@ -253,63 +257,63 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
     formData: CreatePackagingUnitProps,
     packagingTypeId: string
   ) => {
-   try {
-    if (validation.length === 0) {
-      const result = await editPackaging(formData, packagingTypeId)
-      if (result) {
-        onSubmitData('success', t('common.editSuccessfully'))
-        resetData()
-        handleDrawerClose()
+    try {
+      if (validation.length === 0) {
+        const result = await editPackaging(formData, packagingTypeId)
+        if (result) {
+          onSubmitData('success', t('common.editSuccessfully'))
+          resetData()
+          handleDrawerClose()
+        }
+      } else {
+        setTrySubmited(true)
       }
-    } else {
-      setTrySubmited(true)
-    }
-   } catch (error:any) {
-      const {state} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
-        if(error?.response?.data?.status === STATUS_CODE[409]){
-          showErrorToast(error?.response?.data?.message);
+        if (error?.response?.data?.status === STATUS_CODE[409]) {
+          showErrorToast(error?.response?.data?.message)
         }
       }
-   }
+    }
   }
 
   const handleDelete = async () => {
-   try {
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
-    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
+    try {
+      const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+      const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
 
-    const formData: CreatePackagingUnitProps = {
-      tenantId: tenantId,
-      packagingNameTchi: tChineseName,
-      packagingNameSchi: sChineseName,
-      packagingNameEng: englishName,
-      description: description,
-      remark: remark,
-      status: 'DELETED',
-      createdBy: loginId,
-      updatedBy: loginId,
-      version: version,
-    }
-
-    if (selectedItem != null) {
-      const result = await editPackaging(formData, packagingTypeId)
-      if (result) {
-        onSubmitData('success', t('common.deletedSuccessfully'))
-        resetData()
-        handleDrawerClose()
-      } else {
-        onSubmitData('error', t('common.deleteFailed'))
+      const formData: CreatePackagingUnitProps = {
+        tenantId: tenantId,
+        packagingNameTchi: tChineseName,
+        packagingNameSchi: sChineseName,
+        packagingNameEng: englishName,
+        description: description,
+        remark: remark,
+        status: 'DELETED',
+        createdBy: loginId,
+        updatedBy: loginId,
+        version: version
       }
-    }
-   } catch (error:any) {
-      const {state} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+
+      if (selectedItem != null) {
+        const result = await editPackaging(formData, packagingTypeId)
+        if (result) {
+          onSubmitData('success', t('common.deletedSuccessfully'))
+          resetData()
+          handleDrawerClose()
+        } else {
+          onSubmitData('error', t('common.deleteFailed'))
+        }
+      }
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
-   }
+    }
   }
 
   return (
@@ -346,13 +350,15 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
                 id="tChineseName"
                 value={tChineseName}
                 disabled={action === 'delete'}
-                placeholder={t('packaging_unit.traditional_chinese_name_placeholder')}
+                placeholder={t(
+                  'packaging_unit.traditional_chinese_name_placeholder'
+                )}
                 onChange={(event) => setTChineseName(event.target.value)}
                 error={checkString(tChineseName)}
               />
             </CustomField>
           </Box>
-          
+
           <Box sx={{ marginY: 2 }}>
             <CustomField
               label={t('packaging_unit.simplified_chinese_name')}
@@ -362,7 +368,9 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
                 id="sChineseName"
                 value={sChineseName}
                 disabled={action === 'delete'}
-                placeholder={t('packaging_unit.simplified_chinese_name_placeholder')}
+                placeholder={t(
+                  'packaging_unit.simplified_chinese_name_placeholder'
+                )}
                 onChange={(event) => setSChineseName(event.target.value)}
                 error={checkString(sChineseName)}
               />
@@ -436,7 +444,6 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
                 ))}
             </Grid>
           </Box>
-
         </Box>
       </RightOverlayForm>
     </div>
