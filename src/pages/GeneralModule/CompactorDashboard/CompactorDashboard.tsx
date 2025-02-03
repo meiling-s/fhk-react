@@ -267,6 +267,7 @@ const CompactorDashboard: FunctionComponent = () => {
     )
     if (result.data?.content.length > 0) {
       setCompactorProcessInItem(result.data?.content)
+      console.log(result.data?.content)
     } else {
       setCompactorProcessInItem([])
     }
@@ -525,7 +526,7 @@ const CompactorDashboard: FunctionComponent = () => {
           >
             <DataGrid
               rows={compactorProcessInItem}
-              getRowId={(row) => row.chkInId}
+              getRowId={(row) => row.chkInDtlId}
               hideFooter
               columns={columns}
               onRowClick={() => {}}
