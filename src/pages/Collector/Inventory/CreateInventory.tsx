@@ -56,7 +56,6 @@ import {
   ProcessInType,
   ProcessOutType
 } from 'src/interfaces/inventory'
-import { error } from 'console'
 
 interface CreateInventoryItemProps {
   drawerOpen: boolean
@@ -216,9 +215,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
         )
 
         if (matchingRecycType) {
-          const hasSubType =
-            matchingRecycType.recycSubType &&
-            matchingRecycType.recycSubType.length > 0
+          const hasSubType = matchingRecycType.recycSubType.length > 0
 
           if (!selectedRecycType) {
             tempV.push({
@@ -228,7 +225,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
             })
           }
 
-          if (hasSubType && !selectedRecycSubType) {
+          if (hasSubType && selectedRecycSubType === '') {
             tempV.push({
               field: t('pick_up_order.card_detail.subcategory'),
               problem: formErr.empty,
@@ -424,7 +421,6 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
   }
 
   const handleRecycChange = (values: any) => {
-    console.log('handleRecycChange', values)
     if (values && values.recycTypeId) {
       const newDefaultRecyc: singleRecyclable = {
         recycTypeId: values.recycTypeId,
@@ -432,10 +428,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
       }
 
       setSelectedRecycType(values.recycTypeId)
-
-      if (values.recycSubTypeId != '') {
-        setSelectedRecycSubType(values.recycSubTypeId)
-      }
+      setSelectedRecycSubType(values.recycSubTypeId)
 
       setDefaultRecyc(newDefaultRecyc)
     }
@@ -627,6 +620,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                   showError={selectedRecycType === '' && trySubmited && isRecyc}
                   showErrorSubtype={
                     isRequiredSub(t('pick_up_order.card_detail.subcategory')) &&
+                    selectedRecycSubType === '' &&
                     trySubmited
                   }
                 />
@@ -937,7 +931,7 @@ const CreateInventoryItem: React.FC<CreateInventoryItemProps> = ({
                 </ImageUploading>
               </CustomField>
             </Box>
-            <Grid item sx={{ width: '100%' }}>
+            <Grid item sx={{ width: '100%', paddingBottom: 4 }}>
               {trySubmited &&
                 validation.map((val, index) => (
                   <FormErrorMsg
