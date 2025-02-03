@@ -254,6 +254,17 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           });
         }
       }
+      if (
+        deviceIdListExist &&
+        action === "add" &&
+        deviceIdListExist.includes(deviceId)
+      ) {
+        tempV.push({
+          field: t("driver.vehicleMenu.imei"),
+          problem: formErr.alreadyExist,
+          type: "error",
+        });
+      }
       if (deviceIdListExist && action === "edit" && selectedItem && deviceId) {
         if (
           deviceId !== selectedItem.deviceId &&
@@ -329,15 +340,62 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     }
   };
 
+  const checkErrorMessage = (message: string) => {
+    const tempV: formValidate[] = [];
+    if (message.includes("ImeiAlreadyExists")) {
+      const tenantId = message.split("|");
+      const IMEIErrorMessageEN = `Duplicate IMEI ID is found in the system. Please contact ASTD for details. (Error code: E-${tenantId[1]})`;
+      const IMEIErrorMessageTC = `系統找到相同的IMEI ID，請向ASTD職員查詢。(Error code: E-${tenantId[1]})`;
+      const IMEIErrorMessageCH = `系统找到相同的IMEI ID，请向ASTD职员查询。(Error code: E-${tenantId[1]})`;
+      tempV.push({
+        field: "socif",
+        problem:
+          i18n.language === "enus"
+            ? IMEIErrorMessageEN
+            : i18n.language === "zhhk"
+            ? IMEIErrorMessageTC
+            : IMEIErrorMessageCH,
+        type: "error",
+      });
+      setValidation(tempV);
+    } else if (message.includes("RegNumberAlreadyExists")) {
+      const tenantId = message.split("|");
+      const PlateErrorMessageEN = `Duplicate Plate No is found in the system. Please contact ASTD for details. (Error code: E-${tenantId[1]})`;
+      const PlateErrorMessageTC = `系統找到相同的車牌號碼，請向ASTD職員查詢。(Error code: E-${tenantId[1]})`;
+      const PlateErrorMessageCH = `系统找到相同车牌号码，请向ASTD职员查询。(Error code: E-${tenantId[1]})`;
+
+      tempV.push({
+        field: "socif",
+        problem:
+          i18n.language === "enus"
+            ? PlateErrorMessageEN
+            : i18n.language === "zhhk"
+            ? PlateErrorMessageTC
+            : PlateErrorMessageCH,
+        type: "error",
+      });
+      setValidation(tempV);
+    }
+    return null;
+  };
+
   const handleCreateVehicle = async (formData: CreateLogisticVehicle) => {
     if (validation.length === 0) {
-      const result = await createVehicles(formData);
-      if (result) {
-        onSubmitData("success", t("common.saveSuccessfully"));
-        resetData();
-        handleDrawerClose();
-      } else {
-        onSubmitData("error", t("common.saveFailed"));
+      try {
+        const result = await createVehicles(formData);
+        if (result) {
+          onSubmitData("success", t("common.saveSuccessfully"));
+          resetData();
+          handleDrawerClose();
+        }
+      } catch (error: any) {
+        const { state } = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate("/maintenance");
+        } else if (state.code === STATUS_CODE[409]) {
+          setTrySubmited(true);
+          checkErrorMessage(error.response.data.message);
+        }
       }
     } else {
       setTrySubmited(true);
@@ -373,7 +431,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
         if (state.code === STATUS_CODE[503]) {
           navigate("/maintenance");
         } else if (state.code === STATUS_CODE[409]) {
-          showErrorToast(error.response.data.message);
+          setTrySubmited(true);
+          checkErrorMessage(error.response.data.message);
         }
       }
     } else {
@@ -660,8 +719,12 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   validation.map((val, index) => (
                     <FormErrorMsg
                       key={index}
-                      field={t(val.field)}
-                      errorMsg={returnErrorMsg(val.problem, t)}
+                      field={val.field === "socif" ? "" : t(val.field)}
+                      errorMsg={
+                        val.field === "socif"
+                          ? val.problem
+                          : returnErrorMsg(val.problem, t)
+                      }
                       type={val.type}
                       dataTestId=""
                     />

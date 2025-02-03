@@ -561,6 +561,7 @@ const CreateRecycleForm = ({
       resetForm();
       resetModal();
       onClose && onClose();
+      console.log("onSubmit", values)
     },
   });
 
