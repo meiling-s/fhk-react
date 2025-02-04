@@ -348,7 +348,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       if (state.code === STATUS_CODE[503]) {
         navigate("/maintenance");
       } else if (state.code === STATUS_CODE[409]) {
-        showErrorToast(error.response.data.message);
+        checkErrorMessage(error.response.data.message);
       }
     }
   };
