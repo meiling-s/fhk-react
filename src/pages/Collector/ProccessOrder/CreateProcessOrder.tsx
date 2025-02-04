@@ -1081,6 +1081,7 @@ const CreateProcessOrder = ({}: {}) => {
                   <TimePicker
                     value={processStartAt}
                     onChange={(value) => onChangeCreatedDate(value)}
+                    timeSteps={{ minutes: 1 }}
                     sx={{
                       ...localstyles.timePicker
                     }}
