@@ -253,12 +253,24 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.minMoreOneImgUploded,
           type: "error",
         });
-      console.log("tempV", tempV);
       setValidation(tempV);
     };
 
     validate();
   }, [selectedService, selectedVehicle, listedPlate, licensePlate, pictures]);
+
+  const checkErrorMessage = (message: string) => {
+    const tempV: formValidate[] = [];
+    if (message.includes("[Vehicle Plate No] already exist.")) {
+      tempV.push({
+        field: t("vehicle.licensePlate"),
+        problem: formErr.alreadyExist,
+        type: "error",
+      });
+      setValidation(tempV);
+    }
+    return null;
+  };
 
   const handleSubmit = () => {
     const loginId = localStorage.getItem(localStorgeKeyName.username) || "";
@@ -309,6 +321,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
               type: "error",
             },
           ]);
+        } else if (state.code === STATUS_CODE[409]) {
+          checkErrorMessage(error.response.data.message);
         }
         setTrySubmited(true);
       }
