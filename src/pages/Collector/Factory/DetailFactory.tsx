@@ -386,7 +386,7 @@ const DetailFactory: FunctionComponent<Props> = ({
   }
 
   const isNameExisting = (currfield: string) => {
-    return validation.some((item) => item.field === currfield)
+    return validation.some((item) => item.field === currfield) && trySubmited
   }
 
   return (
