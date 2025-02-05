@@ -139,12 +139,16 @@ const CancelModal: React.FC<CancelForm> = ({
       processOrderRejectReason: reasonData
     }
 
-
-    const result = await deleteProcessOrder(form, processOrderId!!)
-    if (result) {
-      onClose()
-      onRejected()
-    } else {
+    try {
+      const result = await deleteProcessOrder(form, processOrderId!!)
+      if (result) {
+        //console.log('result', result)
+        onClose()
+        onRejected()
+      } else {
+        showErrorToast(t('common.cancelFailed'))
+      }
+    } catch (e: any) {
       showErrorToast(t('common.cancelFailed'))
     }
   }
@@ -309,7 +313,7 @@ const DetailProcessOrder = ({
           name: warehouseName
         })
       })
-      console.log('initWarehouse', warehouse)
+
       setWarehouseList(warehouse)
       mappingDetail()
     }
