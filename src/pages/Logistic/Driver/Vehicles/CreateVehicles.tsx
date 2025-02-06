@@ -128,7 +128,6 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       setTrySubmited(false);
       resetData();
     }
-    console.log("id list", deviceIdListExist);
   }, [drawerOpen]);
 
   const getserviceList = () => {};
@@ -257,6 +256,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       if (
         deviceIdListExist &&
         action === "add" &&
+        deviceId !== "" &&
         deviceIdListExist.includes(deviceId)
       ) {
         tempV.push({
@@ -373,6 +373,14 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
             ? PlateErrorMessageTC
             : PlateErrorMessageCH,
         type: "error",
+      });
+      setValidation(tempV);
+    } else if (message.includes("[Vehicle Plate No] already exist.")) {
+      tempV.push({
+        field: t("driver.vehicleMenu.license_plate_number"),
+        problem: formErr.alreadyExist,
+        type: "error",
+        dataTestId: "logistic-vehicles-form-plate-no-err-warning-5910",
       });
       setValidation(tempV);
     }
