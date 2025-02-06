@@ -1,42 +1,42 @@
-import { useEffect, useState, FunctionComponent, useCallback } from 'react'
-import { Box, Button, Typography, Pagination } from '@mui/material'
+import { useEffect, useState, FunctionComponent, useCallback } from "react";
+import { Box, Button, Typography, Pagination } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
   GridRowParams,
   GridRowSpacingParams,
-  GridRenderCellParams
-} from '@mui/x-data-grid'
+  GridRenderCellParams,
+} from "@mui/x-data-grid";
 import {
   ADD_ICON,
   EDIT_OUTLINED_ICON,
-  DELETE_OUTLINED_ICON
-} from '../../../themes/icons'
+  DELETE_OUTLINED_ICON,
+} from "../../../themes/icons";
 
-import { styles } from '../../../constants/styles'
-import CreateUserGroup from './CreateUserGroup'
+import { styles } from "../../../constants/styles";
+import CreateUserGroup from "./CreateUserGroup";
 import {
   UserGroup as UserGroupItem,
   CreateUserGroupProps as UserGroupForm,
-  Functions
-} from '../../../interfaces/userGroup'
-import { ToastContainer, toast } from 'react-toastify'
-import CircularLoading from '../../../components/CircularLoading'
-import { useTranslation } from 'react-i18next'
+  Functions,
+} from "../../../interfaces/userGroup";
+import { ToastContainer, toast } from "react-toastify";
+import CircularLoading from "../../../components/CircularLoading";
+import { useTranslation } from "react-i18next";
 import {
   getAllFunction,
-  getAllUserGroup
-} from '../../../APICalls/Collector/userGroup'
-import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
-import i18n from '../../../setups/i18n'
-import { extractError } from '../../../utils/utils'
-import { useNavigate } from 'react-router-dom'
-import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+  getAllUserGroup,
+} from "../../../APICalls/Collector/userGroup";
+import { STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
+import i18n from "../../../setups/i18n";
+import { extractError } from "../../../utils/utils";
+import { useNavigate } from "react-router-dom";
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 
 type TableRow = {
-  id: number
-  [key: string]: any
-}
+  id: number;
+  [key: string]: any;
+};
 
 function createUserGroup(
   groupId: number,
@@ -64,53 +64,67 @@ function createUserGroup(
     updatedAt,
     userAccount,
     functions,
-    isAdmin
-  }
+    isAdmin,
+  };
 }
 
 const UserGroup: FunctionComponent = () => {
-  const { t } = useTranslation()
-  const [drawerOpen, setDrawerOpen] = useState(false)
-  const [userGroupList, setUserGroupList] = useState<UserGroupItem[]>([])
-  const [selectedRow, setSelectedRow] = useState<UserGroupItem | null>(null)
-  const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
-  const [rowId, setRowId] = useState<number>(1)
-  const [functionList, setFunctionList] = useState<Functions[]>([])
-  const [groupNameList, setGroupNameList] = useState<string[]>([])
-  const role = localStorage.getItem(localStorgeKeyName.role)
-  const navigate = useNavigate()
-  const [page, setPage] = useState(1)
-  const pageSize = 10
-  const [totalData, setTotalData] = useState<number>(0)
-  const { localeTextDataGrid } = useLocaleTextDataGrid()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { t } = useTranslation();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [userGroupList, setUserGroupList] = useState<UserGroupItem[]>([]);
+  const [selectedRow, setSelectedRow] = useState<UserGroupItem | null>(null);
+  const [action, setAction] = useState<"add" | "edit" | "delete">("add");
+  const [rowId, setRowId] = useState<number>(1);
+  const [functionList, setFunctionList] = useState<Functions[]>([]);
+  const [groupNameList, setGroupNameList] = useState<string[]>([]);
+  const role = localStorage.getItem(localStorgeKeyName.role) as string;
+  const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const [totalData, setTotalData] = useState<number>(0);
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    initFunctionList()
-    initUserGroupList()
-  }, [page])
+    initFunctionList();
+    initUserGroupList();
+  }, [page]);
 
   const initFunctionList = async () => {
     try {
-      const result = await getAllFunction()
-      const data = result?.data.filter((item: any) => item.tenantTypeId == role)
-      setFunctionList(data)
+      const result = await getAllFunction();
+      const data = result?.data.filter((item: any) => {
+        const isRoleMatch = item.tenantTypeId === role;
+
+        // Exclude "Pickup order" if role is logistic, collector, or manufacturer
+        const shouldExcludePickup =
+          ["logistic", "collector", "manufacturer"].includes(role) &&
+          item.functionNameEng === "Pickup order";
+
+        // Exclude "Purchase order" if role is customer
+        const shouldExcludePurchase =
+          role === "customer" && item.functionNameEng === "Purchase order";
+
+        return isRoleMatch && !shouldExcludePickup && !shouldExcludePurchase;
+      });
+
+      setFunctionList(data);
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-  }
+  };
 
   const initUserGroupList = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const result = await getAllUserGroup(page - 1, pageSize)
-      const data = result?.data
-      let tempGroupList: string[] = []
+      const result = await getAllUserGroup(page - 1, pageSize);
+      const data = result?.data;
+      let tempGroupList: string[] = [];
       if (data) {
-        let userGroupMapping: UserGroupItem[] = []
+        let userGroupMapping: UserGroupItem[] = [];
         data.content.map((item: any) => {
           userGroupMapping.push(
             createUserGroup(
@@ -127,226 +141,226 @@ const UserGroup: FunctionComponent = () => {
               item?.functions,
               item?.isAdmin
             )
-          )
+          );
 
-          tempGroupList.push(item?.roleName)
-        })
-        setUserGroupList(userGroupMapping)
-        setGroupNameList(tempGroupList)
-        setTotalData(result.data.totalPages)
+          tempGroupList.push(item?.roleName);
+        });
+        setUserGroupList(userGroupMapping);
+        setGroupNameList(tempGroupList);
+        setTotalData(result.data.totalPages);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   const columns: GridColDef[] = [
     {
-      field: 'roleName',
-      headerName: t('userGroup.groupName'),
+      field: "roleName",
+      headerName: t("userGroup.groupName"),
       width: 200,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'description',
-      headerName: t('userGroup.description'),
+      field: "description",
+      headerName: t("userGroup.description"),
       width: 200,
-      type: 'string'
+      type: "string",
     },
     {
-      field: 'isAdmin',
-      headerName: t('userAccount.isAdmin'),
+      field: "isAdmin",
+      headerName: t("userAccount.isAdmin"),
       width: 250,
-      type: 'string',
+      type: "string",
       valueGetter: (params) =>
-        params.row?.isAdmin ? t('common.yes') : t('common.no')
+        params.row?.isAdmin ? t("common.yes") : t("common.no"),
     },
     {
-      field: 'functions',
-      headerName: t('userGroup.availableFeatures'),
+      field: "functions",
+      headerName: t("userGroup.availableFeatures"),
       width: 600,
-      type: 'string',
+      type: "string",
       renderCell: (params) => {
         return (
           <div>
             {params.row.functions.map((item: any, key: number) => (
               <span key={key}>
-                {key > 0 ? ' , ' : ''}
-                {i18n.language == 'zhch'
+                {key > 0 ? " , " : ""}
+                {i18n.language == "zhch"
                   ? item.functionNameSChi
-                  : i18n.language == 'zhhk'
+                  : i18n.language == "zhhk"
                   ? item.functionNameTChi
                   : item.functionNameEng}
               </span>
             ))}
           </div>
-        )
-      }
+        );
+      },
     },
 
     {
-      field: 'edit',
-      headerName: t('pick_up_order.item.edit'),
+      field: "edit",
+      headerName: t("pick_up_order.item.edit"),
       filterable: false,
       renderCell: (params) => {
         return (
           <Button
             data-testid="astd-user-group-edit-button-9924"
             onClick={(event) => {
-              event.stopPropagation()
-              handleAction(params, 'edit')
+              event.stopPropagation();
+              handleAction(params, "edit");
             }}
           >
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
             />
           </Button>
-        )
-      }
+        );
+      },
     },
     {
-      field: 'delete',
-      headerName: t('pick_up_order.item.delete'),
+      field: "delete",
+      headerName: t("pick_up_order.item.delete"),
       filterable: false,
       renderCell: (params) => {
         return (
           <Button
             data-testid="astd-user-group-delete-button-7688"
             onClick={(event) => {
-              event.stopPropagation()
-              handleAction(params, 'delete')
+              event.stopPropagation();
+              handleAction(params, "delete");
             }}
           >
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
             />
           </Button>
-        )
-      }
-    }
-  ]
+        );
+      },
+    },
+  ];
 
   const handleAction = (
     params: GridRenderCellParams,
-    action: 'add' | 'edit' | 'delete'
+    action: "add" | "edit" | "delete"
   ) => {
-    setAction(action)
-    setRowId(params.row.id)
-    setSelectedRow(params.row)
-    setDrawerOpen(true)
-  }
+    setAction(action);
+    setRowId(params.row.id);
+    setSelectedRow(params.row);
+    setDrawerOpen(true);
+  };
 
   const handleSelectRow = (params: GridRowParams) => {
-    setAction('edit')
-    setRowId(params.row.id)
-    setSelectedRow(params.row)
-    setDrawerOpen(true)
-  }
+    setAction("edit");
+    setRowId(params.row.id);
+    setSelectedRow(params.row);
+    setDrawerOpen(true);
+  };
 
   const showErrorToast = (msg: string) => {
     toast.error(msg, {
-      position: 'top-center',
+      position: "top-center",
       autoClose: 3000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      theme: 'light'
-    })
-  }
+      theme: "light",
+    });
+  };
 
   const showSuccessToast = (msg: string) => {
     toast.info(msg, {
-      position: 'top-center',
+      position: "top-center",
       autoClose: 3000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      theme: 'light'
-    })
-  }
+      theme: "light",
+    });
+  };
 
   const onSubmitData = (type: string, msg: string) => {
-    initUserGroupList()
-    if (type == 'success') {
-      showSuccessToast(msg)
+    initUserGroupList();
+    if (type == "success") {
+      showSuccessToast(msg);
     } else {
-      showErrorToast(msg)
+      showErrorToast(msg);
     }
-  }
+  };
 
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
-      top: params.isFirstVisible ? 0 : 10
-    }
-  }, [])
+      top: params.isFirstVisible ? 0 : 10,
+    };
+  }, []);
 
   useEffect(() => {
     if (userGroupList.length === 0 && page > 1) {
       // move backward to previous page once data deleted from last page (no data left on last page)
-      setPage((prev) => prev - 1)
+      setPage((prev) => prev - 1);
     }
-  }, [userGroupList])
+  }, [userGroupList]);
 
   return (
     <>
       <Box
         sx={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          pr: 4
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          pr: 4,
         }}
       >
         <ToastContainer></ToastContainer>
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            marginY: 4
+            display: "flex",
+            alignItems: "center",
+            gap: "16px",
+            marginY: 4,
           }}
         >
           <Typography fontSize={16} color="grey" fontWeight="600">
-            {t('staffManagement.userGroup')}
+            {t("staffManagement.userGroup")}
           </Typography>
           <Button
             sx={[
               styles.buttonOutlinedGreen,
               {
-                width: 'max-content',
-                height: '40px'
-              }
+                width: "max-content",
+                height: "40px",
+              },
             ]}
             data-testid="astd-user-group-new-button-8674"
             variant="outlined"
             onClick={() => {
-              setDrawerOpen(true)
-              setAction('add')
+              setDrawerOpen(true);
+              setAction("add");
             }}
           >
-            <ADD_ICON /> {t('top_menu.add_new')}
+            <ADD_ICON /> {t("top_menu.add_new")}
           </Button>
         </Box>
         <div className="table-vehicle">
-          <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
+          <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
             {isLoading ? (
               <CircularLoading />
             ) : (
               <Box>
-                {' '}
+                {" "}
                 <DataGrid
                   rows={userGroupList}
                   getRowId={(row) => row.groupId}
@@ -357,31 +371,31 @@ const UserGroup: FunctionComponent = () => {
                   localeText={localeTextDataGrid}
                   getRowClassName={(params) =>
                     selectedRow && params.id === selectedRow.groupId
-                      ? 'selected-row'
-                      : ''
+                      ? "selected-row"
+                      : ""
                   }
                   sx={{
-                    border: 'none',
-                    '& .MuiDataGrid-cell': {
-                      border: 'none'
+                    border: "none",
+                    "& .MuiDataGrid-cell": {
+                      border: "none",
                     },
-                    '& .MuiDataGrid-row': {
-                      bgcolor: 'white',
-                      borderRadius: '10px'
+                    "& .MuiDataGrid-row": {
+                      bgcolor: "white",
+                      borderRadius: "10px",
                     },
-                    '&>.MuiDataGrid-main': {
-                      '&>.MuiDataGrid-columnHeaders': {
-                        borderBottom: 'none'
-                      }
+                    "&>.MuiDataGrid-main": {
+                      "&>.MuiDataGrid-columnHeaders": {
+                        borderBottom: "none",
+                      },
                     },
-                    '.MuiDataGrid-columnHeaderTitle': {
-                      fontWeight: 'bold !important',
-                      overflow: 'visible !important'
+                    ".MuiDataGrid-columnHeaderTitle": {
+                      fontWeight: "bold !important",
+                      overflow: "visible !important",
                     },
-                    '& .selected-row': {
-                      backgroundColor: '#F6FDF2 !important',
-                      border: '1px solid #79CA25'
-                    }
+                    "& .selected-row": {
+                      backgroundColor: "#F6FDF2 !important",
+                      border: "1px solid #79CA25",
+                    },
                   }}
                 />
                 <Pagination
@@ -389,7 +403,7 @@ const UserGroup: FunctionComponent = () => {
                   count={Math.ceil(totalData)}
                   page={page}
                   onChange={(_, newPage) => {
-                    setPage(newPage)
+                    setPage(newPage);
                   }}
                 />
               </Box>
@@ -400,8 +414,8 @@ const UserGroup: FunctionComponent = () => {
           <CreateUserGroup
             drawerOpen={drawerOpen}
             handleDrawerClose={() => {
-              setDrawerOpen(false)
-              setSelectedRow(null)
+              setDrawerOpen(false);
+              setSelectedRow(null);
             }}
             action={action}
             rowId={rowId}
@@ -413,7 +427,7 @@ const UserGroup: FunctionComponent = () => {
         )}
       </Box>
     </>
-  )
-}
+  );
+};
 
-export default UserGroup
+export default UserGroup;
