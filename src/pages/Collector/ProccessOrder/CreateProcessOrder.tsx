@@ -831,9 +831,6 @@ const CreateProcessOrder = ({}: {}) => {
 
     const firstWarehouse =
       warehouseListName.length > 0 ? warehouseListName[0] : ''
-    const remainingWarehouses = hasMultipleWarehouses
-      ? warehouseListName.slice(1).join(',')
-      : []
 
     const categoryLabel =
       row.itemCategory != ''
@@ -985,29 +982,6 @@ const CreateProcessOrder = ({}: {}) => {
             {addOnName}
           </TableCell>
         </TableRow>
-        {/* {
-          expandedRows[row.id] && hasMultipleWarehouses && (
-            // remainingWarehouses.map((wh: string, index: number) => (
-            <TableRow key={`${row.id}`}>
-              <TableCell style={{ width: '150px', border: 'none' }}></TableCell>
-              <TableCell style={{ width: '250px', border: 'none' }}></TableCell>
-              <TableCell
-                style={{
-                  width: '200px',
-                  border: 'none'
-                }}
-              >
-                {remainingWarehouses}
-              </TableCell>
-              <TableCell style={{ width: '150px', border: 'none' }}></TableCell>
-              <TableCell style={{ width: '200px', border: 'none' }}></TableCell>
-              <TableCell style={{ width: '200px', border: 'none' }}></TableCell>
-              <TableCell style={{ width: '200px', border: 'none' }}></TableCell>
-              <TableCell style={{ width: '200px', border: 'none' }}></TableCell>
-            </TableRow>
-          )
-          // ))
-        } */}
       </React.Fragment>
     )
   }
@@ -1177,7 +1151,7 @@ const CreateProcessOrder = ({}: {}) => {
                       <EDIT_OUTLINED_ICON
                         fontSize="small"
                         className="cursor-pointer text-grey-dark mr-2"
-                        onClick={(event) => {
+                        onClick={() => {
                           setAction('edit')
                           handleEdit(item, index)
                         }}
@@ -1186,7 +1160,7 @@ const CreateProcessOrder = ({}: {}) => {
                       <DELETE_OUTLINED_ICON
                         fontSize="small"
                         className="cursor-pointer text-grey-dark"
-                        onClick={(event) => {
+                        onClick={() => {
                           //handleDelete(item)
                           setSelectedDeletedItem(item)
                           setOpenDelete(true)
