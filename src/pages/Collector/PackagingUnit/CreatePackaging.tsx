@@ -67,7 +67,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
   const [description, setDescription] = useState('')
   const [remark, setRemark] = useState('')
   const [packagingTypeId, setPackagingTypeId] = useState('')
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState('ACTIVE')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [engNameExisting, setEngNameExisting] = useState<string[]>([])
@@ -325,6 +325,10 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
         navigate('/maintenance')
       }
     }
+  }
+
+  const isNameExisting = (currfield: string) => {
+    return validation.some((item) => item.field === currfield)
   }
 
   return (
