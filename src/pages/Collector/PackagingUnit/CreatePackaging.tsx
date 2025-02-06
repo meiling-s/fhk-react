@@ -327,6 +327,10 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
     }
   }
 
+  const isNameExisting = (currfield: string) => {
+    return validation.some((item) => item.field === currfield)
+  }
+
   return (
     <div className="add-vehicle">
       <RightOverlayForm
