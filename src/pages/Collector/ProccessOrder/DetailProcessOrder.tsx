@@ -81,6 +81,7 @@ const CancelModal: React.FC<CancelForm> = ({
   const [otherReason, setOtherReason] = useState<il_item | undefined>(undefined)
   const [showRemark, setShowRemark] = useState<boolean>(false)
   const [remarkVal, setRemarkVal] = useState<string>('')
+  const [isDisable, setIsDisable] = useState<boolean>(false)
 
   const initDenialReasonList = async () => {
     let result = null
@@ -123,6 +124,7 @@ const CancelModal: React.FC<CancelForm> = ({
   }
 
   const handleCancelRequest = async () => {
+    setIsDisable(true)
     let reasonData: PorReason[] = []
 
     rejectReasonId.map((item) => {
@@ -142,14 +144,17 @@ const CancelModal: React.FC<CancelForm> = ({
     try {
       const result = await deleteProcessOrder(form, processOrderId!!)
       if (result) {
-        //console.log('result', result)
-        onClose()
-        onRejected()
+        setTimeout(() => {
+          onClose()
+          onRejected()
+        }, 1000)
       } else {
         showErrorToast(t('common.cancelFailed'))
       }
     } catch (e: any) {
       showErrorToast(t('common.cancelFailed'))
+    } finally {
+      setTimeout(() => setIsDisable(false), 500)
     }
   }
 
@@ -201,8 +206,8 @@ const CancelModal: React.FC<CancelForm> = ({
           <Box sx={{ alignSelf: 'center' }}>
             <CustomButton
               text={t('check_in.confirm')}
-              color="blue"
-              disabled={rejectReasonId.length === 0}
+              color={isDisable ? '' : 'blue'}
+              disabled={rejectReasonId.length === 0 || isDisable}
               style={{ width: '175px', marginRight: '10px' }}
               onClick={handleCancelRequest}
             />
@@ -214,6 +219,7 @@ const CancelModal: React.FC<CancelForm> = ({
               onClick={() => {
                 onClose()
               }}
+              disabled={isDisable}
             />
           </Box>
         </Stack>
