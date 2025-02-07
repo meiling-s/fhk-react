@@ -67,7 +67,7 @@ import {
   returnApiToken,
   getFormatId,
 } from "../../utils/utils";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { useContainer } from "unstated-next";
@@ -159,14 +159,28 @@ function RejectModal({
         localStorage.getItem(localStorgeKeyName.tenantId) ?? ""
       );
 
-      const result = await astdUpdateTenantStatus(
-        statData,
-        operatorId,
-        tenantId
-      );
-      // const data = result?.data
-      if (result.status === 200) {
-        onSubmit();
+      if (rejectReasonId.length === 0) {
+        toast.info(t("tenant.detail.please_enter_the_reason"), {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else {
+        const result = await astdUpdateTenantStatus(
+          statData,
+          operatorId,
+          tenantId
+        );
+        // const data = result?.data
+        if (result.status === 200) {
+          onSubmit();
+          onClose();
+        }
       }
     } catch (error: any) {
       const { state, realm } = extractError(error);
@@ -208,9 +222,7 @@ function RejectModal({
               className="primary-btn mr-2 cursor-pointer"
               onClick={() => {
                 handleRejectRequest();
-                onClose();
               }}
-              disabled={rejectReasonId.length === 0}
             >
               {t("check_in.confirm")}
             </button>
