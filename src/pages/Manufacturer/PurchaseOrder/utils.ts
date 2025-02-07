@@ -27,7 +27,6 @@ export const ValidateSchemaCreateRecycleFormPurchaseOrder = ({
 
   try {
 
-
     let prevData = []
     if (editRow) {
       prevData = data.filter((item: PurchaseOrderDetail) => item.id != editRow.id)
@@ -72,7 +71,11 @@ export const ValidateSchemaCreateRecycleFormPurchaseOrder = ({
         ,
         weight: Yup.number()
           .moreThan(0, t('pick_up_order.error.weightGreaterThanZero'))
-          .required(t('pick_up_order.error.weight'))
+          .required(t('pick_up_order.error.weight')),
+          unitId: Yup.number()
+          .typeError(`${t("purchase_order.create.unit")} ${t('form.error.shouldNotBeEmpty')}`) 
+          .moreThan(0, `${t("purchase_order.create.unit")} ${t('form.error.shouldNotBeEmpty')}`)
+          .required(`${t("purchase_order.create.unit")} ${t('form.error.shouldNotBeEmpty')}`),
       })
     } else {
       return Yup.object().shape({
@@ -123,7 +126,11 @@ export const ValidateSchemaCreateRecycleFormPurchaseOrder = ({
         ,
         weight: Yup.number()
           .moreThan(0, t('pick_up_order.error.weightGreaterThanZero'))
-          .required(t('pick_up_order.error.weight'))
+          .required(t('pick_up_order.error.weight')),
+          unitId: Yup.number()
+          .typeError(`${t("purchase_order.create.unit")} ${t('form.error.shouldNotBeEmpty')}`)
+          .moreThan(0, `${t("purchase_order.create.unit")} ${t('form.error.shouldNotBeEmpty')}`)
+          .required(`${t("purchase_order.create.unit")} ${t('form.error.shouldNotBeEmpty')}`),
       })
     }
 

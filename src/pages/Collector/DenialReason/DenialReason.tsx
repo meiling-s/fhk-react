@@ -378,6 +378,7 @@ const DenialReason: FunctionComponent = () => {
     initDenialReasonList();
     if (type == "success") {
       showSuccessToast(msg);
+      initAllDenialReason();
     } else {
       showErrorToast(msg);
     }

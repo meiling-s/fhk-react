@@ -37,10 +37,11 @@ const CreatePickupOrder = () => {
   const poInfo: PurChaseOrder = state;
   const [addRow, setAddRow] = useState<CreatePicoDetail[]>([]);
   const { t } = useTranslation();
-  const [picoTypeValue, setPicoType] = useState<string>("AD_HOC");
+  const [picoTypeValue, setPicoType] = useState<string>("ROUTINE");
   const role = localStorage.getItem(localStorgeKeyName.role);
   const loginId = localStorage.getItem(localStorgeKeyName.username) || "";
 
+  console.log(state, "state");
   function getTenantId() {
     const tenantId = returnApiToken().decodeKeycloack.substring(
       "company".length

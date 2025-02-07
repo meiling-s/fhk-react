@@ -1,46 +1,46 @@
-import { FunctionComponent, useState, useEffect, useMemo } from 'react'
-import { Box, Divider, Grid } from '@mui/material'
-import RightOverlayForm from '../../../components/RightOverlayForm'
-import CustomField from '../../../components/FormComponents/CustomField'
-import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
-import Switcher from '../../../components/FormComponents/CustomSwitch'
-import LabelField from '../../../components/FormComponents/CustomField'
-import { useTranslation } from 'react-i18next'
-import { formValidate } from '../../../interfaces/common'
-import { STATUS_CODE, formErr } from '../../../constants/constant'
+import { FunctionComponent, useState, useEffect, useMemo } from "react";
+import { Box, Divider, Grid } from "@mui/material";
+import RightOverlayForm from "../../../components/RightOverlayForm";
+import CustomField from "../../../components/FormComponents/CustomField";
+import CustomTextField from "../../../components/FormComponents/CustomTextField";
+import { FormErrorMsg } from "../../../components/FormComponents/FormErrorMsg";
+import Switcher from "../../../components/FormComponents/CustomSwitch";
+import LabelField from "../../../components/FormComponents/CustomField";
+import { useTranslation } from "react-i18next";
+import { formValidate } from "../../../interfaces/common";
+import { STATUS_CODE, formErr } from "../../../constants/constant";
 import {
   extractError,
   returnApiToken,
-  returnErrorMsg
-} from '../../../utils/utils'
-import { localStorgeKeyName } from '../../../constants/constant'
+  returnErrorMsg,
+} from "../../../utils/utils";
+import { localStorgeKeyName } from "../../../constants/constant";
 
 import {
   CreateUserGroupProps,
   DeleteUserGroupProps,
   EditUserGroupProps,
   Functions,
-  UserGroup
-} from '../../../interfaces/userGroup'
-import FunctionList from './FunctionList'
+  UserGroup,
+} from "../../../interfaces/userGroup";
+import FunctionList from "./FunctionList";
 import {
   createUserGroup,
   deleteUserGroup,
-  editUserGroup
-} from '../../../APICalls/Collector/userGroup'
-import { useNavigate } from 'react-router-dom'
-import i18n from '../../../setups/i18n'
+  editUserGroup,
+} from "../../../APICalls/Collector/userGroup";
+import { useNavigate } from "react-router-dom";
+import i18n from "../../../setups/i18n";
 
 interface Props {
-  drawerOpen: boolean
-  handleDrawerClose: () => void
-  action: 'add' | 'edit' | 'delete' | 'none'
-  onSubmitData: (type: string, msg: string) => void
-  rowId?: number
-  selectedItem?: UserGroup | null
-  functionList: Functions[]
-  groupNameList: string[]
+  drawerOpen: boolean;
+  handleDrawerClose: () => void;
+  action: "add" | "edit" | "delete" | "none";
+  onSubmitData: (type: string, msg: string) => void;
+  rowId?: number;
+  selectedItem?: UserGroup | null;
+  functionList: Functions[];
+  groupNameList: string[];
 }
 
 const CreateUserGroup: FunctionComponent<Props> = ({
@@ -51,324 +51,338 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   rowId,
   selectedItem,
   functionList,
-  groupNameList = []
+  groupNameList = [],
 }) => {
-  const { t } = useTranslation()
-  const [trySubmited, setTrySubmited] = useState<boolean>(false)
-  const [validation, setValidation] = useState<formValidate[]>([])
-  const [roleName, setRoleName] = useState('')
-  const [isAdmin, setIsAdmin] = useState<boolean>(false)
-  const [description, setDescription] = useState('')
-  const [groupList, setGroupList] = useState<string[]>([])
-  const [functions, setFunctions] = useState<number[]>([])
-  var realm = localStorage.getItem(localStorgeKeyName.realm) || 'collector'
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const [trySubmited, setTrySubmited] = useState<boolean>(false);
+  const [validation, setValidation] = useState<formValidate[]>([]);
+  const [roleName, setRoleName] = useState("");
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [description, setDescription] = useState("");
+  const [groupList, setGroupList] = useState<string[]>([]);
+  const [functions, setFunctions] = useState<number[]>([]);
+  var realm = localStorage.getItem(localStorgeKeyName.realm) || "collector";
+  const role = localStorage.getItem(localStorgeKeyName.role) as string;
+  const navigate = useNavigate();
 
   const mappingData = () => {
     if (selectedItem != null) {
       // setRealm('collector')
-      setRoleName(selectedItem.roleName)
-      let newFunctions: number[] = []
+      setRoleName(selectedItem.roleName);
+      let newFunctions: number[] = [];
       selectedItem.functions.forEach((item) => {
-        newFunctions.push(item.functionId)
-      })
-      setFunctions(newFunctions)
-      setIsAdmin(selectedItem.isAdmin)
-      setDescription(selectedItem.description)
+        newFunctions.push(item.functionId);
+      });
+      setFunctions(newFunctions);
+      setIsAdmin(selectedItem.isAdmin);
+      setDescription(selectedItem.description);
     }
-  }
+  };
 
   useEffect(() => {
     if (isAdmin) {
       const allFunctionIds = functionList.map(
         (item: Functions) => item.functionId
-      )
-      setFunctions(allFunctionIds)
+      );
+      setFunctions(allFunctionIds);
     } else {
-      let prevItem: number[] = []
+      let prevItem: number[] = [];
       selectedItem?.functions.forEach((item) => {
-        prevItem.push(item.functionId)
-      })
-      setFunctions(prevItem)
+        prevItem.push(item.functionId);
+      });
+      setFunctions(prevItem);
     }
-  }, [isAdmin, functionList])
+  }, [isAdmin, functionList]);
 
   useEffect(() => {
-    setValidation([])
+    setValidation([]);
 
-    if (action !== 'add') {
-      mappingData()
+    if (action !== "add") {
+      mappingData();
     } else {
-      setTrySubmited(false)
-      resetData()
+      setTrySubmited(false);
+      resetData();
 
       if (isAdmin) {
         const allFunctionIds = functionList.map(
           (item: Functions) => item.functionId
-        )
-        setFunctions(allFunctionIds)
+        );
+        setFunctions(allFunctionIds);
       }
     }
 
     //set groupRoleNameList
     if (selectedItem != null) {
-      const temp = groupNameList.filter((item) => item != selectedItem.roleName)
-      setGroupList(temp)
+      const temp = groupNameList.filter(
+        (item) => item != selectedItem.roleName
+      );
+      setGroupList(temp);
     } else {
-      setGroupList(groupNameList)
+      setGroupList(groupNameList);
     }
 
     //set all funtion selected when drawer open
-  }, [drawerOpen])
+  }, [drawerOpen]);
 
   const resetData = () => {
     //setRealm('')
-    setRoleName('')
-    setFunctions([])
-    setDescription('')
-    setValidation([])
-  }
+    setRoleName("");
+    setFunctions([]);
+    setDescription("");
+    setValidation([]);
+  };
 
   const checkString = (s: string) => {
     if (!trySubmited) {
       //before first submit, don't check the validation
-      return false
+      return false;
     }
-    return s == ''
-  }
+    return s == "";
+  };
 
   useEffect(() => {
     const validate = async () => {
       //do validation here
-      const tempV: formValidate[] = []
-      roleName?.toString() == '' &&
+      const tempV: formValidate[] = [];
+      roleName?.toString() == "" &&
         tempV.push({
-          field: t('userGroup.groupName'),
+          field: t("userGroup.groupName"),
           problem: formErr.empty,
-          dataTestId: 'astd-user-group-form-group-name-err-warning-3882',
-          type: 'error'
-        })
+          dataTestId: "astd-user-group-form-group-name-err-warning-3882",
+          type: "error",
+        });
       groupList.some((item) => item.toLowerCase() == roleName.toLowerCase()) &&
         tempV.push({
-          field: t('userGroup.groupName'),
+          field: t("userGroup.groupName"),
           problem: formErr.alreadyExist,
-          type: 'error'
-        })
-      description?.toString() == '' &&
+          type: "error",
+        });
+      description?.toString() == "" &&
         tempV.push({
-          field: t('userGroup.description'),
+          field: t("userGroup.description"),
           problem: formErr.empty,
-          dataTestId: 'astd-user-group-form-desc-err-warning-1635',
-          type: 'error'
-        })
+          dataTestId: "astd-user-group-form-desc-err-warning-1635",
+          type: "error",
+        });
       functions.length == 0 &&
         tempV.push({
-          field: t('userGroup.availableFeatures'),
+          field: t("userGroup.availableFeatures"),
           problem: formErr.empty,
-          dataTestId: 'astd-user-group-form-available-feature-err-warning-6315',
-          type: 'error'
-        })
+          dataTestId: "astd-user-group-form-available-feature-err-warning-6315",
+          type: "error",
+        });
       // console.log("tempV", tempV)
-      setValidation(tempV)
-    }
+      setValidation(tempV);
+    };
 
-    validate()
-  }, [roleName, description, functions, i18n.language])
+    validate();
+  }, [roleName, description, functions, i18n.language]);
 
   const isUserExisting = () => {
     return (
       groupList.some((item) => item.toLowerCase() == roleName.toLowerCase()) &&
       trySubmited
-    )
-  }
+    );
+  };
 
   const handleSubmit = () => {
-    const token = returnApiToken()
+    const token = returnApiToken();
 
-    if (action == 'add') {
+    const roleFunctionMap: Record<string, number> = {
+      collector: 3, // pickup order
+      logistic: 24, // pickup order
+      manufacturer: 35, // pickup order
+      customer: 62, // purchase order
+    };
+
+    const requiredFunctionId = roleFunctionMap[role];
+    const updatedFunctions = requiredFunctionId
+      ? Array.from(new Set([...functions, requiredFunctionId]))
+      : functions;
+
+    if (action === "add") {
       const formData: CreateUserGroupProps = {
         realm: realm,
         tenantId: token.tenantId,
         roleName: roleName,
         description: description,
-        functions: functions,
+        functions: updatedFunctions,
         createdBy: token.loginId,
-        status: 'ACTIVE',
-        isAdmin: isAdmin
-      }
-      handleCreateUserGroup(formData)
+        status: "ACTIVE",
+        isAdmin: isAdmin,
+      };
+      handleCreateUserGroup(formData);
     } else {
       const formData: EditUserGroupProps = {
-        functions: functions,
+        functions: updatedFunctions,
         roleName: roleName,
         description: description,
         updatedBy: token.loginId,
-        status: 'ACTIVE',
-        isAdmin: isAdmin
-      }
-      handleEditUserGroup(formData)
+        status: "ACTIVE",
+        isAdmin: isAdmin,
+      };
+      handleEditUserGroup(formData);
     }
-  }
+  };
 
   const handleCreateUserGroup = async (formData: CreateUserGroupProps) => {
     try {
-      console.log('handleCreateUserGroup', functions)
       if (validation.length === 0) {
-        const result = await createUserGroup(formData)
+        const result = await createUserGroup(formData);
         if (result) {
-          onSubmitData('success', t('notify.successCreated'))
-          resetData()
-          handleDrawerClose()
+          onSubmitData("success", t("notify.successCreated"));
+          resetData();
+          handleDrawerClose();
         } else {
-          onSubmitData('error', t('notify.errorCreated'))
+          onSubmitData("error", t("notify.errorCreated"));
         }
       } else {
-        setTrySubmited(true)
+        setTrySubmited(true);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-  }
+  };
 
   const handleEditUserGroup = async (formData: EditUserGroupProps) => {
     try {
       if (validation.length === 0) {
         if (selectedItem != null) {
-          const result = await editUserGroup(formData, selectedItem.groupId!)
+          const result = await editUserGroup(formData, selectedItem.groupId!);
           if (result) {
-            onSubmitData('success', t('notify.SuccessEdited'))
-            resetData()
-            handleDrawerClose()
+            onSubmitData("success", t("notify.SuccessEdited"));
+            resetData();
+            handleDrawerClose();
           } else {
-            setTrySubmited(true)
-            onSubmitData('error', t('notify.errorEdited'))
+            setTrySubmited(true);
+            onSubmitData("error", t("notify.errorEdited"));
           }
         }
       } else {
-        setTrySubmited(true)
+        setTrySubmited(true);
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error)
+      const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate('/maintenance')
+        navigate("/maintenance");
       }
     }
-  }
+  };
 
   const handleDelete = async () => {
-    const token = returnApiToken()
-    const status = 'DELETED'
+    const token = returnApiToken();
+    const status = "DELETED";
     if (selectedItem != null) {
       const formData: DeleteUserGroupProps = {
         updatedBy: token.loginId,
-        status: status
-      }
-      const result = await deleteUserGroup(formData, selectedItem.groupId!)
+        status: status,
+      };
+      const result = await deleteUserGroup(formData, selectedItem.groupId!);
       if (result) {
         if (result == 500) {
-          setTrySubmited(true)
-          onSubmitData('error', t('userGroup.userAccountUsed'))
+          setTrySubmited(true);
+          onSubmitData("error", t("userGroup.userAccountUsed"));
         } else {
-          onSubmitData('success', t('notify.successDeleted'))
-          resetData()
-          handleDrawerClose()
+          onSubmitData("success", t("notify.successDeleted"));
+          resetData();
+          handleDrawerClose();
         }
       } else {
-        setTrySubmited(true)
-        onSubmitData('error', t('notify.errorDeleted'))
+        setTrySubmited(true);
+        onSubmitData("error", t("notify.errorDeleted"));
       }
     }
-  }
+  };
 
   return (
     <div className="add-user-group">
       <RightOverlayForm
         open={drawerOpen}
         onClose={handleDrawerClose}
-        anchor={'right'}
+        anchor={"right"}
         action={action}
         headerProps={{
           title:
-            action == 'add'
-              ? t('top_menu.add_new')
-              : action == 'edit'
-              ? t('userGroup.change')
-              : t('userGroup.delete'),
-          subTitle: t('userGroup.title'),
-          submitText: t('add_warehouse_page.save'),
-          cancelText: t('add_warehouse_page.delete'),
+            action == "add"
+              ? t("top_menu.add_new")
+              : action == "edit"
+              ? t("userGroup.change")
+              : t("userGroup.delete"),
+          subTitle: t("userGroup.title"),
+          submitText: t("add_warehouse_page.save"),
+          cancelText: t("add_warehouse_page.delete"),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
         }}
       >
         <Divider></Divider>
         <Box sx={{ PaddingX: 2 }}>
           <Grid
             container
-            direction={'column'}
+            direction={"column"}
             spacing={4}
             sx={{
-              width: { xs: '100%' },
+              width: { xs: "100%" },
               marginTop: { sm: 2, xs: 6 },
               marginLeft: {
-                xs: 0
+                xs: 0,
               },
-              paddingRight: 2
+              paddingRight: 2,
             }}
             className="sm:ml-0 mt-o w-full"
           >
-            <Box sx={{ paddingLeft: '32px' }}>
-              <LabelField label={t('userAccount.isAdmin')} />
+            <Box sx={{ paddingLeft: "32px" }}>
+              <LabelField label={t("userAccount.isAdmin")} />
               <Switcher
-                onText={t('common.yes')}
-                offText={t('common.no')}
-                disabled={action === 'delete'}
+                onText={t("common.yes")}
+                offText={t("common.no")}
+                disabled={action === "delete"}
                 defaultValue={isAdmin}
                 setState={(newValue) => {
-                  setIsAdmin(newValue)
+                  setIsAdmin(newValue);
                 }}
               />
             </Box>
-            <CustomField label={t('userGroup.groupName')} mandatory>
+            <CustomField label={t("userGroup.groupName")} mandatory>
               <CustomTextField
                 id="roleName"
                 dataTestId="astd-user-group-form-group-name-input-field-9870"
                 value={roleName}
-                disabled={action === 'delete'}
-                placeholder={t('userGroup.pleaseEnterName')}
+                disabled={action === "delete"}
+                placeholder={t("userGroup.pleaseEnterName")}
                 onChange={(event) => setRoleName(event.target.value)}
                 error={checkString(roleName) || isUserExisting()}
               />
             </CustomField>
-            <CustomField label={t('userGroup.description')} mandatory>
+            <CustomField label={t("userGroup.description")} mandatory>
               <CustomTextField
                 id="description"
                 dataTestId="astd-user-group-form-available-feature-select-button-9031"
                 value={description}
-                disabled={action === 'delete'}
-                placeholder={t('userGroup.pleaseEnterText')}
+                disabled={action === "delete"}
+                placeholder={t("userGroup.pleaseEnterText")}
                 onChange={(event) => setDescription(event.target.value)}
                 error={checkString(description)}
               />
             </CustomField>
-            <CustomField label={t('userGroup.availableFeatures')} mandatory>
+            <CustomField label={t("userGroup.availableFeatures")} mandatory>
               {functionList.map((item: Functions, index) => (
                 <FunctionList
                   key={index}
                   keyId={index}
                   item={item}
                   functions={functions}
-                  disabled={action === 'delete'}
+                  disabled={action === "delete"}
                   readOnly={isAdmin}
                   setFunctions={setFunctions}
                 />
               ))}
             </CustomField>
-            <Grid item sx={{ width: '100%' }}>
+            <Grid item sx={{ width: "100%" }}>
               {trySubmited &&
                 validation.map((val, index) => (
                   <FormErrorMsg
@@ -384,7 +398,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         </Box>
       </RightOverlayForm>
     </div>
-  )
-}
+  );
+};
 
-export default CreateUserGroup
+export default CreateUserGroup;

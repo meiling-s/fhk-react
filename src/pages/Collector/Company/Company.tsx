@@ -332,7 +332,6 @@ const Company: FunctionComponent = () => {
             onClick={(event) => {
               event.stopPropagation();
               handleAction(params, "edit");
-              console.log(params.row, "roww");
               setSelectCompanyType(params.row.companyType);
             }}
           >
@@ -355,6 +354,7 @@ const Company: FunctionComponent = () => {
             onClick={(event) => {
               event.stopPropagation();
               handleAction(params, "delete");
+              setSelectCompanyType(params.row.companyType);
             }}
           >
             <DELETE_OUTLINED_ICON

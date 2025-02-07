@@ -203,33 +203,42 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
   }
 
   const nameExisting = (errorMsg: string) => {
+    const matches = errorMsg.match(/\[\[(.*?)\]\]/)
+    if (!matches || matches.length < 2) return
+
+    const extractedFields = matches[1]
+      .replace(/\]\s?\[/g, ',') // Convert ][ to ,
+      .replace(/\[|\]/g, '') // Remove remaining brackets
+      .split(',') // Convert string into an array
+      .map((field) => field.trim()) // Trim spaces to avoid issues
+
     const fieldMappings: Record<string, string> = {
-      'English Name': t('process_type.english_name'),
-      'Traditional Chinese Name': t('process_type.traditional_chinese_name'),
-      'Simplified Chinese Name': t('process_type.simplified_chinese_name')
+      eng: t('process_type.english_name'),
+      tchi: t('process_type.traditional_chinese_name'),
+      schi: t('process_type.simplified_chinese_name')
     }
 
-    const checkErrorField = (errorMsg: string): string | undefined =>
-      Object.keys(fieldMappings).find((field) =>
-        errorMsg.includes(`${field} already exist`)
-      )
+    // const checkErrorField = (errorMsg: string): string | undefined =>
+    //   Object.keys(fieldMappings).find((field) =>
+    //     errorMsg.includes(`${field} already exist`)
+    //   )
 
-    const errField = checkErrorField(errorMsg)
+    // const errField = checkErrorField(errorMsg)
     const tempV: formValidate[] = []
 
-    if (errField) {
-      errField === 'Traditional Chinese Name'
-        ? setDuplicatedNameTc(true)
-        : errField === 'Simplified Chinese Name'
-        ? setDuplicatedNameSc(true)
-        : setDuplicatedNameEn(true)
+    extractedFields.forEach((field) => {
+      if (fieldMappings[field]) {
+        if (field === 'tchi') setDuplicatedNameTc(true)
+        if (field === 'schi') setDuplicatedNameSc(true)
+        if (field === 'eng') setDuplicatedNameEn(true)
 
-      tempV.push({
-        field: fieldMappings[errField!!],
-        problem: formErr.alreadyExist,
-        type: 'error'
-      })
-    }
+        tempV.push({
+          field: fieldMappings[field],
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
+      }
+    })
     setValidation(tempV)
   }
 

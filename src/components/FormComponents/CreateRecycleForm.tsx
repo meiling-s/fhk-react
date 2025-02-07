@@ -203,6 +203,7 @@ const CreateRecycleForm = ({
       productAddonId:
         picoDtl?.productAddonType?.productAddonTypeId ||
         picoDtl?.productAddon ||
+        picoDtl?.productAddonType ||
         "",
       productAddonTypeRemark: picoDtl.productAddonTypeRemark || "",
       productSubTypeRemark: picoDtl.productSubTypeRemark || "",
@@ -560,6 +561,7 @@ const CreateRecycleForm = ({
       resetForm();
       resetModal();
       onClose && onClose();
+      console.log("onSubmit", values)
     },
   });
 
