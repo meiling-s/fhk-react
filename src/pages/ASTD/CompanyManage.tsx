@@ -210,6 +210,7 @@ function RejectModal({
                 handleRejectRequest();
                 onClose();
               }}
+              disabled={rejectReasonId.length === 0}
             >
               {t("check_in.confirm")}
             </button>
@@ -1156,7 +1157,7 @@ function CompanyManage() {
   useEffect(() => {
     initCompaniesData();
     getReasonList();
-  }, [page]);
+  }, [page, i18n.language]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mappingTenantData = (data: any) => {
