@@ -101,7 +101,6 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
 
     setPicoList(picoDetailListDistinguished)
     setFilteredPico(picoDetailListDistinguished)
-    console.log('picoDetailListDistinguished', picoDetailListDistinguished)
   }
 
   useEffect(() => {
@@ -130,6 +129,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   }
 
   const handleSearch = async (searchWord: string) => {
+    setFilteredPico([])
     if (searchWord !== '') {
       const updatedQuery = {
         ...query,
@@ -172,9 +172,12 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                 }))
             ) ?? []
 
-        console.log('picoDetailList', picoDetailList)
-
-        setFilteredPico(picoDetailList)
+        const uniquePicoDetailList = picoDetailList.filter(
+          (value: PickupOrder, index: number, self: any) =>
+            index === self.findIndex((obj: any) => obj.picoId === value.picoId)
+        )
+        console.log('uniquePicoDetailList', uniquePicoDetailList)
+        setFilteredPico(uniquePicoDetailList)
       } else {
         setFilteredPico([])
       }
