@@ -683,20 +683,18 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({
               </CustomField>
             </Box>
 
-            <Box>
-              {/* 備註 - Remarks */}
-              <CustomField label={t("settings_page.recycling.remarks")}>
-                <CustomTextField
-                  dataTestId="astd-semi-product-main-category-remarks-904"
-                  id="remarks"
-                  value={formik.values.remarks}
-                  placeholder={t("settings_page.recycling.remark_placeholder")}
-                  onChange={formik.handleChange}
-                  multiline
-                  rows={4}
-                />
-              </CustomField>
-            </Box>
+            {/* 備註 - Remarks */}
+            <CustomField label={t("settings_page.recycling.remarks")}>
+              <CustomTextField
+                dataTestId="astd-semi-product-main-category-remarks-904"
+                id="remarks"
+                value={formik.values.remarks}
+                placeholder={t("settings_page.recycling.remark_placeholder")}
+                onChange={formik.handleChange}
+                multiline
+                rows={4}
+              />
+            </CustomField>
           </TabPanel>
 
           <TabPanel
@@ -770,23 +768,20 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({
                     />
                   </CustomField>
                 </Box>
-
-                <Box>
-                  {/* 備註 - Remarks */}
-                  <CustomField label={t("settings_page.recycling.remarks")}>
-                    <CustomTextField
-                      dataTestId="astd-semi-product-sub-category-remarks-654"
-                      id="remarks"
-                      value={formik.values.remarks}
-                      placeholder={t(
-                        "settings_page.recycling.remark_placeholder"
-                      )}
-                      onChange={formik.handleChange}
-                      multiline
-                      rows={4}
-                    />
-                  </CustomField>
-                </Box>
+                {/* 備註 - Remarks */}
+                <CustomField label={t("settings_page.recycling.remarks")}>
+                  <CustomTextField
+                    dataTestId="astd-semi-product-sub-category-remarks-654"
+                    id="remarks"
+                    value={formik.values.remarks}
+                    placeholder={t(
+                      "settings_page.recycling.remark_placeholder"
+                    )}
+                    onChange={formik.handleChange}
+                    multiline
+                    rows={4}
+                  />
+                </CustomField>
               </Box>
             </Box>
           </TabPanel>
@@ -928,43 +923,43 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({
                 />
               </CustomField>
             </Box>
-            <Box>
-              {/* 備註 - Remarks */}
-              <CustomField label={t("settings_page.recycling.remarks")}>
-                <CustomTextField
-                  dataTestId="astd-semi-product-additional-category-remarks-789"
-                  id="remarks"
-                  value={formik.values.remarks}
-                  placeholder={t("settings_page.recycling.remark_placeholder")}
-                  onChange={formik.handleChange}
-                  multiline
-                  rows={4}
-                />
-              </CustomField>
-            </Box>
-          </TabPanel>
-          {Object.entries(formik.errors).map(([key, value], index) => {
-            const errorKeys = Object.keys(formik.errors);
-            const lastErrorKey = errorKeys[errorKeys.length - 1];
-            return formik.touched[key as keyof typeof formik.touched] &&
-              value ? (
-              <FormErrorMsg
-                key={index}
-                field={t(
-                  `common.${
-                    key === "traditionalName"
-                      ? "traditionalChineseName"
-                      : key === "simplifiedName"
-                      ? "simplifiedChineseName"
-                      : key
-                  }`
-                )}
-                errorMsg={String(value)}
-                type="error"
-                lastIndex={lastErrorKey}
+            {/* 備註 - Remarks */}
+            <CustomField label={t("settings_page.recycling.remarks")}>
+              <CustomTextField
+                dataTestId="astd-semi-product-additional-category-remarks-789"
+                id="remarks"
+                value={formik.values.remarks}
+                placeholder={t("settings_page.recycling.remark_placeholder")}
+                onChange={formik.handleChange}
+                multiline
+                rows={4}
               />
-            ) : null;
-          })}
+            </CustomField>
+          </TabPanel>
+          <div style={{ gap: 0, marginTop: -5 }}>
+            {Object.entries(formik.errors).map(([key, value], index) => {
+              const errorKeys = Object.keys(formik.errors);
+              const lastErrorKey = errorKeys[errorKeys.length - 1];
+              return formik.touched[key as keyof typeof formik.touched] &&
+                value ? (
+                <FormErrorMsg
+                  key={index}
+                  field={t(
+                    `common.${
+                      key === "traditionalName"
+                        ? "traditionalChineseName"
+                        : key === "simplifiedName"
+                        ? "simplifiedChineseName"
+                        : key
+                    }`
+                  )}
+                  errorMsg={String(value)}
+                  type="error"
+                  lastIndex={lastErrorKey}
+                />
+              ) : null;
+            })}
+          </div>
         </Box>
         <Box
           mt={0}
