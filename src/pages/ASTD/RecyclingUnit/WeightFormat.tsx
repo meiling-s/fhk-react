@@ -284,7 +284,6 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
     const matches = input.match(/\[(tchi|eng|schi)\]/g);
 
     if (matches) {
-      console.log(matches, "matches");
       const tempV: { field: string; error: string; dataTestId: string }[] = [];
       matches.map((match) => {
         tempV.push({
@@ -295,7 +294,6 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
       });
       setValidation(tempV);
 
-      console.log(tempV, "aa");
       return tempV.length === 0;
     }
 

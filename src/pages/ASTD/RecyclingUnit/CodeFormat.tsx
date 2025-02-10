@@ -236,9 +236,10 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
       if (state.code === STATUS_CODE[503]) {
         navigate("/maintenance");
       } else if (state.code === STATUS_CODE[409]) {
+        setTrySubmitted(true);
         const errorMessage = error.response.data.message;
-        if (errorMessage.includes("recycCodeNameDuplicate")) {
-          showErrorToast(handleDuplicateErrorMessage(errorMessage));
+        if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
+          handleDuplicateErrorMessage(errorMessage);
         } else {
           showErrorToast(error.response.data.message);
         }
@@ -258,9 +259,10 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
       if (state.code === STATUS_CODE[503]) {
         navigate("/maintenance");
       } else if (state.code === STATUS_CODE[409]) {
+        setTrySubmitted(true);
         const errorMessage = error.response.data.message;
-        if (errorMessage.includes("recycCodeNameDuplicate")) {
-          showErrorToast(handleDuplicateErrorMessage(errorMessage));
+        if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
+          handleDuplicateErrorMessage(errorMessage);
         } else {
           showErrorToast(error.response.data.message);
         }
@@ -270,35 +272,28 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
 
   const handleDuplicateErrorMessage = (input: string) => {
     const replacements: { [key: string]: string } = {
-      "[tchi]": "Traditional Chinese Name",
-      "[eng]": "English Name",
-      "[schi]": "Simplified Chinese Name",
+      "[tchi]": t("common.traditionalChineseName"),
+      "[eng]": t("common.englishName"),
+      "[schi]": t("common.simplifiedChineseName"),
     };
 
-    let result = input.replace(/\[recycCodeNameDuplicate\]/, "");
-
-    const matches = result.match(/\[(tchi|eng|schi)\]/g);
+    const matches = input.match(/\[(Recyc code name)\]/g);
 
     if (matches) {
-      const replaced = matches.map(
-        (match) => replacements[match as keyof typeof replacements]
-      );
+      const tempV: { field: string; error: string; dataTestId: string }[] = [];
+      matches.map((match) => {
+        tempV.push({
+          field: t("recycling_unit.recyclable_code"),
+          error: t("settings_page.recycling.already_exists"),
+          dataTestId: "",
+        });
+      });
+      setValidation(tempV);
 
-      let formatted: string;
-      if (replaced.length === 1) {
-        formatted = replaced[0];
-      } else if (replaced.length === 2) {
-        formatted = replaced.join(" and ");
-      } else if (replaced.length === 3) {
-        formatted = `${replaced[0]}, ${replaced[1]} and ${replaced[2]}`;
-      }
-
-      result = result.replace(/\[(tchi|eng|schi)\]+/, formatted!);
-
-      result = result.replace(/\[(tchi|eng|schi)\]/g, "");
+      return tempV.length === 0;
     }
 
-    return result.trim();
+    return [];
   };
 
   return (
