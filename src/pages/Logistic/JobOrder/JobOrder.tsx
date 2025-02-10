@@ -186,6 +186,7 @@ const SelectReasonModal: React.FC<ReasonForm> = ({
             progress: undefined,
             theme: "light",
           });
+          setOtherRemark("");
           onSuccess();
         }
       } catch (error) {
@@ -405,6 +406,7 @@ const RejectModal: React.FC<RejectForm> = ({
             progress: undefined,
             theme: "light",
           });
+          setOtherRemark("");
           onClose();
         }
       }
