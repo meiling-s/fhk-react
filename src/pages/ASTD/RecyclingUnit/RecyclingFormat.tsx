@@ -173,7 +173,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     } else if (action === "add") {
       resetForm();
     }
-  }, [selectedItem, action, mainCategory, recyclableType]);
+  }, [selectedItem, action, mainCategory, recyclableType, drawerOpen]);
 
   const resetForm = () => {
     setTChineseName("");
