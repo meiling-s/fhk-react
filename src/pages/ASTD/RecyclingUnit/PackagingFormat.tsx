@@ -30,6 +30,7 @@ import { useTranslation } from "react-i18next";
 import { ToastContainer, toast } from "react-toastify";
 import {
   extractError,
+  isEmptyOrWhitespace,
   returnApiToken,
   showErrorToast,
   showSuccessToast,
@@ -137,7 +138,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
       //before first submit, don't check the validation
       return false;
     }
-    return s == "";
+    return s == "" || isEmptyOrWhitespace(s);
   };
 
   const checkNumber = (s: number) => {

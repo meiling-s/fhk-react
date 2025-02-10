@@ -34,7 +34,11 @@ import {
 } from "../../../../APICalls/ASTD/settings/productType";
 import { FormErrorMsg } from "../../../../components/FormComponents/FormErrorMsg";
 import { STATUS_CODE } from "../../../../constants/constant";
-import { extractError, showErrorToast } from "../../../../utils/utils";
+import {
+  extractError,
+  isEmptyOrWhitespace,
+  showErrorToast,
+} from "../../../../utils/utils";
 import { localStorgeKeyName } from "../../../../constants/constant";
 import { useProductContext } from "./ProductContext";
 import { useNavigate } from "react-router-dom";
@@ -130,6 +134,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({
   );
   const { refetch } = useProductContext();
   const navigate = useNavigate();
+  const [trySubmitted, setTrySubmitted] = useState<boolean>(false);
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newIndex: number) => {
     setTabIndex(newIndex);
@@ -270,6 +275,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({
   };
 
   const handleError = (error: any): void => {
+    setTrySubmitted(true);
     const { state } = extractError(error);
     if (state.code === STATUS_CODE[503]) {
       navigate("/maintenance");
@@ -437,6 +443,7 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({
   };
 
   useEffect(() => {
+    setTrySubmitted(false);
     if (initialSubCategory && !isEditMode) {
       setSubCategory(initialSubCategory);
     }
@@ -532,6 +539,13 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({
     }
   };
 
+  const checkString = (s: string) => {
+    if (!trySubmitted) {
+      return false;
+    }
+    return s === "" || isEmptyOrWhitespace(s);
+  };
+
   return (
     <RightOverlayForm
       open={open}
@@ -580,7 +594,8 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({
                 onBlur={formik.handleBlur}
                 error={
                   formik.touched.traditionalName &&
-                  Boolean(formik.errors.traditionalName)
+                  Boolean(formik.errors.traditionalName) &&
+                  checkString(formik.values.traditionalName)
                 }
                 // helperText={formik.touched.traditionalName && formik.errors.traditionalName}
               />
@@ -606,7 +621,8 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({
                 onBlur={formik.handleBlur}
                 error={
                   formik.touched.simplifiedName &&
-                  Boolean(formik.errors.simplifiedName)
+                  Boolean(formik.errors.simplifiedName) &&
+                  checkString(formik.values.simplifiedName)
                 }
                 // helperText={formik.touched.simplifiedName && formik.errors.simplifiedName}
               />
@@ -632,8 +648,9 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({
                 }}
                 onBlur={formik.handleBlur}
                 error={
-                  formik.touched.englishName &&
-                  Boolean(formik.errors.englishName)
+                  (formik.touched.englishName &&
+                    Boolean(formik.errors.englishName)) ||
+                  checkString(formik.values.englishName)
                 }
                 // helperText={formik.touched.englishName && formik.errors.englishName}
               />
