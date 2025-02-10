@@ -427,8 +427,15 @@ function MainDrawer() {
           currentMenu.functionName.toLowerCase()
       );
       const userActivity: UserActivity = {
-        operation:
-          selectedFunction?.functionNameTChi ?? currentMenu.functionName,
+        operation: selectedFunction?.functionNameTChi
+          ? selectedFunction?.functionNameTChi
+          : window.location.pathname === "/manufacturer/pickupOrder" ||
+            window.location.pathname === "/collector/pickupOrder" ||
+            window.location.pathname === "/logistic/pickupOrder"
+          ? "回收運單"
+          : window.location.pathname === "/astd"
+          ? "公司管理"
+          : "採購訂單",
         ip: ipAddress,
         createdBy: loginId,
         updatedBy: loginId,
@@ -440,7 +447,6 @@ function MainDrawer() {
     (previousPath !== currentPath && currentSubMenu)
   ) {
     localStorage.setItem("previousPath", currentPath);
-    console.log(currentSubMenu, "aaaa");
     const selectedFunction = APIFunctionList.find(
       (value) =>
         value.functionNameEng.toLowerCase() ===
