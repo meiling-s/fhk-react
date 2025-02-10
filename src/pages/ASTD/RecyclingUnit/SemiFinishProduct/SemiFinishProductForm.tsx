@@ -593,8 +593,8 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({
                 }}
                 onBlur={formik.handleBlur}
                 error={
-                  formik.touched.traditionalName &&
-                  Boolean(formik.errors.traditionalName) &&
+                  (formik.touched.traditionalName &&
+                    Boolean(formik.errors.traditionalName)) ||
                   checkString(formik.values.traditionalName)
                 }
                 // helperText={formik.touched.traditionalName && formik.errors.traditionalName}
@@ -620,8 +620,8 @@ const SemiFinishProductForm: React.FC<SemiFinishProductProps> = ({
                 }}
                 onBlur={formik.handleBlur}
                 error={
-                  formik.touched.simplifiedName &&
-                  Boolean(formik.errors.simplifiedName) &&
+                  (formik.touched.simplifiedName &&
+                    Boolean(formik.errors.simplifiedName)) ||
                   checkString(formik.values.simplifiedName)
                 }
                 // helperText={formik.touched.simplifiedName && formik.errors.simplifiedName}
