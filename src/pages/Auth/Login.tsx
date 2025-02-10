@@ -240,7 +240,7 @@ const Login = () => {
               break;
             case "collector":
               realmApiRoute = "collectors";
-              window.location.href = "/collector";
+              window.location.href = "/collector/pickupOrder";
               break;
             case "logistic":
               realmApiRoute = "logistic";
@@ -252,7 +252,7 @@ const Login = () => {
               break;
             case "customer":
               realmApiRoute = "customer";
-              window.location.href = "/customer/account";
+              window.location.href = "/customer/purchaseOrder";
               break;
             default:
               realmApiRoute = "collectors";

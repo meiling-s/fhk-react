@@ -190,7 +190,7 @@ const OtherPict = () => {
             const result = await createServiceInfo(formData)
             if (result) {
               resetServiceDataWithKey(key, serviceItem.serviceId)
-              const toastMsg = 'created other service success'
+              const toastMsg = t("report.otherPictures") + ' ' + t('common.saveSuccessfully')
               toast.info(toastMsg, {
                 position: 'top-center',
                 autoClose: 3000,

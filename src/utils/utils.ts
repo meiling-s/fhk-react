@@ -664,3 +664,7 @@ export const objectFilter = (data: object, arr: string[]) => {
     return result
   } catch (err) {}
 }
+
+export const isEmptyOrWhitespace = (value: string) => {
+  return value.toString() === '' || /^\s*$/.test(value.toString())
+}
