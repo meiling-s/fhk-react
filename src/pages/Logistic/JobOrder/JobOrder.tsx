@@ -186,6 +186,7 @@ const SelectReasonModal: React.FC<ReasonForm> = ({
             progress: undefined,
             theme: "light",
           });
+          setOtherRemark("");
           onSuccess();
         }
       } catch (error) {
@@ -358,7 +359,7 @@ const RejectModal: React.FC<RejectForm> = ({
       (value: any) => value.reasonNameEng === "Others"
     );
     const selectedReason = rejectReasonId.find(
-      (value) => value == findOthersReason.reasonId
+      (value) => value == findOthersReason?.reasonId
     );
     if (!selectedReason) {
       setOtherRemark("");
@@ -405,6 +406,7 @@ const RejectModal: React.FC<RejectForm> = ({
             progress: undefined,
             theme: "light",
           });
+          setOtherRemark("");
           onClose();
         }
       }

@@ -30,6 +30,7 @@ import { useTranslation } from "react-i18next";
 import { ToastContainer, toast } from "react-toastify";
 import {
   extractError,
+  isEmptyOrWhitespace,
   returnApiToken,
   showErrorToast,
   showSuccessToast,
@@ -172,7 +173,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     } else if (action === "add") {
       resetForm();
     }
-  }, [selectedItem, action, mainCategory, recyclableType]);
+  }, [selectedItem, action, mainCategory, recyclableType, drawerOpen]);
 
   const resetForm = () => {
     setTChineseName("");
@@ -192,7 +193,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
       //before first submit, don't check the validation
       return false;
     }
-    return s == "";
+    return s == "" || isEmptyOrWhitespace(s);
   };
 
   const checkNumber = (s: number) => {
@@ -375,6 +376,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         const errorMessage = error.response.data.message;
 
         if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
+          setTrySubmitted(true);
           handleDuplicateErrorMessage(errorMessage);
         } else {
           showErrorToast(error.response.data.message);
