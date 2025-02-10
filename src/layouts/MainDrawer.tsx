@@ -422,7 +422,9 @@ function MainDrawer() {
     localStorage.setItem("previousPath", currentPath);
     if (ipAddress) {
       const selectedFunction = APIFunctionList.find(
-        (value) => value.functionNameEng === currentMenu.functionName
+        (value) =>
+          value.functionNameEng.toLowerCase() ===
+          currentMenu.functionName.toLowerCase()
       );
       const userActivity: UserActivity = {
         operation:
@@ -443,15 +445,17 @@ function MainDrawer() {
         value.functionNameEng.toLowerCase() ===
         currentSubMenu.value.toLowerCase()
     );
-    // console.log(APIFunctionList, "aaa");
-    // console.log(currentSubMenu, "currentSubMenu");
     if (ipAddress) {
       const userActivity: UserActivity = {
-        operation: selectedFunction?.functionNameTChi
-          ? selectedFunction?.functionNameTChi
-          : currentSubMenu.name === "warehouse"
-          ? "概覽"
-          : currentSubMenu.name,
+        operation:
+          currentSubMenu.functionName === "vehicleDashboard" ||
+          currentSubMenu.functionName === "weightOfRecyclables"
+            ? "儀錶板"
+            : selectedFunction?.functionNameTChi
+            ? selectedFunction?.functionNameTChi
+            : currentSubMenu.name === "warehouse"
+            ? "概覽"
+            : currentSubMenu.name,
         ip: ipAddress,
         createdBy: loginId,
         updatedBy: loginId,
