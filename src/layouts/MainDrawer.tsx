@@ -440,6 +440,7 @@ function MainDrawer() {
     (previousPath !== currentPath && currentSubMenu)
   ) {
     localStorage.setItem("previousPath", currentPath);
+    console.log(currentSubMenu, "aaaa");
     const selectedFunction = APIFunctionList.find(
       (value) =>
         value.functionNameEng.toLowerCase() ===
@@ -451,6 +452,10 @@ function MainDrawer() {
           currentSubMenu.functionName === "vehicleDashboard" ||
           currentSubMenu.functionName === "weightOfRecyclables"
             ? "儀錶板"
+            : currentSubMenu.functionName === "dashboard"
+            ? "仓库仪表板"
+            : currentSubMenu.functionName === "inventory"
+            ? "存货"
             : selectedFunction?.functionNameTChi
             ? selectedFunction?.functionNameTChi
             : currentSubMenu.name === "warehouse"
