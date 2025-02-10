@@ -375,6 +375,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         const errorMessage = error.response.data.message;
 
         if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
+          setTrySubmitted(true);
           handleDuplicateErrorMessage(errorMessage);
         } else {
           showErrorToast(error.response.data.message);
