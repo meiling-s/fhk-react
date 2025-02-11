@@ -475,7 +475,7 @@
     "adhoc": {
       "reason_get_off": "下單原因",
       "po_number": "回收運單編號",
-      "sender_company_name": "寄件公司"
+      "sender_company_name": "請輸入寄件公司"
     },
     "choose_logistic": "選擇物流公司",
     "enter_company_name": "請輸入公司名稱",
