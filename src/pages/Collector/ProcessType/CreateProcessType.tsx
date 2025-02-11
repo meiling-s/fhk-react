@@ -133,7 +133,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
       const tempV: formValidate[] = []
 
       // Validate each individual field separately
-      if (tChineseName.toString() === '') {
+      if (tChineseName.toString().trim() === '') {
         tempV.push({
           field: t('process_type.traditional_chinese_name'),
           problem: formErr.empty,
@@ -142,7 +142,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
         })
       }
 
-      if (sChineseName.toString() === '') {
+      if (sChineseName.toString().trim() === '') {
         tempV.push({
           field: t('process_type.simplified_chinese_name'),
           problem: formErr.empty,
@@ -151,7 +151,7 @@ const CreateProcessType: FunctionComponent<CreateProcessType> = ({
         })
       }
 
-      if (englishName.toString() === '') {
+      if (englishName.toString().trim() === '') {
         tempV.push({
           field: t('process_type.english_name'),
           problem: formErr.empty,

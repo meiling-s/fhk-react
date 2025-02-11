@@ -118,7 +118,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
     const validate = async () => {
       const tempV: formValidate[] = [];
 
-      contractNo.toString() == "" &&
+      contractNo.toString().trim() == "" &&
         tempV.push({
           field: t("general_settings.contract_number"),
           problem: formErr.empty,
