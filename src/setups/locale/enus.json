@@ -475,7 +475,8 @@
     },
     "adhoc": {
       "reason_get_off": "Ad-hoc Reason",
-      "po_number": "Related Pickup Order"
+      "po_number": "Related Pickup Order",
+      "sender_company_name": "Please Enter Sender Company Name"
     },
     "choose_logistic": "Choose Logistic Company",
     "enter_company_name": "Please Enter Company Name",
