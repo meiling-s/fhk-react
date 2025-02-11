@@ -38,16 +38,25 @@ const NotifItem: React.FC<NotifItemProps> = ({
     }
   };
 
-  const contentArray = content?.split(" ") ?? null;
-  if (contentArray) {
-    contentArray.forEach((val, key) => {
-      if (val.includes("T") && val.includes("-") && val.includes(":")) {
-        contentArray[key] = createdDate;
-        content = contentArray.join(" ");
-        return;
-      }
-    });
-  }
+  // const contentArray = content?.split(" ") ?? null;
+  // if (contentArray) {
+  //   contentArray.forEach((val, key) => {
+  //     if (val.includes("T") && val.includes("-") && val.includes(":")) {
+  //       contentArray[key] = createdDate;
+  //       content = contentArray.join(" ");
+  //       return;
+  //     }
+  //   });
+  // }
+
+  const formatNotificationContent = (content: string) => {
+    const dateMatch = content.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/);
+
+    if (!dateMatch) return content;
+
+    const formattedDate = dayjs(dateMatch[0]).format("YYYY年MM月DD日 HH:mm");
+    return content.replace(dateMatch[0], formattedDate);
+  };
 
   return (
     <List key={notifId}>
@@ -63,7 +72,9 @@ const NotifItem: React.FC<NotifItemProps> = ({
               </Typography>
             </Stack>
 
-            <Typography sx={{ ml: "40px" }}>{content}</Typography>
+            <Typography sx={{ ml: "40px" }}>
+              {formatNotificationContent(content ?? "")}
+            </Typography>
 
             {/* <Typography sx={{ ml: "40px", mt: "10px" }}>
               {createdDate}
