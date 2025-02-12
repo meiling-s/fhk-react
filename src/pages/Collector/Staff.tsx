@@ -10,9 +10,6 @@ const Staff = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [resizedImage, setResizedImage] = useState<string | null>(null);
 
-
-
-
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
     setSelectedImage(file);
