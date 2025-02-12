@@ -116,7 +116,7 @@
       "atLeastOnePicoExist": "至少需要一个 Pico 详细信息",
       "exceedsMaxLength": "不可超过一百个字符",
       "minMoreOneImgUploded": "至少需要上传2张车辆图片",
-      "startDateBehindEndDate": "如果开始日期晚于截止日期，则不允许开始日期",
+      "startDateBehindEndDate": "开始日期不能晚于结束日期",
       "endTimeBehindStartTime": "开始时间不得晚于结束时间",
       "endDateEarlyThanStartDate": "如果“截止日期”早于“开始日期”，则不允许截止日期",
       "loginIdCantContainAdmin": "'admin' 中不允许有单词",
