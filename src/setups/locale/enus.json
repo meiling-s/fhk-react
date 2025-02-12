@@ -116,7 +116,7 @@
       "atLeastOnePicoExist": "At least one Pico Detail is required",
       "exceedsMaxLength": "should not exceed 100 characters",
       "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded",
-      "startDateBehindEndDate": "Start Date is not allowed if the Start Date is later than to Date",
+      "startDateBehindEndDate": "Start Date cannot be later than the End date",
       "endTimeBehindStartTime": "Start Time is not allowed later than To Time",
       "endDateEarlyThanStartDate": "To date not allowed if To Date is earlier than Start Date",
       "loginIdCantContainAdmin": "not allowed have words in 'admin'",

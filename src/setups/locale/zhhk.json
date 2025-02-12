@@ -116,7 +116,7 @@
       "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
       "exceedsMaxLength": "不可超過一百個字符",
       "minMoreOneImgUploded": "至少需要上傳2張車輛圖片",
-      "startDateBehindEndDate": "如果開始日期晚於截止日期，則不允許開始日期",
+      "startDateBehindEndDate": "開始日期不能晚於結束日期",
       "endTimeBehindStartTime": "開始時間不得晚於結束時間",
       "endDateEarlyThanStartDate": "如果“截止日期”早於“開始日期”，則不允許截止日期",
       "loginIdCantContainAdmin": "'admin' 中不允許有單字",
@@ -1204,7 +1204,7 @@
     "currency_category": "貨幣類別",
     "introduction": "簡介",
     "monetary": "名稱",
-    "contract_number": "編號",
+    "contract_number": "合約編號",
     "contract_number_must_be_different": "合約編號和參考編號",
     "packageNameAlreadyExist": "封裝類型名稱",
     "disposalLocation": "處置地點"
