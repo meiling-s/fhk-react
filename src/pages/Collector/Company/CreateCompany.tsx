@@ -66,6 +66,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
     localStorage.getItem(localStorgeKeyName.username) ?? "";
   const [prefixItemName, setPrefixItemName] = useState<string>("");
   const [existingCompanyList, setExistingCompanyList] = useState<Company[]>([]);
+
   const role = localStorgeKeyName.realm;
   const staffField = [
     {
@@ -155,11 +156,28 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
     setPrefixItemName(prefixName);
   }, [companyType]);
 
-  const checkString = (s: string) => {
-    if (!trySubmited) {
+  const checkString = (s: string, field: string) => {
+
+    if (trySubmited) {
+      let duplicated = s == "";
+      switch(field){
+        case "nameTchi":
+          if(existingCompanyList.some((item) => item.nameTchi.toLowerCase() == s.toLowerCase())) duplicated = true
+          break;
+        case "nameSchi":
+          if(existingCompanyList.some((item) => item.nameSchi.toLowerCase() == s.toLowerCase())) duplicated = true
+          break;
+        case "nameEng":
+          if(existingCompanyList.some((item) => item.nameEng.toLowerCase() == s.toLowerCase())) duplicated = true
+          break;
+        default:
+          break;
+      }
+      return duplicated
+    }else{
       return false;
     }
-    return s == "";
+    //return s == "";
   };
 
   const validate = async () => {
@@ -484,8 +502,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
 
     if (matches) {
       const replaced = matches.map(
-        (match) => replacements[match as keyof typeof replacements]
-      );
+        (match) => replacements[match as keyof typeof replacements]);
 
       if (replaced.length === 1) {
         formatted = replaced[0];
@@ -562,9 +579,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
                         event.target.value
                       )
                     }
-                    error={checkString(
-                      formData[item.field as keyof FormValues]
-                    )}
+                    error={checkString(formData[item.field as keyof FormValues],item.field)}
                   />
                 </CustomField>
               </Grid>
