@@ -337,7 +337,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
           <Box sx={{ marginY: 2 }}>
-            <CustomField label={t("general_settings.contract_number")}>
+            <CustomField label={t("general_settings.contract_number")} mandatory>
               <CustomTextField
                 id="contractNo"
                 value={contractNo}
