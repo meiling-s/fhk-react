@@ -736,7 +736,7 @@ const JobOrder = () => {
       const result = await getAllDenialReasonByFunctionId(
         page - 1,
         pageSize,
-        27
+        23
       );
       if (result?.data?.content.length > 0) {
         let reasonName = "";
