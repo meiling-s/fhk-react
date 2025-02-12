@@ -223,12 +223,20 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           type: 'error'
         })
       }
-      userList?.includes(loginId) &&
+      userList?.some((userLoginId) =>
+        userLoginId.toLowerCase() == loginId.toLowerCase()
+      ) &&
         tempV.push({
           field: t('userAccount.loginName'),
           problem: formErr.alreadyExist,
           type: 'error'
         })
+      // userList?.includes(loginId) &&
+      //   tempV.push({
+      //     field: t('userAccount.loginName'),
+      //     problem: formErr.alreadyExist,
+      //     type: 'error'
+      //   })
       contactNo?.toString() == '' &&
         tempV.push({
           field: t('staffManagement.contactNumber'),
