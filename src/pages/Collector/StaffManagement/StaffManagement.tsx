@@ -407,49 +407,49 @@ const StaffManagement: FunctionComponent = () => {
         headerName: t('staffManagement.lastLogin'),
         width: 200,
         type: 'string'
+      },
+      {
+        field: 'edit',
+        headerName: t('pick_up_order.item.edit'),
+        renderCell: (params) => {
+          return (
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <EDIT_OUTLINED_ICON
+                fontSize="small"
+                className="cursor-pointer text-grey-dark mr-2"
+                onClick={(event) => {
+                  const selected = staffList.find(
+                    (item) => item.loginId == params.row.loginId
+                  )
+                  event.stopPropagation()
+                  handleAction(params, 'edit')
+                  if (selected) setSelectedRow(selected)
+                }}
+                style={{ cursor: 'pointer' }}
+              />
+            </div>
+          )
+        }
+      },
+      {
+        field: 'delete',
+        headerName: t('pick_up_order.item.delete'),
+        renderCell: (params) => {
+          return (
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <DELETE_OUTLINED_ICON
+                fontSize="small"
+                className="cursor-pointer text-grey-dark"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  handleAction(params, 'delete')
+                }}
+                style={{ cursor: 'pointer' }}
+              />
+            </div>
+          )
+        }
       }
-      // {
-      //   field: 'edit',
-      //   headerName: t('pick_up_order.item.edit'),
-      //   renderCell: (params) => {
-      //     return (
-      //       <div style={{ display: 'flex', gap: '8px' }}>
-      //         <EDIT_OUTLINED_ICON
-      //           fontSize="small"
-      //           className="cursor-pointer text-grey-dark mr-2"
-      //           onClick={(event) => {
-      //             const selected = staffList.find(
-      //               (item) => item.loginId == params.row.loginId
-      //             )
-      //             event.stopPropagation()
-      //             handleAction(params, 'edit')
-      //             if (selected) setSelectedRow(selected)
-      //           }}
-      //           style={{ cursor: 'pointer' }}
-      //         />
-      //       </div>
-      //     )
-      //   }
-      // },
-      // {
-      //   field: 'delete',
-      //   headerName: t('pick_up_order.item.delete'),
-      //   renderCell: (params) => {
-      //     return (
-      //       <div style={{ display: 'flex', gap: '8px' }}>
-      //         <DELETE_OUTLINED_ICON
-      //           fontSize="small"
-      //           className="cursor-pointer text-grey-dark"
-      //           onClick={(event) => {
-      //             event.stopPropagation()
-      //             handleAction(params, 'delete')
-      //           }}
-      //           style={{ cursor: 'pointer' }}
-      //         />
-      //       </div>
-      //     )
-      //   }
-      // }
     ]
   }
 

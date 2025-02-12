@@ -891,14 +891,17 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                   </Typography> */}
                 </Grid>
               ) : (
-                <CustomField label={t('staffManagement.contractType')}>
-                  <CustomItemListBoolean
-                    items={contractTypeList}
-                    setServiceFlg={setContractType}
-                    value={contractType}
-                    needPrimaryColor={true}
-                  ></CustomItemListBoolean>
-                </CustomField>
+                <Grid item>
+                  <CustomField label={t('staffManagement.contractType')}>
+                    <CustomItemListBoolean
+                      items={contractTypeList}
+                      setServiceFlg={setContractType}
+                      value={contractType}
+                      needPrimaryColor={true}
+                      editable={action === 'delete' ? false : true}
+                    ></CustomItemListBoolean>
+                  </CustomField>
+                </Grid>
               )
             )}
             <Grid item sx={{ width: '100%' }}>

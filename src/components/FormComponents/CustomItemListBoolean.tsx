@@ -46,7 +46,10 @@ function CustomItemList({
       }
 
     const handleSingleClick = (index: number) => {
-        if(!setServiceFlg) return
+        if ((editable != undefined && !editable) || !setServiceFlg) {
+            return
+          }
+        //if(!setServiceFlg) return
         setServiceFlg(index)
     }
 
@@ -57,7 +60,7 @@ function CustomItemList({
                     <Button
                         key={index}
                         variant="outlined"
-                        sx={value === index ? triggerdItem : localstyles.uneditable}
+                        sx={value === index ? (editable ? triggerdItem : localstyles.uneditable) : localstyles.item}
                         onClick={()=>{ handleSingleClick(index)}}
                     >
                         {item.name}
@@ -104,14 +107,24 @@ const localstyles = {
             backgroundColor: "#F0F0F0"
         }
     },
+    unselected: {
+        ...styles.listItemTemp,
+        backgroundColor: '#79CA25',
+        borderColor: '#79CA25',
+        color: '#FFFFFF',
+        '&.MuiButton-root:hover': {
+          backgroundColor: getPrimaryLightColor(),
+          borderColor: '#79CA25'
+        }
+    },
     uneditable: {
         ...styles.listItemTemp,
-        backgroundColor: "white",
-        borderColor: "#D1D1D1",
-        color: "#808080",
-        '&.MuiButton-root:hover':{
-            borderColor: "#D1D1D1",
-            backgroundColor: "#C7C7C7"
+        backgroundColor: '#C7C7C7',
+        borderColor: '#D1D1D1',
+        color: '#808080',
+        '&.MuiButton-root:hover': {
+          borderColor: '#D1D1D1',
+          backgroundColor: '#C7C7C7'
         }
     }
 }

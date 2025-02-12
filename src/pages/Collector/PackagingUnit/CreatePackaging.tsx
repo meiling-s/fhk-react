@@ -187,6 +187,8 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
           type: 'error'
         })
 
+        
+
       setValidation(tempV)
     }
 
@@ -369,7 +371,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
                   'packaging_unit.traditional_chinese_name_placeholder'
                 )}
                 onChange={(event) => setTChineseName(event.target.value)}
-                error={checkString(tChineseName)}
+                error={checkString(tChineseName) || (tchiNameExisting.some((item) => item.toLowerCase() == tChineseName.toLowerCase()) && trySubmited)}
               />
             </CustomField>
           </Box>
@@ -387,7 +389,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
                   'packaging_unit.simplified_chinese_name_placeholder'
                 )}
                 onChange={(event) => setSChineseName(event.target.value)}
-                error={checkString(sChineseName)}
+                error={checkString(sChineseName) || (schiNameExisting.some((item) => item.toLowerCase() == sChineseName.toLowerCase()) && trySubmited)}
               />
             </CustomField>
           </Box>
@@ -400,7 +402,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
                 disabled={action === 'delete'}
                 placeholder={t('packaging_unit.english_name_placeholder')}
                 onChange={(event) => setEnglishName(event.target.value)}
-                error={checkString(englishName)}
+                error={checkString(englishName) || (engNameExisting.some((item) => item.toLowerCase() == englishName.toLowerCase()) && trySubmited)}
               />
             </CustomField>
           </Box>
