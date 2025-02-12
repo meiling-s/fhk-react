@@ -48,6 +48,7 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 import { getManufacturerBasedLang } from "./utils";
+import { getAllFilteredFunction } from "src/APICalls/Collector/userGroup";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -396,7 +397,7 @@ const PurchaseOrder = () => {
   const [approveModal, setApproveModal] = useState(false);
   const [rejectModal, setRejectModal] = useState(false);
   const [reasonList, setReasonList] = useState<any>([]);
-  const role = localStorage.getItem(localStorgeKeyName.role);
+  const role = localStorage.getItem(localStorgeKeyName.role) as string;
   const [primaryColor, setPrimaryColor] = useState<string>("#79CA25");
   const statusList: StatusPurchaseOrder[] = [
     {
@@ -490,31 +491,48 @@ const PurchaseOrder = () => {
 
   const getRejectReason = async () => {
     try {
-      let result = await getPurchaseOrderReason();
-
-      if (result && result?.data && result?.data.content.length > 0) {
-        let reasonName = "";
-        switch (i18n.language) {
-          case "enus":
-            reasonName = "reasonNameEng";
-            break;
-          case "zhch":
-            reasonName = "reasonNameSchi";
-            break;
-          case "zhhk":
-            reasonName = "reasonNameTchi";
-            break;
-          default:
-            reasonName = "reasonNameEng";
-            break;
-        }
-        result?.data.content.map(
-          (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
-            item.id = item.reasonId;
-            item.name = item[reasonName];
-          }
+      let functionListResult = await getAllFilteredFunction(role);
+      if (functionListResult.data.length > 0) {
+        const purchaseOrderReason = functionListResult.data.find(
+          (value: { functionNameEng: string }) =>
+            value.functionNameEng == "Purchase order"
         );
-        setReasonList(result?.data.content);
+        let result = await getPurchaseOrderReason();
+        if (result && result?.data && result?.data.content.length > 0) {
+          const filteredData = result.data.content.filter(
+            (value: { functionId: any }) =>
+              value.functionId === purchaseOrderReason.functionId
+          );
+          let reasonName = "";
+          switch (i18n.language) {
+            case "enus":
+              reasonName = "reasonNameEng";
+              break;
+            case "zhch":
+              reasonName = "reasonNameSchi";
+              break;
+            case "zhhk":
+              reasonName = "reasonNameTchi";
+              break;
+            default:
+              reasonName = "reasonNameEng";
+              break;
+          }
+          if (filteredData.length > 0) {
+            filteredData?.map(
+              (item: {
+                [x: string]: any;
+                id: any;
+                reasonId: any;
+                name: any;
+              }) => {
+                item.id = item.reasonId;
+                item.name = item[reasonName];
+              }
+            );
+            setReasonList(filteredData);
+          }
+        }
       }
     } catch (error: any) {
       const { state, realm } = extractError(error);
@@ -532,10 +550,10 @@ const PurchaseOrder = () => {
 
   useEffect(() => {
     initPurchaseOrderRequest();
+    getRejectReason();
   }, [i18n.language]);
 
   useEffect(() => {
-    console.log("initPurchaseOrderRequest", query);
     initPurchaseOrderRequest();
     getRejectReason();
 

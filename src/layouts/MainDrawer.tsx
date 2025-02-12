@@ -422,11 +422,20 @@ function MainDrawer() {
     localStorage.setItem("previousPath", currentPath);
     if (ipAddress) {
       const selectedFunction = APIFunctionList.find(
-        (value) => value.functionNameEng === currentMenu.functionName
+        (value) =>
+          value.functionNameEng.toLowerCase() ===
+          currentMenu.functionName.toLowerCase()
       );
       const userActivity: UserActivity = {
-        operation:
-          selectedFunction?.functionNameTChi ?? currentMenu.functionName,
+        operation: selectedFunction?.functionNameTChi
+          ? selectedFunction?.functionNameTChi
+          : window.location.pathname === "/manufacturer/pickupOrder" ||
+            window.location.pathname === "/collector/pickupOrder" ||
+            window.location.pathname === "/logistic/pickupOrder"
+          ? "回收運單"
+          : window.location.pathname === "/astd"
+          ? "公司管理"
+          : "採購訂單",
         ip: ipAddress,
         createdBy: loginId,
         updatedBy: loginId,
@@ -443,15 +452,21 @@ function MainDrawer() {
         value.functionNameEng.toLowerCase() ===
         currentSubMenu.value.toLowerCase()
     );
-    // console.log(APIFunctionList, "aaa");
-    // console.log(currentSubMenu, "currentSubMenu");
     if (ipAddress) {
       const userActivity: UserActivity = {
-        operation: selectedFunction?.functionNameTChi
-          ? selectedFunction?.functionNameTChi
-          : currentSubMenu.name === "warehouse"
-          ? "概覽"
-          : currentSubMenu.name,
+        operation:
+          currentSubMenu.functionName === "vehicleDashboard" ||
+          currentSubMenu.functionName === "weightOfRecyclables"
+            ? "儀錶板"
+            : currentSubMenu.functionName === "dashboard"
+            ? "仓库仪表板"
+            : currentSubMenu.functionName === "inventory"
+            ? "存货"
+            : selectedFunction?.functionNameTChi
+            ? selectedFunction?.functionNameTChi
+            : currentSubMenu.name === "warehouse"
+            ? "概覽"
+            : currentSubMenu.name,
         ip: ipAddress,
         createdBy: loginId,
         updatedBy: loginId,
