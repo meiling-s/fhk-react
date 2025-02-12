@@ -47,13 +47,17 @@ const Rosters: FunctionComponent = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    initRosterData();
     initStaffTitle();
   }, []);
 
   useEffect(() => {
+    initRosterData();
+  }, [staffTitleList]);
+
+  useEffect(() => {
     const filteredDate = filterDate.format("YYYY-MM-DD[T]00:00:00.000[Z]");
     initRosterData(filteredDate);
+    initStaffTitle();
   }, [filterDate]);
 
   const initStaffTitle = async () => {
