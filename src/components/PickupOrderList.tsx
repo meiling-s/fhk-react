@@ -234,7 +234,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
               <Box>
                 <div className="filter-section  mb-6">
                   <CustomAutoComplete
-                    placeholder={t('pick_up_order.enter_company_name')}
+                    placeholder={t('pick_up_order.adhoc.sender_company_name')}
                     option={
                       Array.from(
                         new Set(
