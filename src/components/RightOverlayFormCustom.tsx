@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactNode } from 'react'
+import React, { useState, useEffect, ReactNode, useRef } from 'react'
 import Drawer from '@mui/material/Drawer'
 import StatusCard from './StatusCard'
 import { useContainer } from 'unstated-next'
@@ -41,6 +41,40 @@ const HeaderSection: React.FC<HeaderProps> = ({
   isButtonCancel,
   isButtonFinish
 }) => {
+  const [disabledSubmit, setDisabledSubmit] = useState(false);
+  const [disabledDelete, setDisabledDelete] = useState(false);
+  const disabledSync = useRef(false);
+
+  const onDeleteClick = async () => {
+
+    if(action === "add" || disabledSync.current || disabledDelete) return
+
+    disabledSync.current = true
+    setDisabledDelete(true)
+
+    try {
+      if (onDelete) await onDelete();
+    } finally {
+      disabledSync.current = false;
+      setDisabledSubmit(false);
+    }
+  };
+
+  const onSubmitClick = async () => {
+
+    if(action === "delete" || disabledSync.current || disabledSubmit) return
+
+    disabledSync.current = true
+    setDisabledSubmit(true)
+
+    try {
+      if(onSubmit) await onSubmit();
+    } finally {
+      disabledSync.current = false;
+      setDisabledSubmit(false);
+    }
+  }
+
   return (
     <div className="header-section">
       <div className="flex flex-row items-center justify-between p-[25px] gap-[25px">
@@ -60,10 +94,10 @@ const HeaderSection: React.FC<HeaderProps> = ({
         {action !== 'none' && (
           <div className="h-9 flex flex-row items-start justify-start gap-[12px] text-smi text-white">
             { isButtonFinish && <button
-                onClick={onSubmit}
-                disabled={action === 'delete'}
+                onClick={onSubmitClick}
+                disabled={action === "delete" || disabledSync.current || disabledSubmit}
                 className={`${
-                  action === 'delete' ? 'cursor-not-allowed  bg-green-primary border-gray' : ' bg-green-primary cursor-pointer'
+                  (action === "delete" || disabledSync.current || disabledSubmit) ? 'cursor-not-allowed  bg-green-primary border-gray' : ' bg-green-primary cursor-pointer'
                 } rounded-6xl flex flex-row items-center  text-white justify-center py-2 px-5 gap-[5px] border-[1px] border-solid border-green-primary`}
               >
                 {submitText}
@@ -71,10 +105,10 @@ const HeaderSection: React.FC<HeaderProps> = ({
             }
 
             {isButtonCancel &&  <button
-                onClick={onDelete}
-                disabled={action === 'add'}
+                onClick={onDeleteClick}
+                disabled={action === 'add' || disabledSync.current || disabledDelete}
                 className={`${
-                action === 'add' 
+                (action === 'add' || disabledSync.current || disabledDelete)
                     ? 'cursor-not-allowed text-gray border-gray'
                     : 'cursor-pointer'
                 } rounded-6xl  overflow-hidden flex flex-row items-center justify-center py-2 px-5 gap-[5px] text-green-primary border-[1px] border-solid border-green-pale`}
