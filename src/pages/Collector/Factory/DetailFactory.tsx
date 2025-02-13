@@ -264,7 +264,7 @@ const DetailFactory: FunctionComponent<Props> = ({
     i18n.language
   ])
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const token = returnApiToken()
 
     const selectedWarehouseData: FactoryWarehouse[] = selectedWarehouses
@@ -301,9 +301,9 @@ const DetailFactory: FunctionComponent<Props> = ({
     }
 
     if (action === 'add') {
-      handleCreateUserGroup(formData)
+      await handleCreateUserGroup(formData)
     } else {
-      handleEditUserGroup(formData)
+      await handleEditUserGroup(formData)
     }
   }
 

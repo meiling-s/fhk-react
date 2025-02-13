@@ -292,17 +292,19 @@ const AdditionalServicePict = () => {
     property: string,
     value: any
   ) => {
+
+    setServiceData((prevData) => ({
+      ...prevData,
+      [serviceName]: {
+        ...prevData[serviceName],
+        [property]: value
+      }
+    }))
+
     if (value === '' || value === 0) {
       const message = returnErrorMsg(formErr.empty)
       onHandleError(serviceName, property, value, message)
     } else {
-      setServiceData((prevData) => ({
-        ...prevData,
-        [serviceName]: {
-          ...prevData[serviceName],
-          [property]: value
-        }
-      }))
       onHandleError(serviceName, property, value, 'succeed')
     }
   }
@@ -693,25 +695,16 @@ const AdditionalServicePict = () => {
                           placeholder={t('report.pleaseEnterEventName')}
                           value={eventName}
                           onChange={(event) => {
-                            if (event.target.value) {
-                              setEventName(event.target.value)
-                              setErrorOptions((prev) => {
-                                return {
-                                  ...prev,
-                                  eventName: { status: false, message: '' }
+                            setEventName(event.target.value)
+                            setErrorOptions((prev) => {
+                              return {
+                                ...prev,
+                                eventName: {
+                                  status: event.target.value ? false : true,
+                                  message: event.target.value ? '' : t('form.error.shouldNotBeEmpty')
                                 }
-                              })
-                            } else {
-                              setErrorOptions((prev) => {
-                                return {
-                                  ...prev,
-                                  eventName: {
-                                    status: true,
-                                    message: t('form.error.shouldNotBeEmpty')
-                                  }
-                                }
-                              })
-                            }
+                              }
+                            })
                           }}
                           error={checkString(eventName)}
                         />
@@ -730,25 +723,16 @@ const AdditionalServicePict = () => {
                           placeholder={t('report.enterNature')}
                           value={nature}
                           onChange={(event) => {
-                            if (event.target.value) {
-                              setNature(event.target.value)
-                              setErrorOptions((prev) => {
-                                return {
-                                  ...prev,
-                                  nature: { status: false, message: '' }
+                            setNature(event.target.value)
+                            setErrorOptions((prev) => {
+                              return {
+                                ...prev,
+                                nature: {
+                                  status: event.target.value ? false : true,
+                                  message: event.target.value ? '' : t('form.error.shouldNotBeEmpty')
                                 }
-                              })
-                            } else {
-                              setErrorOptions((prev) => {
-                                return {
-                                  ...prev,
-                                  nature: {
-                                    status: true,
-                                    message: t('form.error.shouldNotBeEmpty')
-                                  }
-                                }
-                              })
-                            }
+                              }
+                            })
                           }}
                           error={checkString(nature)}
                         />
@@ -767,25 +751,16 @@ const AdditionalServicePict = () => {
                           placeholder={t('report.enterSpeaker')}
                           value={speaker}
                           onChange={(event) => {
-                            if (event.target.value) {
-                              setSpeaker(event.target.value)
-                              setErrorOptions((prev) => {
-                                return {
-                                  ...prev,
-                                  speaker: { status: false, message: '' }
+                            setSpeaker(event.target.value)
+                            setErrorOptions((prev) => {
+                              return {
+                                ...prev,
+                                speaker: {
+                                  status: event.target.value ? false : true,
+                                  message: event.target.value ? '' : t('form.error.shouldNotBeEmpty')
                                 }
-                              })
-                            } else {
-                              setErrorOptions((prev) => {
-                                return {
-                                  ...prev,
-                                  speaker: {
-                                    status: true,
-                                    message: t('form.error.shouldNotBeEmpty')
-                                  }
-                                }
-                              })
-                            }
+                              }
+                            })
                           }}
                           error={checkString(speaker)}
                         />
@@ -809,28 +784,16 @@ const AdditionalServicePict = () => {
                           )}
                           value={activeObj}
                           onChange={(event) => {
-                            if (event.target.value) {
-                              setActiveObj(event.target.value)
-                              setErrorOptions((prev) => {
-                                return {
-                                  ...prev,
-                                  targetParticipants: {
-                                    status: false,
-                                    message: ''
-                                  }
+                            setActiveObj(event.target.value)
+                            setErrorOptions((prev) => {
+                              return {
+                                ...prev,
+                                targetParticipants: {
+                                  status: event.target.value ? false : true,
+                                  message: event.target.value ? '' : t('form.error.shouldNotBeEmpty')
                                 }
-                              })
-                            } else {
-                              setErrorOptions((prev) => {
-                                return {
-                                  ...prev,
-                                  targetParticipants: {
-                                    status: true,
-                                    message: t('form.error.shouldNotBeEmpty')
-                                  }
-                                }
-                              })
-                            }
+                              }
+                            })
                           }}
                           error={checkString(activeObj)}
                         />
