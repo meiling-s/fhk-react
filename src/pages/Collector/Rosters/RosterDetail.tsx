@@ -359,6 +359,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
       reason: rosterReason,
       createdBy: loginName,
       updatedBy: loginName,
+      colId: selectedColPoint,
     };
     // console.log('validation', validation)
     if (validation.length === 0) {
