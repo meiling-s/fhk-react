@@ -1,73 +1,58 @@
-import React from 'react'
-import { Button } from '@mui/material'
-import { getPrimaryColor } from '../../utils/utils'
+import React from "react";
+import { Button } from "@mui/material";
+import { getPrimaryColor } from "../../utils/utils";
 interface ButtonProps {
-  id?: string
-  text?: string
-  disabled?: boolean
-  className?: string
-  onClick?: () => void
-  color?: string
-  outlined?: Boolean
-  style?: object
-  dataTestId?: string
+  id?: string;
+  text?: string;
+  disabled?: boolean;
+  className?: string;
+  onClick?: () => void;
+  color?: string;
+  outlined?: Boolean;
+  style?: object;
+  dataTestId?: string;
 }
 
 const CustomButton: React.FC<ButtonProps> = ({
-  id = '',
-  text = '',
+  id = "",
+  text = "",
   disabled = false,
   className,
   onClick,
-  color = 'green',
+  color = "green",
   outlined = false,
   style = {},
-  dataTestId = ''
+  dataTestId = "",
 }) => {
-  const getStyle = () => {
-    let style = {}
-    switch (color) {
-      case 'green':
-        style = {
-          backgroundColor: disabled
-            ? 'light-gray'
-            : outlined
-            ? '#fff'
-            : getPrimaryColor(),
-          color: disabled
-            ? 'light-gray'
-            : outlined
-            ? getPrimaryColor()
-            : '#fff',
-          borderColor: disabled ? 'light-gray' : getPrimaryColor(),
-          cursor: disabled ? 'not-allowed' : 'pointer'
-        }
-        break
-      case 'blue':
-        style = {
-          backgroundColor: disabled
-            ? 'light-gray'
-            : outlined
-            ? '#fff'
-            : getPrimaryColor(),
-          color: disabled
-            ? 'light-gray'
-            : outlined
-            ? getPrimaryColor()
-            : '#fff',
-          borderColor: disabled
-            ? 'light-gray'
-            : outlined
-            ? getPrimaryColor()
-            : getPrimaryColor(),
-          cursor: disabled ? 'not-allowed' : 'pointer'
-        }
-        break
-      default:
-        break
+  const getStyle = React.useMemo(() => {
+    let btnStyle: React.CSSProperties = {
+      cursor: disabled ? "not-allowed" : "pointer",
+    };
+
+    if (color === "green") {
+      btnStyle = {
+        backgroundColor: disabled
+          ? "lightgray"
+          : outlined
+          ? "#fff"
+          : getPrimaryColor(),
+        color: disabled ? "#A9A9A9" : outlined ? getPrimaryColor() : "#fff",
+        borderColor: disabled ? "lightgray" : getPrimaryColor(),
+      };
+    } else if (color === "blue") {
+      btnStyle = {
+        backgroundColor: disabled
+          ? "lightgray"
+          : outlined
+          ? "#fff"
+          : getPrimaryColor(),
+        color: disabled ? "#A9A9A9" : outlined ? getPrimaryColor() : "#fff",
+        borderColor: disabled ? "lightgray" : getPrimaryColor(),
+      };
     }
-    return style
-  }
+
+    return btnStyle;
+  }, [disabled, outlined, color]);
 
   return (
     <Button
@@ -75,25 +60,32 @@ const CustomButton: React.FC<ButtonProps> = ({
       disabled={disabled}
       className={className}
       onClick={(event) => {
-        event.stopPropagation()
-        onClick && onClick()
+        event.stopPropagation();
+        onClick && onClick();
       }}
       data-testid={dataTestId}
-      variant={outlined ? 'outlined' : 'contained'}
-      style={{ ...getStyle(), ...style }}
+      variant={outlined ? "outlined" : "contained"}
       sx={{
-        fontSize: '13px',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        fontWeight: '700',
-        letterSpacing: '1px',
-        padding: '8px 20px',
-        borderRadius: '20px',
-        boxShadow: 'none'
+        fontSize: "13px",
+        cursor: disabled ? "not-allowed" : "pointer",
+        fontWeight: "700",
+        letterSpacing: "1px",
+        padding: "8px 20px",
+        borderRadius: "20px",
+        boxShadow: "none",
+        backgroundColor: disabled
+          ? "lightgray"
+          : outlined
+          ? "#fff"
+          : getPrimaryColor(),
+        color: disabled ? "#A9A9A9" : outlined ? getPrimaryColor() : "#fff",
+        borderColor: disabled ? "lightgray" : getPrimaryColor(),
+        margin: "0 8px", // <-- Add margin to separate buttons
       }}
     >
       {text}
     </Button>
-  )
-}
+  );
+};
 
-export default CustomButton
+export default CustomButton;
