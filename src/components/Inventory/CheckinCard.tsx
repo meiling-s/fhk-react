@@ -100,7 +100,7 @@ const CheckinCard: FunctionComponent<CheckinCardProps> = ({ data }) => {
     switch (i18n.language) {
       case "enus":
         return `${dayjs
-          .utc(data.createdAt)
+          .utc(data.pickup_date_time)
           .tz("Asia/Hong_Kong")
           .format(`${dateFormat} HH:mm`)} delivered to [${getConditionalValue(
           data,
@@ -108,7 +108,7 @@ const CheckinCard: FunctionComponent<CheckinCardProps> = ({ data }) => {
         )}, ${data.car_plate_no}]`;
       case "zhhk":
         return `於 ${dayjs
-          .utc(data.createdAt)
+          .utc(data.pickup_date_time)
           .tz("Asia/Hong_Kong")
           .format(`${dateFormat} HH:mm`)} 交給 [${getConditionalValue(
           data,
@@ -116,7 +116,7 @@ const CheckinCard: FunctionComponent<CheckinCardProps> = ({ data }) => {
         )}, ${data.car_plate_no}]`;
       case "zhch":
         return `於 ${dayjs
-          .utc(data.createdAt)
+          .utc(data.pickup_date_time)
           .tz("Asia/Hong_Kong")
           .format(`${dateFormat} HH:mm`)} 交給 [${getConditionalValue(
           data,

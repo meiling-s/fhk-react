@@ -36,11 +36,16 @@ import {
 import { randomBackgroundColor, returnApiToken } from "../utils/utils";
 import axiosInstance from "../constants/axiosInstance";
 import { getWeightUnit } from "../APICalls/ASTD/recycling";
-import { getAllTenant, getTenantById } from "../APICalls/tenantManage";
+import {
+  getAllTenant,
+  getRegisterLinkStatus,
+  getTenantById,
+} from "../APICalls/tenantManage";
 import { localStorgeKeyName } from "../constants/constant";
 import { getAllPackagingUnit } from "../APICalls/Collector/packagingUnit";
 import { getProductTypeList } from "../APICalls/ASTD/settings/productType";
 import { Products } from "../interfaces/productType";
+import { Tenant } from "src/interfaces/account";
 
 const CommonType = () => {
   const [colPointType, setColPointType] = useState<colPointType[]>();
@@ -72,6 +77,7 @@ const CommonType = () => {
   const [packagingList, setPackagingList] = useState<PackagingList[]>([]);
   const [productType, setProductType] = useState<Products[]>([]);
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId);
+  const [accountData, setAccountData] = useState<Tenant>();
 
   const getColPointType = async () => {
     var colPointType = [];
@@ -408,6 +414,16 @@ const CommonType = () => {
     }
   };
 
+  const getAccountData = async () => {
+    const token = returnApiToken();
+    const response = await getRegisterLinkStatus(token.tenantId);
+    const data = response.data;
+
+    if (data) {
+      setAccountData(data);
+    }
+  };
+
   const updateCommonTypeContainer = () => {
     getColPointType();
     getPremiseType();
@@ -428,6 +444,7 @@ const CommonType = () => {
     getTenantLogin();
     getPackagingUnitList();
     getProductType();
+    getAccountData();
   };
 
   useEffect(() => {
@@ -452,6 +469,7 @@ const CommonType = () => {
       getTenantLogin();
       getPackagingUnitList();
       getProductType();
+      getAccountData();
     }
   }, []);
 
@@ -476,6 +494,7 @@ const CommonType = () => {
     currentTenant,
     packagingList,
     productType,
+    accountData,
     updateCommonTypeContainer,
     getColPointType,
     getPremiseType,
@@ -496,6 +515,7 @@ const CommonType = () => {
     initWeightUnit,
     initCompaniesData,
     getPackagingUnitList,
+    getAccountData,
   };
 };
 

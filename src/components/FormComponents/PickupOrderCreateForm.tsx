@@ -698,6 +698,8 @@ const PickupOrderCreateForm = ({
     picodetail: PickupOrderDetail[],
     picoId: string
   ) => {
+    console.log('selectPicoRefrence', picodetail)
+    console.log('picoId', picoId)
     const newRow: CreatePicoDetail[] = picodetail
       .filter((value) => value.status === 'OUTSTANDING')
       // picodetail.filter(value => value)
@@ -731,6 +733,7 @@ const PickupOrderCreateForm = ({
         }
       })
 
+    console.log('newRow', newRow)
     const newState = state
       ?.filter((value) => value?.isAutomation === undefined)
       .concat(newRow)

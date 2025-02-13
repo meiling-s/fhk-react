@@ -1,280 +1,351 @@
-import { Box, Divider } from '@mui/material'
-import RightOverlayForm from '../../../components/RightOverlayForm'
-import axios from 'axios'
-import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
-import { GET_ALL_RECYCLE_TYPE } from '../../../constants/requests'
-import { useEffect, useState } from 'react'
-import { formatWeight, returnApiToken } from '../../../utils/utils'
-import { useTranslation } from 'react-i18next'
-import { useContainer } from 'unstated-next'
-import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import axiosInstance from '../../../constants/axiosInstance'
+import { Box, Divider } from "@mui/material";
+import RightOverlayForm from "../../../components/RightOverlayForm";
+import axios from "axios";
+import { AXIOS_DEFAULT_CONFIGS } from "../../../constants/configs";
+import { GET_ALL_RECYCLE_TYPE } from "../../../constants/requests";
+import { useEffect, useState } from "react";
+import { formatWeight, returnApiToken } from "../../../utils/utils";
+import { useTranslation } from "react-i18next";
+import { useContainer } from "unstated-next";
+import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
+import axiosInstance from "../../../constants/axiosInstance";
 import {
   getCheckInDetailByID,
-  getCheckOutDetailByID
-} from '../../../APICalls/Collector/inout'
+  getCheckOutDetailByID,
+} from "../../../APICalls/Collector/inout";
+import { PanoramaSharp } from "@mui/icons-material";
+import { getWarehouseById } from "src/APICalls/warehouseManage";
+import { getCollectionPointDetail } from "src/APICalls/collectionPointManage";
 
 interface CheckInOutDetail {
-  chkInId: number
-  logisticName: string
-  logisticId: string
-  vehicleTypeId: string
-  plateNo: string
-  senderName: string
-  senderId: string
-  senderAddr: string
-  senderAddrGps: number[]
-  receiverName: string
-  receiverAddr: string
-  warehouseId: number
-  colId: number
-  status: string
-  reason: string[]
-  picoId: string
-  signature: string
-  normalFlg: boolean
-  adjustmentFlg: boolean
-  nightFlg: boolean
-  createdBy: string
-  updatedBy: string
+  chkInId: number;
+  logisticName: string;
+  logisticId: string;
+  vehicleTypeId: string;
+  plateNo: string;
+  senderName: string;
+  senderId: string;
+  senderAddr: string;
+  senderAddrGps: number[];
+  receiverName: string;
+  receiverAddr: string;
+  warehouseId: number;
+  colId: number;
+  status: string;
+  reason: string[];
+  picoId: string;
+  signature: string;
+  normalFlg: boolean;
+  adjustmentFlg: boolean;
+  nightFlg: boolean;
+  createdBy: string;
+  updatedBy: string;
   checkinDetail?: [
     {
-      chkInDtlId: number
-      recycTypeId: string
-      recycSubTypeId: string
-      packageTypeId: string
-      weight: number
-      unitId: string
-      itemId: number
-      picoDtlId: number | string
+      chkInDtlId: number;
+      recycTypeId: string;
+      recycSubTypeId: string;
+      packageTypeId: string;
+      weight: number;
+      unitId: string;
+      itemId: number;
+      picoDtlId: number | string;
       checkinDetailPhoto?: [
         {
-          sid: number
-          photo: string
+          sid: number;
+          photo: string;
         }
-      ]
-      createdBy: string
-      updatedBy: string
+      ];
+      createdBy: string;
+      updatedBy: string;
     }
-  ]
-  createdAt: string
-  updatedAt: string
+  ];
+  createdAt: string;
+  updatedAt: string;
 }
 
 function unitName(unit: string) {
-  var name = ''
+  var name = "";
   switch (unit?.toString()) {
-    case '1':
-      name = 'kg'
-      break
-    case '2':
-      name = 'lb'
-      break
+    case "1":
+      name = "kg";
+      break;
+    case "2":
+      name = "lb";
+      break;
   }
-  return name
+  return name;
 }
 
 function packagingToText(packaging: string) {
-  var text = ''
+  var text = "";
   switch (
     packaging //the space of circle text component can only hold 1 chinese word, need to discuss about this function
   ) {
-    case 'PKG00001':
-      text = '袋'
-      break
-    case 'PKG00002':
-      text = '盒'
-      break
-    case 'PKG00003':
-      text = '箱'
-      break
+    case "PKG00001":
+      text = "袋";
+      break;
+    case "PKG00002":
+      text = "盒";
+      break;
+    case "PKG00003":
+      text = "箱";
+      break;
   }
-  return text
+  return text;
 }
 
 function packageTextColor(packaging: string) {
-  var color = ''
+  var color = "";
   switch (packaging) {
-    case 'PKG00001':
-      color = '#36ABF3'
-      break
-    case 'PKG00002':
-      color = '#ABAD30'
-      break
-    case 'PKG00003':
-      color = '#FF4242'
-      break
+    case "PKG00001":
+      color = "#36ABF3";
+      break;
+    case "PKG00002":
+      color = "#ABAD30";
+      break;
+    case "PKG00003":
+      color = "#FF4242";
+      break;
   }
-  return color
+  return color;
 }
 
 function packageBgColor(packaging: string) {
-  var color = ''
+  var color = "";
   switch (packaging) {
-    case 'PKG00001':
-      color = '#E1F4FF'
-      break
-    case 'PKG00002':
-      color = '#F6F1DC'
-      break
-    case 'PKG00003':
-      color = '#FFEBEB'
-      break
+    case "PKG00001":
+      color = "#E1F4FF";
+      break;
+    case "PKG00002":
+      color = "#F6F1DC";
+      break;
+    case "PKG00003":
+      color = "#FFEBEB";
+      break;
   }
-  return color
+  return color;
 }
 
 function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
-  const { decimalVal } = useContainer(CommonTypeContainer)
+  const { decimalVal, accountData } = useContainer(CommonTypeContainer);
 
-  const [recycType, setRecycType] = useState([])
+  const [recycType, setRecycType] = useState([]);
   const [checkInOutData, setCheckInOutData] = useState<CheckInOutDetail | null>(
     null
-  )
-  const { t } = useTranslation()
+  );
+  const { t, i18n } = useTranslation();
+
+  const [senderLocation, setSenderLocation] = useState<string | null>(null);
 
   useEffect(() => {
-    initCheckinoutDetail()
-  }, [selectedRow])
+    if (checkInOutData) {
+      const fetchLocation = async () => {
+        if (
+          checkInOutData?.senderAddr === undefined ||
+          checkInOutData?.receiverAddr === undefined
+        ) {
+          if (checkInOutData?.warehouseId !== 0) {
+            const warehouse = await getWarehouseDetail(
+              checkInOutData.warehouseId
+            );
+            setSenderLocation(warehouse.location);
+          } else {
+            const collectionPoint = await getCollectionPoint(
+              checkInOutData.colId
+            );
+            setSenderLocation(collectionPoint.address);
+          }
+        }
+      };
+      fetchLocation();
+    }
+  }, [checkInOutData]);
+
+  useEffect(() => {
+    initCheckinoutDetail();
+  }, [selectedRow]);
 
   const initCheckinoutDetail = async () => {
     if (selectedRow !== null && selectedRow !== undefined) {
-      let result
-      const token = returnApiToken()
+      let result;
+      const token = returnApiToken();
       if (selectedRow.chkInId) {
         result = await getCheckInDetailByID(
           selectedRow.chkInId,
           token.realmApiRoute
-        )
+        );
       } else if (selectedRow.chkOutId) {
         result = await getCheckOutDetailByID(
           selectedRow.chkOutId,
           token.realmApiRoute
-        )
+        );
       }
-      const data = result?.data
+      const data = result?.data;
 
       if (data) {
-        initRecycType()
-        setCheckInOutData(data)
+        initRecycType();
+        setCheckInOutData(data);
       }
     }
-  }
+  };
   const initRecycType = async () => {
-    const token = returnApiToken()
-    const AuthToken = token.authToken
+    const token = returnApiToken();
+    const AuthToken = token.authToken;
 
     const { data } = await axiosInstance({
       baseURL: window.baseURL.collector,
       ...GET_ALL_RECYCLE_TYPE(),
       headers: {
-        AuthToken
-      }
-    })
+        AuthToken,
+      },
+    });
 
-    setRecycType(data)
-  }
+    setRecycType(data);
+  };
+
+  const getWarehouseDetail = async (id: number) => {
+    try {
+      const response = await getWarehouseById(id);
+
+      return response.data;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const getCollectionPoint = async (id: number) => {
+    try {
+      const response = await getCollectionPointDetail(id);
+
+      return response?.data;
+    } catch (error) {
+      return null;
+    }
+  };
 
   const recycleType = (id: string) => {
     const findRecyc: any = recycType?.find(
       (item: any) => item.recycTypeId === id
-    )
-    return findRecyc?.recyclableNameSchi
-  }
+    );
+    return findRecyc?.recyclableNameSchi;
+  };
 
   const recycleSubType = (id: string, subId: string) => {
-    const parent: any = recycType?.find((item: any) => item.recycTypeId === id)
+    const parent: any = recycType?.find((item: any) => item.recycTypeId === id);
     const findSubRecyc: any = parent?.recycSubType?.find(
       (item: any) => item.recycSubTypeId === subId
-    )
-    return findSubRecyc?.recyclableNameSchi
-  }
+    );
+    return findSubRecyc?.recyclableNameSchi;
+  };
 
   return (
     <div className="detail-inventory">
       <RightOverlayForm
         open={isShow}
         onClose={() => setIsShow(false)}
-        anchor={'right'}
-        action={'none'}
+        anchor={"right"}
+        action={"none"}
         headerProps={{
-          title: t('checkinandcheckout.send_request'),
+          title: t("checkinandcheckout.send_request"),
           subTitle: checkInOutData?.picoId,
-          onCloseHeader: () => setIsShow(false)
+          onCloseHeader: () => setIsShow(false),
         }}
       >
         <Divider />
         <Box sx={{ PaddingX: 2 }}>
           <div className="px-6 py-6">
             <div className="bg-light px-4 py-2 mb-4 flex items-center">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="mr-4"
-              >
-                <path
-                  d="M14 4L6 12L2 8"
-                  stroke="#79CA25"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              {checkInOutData?.adjustmentFlg ? (
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="mr-4"
+                >
+                  <path
+                    d="M14 4L6 12L2 8"
+                    stroke="#79CA25"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="w-[16px] h-[16px] text-red-primary mr-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 -3 16 16"
+                  width="28"
+                  fill="currentColor"
+                >
+                  <path d="M7.314 5.9l3.535-3.536A1 1 0 1 0 9.435.95L5.899 4.485 2.364.95A1 1 0 1 0 .95 2.364l3.535 3.535L.95 9.435a1 1 0 1 0 1.414 1.414l3.535-3.535 3.536 3.535a1 1 0 1 0 1.414-1.414L7.314 5.899z"></path>
+                </svg>
+              )}
               <p className="text-grey-dark">
-                {t('checkinandcheckout.adjust_inventory')}
+                {t("checkinandcheckout.adjust_inventory")}
               </p>
             </div>
             <div className="flex flex-col gap-y-4">
               <p className="text-grey-dark font-bold">
-                {t('checkinandcheckout.shipping_info')}
+                {t("checkinandcheckout.shipping_info")}
               </p>
               <div className="flex flex-col">
                 <p className="text-gray-middle text-smi m-0">
-                  {t('checkinandcheckout.shipping_company')}
+                  {t("checkinandcheckout.shipping_company")}
                 </p>
                 <p className="text-black font-bold">
-                  {checkInOutData?.senderName ? checkInOutData.senderName : '-'}
+                  {checkInOutData?.senderName
+                    ? checkInOutData.senderName
+                    : i18n.language === "enus"
+                    ? accountData?.companyNameEng
+                    : i18n.language === "zhhk"
+                    ? accountData?.companyNameTchi
+                    : accountData?.companyNameSchi}
                 </p>
               </div>
 
               <div className="flex flex-col">
                 <p className="text-gray-middle text-smi m-0">
-                  {t('checkinandcheckout.receiver')}
+                  {t("checkinandcheckout.receiver")}
                 </p>
                 <p className="text-black font-bold">
                   {checkInOutData?.receiverName
                     ? checkInOutData.receiverName
-                    : '-'}
+                    : i18n.language === "enus"
+                    ? accountData?.companyNameEng
+                    : i18n.language === "zhhk"
+                    ? accountData?.companyNameTchi
+                    : accountData?.companyNameSchi}
                 </p>
               </div>
 
               <div className="flex flex-col">
                 <p className="text-gray-middle text-smi m-0">
-                  {t('checkinandcheckout.logistics_company')}
+                  {t("checkinandcheckout.logistics_company")}
                 </p>
                 <p className="text-black font-bold">
                   {checkInOutData?.logisticName
                     ? checkInOutData?.logisticName
-                    : '-'}
+                    : "-"}
                 </p>
               </div>
 
               <p className="text-grey-dark font-bold">
-                {t('checkinandcheckout.recyle_loc_info')}
+                {t("checkinandcheckout.recyle_loc_info")}
               </p>
 
               <div className="flex">
                 <div className="flex flex-col flex-1">
                   <p className="text-gray-middle text-smi m-0">
-                    {t('checkinandcheckout.delivery_location')}
+                    {t("checkinandcheckout.delivery_location")}
                   </p>
                   <p className="text-black font-bold">
                     {checkInOutData?.senderAddr
                       ? checkInOutData?.senderAddr
-                      : '-'}
+                      : senderLocation}
                   </p>
                 </div>
                 <svg
@@ -293,19 +364,19 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
                 </svg>
                 <div className="flex flex-col flex-1 ml-6">
                   <p className="text-gray-middle text-smi m-0">
-                    {t('checkinandcheckout.arrived')}
+                    {t("checkinandcheckout.arrived")}
                   </p>
                   <p className="text-black font-bold">
                     {checkInOutData?.receiverAddr
                       ? checkInOutData?.receiverAddr
-                      : '-'}
+                      : senderLocation}
                   </p>
                 </div>
               </div>
 
               <div className="flex flex-col gap-4">
                 <p className="text-grey-dark text-smi -mb-1">
-                  {t('checkinandcheckout.recyc_loc_info')}
+                  {t("checkinandcheckout.recyc_loc_info")}
                 </p>
                 {checkInOutData?.checkinDetail?.map((detail: any) => {
                   return (
@@ -317,7 +388,7 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
                             backgroundColor: packageBgColor(
                               detail?.packageTypeId
                             ),
-                            color: packageTextColor(detail?.packageTypeId)
+                            color: packageTextColor(detail?.packageTypeId),
                           }}
                         >
                           <p className="text-blue-middle text-xxs">
@@ -338,10 +409,10 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
                       </div>
                       <p className="text-black font-bold">
                         {formatWeight(detail?.weight, decimalVal)}
-                        {unitName(detail?.unitId)}{' '}
+                        {unitName(detail?.unitId)}{" "}
                       </p>
                     </div>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -349,7 +420,7 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
         </Box>
       </RightOverlayForm>
     </div>
-  )
+  );
 }
 
-export default CheckInAndCheckOutDetails
+export default CheckInAndCheckOutDetails;
