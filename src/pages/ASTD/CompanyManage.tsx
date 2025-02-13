@@ -206,7 +206,9 @@ function RejectModal({
               component="h3"
               sx={{ fontWeight: "bold" }}
             >
-              {`${t("tenant.are_sure_to_reject")} ${tenantId}?`}
+              {`${t("tenant.are_sure_to_reject")} ${getFormatId(
+                tenantId.toString()
+              )}?`}
             </Typography>
           </Box>
           <Divider />
