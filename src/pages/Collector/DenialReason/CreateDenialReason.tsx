@@ -142,21 +142,21 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   };
   const denialReasonField = [
     {
-      label: t("denial_reason.reason_name_tchi"),
+      label: t("common.traditionalChineseName"),
       placeholder: t("denial_reason.enter_name"),
       field: "reasonNameTchi",
       type: "text",
       mandatory: true,
     },
     {
-      label: t("denial_reason.reason_name_schi"),
+      label: t("common.simplifiedChineseName"),
       placeholder: t("denial_reason.enter_name"),
       field: "reasonNameSchi",
       type: "text",
       mandatory: true,
     },
     {
-      label: t("denial_reason.reason_name_eng"),
+      label: t("common.englishName"),
       placeholder: t("denial_reason.enter_name"),
       field: "reasonNameEng",
       type: "text",
@@ -276,11 +276,15 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     }
   }, [functionList, drawerOpen]);
 
-  const checkString = (s: string) => {
-    if (!trySubmited) {
-      return false;
+  const checkString = (s: string, field: string) => {
+    if (trySubmited) {
+      if (s === "" || isEmptyOrWhitespace(s)) {
+        return true;
+      } else {
+        return validation.some((val) => val.field === field);
+      }
     }
-    return s == "" || isEmptyOrWhitespace(s);
+    return false;
   };
 
   const validate = async () => {
@@ -595,12 +599,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                       error={
                         item.mandatory
                           ? checkString(
-                              formData[item.field as keyof FormValues]
-                            ) ||
-                            (trySubmited &&
-                              validation.some(
-                                (value) => value.field === item.label
-                              ))
+                              formData[item.field as keyof FormValues],
+                              item.label
+                            )
                           : false
                       }
                     />
@@ -636,7 +637,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                             ...params.InputProps,
                             sx: styles.inputProps,
                           }}
-                          error={checkString(selectedFunctionId)}
+                          error={checkString(selectedFunctionId, item.label)}
                         />
                       )}
                       noOptionsText={t("common.noOptions")}
