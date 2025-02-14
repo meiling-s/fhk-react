@@ -19,6 +19,7 @@ import { STATUS_CODE, formErr, format } from "../../../constants/constant";
 import {
   extractError,
   getPrimaryColor,
+  isEmptyOrWhitespace,
   returnErrorMsg,
   showErrorToast,
   validDayjsISODate,
@@ -191,7 +192,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       //before first submit, don't check the validation
       return false;
     }
-    return s == "";
+    return s == "" || isEmptyOrWhitespace(s);
   };
 
   const handleSubmit = () => {
@@ -337,7 +338,10 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
           <Box sx={{ marginY: 2 }}>
-            <CustomField label={t("general_settings.contract_number")} mandatory>
+            <CustomField
+              label={t("general_settings.contract_number")}
+              mandatory
+            >
               <CustomTextField
                 id="contractNo"
                 value={contractNo}
