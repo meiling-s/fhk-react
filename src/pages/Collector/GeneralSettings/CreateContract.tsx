@@ -348,7 +348,13 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                 disabled={action != "add"}
                 placeholder={t("general_settings.enter_contracts_number")}
                 onChange={(event) => setContractNo(event.target.value)}
-                error={checkString(contractNo)}
+                error={
+                  checkString(contractNo) ||
+                  (trySubmited &&
+                    validation.some(
+                      (v) => v.field === t("general_settings.contract_number")
+                    ))
+                }
               />
             </CustomField>
           </Box>
