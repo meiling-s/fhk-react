@@ -215,8 +215,6 @@ const PickupOrderCreateForm = ({
   const { validateData, errorsField, changeTouchField } =
     useValidationPickupOrder(formik.values, state);
 
-  console.log(contractRole, "contract role");
-
   const unexpiredContracts = contractRole
     ? contractRole.filter((contract) => {
         const currentDate = new Date();
