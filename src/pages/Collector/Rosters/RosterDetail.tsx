@@ -359,6 +359,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
       reason: rosterReason,
       createdBy: loginName,
       updatedBy: loginName,
+      colId: selectedColPoint,
     };
     // console.log('validation', validation)
     if (validation.length === 0) {
@@ -484,8 +485,28 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                 <Box sx={{ ...localStyle.timePeriodItem }}>
                   <TimePicker
                     value={startDate}
+                    timeSteps={{ minutes: 1 }}
                     onChange={(value) => setStartDate(value!!)}
                     sx={{ ...localStyle.timePicker }}
+                    slotProps={{
+                      layout: {
+                        sx: {
+                          width: "216px",
+                          "& .MuiMultiSectionDigitalClockSection-root": {
+                            flexGrow: 1,
+                            scrollbarGutter: "stable",
+                          },
+                        },
+                      },
+                      digitalClockSectionItem: {
+                        sx: {
+                          width: "auto",
+                        },
+                      },
+                      textField: {
+                        inputProps: { readOnly: true },
+                      },
+                    }}
                   />
                 </Box>
               </Box>
@@ -494,8 +515,28 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                 <Box sx={{ ...localStyle.timePeriodItem }}>
                   <TimePicker
                     value={endDate}
+                    timeSteps={{ minutes: 1 }}
                     onChange={(value) => setEndDate(value!!)}
                     sx={{ ...localStyle.timePicker }}
+                    slotProps={{
+                      layout: {
+                        sx: {
+                          width: "216px",
+                          "& .MuiMultiSectionDigitalClockSection-root": {
+                            flexGrow: 1,
+                            scrollbarGutter: "stable",
+                          },
+                        },
+                      },
+                      digitalClockSectionItem: {
+                        sx: {
+                          width: "auto",
+                        },
+                      },
+                      textField: {
+                        inputProps: { readOnly: true },
+                      },
+                    }}
                   />
                 </Box>
               </Box>

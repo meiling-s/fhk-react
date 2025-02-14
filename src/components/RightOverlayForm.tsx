@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect, ReactNode, useRef } from "react";
 import Drawer from "@mui/material/Drawer";
 import StatusCard from "./StatusCard";
 import { Button, Typography } from "@mui/material";
@@ -49,6 +49,9 @@ const HeaderSection: React.FC<HeaderProps> = ({
   useDeleteConfirmation = true,
 }) => {
   const [openDelete, setOpenDelete] = useState<boolean>(false);
+  const [disabledSubmit, setDisabledSubmit] = useState(false);
+  const [disabledDelete, setDisabledDelete] = useState(false);
+  const disabledSync = useRef(false);
 
   const onDeleteModal = () => {
     if (cancelText === t("common.cancel") || !useDeleteConfirmation) {
@@ -62,11 +65,35 @@ const HeaderSection: React.FC<HeaderProps> = ({
   };
 
   const onDeleteClick = async () => {
-    if (onDelete) {
-      await onDelete();
+
+    if(action === "add" || disabledSync.current || disabledDelete) return
+
+    disabledSync.current = true
+    setDisabledDelete(true)
+
+    try {
+      if (onDelete) await onDelete();
+      onDeleteModal();
+    } finally {
+      disabledSync.current = false;
+      setDisabledSubmit(false);
     }
-    onDeleteModal();
   };
+
+  const onSubmitClick = async () => {
+
+    if(action === "delete" || disabledSync.current || disabledSubmit) return
+
+    disabledSync.current = true
+    setDisabledSubmit(true)
+
+    try {
+      if(onSubmit) await onSubmit();
+    } finally {
+      disabledSync.current = false;
+      setDisabledSubmit(false);
+    }
+  }
 
   return (
     <div className="header-section">
@@ -91,8 +118,8 @@ const HeaderSection: React.FC<HeaderProps> = ({
                     height: "40px",
                   },
                 ]}
-                disabled={action === "delete"}
-                onClick={onSubmit}
+                disabled={action === "delete" || disabledSync.current}
+                onClick={onSubmitClick}
                 data-testid=" astd-right-drawer-save-button-5997"
               >
                 {submitText}
@@ -109,7 +136,7 @@ const HeaderSection: React.FC<HeaderProps> = ({
                   ]}
                   data-testid="astd-right-drawer-cancel-delete-button-8523"
                   variant="outlined"
-                  disabled={action === "add"}
+                  disabled={action === "add" || disabledSync.current}
                   onClick={onDeleteModal}
                 >
                   {cancelText}
