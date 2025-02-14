@@ -82,7 +82,7 @@
     "open": "开放",
     "close": "关闭",
     "colRecycType": "回收物资料",
-    "recycType": "可回收物类别",
+    "recycType": "可回收物类别 (请以鼠标左键两次来取消选择)",
     "category": "类别 (按一下类别选择/取消选择)",
     "staffInfo": "员工资料",
     "numOfStaff": "员工数量",
