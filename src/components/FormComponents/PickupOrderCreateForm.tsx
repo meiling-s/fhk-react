@@ -215,13 +215,21 @@ const PickupOrderCreateForm = ({
   const { validateData, errorsField, changeTouchField } =
     useValidationPickupOrder(formik.values, state);
 
+  console.log(contractRole, "contract role");
+
   const unexpiredContracts = contractRole
-    ? contractRole?.filter((contract) => {
+    ? contractRole.filter((contract) => {
         const currentDate = new Date();
         const contractDate = new Date(contract.contractToDate);
-        return contractDate > currentDate && contract.status !== "INACTIVE";
+
+        // Set time to midnight to compare only the date part
+        currentDate.setHours(0, 0, 0, 0);
+        contractDate.setHours(0, 0, 0, 0);
+
+        return contractDate >= currentDate && contract.status === "ACTIVE"; // Includes today
       })
     : [];
+
   const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(
     null
   );
