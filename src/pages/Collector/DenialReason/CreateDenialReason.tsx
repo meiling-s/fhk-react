@@ -18,6 +18,7 @@ import { styles } from "../../../constants/styles";
 import { STATUS_CODE, formErr } from "../../../constants/constant";
 import {
   extractError,
+  isEmptyOrWhitespace,
   returnErrorMsg,
   showErrorToast,
 } from "../../../utils/utils";
@@ -279,7 +280,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     if (!trySubmited) {
       return false;
     }
-    return s == "";
+    return s == "" || isEmptyOrWhitespace(s);
   };
 
   const validate = async () => {
@@ -595,7 +596,11 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                         item.mandatory
                           ? checkString(
                               formData[item.field as keyof FormValues]
-                            )
+                            ) ||
+                            (trySubmited &&
+                              validation.some(
+                                (value) => value.field === item.label
+                              ))
                           : false
                       }
                     />

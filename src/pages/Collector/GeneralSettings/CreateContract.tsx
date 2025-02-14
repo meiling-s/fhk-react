@@ -19,6 +19,7 @@ import { STATUS_CODE, formErr, format } from "../../../constants/constant";
 import {
   extractError,
   getPrimaryColor,
+  isEmptyOrWhitespace,
   returnErrorMsg,
   showErrorToast,
   validDayjsISODate,
@@ -191,7 +192,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       //before first submit, don't check the validation
       return false;
     }
-    return s == "";
+    return s == "" || isEmptyOrWhitespace(s);
   };
 
   const handleSubmit = () => {
@@ -337,14 +338,23 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
           <Box sx={{ marginY: 2 }}>
-            <CustomField label={t("general_settings.contract_number")} mandatory>
+            <CustomField
+              label={t("general_settings.contract_number")}
+              mandatory
+            >
               <CustomTextField
                 id="contractNo"
                 value={contractNo}
                 disabled={action != "add"}
                 placeholder={t("general_settings.enter_contracts_number")}
                 onChange={(event) => setContractNo(event.target.value)}
-                error={checkString(contractNo)}
+                error={
+                  checkString(contractNo) ||
+                  (trySubmited &&
+                    validation.some(
+                      (v) => v.field === t("general_settings.contract_number")
+                    ))
+                }
               />
             </CustomField>
           </Box>
