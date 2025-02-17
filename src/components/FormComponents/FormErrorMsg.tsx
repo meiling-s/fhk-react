@@ -28,10 +28,7 @@ export function FormErrorMsg({
       : `${t("common.englishName")}`;
   return (
     <Box
-      sx={[
-        warning ? localstyles.container_warning : localstyles.container,
-        field === warnField ? localstyles.marginBottom : null,
-      ]}
+      sx={[warning ? localstyles.container_warning : localstyles.container]}
       data-testid={dataTestId}
     >
       <Box

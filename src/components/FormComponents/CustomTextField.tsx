@@ -8,7 +8,9 @@ type props = {
   value?: string | number;
   defaultValue?: string | number;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur?: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> | undefined; 
+  onBlur?:
+    | FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>
+    | undefined;
   endAdornment?: JSX.Element;
   error?: boolean;
   className?: string;
@@ -41,7 +43,7 @@ function CustomTextField({
   textarea = false,
   type,
   maxLength,
-  dataTestId = ""
+  dataTestId = "",
 }: props) {
   return (
     <TextField
@@ -58,7 +60,21 @@ function CustomTextField({
       defaultValue={defaultValue ? defaultValue : ""}
       onChange={onChange}
       onBlur={onBlur}
-      sx={{ ...styles.textField, ...sx }}
+      sx={{
+        ...styles.textField,
+        ...sx,
+        "& .MuiOutlinedInput-root": {
+          "& fieldset": {
+            borderColor: error ? "red" : "", // Red border when error is true
+          },
+          "&:hover fieldset": {
+            borderColor: error ? "red" : "",
+          },
+          "&.Mui-focused fieldset": {
+            borderColor: error ? "red" : "",
+          },
+        },
+      }}
       helperText={helperText}
       disabled={disabled}
       inputProps={maxLength ? { maxLength: maxLength } : undefined}

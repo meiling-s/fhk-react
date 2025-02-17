@@ -145,6 +145,7 @@ const EditPickupOrder = () => {
         id: item.picoDtlId,
         picoDtlId: item.picoDtlId,
         picoHisId: item.picoHisId,
+        refPicoDtlId: item.refPicoDtlId,
         senderId: item.senderId,
         senderName: item.senderName,
         senderAddr: item.senderAddr,

@@ -240,8 +240,8 @@ const SelectReasonModal: React.FC<ReasonForm> = ({
           <Box sx={{ alignSelf: "center" }}>
             <CustomButton
               text={t("check_in.confirm")}
-              color="blue"
               style={{ width: "175px", marginRight: "10px" }}
+              disabled={rejectReasonId.length === 0 ? true : false}
               onClick={() => {
                 handleSubmitRequest(rejectReasonId);
                 onClose();
@@ -249,7 +249,6 @@ const SelectReasonModal: React.FC<ReasonForm> = ({
             />
             <CustomButton
               text={t("check_in.cancel")}
-              color="blue"
               outlined
               style={{ width: "175px" }}
               onClick={() => {
@@ -460,8 +459,11 @@ const RejectModal: React.FC<RejectForm> = ({
           <Box sx={{ alignSelf: "center" }}>
             <CustomButton
               text={t("check_in.confirm")}
-              color="blue"
-              style={{ width: "175px", marginRight: "10px" }}
+              style={{
+                width: "175px",
+                marginRight: "10px",
+              }}
+              disabled={rejectReasonId.length === 0 ? true : false}
               onClick={() => {
                 handleRejectRequest(rejectReasonId);
                 onClose();
@@ -469,7 +471,6 @@ const RejectModal: React.FC<RejectForm> = ({
             />
             <CustomButton
               text={t("check_in.cancel")}
-              color="blue"
               outlined
               style={{ width: "175px" }}
               onClick={() => {
