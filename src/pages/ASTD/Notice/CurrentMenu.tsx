@@ -143,10 +143,10 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
       value: option,
       label:
         option === "ZH-CH"
-          ? t("common.simplifiedChineseName")
+          ? t("common.simplifiedChinese")
           : option === "ZH-HK"
-          ? t("common.traditionalChineseName")
-          : t("common.englishName"),
+          ? t("common.traditionalChinese")
+          : t("common.english"),
     }));
     options.push({
       value: "",
