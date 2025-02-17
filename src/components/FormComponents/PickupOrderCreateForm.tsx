@@ -456,7 +456,7 @@ const PickupOrderCreateForm = ({
       field: "recycType",
       headerName: t("pick_up_order.detail.main_category"),
       width: 150,
-      editable: true,
+      // editable: true,
       valueGetter: ({ row }) => {
         const typeField = row.recycType || row.productType;
         const matchingRecycType = recycType?.find(
@@ -525,7 +525,7 @@ const PickupOrderCreateForm = ({
       headerName: t("pick_up_order.detail.subcategory"),
       type: "string",
       width: 150,
-      editable: true,
+      // editable: true,
       valueGetter: ({ row }) => {
         const matchingRecycType = recycType?.find(
           (item) => item.recycTypeId === row.recycType
@@ -587,7 +587,7 @@ const PickupOrderCreateForm = ({
       headerName: t("pick_up_order.product_type.add-on"),
       type: "string",
       width: 150,
-      editable: true,
+      // editable: true,
       valueGetter: ({ row }) => {
         const matchingProductAddon = getProductAddonFromDataRow({
           row,
@@ -618,35 +618,35 @@ const PickupOrderCreateForm = ({
       headerName: t("pick_up_order.detail.weight"),
       type: "string",
       width: 150,
-      editable: true,
+      // editable: true,
     },
     {
       field: "senderName",
       headerName: t("pick_up_order.detail.sender_name"),
       type: "string",
       width: 150,
-      editable: true,
+      // editable: true,
     },
     {
       field: "receiverName",
       headerName: t("pick_up_order.detail.receiver"),
       type: "string",
       width: 150,
-      editable: true,
+      // editable: true,
     },
     {
       field: "senderAddr",
       headerName: t("pick_up_order.detail.recycling_location"),
       type: "string",
       width: 150,
-      editable: true,
+      // editable: true,
     },
     {
       field: "receiverAddr",
       headerName: t("pick_up_order.detail.arrived"),
       type: "string",
       width: 200,
-      editable: true,
+      // editable: true,
     },
     {
       field: "edit",
@@ -661,7 +661,7 @@ const PickupOrderCreateForm = ({
               setIndex(params.row.id);
               handleEditRow(params.row.picoDtlId);
             }}
-            disabled={params.row.isAutomation}
+            disabled={params.row.isAutomation || params.row.refPicoDtlId}
             data-testId={
               "astd-create-edit-pickup-order-edit-recycling-3943" +
               params.row.id

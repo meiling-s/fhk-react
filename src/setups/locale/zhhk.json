@@ -474,7 +474,7 @@
     },
     "adhoc": {
       "reason_get_off": "下單原因",
-      "po_number": "回收運單編號",
+      "po_number": "相關回收運單編號",
       "sender_company_name": "請輸入寄件公司"
     },
     "choose_logistic": "選擇物流公司",
@@ -519,7 +519,7 @@
       "placeholder": "請輸入地點",
       "placeholder_shipping_company": "請輸入寄件公司",
       "placeholder_receiver_company": "請輸入收貨公司",
-      "select_po": "選擇運單",
+      "select_po": "相關回收運單編號",
       "item_category": "物品類別"
     },
     "product_type": {
@@ -527,7 +527,7 @@
       "subtype": "次類別",
       "add-on": "追加類別"
     },
-    "select_po": "選擇運單",
+    "select_po": "相關回收運單編號",
     "search_company_name": "輸入寄件者公司",
     "change": "變更",
     "confirm_approve": "確認接受",
