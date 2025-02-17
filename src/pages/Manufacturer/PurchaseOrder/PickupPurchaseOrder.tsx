@@ -41,7 +41,6 @@ const CreatePickupOrder = () => {
   const role = localStorage.getItem(localStorgeKeyName.role);
   const loginId = localStorage.getItem(localStorgeKeyName.username) || "";
 
-  console.log(state, "state");
   function getTenantId() {
     const tenantId = returnApiToken().decodeKeycloack.substring(
       "company".length
@@ -147,10 +146,10 @@ const CreatePickupOrder = () => {
   }, [createPickupOrder.values.picoType]);
 
   const setPickupOrderDetail = () => {
-    console.log(poInfo, "poInfo");
     const picoDetails: CreatePicoDetail[] =
       poInfo?.purchaseOrderDetail?.map((item) => ({
         id: item?.poDtlId,
+        picoDtlId: item?.poDtlId,
         picoHisId: "",
         senderId: "",
         senderName: poInfo.senderName,
