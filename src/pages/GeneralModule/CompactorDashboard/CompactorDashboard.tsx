@@ -308,6 +308,9 @@ const CompactorDashboard: FunctionComponent = () => {
     if (keyName === 'currDate') {
       setSelectedDate(value)
     } else {
+      setCompactorProcessInItem([])
+      setSelectedItem([])
+      setSelectedItem([])
       setSelectedPlate(value)
     }
   }, 1000)
@@ -421,8 +424,8 @@ const CompactorDashboard: FunctionComponent = () => {
               <Box sx={{ paddingY: '24px', paddingX: '40px' }}>
                 {compactorProcessIn.length > 0 ? (
                   <div className="grid grid-cols-2 gap-4 justify-items-start w-full max-w-[980px]">
-                    {compactorProcessIn.map((item) => (
-                      <div
+                    {compactorProcessIn.map((item, index) => (
+                      <div key={index}
                         className={`relative card-wrapper col-span-1 max-w-[450px] w-full flex items-center space-x-6 py-4 px-4 rounded-lg border-solid cursor-pointer ${
                           selectedCheckInIds.includes(item.chkInId)
                             ? 'border-[2px] border-[#79CA25]'
