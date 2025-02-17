@@ -154,7 +154,11 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
             const collectionPoint = await getCollectionPoint(
               checkInOutData.colId
             );
-            setSenderLocation(collectionPoint.address);
+            if (collectionPoint) {
+              setSenderLocation(collectionPoint.address);
+            } else {
+              setSenderLocation("Loading...");
+            }
           }
         }
       };
