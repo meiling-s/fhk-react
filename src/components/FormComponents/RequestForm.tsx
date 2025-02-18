@@ -413,8 +413,9 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
                 weight={formatWeight(item.weight, decimalVal)}
                 showImage={true}
                 packageTypeId={item.packageTypeId}
-                productName={item.productType.name}
+                productName={item.productSubType.name}
                 productType={item.productType.name}
+                productAddon={item.productAddonType.name}
                 images={item.checkinDetailPhoto}
               />
             );

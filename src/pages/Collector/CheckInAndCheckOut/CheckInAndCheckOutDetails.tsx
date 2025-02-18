@@ -271,6 +271,33 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
     return "";
   };
 
+  const findProductAddon = (
+    typeId: string,
+    subtypeId: string,
+    addonId: string
+  ) => {
+    const findProduct: any = productType?.find(
+      (item: any) => item.productTypeId === typeId
+    );
+    if (findProduct) {
+      const findSubProduct: any = findProduct?.productSubType?.find(
+        (item: any) => item.productSubTypeId === subtypeId
+      );
+      if (findSubProduct) {
+        const findAddon: any = findSubProduct?.productAddonType?.find(
+          (item: any) => item.productAddonTypeId === addonId
+        );
+        return i18n.language === "enus"
+          ? findAddon?.productNameEng
+          : i18n.language === "zhch"
+          ? findAddon?.productNameSchi
+          : findAddon?.productNameTchi;
+      }
+    }
+
+    return "";
+  };
+
   return (
     <div className="detail-inventory">
       <RightOverlayForm
@@ -326,7 +353,7 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
               </p>
               <div className="flex flex-col">
                 <p className="text-gray-middle text-smi m-0">
-                  {t("checkinandcheckout.shipping_company")}
+                  {t("check_in.sender_company")}
                 </p>
                 <p className="text-black font-bold">
                   {checkInOutData?.senderName
@@ -341,7 +368,7 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
 
               <div className="flex flex-col">
                 <p className="text-gray-middle text-smi m-0">
-                  {t("checkinandcheckout.receiver")}
+                  {t("check_in.receiver_company")}
                 </p>
                 <p className="text-black font-bold">
                   {checkInOutData?.receiverName
@@ -372,7 +399,7 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
               <div className="flex">
                 <div className="flex flex-col flex-1">
                   <p className="text-gray-middle text-smi m-0">
-                    {t("checkinandcheckout.delivery_location")}
+                    {t("check_out.shipping_location")}
                   </p>
                   <p className="text-black font-bold">
                     {checkInOutData?.senderAddr
@@ -396,7 +423,7 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
                 </svg>
                 <div className="flex flex-col flex-1 ml-6">
                   <p className="text-gray-middle text-smi m-0">
-                    {t("checkinandcheckout.arrived")}
+                    {t("pick_up_order.detail.arrived")}
                   </p>
                   <p className="text-black font-bold">
                     {checkInOutData?.receiverAddr
@@ -489,6 +516,11 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
                           detail?.productSubTypeId
                         )}
                         productType={findProductType(detail?.productTypeId)}
+                        productAddon={findProductAddon(
+                          detail?.productTypeId,
+                          detail?.productSubTypeId,
+                          detail?.productAddonTypeId
+                        )}
                         images={detail?.checkoutDetailPhoto}
                       />
                     );
