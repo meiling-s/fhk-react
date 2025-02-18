@@ -227,7 +227,6 @@ const CompactorDashboard: FunctionComponent = () => {
   ]
 
   useEffect(() => {
-    //initLicensePlate()
     getProductType()
     setCurrDate()
   }, [])
@@ -246,7 +245,6 @@ const CompactorDashboard: FunctionComponent = () => {
     const result = await getPlateNoList(selectedDate)
     if (result.data) {
       setLicensePlate(result.data)
-      console.log(result.data)
     }
   }
 
@@ -307,19 +305,19 @@ const CompactorDashboard: FunctionComponent = () => {
     }
   ]
 
-  const handleSearch = debounce((keyName: string, value: string) => {
+  const handleSearch = (keyName: string, value: string) => {
     if (keyName === 'currDate') {
       setSelectedDate(value)
-      setSelectedPlate('')
       setCompactorProcessIn([])
       setCompactorProcessInItem([])
       setSelectedItem([])
+      setLicensePlate([])
     } else {
       setCompactorProcessInItem([])
       setSelectedItem([])
       setSelectedPlate(value)
     }
-  }, 1000)
+  }
 
   const selectCard = (id: number) => {
     setSelectedItem((prevSelected) => {

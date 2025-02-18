@@ -85,10 +85,10 @@ const CustomSearchField = ({
   }
 
   useEffect(() => {
-    if (!hasOptions) {
+    if (!(options && options.length > 0)) {
       setSelectedValue('')
     }
-  }, [hasOptions])
+  }, [options])
 
   return (
     <Box>
