@@ -1083,6 +1083,11 @@ export const GET_ALL_RECYCLE_TYPE = (): AxiosRequestConfig => ({
   url: 'api/v1/administrator/recycType'
 })
 
+export const GET_ALL_PRODUCT_TYPE = (): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/productTypes`
+})
+
 //logistics pickup order
 export const GET_ALL_LOGISTICS_PICK_UP_ORDER = (
   tenantId: string

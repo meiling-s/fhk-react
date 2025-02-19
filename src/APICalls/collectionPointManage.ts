@@ -146,6 +146,6 @@ export const getCollectionPointDetail = async (colId: number) => {
     });
     return response
   } catch (e) {
-    return null;
+    return null
   }
 }

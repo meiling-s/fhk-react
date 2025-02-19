@@ -13,6 +13,7 @@ type props = {
   showImage: boolean;
   productName: string;
   productType: string;
+  productAddon?: string;
   weight: string;
   images: CheckinDetailPhoto[] | CheckoutDetailPhoto[];
 };
@@ -25,6 +26,7 @@ const RecycleCard = ({
   showImage,
   productName,
   productType,
+  productAddon,
   weight,
   images,
 }: props) => {
@@ -54,11 +56,22 @@ const RecycleCard = ({
             />
           </Box>
           <Box>
-            <Typography fontWeight="bold" fontSize="16px">
-              {productName}{" "}
-            </Typography>
+            {productAddon && (
+              <Typography fontWeight="bold" fontSize="16px">
+                {productAddon}
+              </Typography>
+            )}
+            {productAddon ? (
+              <Typography color="#9f9f9f" fontSize="14px">
+                {productName}
+              </Typography>
+            ) : (
+              <Typography fontWeight="bold" fontSize="16px">
+                {productName}
+              </Typography>
+            )}
             <Typography color="#9f9f9f" fontSize="14px">
-              {productType}{" "}
+              {productType}
             </Typography>
           </Box>
         </Box>

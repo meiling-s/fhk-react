@@ -217,7 +217,7 @@ function CheckInAndCheckOut() {
       field: "senderName",
       width: 200,
       type: "string",
-      headerName: t("checkinandcheckout.shipping_company"),
+      headerName: t("check_in.sender_company"),
       renderCell: (params) => {
         if (params.row.senderName === null) {
           if (i18n.language === "enus") {
@@ -236,7 +236,7 @@ function CheckInAndCheckOut() {
       field: "receiverName",
       width: 200,
       type: "string",
-      headerName: t("checkinandcheckout.receiver"),
+      headerName: t("check_in.receiver_company"),
       renderCell: (params) => {
         if (params.row.receiverName === null) {
           if (i18n.language === "enus") {
@@ -302,7 +302,7 @@ function CheckInAndCheckOut() {
       field: "senderAddr",
       type: "string",
       width: 200,
-      headerName: t("checkinandcheckout.delivery_location"),
+      headerName: t("check_out.shipping_location"),
       renderCell: (params) => {
         if (params.row.senderAddr !== null) {
           return params.row.senderAddr;
@@ -331,7 +331,7 @@ function CheckInAndCheckOut() {
       field: "receiverAddr",
       type: "string",
       width: 200,
-      headerName: t("checkinandcheckout.arrived"),
+      headerName: t("pick_up_order.detail.arrived"),
       renderCell: (params) => {
         if (params.row.receiverAddr !== null) {
           return params.row.receiverAddr;
