@@ -99,7 +99,9 @@ const CompactorDashboard: FunctionComponent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [licensePlate, setLicensePlate] = useState<string[]>([])
   const [selectedCheckInIds, setSelectedItem] = useState<number[]>([])
-  const [selectedDate, setSelectedDate] = useState<string>('')
+  const [selectedDate, setSelectedDate] = useState<string>(
+    dayjs().format('YYYY-MM-DD')
+  )
   const [selectedPlate, setSelectedPlate] = useState<string>('')
   const [compactorProcessIn, setCompactorProcessIn] = useState<
     CompactorProcessIn[]
@@ -232,7 +234,6 @@ const CompactorDashboard: FunctionComponent = () => {
   ]
 
   useEffect(() => {
-    initLicensePlate()
     getProductType()
     setCurrDate()
   }, [])
@@ -352,16 +353,19 @@ const CompactorDashboard: FunctionComponent = () => {
     }
   ]
 
-  const handleSearch = debounce((keyName: string, value: string) => {
+  const handleSearch = (keyName: string, value: string) => {
     if (keyName === 'currDate') {
       setSelectedDate(value)
+      setCompactorProcessIn([])
+      setCompactorProcessInItem([])
+      setSelectedItem([])
+      setLicensePlate([])
     } else {
       setCompactorProcessInItem([])
       setSelectedItem([])
-      setSelectedItem([])
       setSelectedPlate(value)
     }
-  }, 1000)
+  }
 
   const selectCard = (id: number) => {
     setSelectedItem((prevSelected) => {

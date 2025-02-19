@@ -2,7 +2,10 @@ import { Box, Divider } from "@mui/material";
 import RightOverlayForm from "../../../components/RightOverlayForm";
 import axios from "axios";
 import { AXIOS_DEFAULT_CONFIGS } from "../../../constants/configs";
-import { GET_ALL_RECYCLE_TYPE } from "../../../constants/requests";
+import {
+  GET_ALL_PRODUCT_TYPE,
+  GET_ALL_RECYCLE_TYPE,
+} from "../../../constants/requests";
 import { useEffect, useState } from "react";
 import { formatWeight, returnApiToken } from "../../../utils/utils";
 import { useTranslation } from "react-i18next";
@@ -16,6 +19,8 @@ import {
 import { PanoramaSharp } from "@mui/icons-material";
 import { getWarehouseById } from "src/APICalls/warehouseManage";
 import { getCollectionPointDetail } from "src/APICalls/collectionPointManage";
+import RecycleCard from "src/components/RecycleCard";
+import ProductCard from "src/components/ProductCard";
 
 interface CheckInOutDetail {
   chkInId: number;
@@ -45,6 +50,11 @@ interface CheckInOutDetail {
       chkInDtlId: number;
       recycTypeId: string;
       recycSubTypeId: string;
+      productAddonTypeId: string;
+      productAddonTypeRemark: string;
+      productSubTypeId: string;
+      productSubTypeRemark: string;
+      productTypeId: string;
       packageTypeId: string;
       weight: number;
       unitId: string;
@@ -60,77 +70,40 @@ interface CheckInOutDetail {
       updatedBy: string;
     }
   ];
+  checkoutDetail?: [
+    {
+      chkOutDtlId: number;
+      recycTypeId: string;
+      recycSubTypeId: string;
+      productAddonTypeId: string;
+      productAddonTypeRemark: string;
+      productSubTypeId: string;
+      productSubTypeRemark: string;
+      productTypeId: string;
+      packageTypeId: string;
+      weight: number;
+      unitId: string;
+      itemId: number;
+      picoDtlId: number | string;
+      checkoutDetailPhoto?: [
+        {
+          sid: number;
+          photo: string;
+        }
+      ];
+      createdBy: string;
+      updatedBy: string;
+    }
+  ];
   createdAt: string;
   updatedAt: string;
-}
-
-function unitName(unit: string) {
-  var name = "";
-  switch (unit?.toString()) {
-    case "1":
-      name = "kg";
-      break;
-    case "2":
-      name = "lb";
-      break;
-  }
-  return name;
-}
-
-function packagingToText(packaging: string) {
-  var text = "";
-  switch (
-    packaging //the space of circle text component can only hold 1 chinese word, need to discuss about this function
-  ) {
-    case "PKG00001":
-      text = "袋";
-      break;
-    case "PKG00002":
-      text = "盒";
-      break;
-    case "PKG00003":
-      text = "箱";
-      break;
-  }
-  return text;
-}
-
-function packageTextColor(packaging: string) {
-  var color = "";
-  switch (packaging) {
-    case "PKG00001":
-      color = "#36ABF3";
-      break;
-    case "PKG00002":
-      color = "#ABAD30";
-      break;
-    case "PKG00003":
-      color = "#FF4242";
-      break;
-  }
-  return color;
-}
-
-function packageBgColor(packaging: string) {
-  var color = "";
-  switch (packaging) {
-    case "PKG00001":
-      color = "#E1F4FF";
-      break;
-    case "PKG00002":
-      color = "#F6F1DC";
-      break;
-    case "PKG00003":
-      color = "#FFEBEB";
-      break;
-  }
-  return color;
 }
 
 function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
   const { decimalVal, accountData } = useContainer(CommonTypeContainer);
 
   const [recycType, setRecycType] = useState([]);
+  const [productType, setProductType] = useState([]);
   const [checkInOutData, setCheckInOutData] = useState<CheckInOutDetail | null>(
     null
   );
@@ -154,12 +127,17 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
             const collectionPoint = await getCollectionPoint(
               checkInOutData.colId
             );
-            setSenderLocation(collectionPoint.address);
+            if (collectionPoint) {
+              setSenderLocation(collectionPoint.address);
+            } else {
+              setSenderLocation("Loading...");
+            }
           }
         }
       };
       fetchLocation();
     }
+    console.log(checkInOutData, "checkinoutdata");
   }, [checkInOutData]);
 
   useEffect(() => {
@@ -185,6 +163,7 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
 
       if (data) {
         initRecycType();
+        initProductType();
         setCheckInOutData(data);
       }
     }
@@ -202,6 +181,21 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
     });
 
     setRecycType(data);
+  };
+
+  const initProductType = async () => {
+    const token = returnApiToken();
+    const AuthToken = token.authToken;
+
+    const { data } = await axiosInstance({
+      baseURL: window.baseURL.collector,
+      ...GET_ALL_PRODUCT_TYPE(),
+      headers: {
+        AuthToken,
+      },
+    });
+
+    setProductType(data);
   };
 
   const getWarehouseDetail = async (id: number) => {
@@ -228,7 +222,11 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
     const findRecyc: any = recycType?.find(
       (item: any) => item.recycTypeId === id
     );
-    return findRecyc?.recyclableNameSchi;
+    return i18n.language === "enus"
+      ? findRecyc?.recyclableNameEng
+      : i18n.language === "zhch"
+      ? findRecyc?.recyclableNameSchi
+      : findRecyc?.recyclableNameTchi;
   };
 
   const recycleSubType = (id: string, subId: string) => {
@@ -236,7 +234,68 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
     const findSubRecyc: any = parent?.recycSubType?.find(
       (item: any) => item.recycSubTypeId === subId
     );
-    return findSubRecyc?.recyclableNameSchi;
+    return i18n.language === "enus"
+      ? findSubRecyc?.recyclableNameEng
+      : i18n.language === "zhch"
+      ? findSubRecyc?.recyclableNameSchi
+      : findSubRecyc?.recyclableNameTchi;
+  };
+
+  const findProductType = (id: string) => {
+    const findProduct: any = productType?.find(
+      (item: any) => item.productTypeId === id
+    );
+    return i18n.language === "enus"
+      ? findProduct?.productNameEng
+      : i18n.language === "zhch"
+      ? findProduct?.productNameSchi
+      : findProduct?.productNameTchi;
+  };
+
+  const findProductSubType = (typeId: string, subtypeId: string) => {
+    const findProduct: any = productType?.find(
+      (item: any) => item.productTypeId === typeId
+    );
+    if (findProduct) {
+      const findSubProduct: any = findProduct?.productSubType?.find(
+        (item: any) => item.productSubTypeId === subtypeId
+      );
+
+      return i18n.language === "enus"
+        ? findSubProduct?.productNameEng
+        : i18n.language === "zhch"
+        ? findSubProduct?.productNameSchi
+        : findSubProduct?.productNameTchi;
+    }
+
+    return "";
+  };
+
+  const findProductAddon = (
+    typeId: string,
+    subtypeId: string,
+    addonId: string
+  ) => {
+    const findProduct: any = productType?.find(
+      (item: any) => item.productTypeId === typeId
+    );
+    if (findProduct) {
+      const findSubProduct: any = findProduct?.productSubType?.find(
+        (item: any) => item.productSubTypeId === subtypeId
+      );
+      if (findSubProduct) {
+        const findAddon: any = findSubProduct?.productAddonType?.find(
+          (item: any) => item.productAddonTypeId === addonId
+        );
+        return i18n.language === "enus"
+          ? findAddon?.productNameEng
+          : i18n.language === "zhch"
+          ? findAddon?.productNameSchi
+          : findAddon?.productNameTchi;
+      }
+    }
+
+    return "";
   };
 
   return (
@@ -294,7 +353,7 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
               </p>
               <div className="flex flex-col">
                 <p className="text-gray-middle text-smi m-0">
-                  {t("checkinandcheckout.shipping_company")}
+                  {t("check_in.sender_company")}
                 </p>
                 <p className="text-black font-bold">
                   {checkInOutData?.senderName
@@ -309,7 +368,7 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
 
               <div className="flex flex-col">
                 <p className="text-gray-middle text-smi m-0">
-                  {t("checkinandcheckout.receiver")}
+                  {t("check_in.receiver_company")}
                 </p>
                 <p className="text-black font-bold">
                   {checkInOutData?.receiverName
@@ -334,13 +393,13 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
               </div>
 
               <p className="text-grey-dark font-bold">
-                {t("checkinandcheckout.recyle_loc_info")}
+                {t("check_in.recyc_loc_info")}
               </p>
 
               <div className="flex">
                 <div className="flex flex-col flex-1">
                   <p className="text-gray-middle text-smi m-0">
-                    {t("checkinandcheckout.delivery_location")}
+                    {t("check_out.shipping_location")}
                   </p>
                   <p className="text-black font-bold">
                     {checkInOutData?.senderAddr
@@ -364,7 +423,7 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
                 </svg>
                 <div className="flex flex-col flex-1 ml-6">
                   <p className="text-gray-middle text-smi m-0">
-                    {t("checkinandcheckout.arrived")}
+                    {t("pick_up_order.detail.arrived")}
                   </p>
                   <p className="text-black font-bold">
                     {checkInOutData?.receiverAddr
@@ -376,43 +435,96 @@ function CheckInAndCheckOutDetails({ isShow, setIsShow, selectedRow }: any) {
 
               <div className="flex flex-col gap-4">
                 <p className="text-grey-dark text-smi -mb-1">
-                  {t("checkinandcheckout.recyc_loc_info")}
+                  {t("check_in.recyclable_type_weight")}
                 </p>
                 {checkInOutData?.checkinDetail?.map((detail: any) => {
-                  return (
-                    <div className="flex px-4 py-2 border border-solid border-grey-line rounded-xl items-center justify-between">
-                      <div className="flex items-center">
-                        <div
-                          className="w-[25px] h-[25px] rounded-full flex items-center justify-center"
-                          style={{
-                            backgroundColor: packageBgColor(
-                              detail?.packageTypeId
-                            ),
-                            color: packageTextColor(detail?.packageTypeId),
-                          }}
-                        >
-                          <p className="text-blue-middle text-xxs">
-                            {packagingToText(detail?.packageTypeId)}
-                          </p>
-                        </div>
-                        <div className="flex flex-col ml-4">
-                          <p className="text-black font-bold m-0">
-                            {recycleType(detail?.recycTypeId)}
-                          </p>
-                          <p className="text-gray-middle m-0">
-                            {recycleSubType(
-                              detail?.recycTypeId,
-                              detail?.recycSubTypeId
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                      <p className="text-black font-bold">
-                        {formatWeight(detail?.weight, decimalVal)}
-                        {unitName(detail?.unitId)}{" "}
-                      </p>
-                    </div>
-                  );
+                  if (
+                    detail?.recycTypeId !== null &&
+                    detail?.recycTypeId !== ""
+                  ) {
+                    return (
+                      <RecycleCard
+                        key={detail?.recycTypeId}
+                        name={recycleType(detail?.recycTypeId)}
+                        bgcolor="#e1f4ff"
+                        fontcolor="#66bff6"
+                        weight={formatWeight(detail?.weight, decimalVal)}
+                        showImage={true}
+                        packageTypeId={detail?.packageTypeId}
+                        recycleName={recycleSubType(
+                          detail?.recycTypeId,
+                          detail?.recycSubTypeId
+                        )}
+                        recycleType={recycleType(detail?.recycTypeId)}
+                        images={detail?.checkinDetailPhoto}
+                      />
+                    );
+                  } else {
+                    return (
+                      <ProductCard
+                        key={detail?.productTypeId}
+                        name={findProductType(detail?.productTypeId)}
+                        bgcolor="#e1f4ff"
+                        fontcolor="#66bff6"
+                        weight={formatWeight(detail?.weight, decimalVal)}
+                        showImage={true}
+                        packageTypeId={detail?.packageTypeId}
+                        productName={findProductSubType(
+                          detail?.productTypeId,
+                          detail?.productSubTypeId
+                        )}
+                        productType={findProductType(detail?.productTypeId)}
+                        images={detail?.checkinDetailPhoto}
+                      />
+                    );
+                  }
+                })}
+                {checkInOutData?.checkoutDetail?.map((detail: any) => {
+                  if (
+                    detail?.recycTypeId !== null &&
+                    detail?.recycTypeId !== ""
+                  ) {
+                    return (
+                      <RecycleCard
+                        key={detail?.recycTypeId}
+                        name={recycleType(detail?.recycTypeId)}
+                        bgcolor="#e1f4ff"
+                        fontcolor="#66bff6"
+                        weight={formatWeight(detail?.weight, decimalVal)}
+                        showImage={true}
+                        packageTypeId={detail?.packageTypeId}
+                        recycleName={recycleSubType(
+                          detail?.recycTypeId,
+                          detail?.recycSubTypeId
+                        )}
+                        recycleType={recycleType(detail?.recycTypeId)}
+                        images={detail?.checkoutDetailPhoto}
+                      />
+                    );
+                  } else {
+                    return (
+                      <ProductCard
+                        key={detail?.productTypeId}
+                        name={findProductType(detail?.productTypeId)}
+                        bgcolor="#e1f4ff"
+                        fontcolor="#66bff6"
+                        weight={formatWeight(detail?.weight, decimalVal)}
+                        showImage={true}
+                        packageTypeId={detail?.packageTypeId}
+                        productName={findProductSubType(
+                          detail?.productTypeId,
+                          detail?.productSubTypeId
+                        )}
+                        productType={findProductType(detail?.productTypeId)}
+                        productAddon={findProductAddon(
+                          detail?.productTypeId,
+                          detail?.productSubTypeId,
+                          detail?.productAddonTypeId
+                        )}
+                        images={detail?.checkoutDetailPhoto}
+                      />
+                    );
+                  }
                 })}
               </div>
             </div>

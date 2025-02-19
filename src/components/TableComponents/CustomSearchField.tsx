@@ -4,22 +4,22 @@ import {
   IconButton,
   InputAdornment,
   MenuItem,
-  TextField,
-} from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { SEARCH_ICON } from "../../themes/icons";
-import { t } from "i18next";
-import { localStorgeKeyName } from "../../constants/constant";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs, { Dayjs } from "dayjs";
-import { format } from "./../../constants/constant";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { getPrimaryColor } from "../../utils/utils";
+  TextField
+} from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { SEARCH_ICON } from '../../themes/icons'
+import { t } from 'i18next'
+import { localStorgeKeyName } from '../../constants/constant'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import dayjs, { Dayjs } from 'dayjs'
+import { format } from './../../constants/constant'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { getPrimaryColor } from '../../utils/utils'
 
 interface Option {
-  value: string;
-  label: string;
+  value: string
+  label: string
 }
 
 const CustomSearchField = ({
@@ -34,61 +34,67 @@ const CustomSearchField = ({
   numberOnly = false,
   dataTestId,
   disableIcon,
-  isUseCurrDate = false,
+  isUseCurrDate = false
 }: {
-  label: string;
-  width?: string;
-  options?: Option[];
-  onChange?: (labelField: string, value: string) => void;
-  field?: string;
-  placeholder?: string;
-  handleSearch?: (value: string) => void;
-  inputType?: string;
-  numberOnly?: boolean;
-  dataTestId?: string;
-  disableIcon?: boolean;
-  isUseCurrDate?: boolean;
+  label: string
+  width?: string
+  options?: Option[]
+  onChange?: (labelField: string, value: string) => void
+  field?: string
+  placeholder?: string
+  handleSearch?: (value: string) => void
+  inputType?: string
+  numberOnly?: boolean
+  dataTestId?: string
+  disableIcon?: boolean
+  isUseCurrDate?: boolean
 }) => {
-  const hasOptions = options && options.length > 0;
+  const hasOptions = options && options.length > 0
   //const [selectedValue, setSelectedValue] = useState<string>("")
   const initialSelectedValue =
-    inputType === "date" ? dayjs().format("YY-MM-DD") : "";
+    inputType === 'date' ? dayjs().format('YY-MM-DD') : ''
   const [selectedValue, setSelectedValue] =
-    useState<string>(initialSelectedValue);
+    useState<string>(initialSelectedValue)
 
   const handleChange = (event: React.ChangeEvent<{ value: any }>) => {
-    let newValue = event.target.value as string;
+    let newValue = event.target.value as string
     if (numberOnly) {
       // Only allow numeric input
-      newValue = newValue.replace(/\D/g, "");
+      newValue = newValue.replace(/\D/g, '')
     }
-    setSelectedValue(newValue);
+    setSelectedValue(newValue)
 
     if (onChange) {
-      onChange(field ? field : label, newValue);
+      onChange(field ? field : label, newValue)
     }
-  };
+  }
 
   const handleDateChange = (date: Dayjs | null) => {
-    const formattedDate = date ? date.format("YYYY-MM-DD") : "";
-    setSelectedValue(formattedDate);
+    const formattedDate = date ? date.format('YYYY-MM-DD') : ''
+    setSelectedValue(formattedDate)
 
     if (onChange) {
-      onChange(field ? field : label, formattedDate);
+      onChange(field ? field : label, formattedDate)
     }
-  };
+  }
 
   const handleSearchClick = () => {
     if (handleSearch) {
-      handleSearch(selectedValue);
+      handleSearch(selectedValue)
     }
-  };
+  }
+
+  useEffect(() => {
+    if (!(options && options.length > 0)) {
+      setSelectedValue('')
+    }
+  }, [options])
 
   return (
     <Box>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
-        {inputType === "date" ? (
-          <Box sx={{ ...localstyles.DateItem, width: width ? width : "250px" }}>
+        {inputType === 'date' ? (
+          <Box sx={{ ...localstyles.DateItem, width: width ? width : '250px' }}>
             <DatePicker
               defaultValue={isUseCurrDate ? dayjs() : null}
               label={label}
@@ -96,9 +102,9 @@ const CustomSearchField = ({
               onChange={handleDateChange}
               sx={{
                 ...localstyles.datePicker,
-                "& .MuiIconButton-edgeEnd": {
-                  color: getPrimaryColor(),
-                },
+                '& .MuiIconButton-edgeEnd': {
+                  color: getPrimaryColor()
+                }
               }}
               data-testid={dataTestId}
             ></DatePicker>
@@ -108,31 +114,31 @@ const CustomSearchField = ({
             sx={{
               mt: 3,
               m: 1,
-              width: width ? width : "250px",
-              bgcolor: "white",
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "#grey",
+              width: width ? width : '250px',
+              bgcolor: 'white',
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: '#grey'
                 },
-                "&:hover fieldset": {
-                  borderColor: getPrimaryColor(),
+                '&:hover fieldset': {
+                  borderColor: getPrimaryColor()
                 },
-                "&.Mui-focused fieldset": {
-                  borderColor: getPrimaryColor(),
+                '&.Mui-focused fieldset': {
+                  borderColor: getPrimaryColor()
                 },
-                "& label.Mui-focused": {
-                  color: getPrimaryColor(), // Change label color when input is focused
-                },
-              },
+                '& label.Mui-focused': {
+                  color: getPrimaryColor() // Change label color when input is focused
+                }
+              }
             }}
             label={label}
             InputLabelProps={{
               style: { color: getPrimaryColor() },
-              focused: true,
+              focused: true
             }}
             value={selectedValue}
             placeholder={
-              placeholder ? placeholder : t("pick_up_order.filter.search")
+              placeholder ? placeholder : t('pick_up_order.filter.search')
             }
             InputProps={{
               endAdornment: (
@@ -147,19 +153,19 @@ const CustomSearchField = ({
                     </IconButton>
                   )}
                 </InputAdornment>
-              ),
+              )
             }}
             select={hasOptions}
             onChange={handleChange}
             inputProps={
               numberOnly
                 ? {
-                    inputMode: "numeric",
-                    pattern: "[0-9]*",
+                    inputMode: 'numeric',
+                    pattern: '[0-9]*'
                   }
                 : {
-                    inputMode: "text",
-                    pattern: "[A-Za-z0-9]*",
+                    inputMode: 'text',
+                    pattern: '[A-Za-z0-9]*'
                   }
             }
             data-testid={dataTestId}
@@ -174,39 +180,39 @@ const CustomSearchField = ({
         )}
       </LocalizationProvider>
     </Box>
-  );
-};
+  )
+}
 
 let localstyles = {
   timePeriodItem: {
-    display: "flex",
-    height: "fit-content",
+    display: 'flex',
+    height: 'fit-content',
     // paddingX: 2,
-    alignItems: "center",
-    backgroundColor: "white",
+    alignItems: 'center',
+    backgroundColor: 'white',
     border: 2,
     borderRadius: 1,
-    borderColor: "#E2E2E2",
+    borderColor: '#E2E2E2'
   },
   datePicker: {
     width: {
-      xs: "280px",
-      md: "100%",
+      xs: '280px',
+      md: '100%'
     },
-    backgroundColor: "white",
-    "& fieldset": {
-      borderRadius: "4px",
+    backgroundColor: 'white',
+    '& fieldset': {
+      borderRadius: '4px'
     },
-    borderRadius: "4px",
+    borderRadius: '4px'
   },
   DateItem: {
-    display: "flex",
-    height: "fit-content",
-    alignItems: "center",
-    marginTop: "8px",
-    marginRight: "8px",
+    display: 'flex',
+    height: 'fit-content',
+    alignItems: 'center',
+    marginTop: '8px',
+    marginRight: '8px'
     // width: '250px'
-  },
-};
+  }
+}
 
-export default CustomSearchField;
+export default CustomSearchField

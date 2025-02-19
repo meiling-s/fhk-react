@@ -298,7 +298,7 @@ const AddProcessCompactor: FunctionComponent<AddProcessCompactorProps> = ({
   }
 
   const resetForm = () => {
-    setRecycleCategory(false)
+    setRecycleCategory(!isRecylingCategory)
     setSelectedProduct(undefined)
     setSelectedRecyc(undefined)
     setDefaultRecyc(undefined)
