@@ -142,11 +142,13 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
     let options: Option[] = Array.from(optionMap.values()).map((option) => ({
       value: option,
       label:
-        option === "ZH-CH"
-          ? t("common.simplifiedChinese")
-          : option === "ZH-HK"
-          ? t("common.traditionalChinese")
-          : t("common.english"),
+        propertyName === "lang"
+          ? option === "ZH-CH"
+            ? t("common.simplifiedChinese")
+            : option === "ZH-HK"
+            ? t("common.traditionalChinese")
+            : t("common.english")
+          : option,
     }));
     options.push({
       value: "",
@@ -218,6 +220,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
         const data = result?.data?.content;
         var notifMappingTemplate: NotifTemplate[] = [];
         if (data) {
+          console.log(data, "data");
           data.map((item: any) => {
             notifMappingTemplate.push(
               createNotifTemplate(
