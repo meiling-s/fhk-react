@@ -242,7 +242,7 @@ const CompactorDashboard: FunctionComponent = () => {
   }, [selectedDate])
 
   useEffect(() => {
-    getProcessInData()
+    if (selectedDate && selectedPlate) getProcessInData()
   }, [i18n.language])
 
   const setCurrDate = () => {
