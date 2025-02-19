@@ -92,7 +92,9 @@ const CompactorDashboard: FunctionComponent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [licensePlate, setLicensePlate] = useState<string[]>([])
   const [selectedCheckInIds, setSelectedItem] = useState<number[]>([])
-  const [selectedDate, setSelectedDate] = useState<string>('')
+  const [selectedDate, setSelectedDate] = useState<string>(
+    dayjs().format('YYYY-MM-DD')
+  )
   const [selectedPlate, setSelectedPlate] = useState<string>('')
   const [compactorProcessIn, setCompactorProcessIn] = useState<
     CompactorProcessIn[]
@@ -225,7 +227,6 @@ const CompactorDashboard: FunctionComponent = () => {
   ]
 
   useEffect(() => {
-    initLicensePlate()
     getProductType()
     setCurrDate()
   }, [])
@@ -304,16 +305,19 @@ const CompactorDashboard: FunctionComponent = () => {
     }
   ]
 
-  const handleSearch = debounce((keyName: string, value: string) => {
+  const handleSearch = (keyName: string, value: string) => {
     if (keyName === 'currDate') {
       setSelectedDate(value)
+      setCompactorProcessIn([])
+      setCompactorProcessInItem([])
+      setSelectedItem([])
+      setLicensePlate([])
     } else {
       setCompactorProcessInItem([])
       setSelectedItem([])
-      setSelectedItem([])
       setSelectedPlate(value)
     }
-  }, 1000)
+  }
 
   const selectCard = (id: number) => {
     setSelectedItem((prevSelected) => {
@@ -425,7 +429,8 @@ const CompactorDashboard: FunctionComponent = () => {
                 {compactorProcessIn.length > 0 ? (
                   <div className="grid grid-cols-2 gap-4 justify-items-start w-full max-w-[980px]">
                     {compactorProcessIn.map((item, index) => (
-                      <div key={index}
+                      <div
+                        key={index}
                         className={`relative card-wrapper col-span-1 max-w-[450px] w-full flex items-center space-x-6 py-4 px-4 rounded-lg border-solid cursor-pointer ${
                           selectedCheckInIds.includes(item.chkInId)
                             ? 'border-[2px] border-[#79CA25]'
