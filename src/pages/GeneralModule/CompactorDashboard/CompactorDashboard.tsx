@@ -39,7 +39,11 @@ import {
 } from 'src/utils/utils'
 import i18n from '../../../setups/i18n'
 import dayjs from 'dayjs'
-import { localStorgeKeyName } from 'src/constants/constant'
+import {
+  Languages,
+  localStorgeKeyName,
+  thirdPartyLogisticId
+} from 'src/constants/constant'
 import { formValidate } from 'src/interfaces/common'
 import CircularLoading from 'src/components/CircularLoading'
 
@@ -55,11 +59,14 @@ interface CompactorProcessIn {
   driverNameEng: string
   driverNameSchi: string
   driverNameTchi: string
-  senderName: string
+  senderName: string | null
   senderAddr: string
   receiverName: string | null
   receiverAddr: string | null
   plateNo: string
+  logisticId: string
+  receiverId: any
+  senderId: any
 }
 
 interface CompactorProcessInItem {
@@ -87,7 +94,7 @@ interface CompactorProcessInItem {
 
 const CompactorDashboard: FunctionComponent = () => {
   const { t } = useTranslation()
-  const { recycType, productType, getProductType } =
+  const { recycType, productType, getProductType, companies } =
     useContainer(CommonTypeContainer)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [licensePlate, setLicensePlate] = useState<string[]>([])
@@ -235,6 +242,10 @@ const CompactorDashboard: FunctionComponent = () => {
     initLicensePlate()
   }, [selectedDate])
 
+  useEffect(() => {
+    if (selectedDate && selectedPlate) getProcessInData()
+  }, [i18n.language])
+
   const setCurrDate = () => {
     const currentDate = dayjs().format('YYYY-MM-DD')
     setSelectedDate(currentDate)
@@ -253,7 +264,44 @@ const CompactorDashboard: FunctionComponent = () => {
     const result = await getCompactorProcessIn(selectedDate, selectedPlate)
 
     if (result.data.length > 0) {
-      setCompactorProcessIn(result.data)
+      const data = result.data
+      data.map((item: CompactorProcessIn) => {
+        if (item.logisticId && item.logisticId != thirdPartyLogisticId) {
+          if (item.receiverId) {
+            const receiverName = companies.find(
+              (company) => company.id == item.receiverId
+            )
+
+            if (receiverName) {
+              if (i18n.language === Languages.ENUS)
+                item.receiverName = receiverName.nameEng ?? null
+              if (i18n.language === Languages.ZHCH)
+                item.receiverName = receiverName.nameSchi ?? null
+              if (i18n.language === Languages.ZHHK)
+                item.receiverName = receiverName.nameTchi ?? null
+            }
+          }
+
+          if (item.senderId) {
+            const senderName = companies.find(
+              (company) => company.id == item.senderId
+            )
+            if (senderName) {
+              if (i18n.language === Languages.ENUS)
+                item.senderName = senderName.nameEng ?? null
+              if (i18n.language === Languages.ZHCH)
+                item.senderName = senderName.nameSchi ?? null
+              if (i18n.language === Languages.ZHHK)
+                item.senderName = senderName.nameTchi ?? null
+            }
+          }
+        }
+
+        return item
+      })
+      setCompactorProcessIn(data)
+
+      //setCompactorProcessIn(result.data)
     } else {
       setCompactorProcessIn([])
     }
