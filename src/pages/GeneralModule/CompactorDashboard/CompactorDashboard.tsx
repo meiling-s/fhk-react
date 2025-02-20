@@ -447,6 +447,7 @@ const CompactorDashboard: FunctionComponent = () => {
                     isUseCurrDate={true}
                     inputType={s.inputType}
                     options={s.options ?? []}
+                    resetValue={true}
                     width="500px"
                     onChange={handleSearch}
                   />
