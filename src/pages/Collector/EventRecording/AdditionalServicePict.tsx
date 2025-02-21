@@ -299,7 +299,21 @@ const AdditionalServicePict = () => {
       if (selectedService === "SRV00004") {
         if (nature === "") {
           tempV.push({
-            field: `${serviceLabel} ${t("report.picture")}`,
+            field: `${serviceLabel} ${t("report.nature")}`,
+            problem: formErr.empty,
+            type: "error",
+          });
+        }
+        if (speaker === "") {
+          tempV.push({
+            field: `${serviceLabel} ${t("report.speaker")}`,
+            problem: formErr.empty,
+            type: "error",
+          });
+        }
+        if (activeObj === "") {
+          tempV.push({
+            field: `${serviceLabel} ${t("report.targetParticipants")}`,
             problem: formErr.empty,
             type: "error",
           });
