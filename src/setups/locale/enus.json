@@ -711,7 +711,8 @@
     "other_services": "Other services",
     "tenantIdPlaceHolder": "Enter tenant Id",
     "tenantId": "Tenant Id",
-    "invalidTenantId": "Invalid Tenant ID"
+    "invalidTenantId": "Invalid Tenant ID",
+    "selectService": "Select Service"
   },
   "vehicle": {
     "vehicle": "Vehicle",
