@@ -403,7 +403,8 @@
       "operation": "操作",
       "approve": "接受",
       "reject": "拒絕",
-      "create_job_order": "建立工作運單"
+      "create_job_order": "建立工作運單",
+      "shipping_date": "運送日期"
     },
     "filter": {
       "search": "搜尋",

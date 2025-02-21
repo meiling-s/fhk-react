@@ -404,7 +404,8 @@
       "operation": "操作",
       "approve": "接受",
       "reject": "拒绝",
-      "create_job_order": "建立工作运单"
+      "create_job_order": "建立工作运单",
+      "shipping_date": "运送日期"
     },
     "filter": {
       "search": "搜索",

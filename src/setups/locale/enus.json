@@ -404,7 +404,8 @@
       "operation": "Operation",
       "approve": "Approve",
       "reject": "Reject",
-      "create_job_order": "Create Job Order"
+      "create_job_order": "Create Job Order",
+      "shipping_date": "Shipping Date"
     },
     "filter": {
       "search": "Search",
