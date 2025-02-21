@@ -189,44 +189,53 @@ const AdditionalServicePict = () => {
     const validate = async () => {
       const tempV = [];
 
-      for (const key in serviceData) {
-        if (serviceData.hasOwnProperty(key)) {
-          const entry = serviceData[key as ServiceName];
+      if (serviceData.hasOwnProperty(selectedService)) {
+        const entry = serviceData[selectedService as ServiceName];
+        const serviceLabel =
+          AdditionalService.find(
+            (value) => value.serviceName === selectedService
+          )?.label ?? selectedService; // Fallback to key if no match
 
-          if (entry.startDate?.toString() == "") {
+        if (!entry.startDate) {
+          tempV.push({
+            field: `${serviceLabel} ${t("report.dateAndTime")}`,
+            problem: formErr.empty,
+            type: "error",
+          });
+        }
+
+        if (!entry.endDate) {
+          tempV.push({
+            field: `${serviceLabel} ${t("report.to")}`,
+            problem: formErr.empty,
+            type: "error",
+          });
+        }
+
+        if (entry.startDate && entry.endDate) {
+          if (entry.startDate.isAfter(entry.endDate)) {
             tempV.push({
-              field: `${key} ${t("report.dateAndTime")}`,
-              problem: formErr.empty,
+              field: `${serviceLabel} ${t("report.dateAndTime")}`,
+              problem: formErr.startDateBehindEndDate,
               type: "error",
             });
           }
+        }
 
-          if (entry.startDate?.toString() == "") {
-            tempV.push({
-              field: `${key} ${t("report.to")}`,
-              problem: formErr.empty,
-              type: "error",
-            });
-          }
+        if (!entry.place) {
+          tempV.push({
+            field: `${serviceLabel} ${t("report.address")}`,
+            problem: formErr.empty,
+            type: "error",
+          });
+        }
 
-          if (entry.place == "") {
-            tempV.push({
-              field: `${key} ${t("report.address")}`,
-              problem: formErr.empty,
-              type: "error",
-            });
-          }
-
-          if (
-            !Array.isArray(entry.photoImage) ||
-            entry.photoImage.length === 0
-          ) {
-            tempV.push({
-              field: `${key} ${t("report.picture")}`,
-              problem: formErr.empty,
-              type: "error",
-            });
-          }
+        if (!Array.isArray(entry.photoImage) || entry.photoImage.length === 0) {
+          tempV.push({
+            field: `${serviceLabel} ${t("report.picture")}`,
+            problem: formErr.empty,
+            type: "error",
+          });
         }
       }
 
@@ -235,6 +244,71 @@ const AdditionalServicePict = () => {
 
     validate();
   }, [serviceData, i18n.language]);
+
+  const validateData = () => {
+    const tempV = [];
+
+    if (serviceData.hasOwnProperty(selectedService)) {
+      const entry = serviceData[selectedService as ServiceName];
+      const serviceLabel =
+        AdditionalService.find((value) => value.serviceName === selectedService)
+          ?.label ?? selectedService; // Fallback to key if no match
+
+      if (!entry.startDate) {
+        tempV.push({
+          field: `${serviceLabel} ${t("report.dateAndTime")}`,
+          problem: formErr.empty,
+          type: "error",
+        });
+      }
+
+      if (!entry.endDate) {
+        tempV.push({
+          field: `${serviceLabel} ${t("report.to")}`,
+          problem: formErr.empty,
+          type: "error",
+        });
+      }
+
+      if (entry.startDate && entry.endDate) {
+        if (entry.startDate.isAfter(entry.endDate)) {
+          tempV.push({
+            field: `${serviceLabel} ${t("report.dateAndTime")}`,
+            problem: formErr.startDateBehindEndDate,
+            type: "error",
+          });
+        }
+      }
+
+      if (!entry.place) {
+        tempV.push({
+          field: `${serviceLabel} ${t("report.address")}`,
+          problem: formErr.empty,
+          type: "error",
+        });
+      }
+
+      if (!Array.isArray(entry.photoImage) || entry.photoImage.length === 0) {
+        tempV.push({
+          field: `${serviceLabel} ${t("report.picture")}`,
+          problem: formErr.empty,
+          type: "error",
+        });
+      }
+
+      if (selectedService === "SRV00004") {
+        if (nature === "") {
+          tempV.push({
+            field: `${serviceLabel} ${t("report.picture")}`,
+            problem: formErr.empty,
+            type: "error",
+          });
+        }
+      }
+    }
+
+    setValidation(tempV);
+  };
 
   const onHandleError = (
     serviceName: ServiceName,
@@ -370,6 +444,7 @@ const AdditionalServicePict = () => {
   };
 
   const resetServiceData = () => {
+    setValidation([]);
     setServiceData(initialServiceData);
     setEventName("");
     setNature("");
@@ -378,120 +453,70 @@ const AdditionalServicePict = () => {
   };
 
   const submitServiceInfo = async () => {
-    let itemData = 0;
+    setTrySubmited(false);
+    validateData();
 
-    for (const key of Object.keys(errors) as ServiceName[]) {
-      const error = errors[key];
-      const serviceItem = serviceData[key];
-      if (
-        !(error.endDate.status || serviceItem.endDate.toString() === "") &&
-        !(error.startDate.status || serviceItem.startDate.toString() === "") &&
-        !(error.place.status || serviceItem.place === "") &&
-        !(error.photoImage.status || serviceItem.photoImage.length === 0)
-      ) {
-        const imgList: string[] = ImageToBase64(serviceItem.photoImage).map(
-          (item) => {
-            return item;
-          }
-        );
-        setDisableState(true);
+    // Get the selected service data
+    const serviceItem = serviceData[selectedService];
+    const error = errors[selectedService];
 
-        const formData: ServiceInfo = {
-          serviceId: serviceItem.serviceId,
-          address: serviceItem.place,
-          addressGps: [0],
-          serviceName: serviceItem.serviceId === 4 ? eventName : "",
-          participants: activeObj,
-          startAt: formattedDate(serviceItem.startDate),
-          endAt: formattedDate(serviceItem.endDate),
-          photo: imgList,
-          numberOfVisitor: serviceItem.numberOfPeople,
-          createdBy: loginId,
-          updatedBy: loginId,
-          nature: serviceItem.serviceId === 4 ? nature : "",
-          speaker: serviceItem.serviceId === 4 ? speaker : "",
-          additionalFlg:
-            serviceItem.serviceId === 4 && serviceFlg === 0 ? true : false,
-        };
+    // If serviceItem is undefined, return early
+    if (!serviceItem) return;
 
-        try {
-          const result = await createServiceInfo(formData);
-          if (result) {
-            itemData++;
-            const toastMsg =
-              t("report.additionalServicePicturesTitle") +
-              " " +
-              t("common.saveSuccessfully");
-            toast.info(toastMsg, {
-              position: "top-center",
-              autoClose: 3000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-            });
-            resetServiceData();
-          }
-        } catch (error: any) {
-          const { state, realm } = extractError(error);
-          if (state.code === STATUS_CODE[503]) {
-            navigate("/maintenance");
-          }
-        }
-
-        setDisableState(false);
-        resetServiceData();
-      } else {
-        setTrySubmited(true);
-      }
+    if (validation.length > 0) {
+      setTrySubmited(true);
+      return;
     }
 
-    // if (validation.length == 0) {
-    //   for (const key of Object.keys(serviceData) as ServiceName[]) {
-    //     const serviceItem = serviceData[key]
-    //     const imgList: string[] = ImageToBase64(
-    //       serviceItem.photoImage
-    //     ).map((item) => {
-    //       return item
-    //     })
+    // Convert images to Base64
+    const imgList: string[] = ImageToBase64(serviceItem.photoImage);
 
-    //     const formData: ServiceInfo = {
-    //       serviceId: serviceItem.serviceId,
-    //       address: serviceItem.place,
-    //       addressGps: [0],
-    //       serviceName: serviceItem.serviceId === 4 ? eventName: '',
-    //       participants: activeObj,
-    //       startAt: formattedDate(serviceItem.startDate),
-    //       endAt: formattedDate(serviceItem.endDate),
-    //       photo: imgList,
-    //       numberOfVisitor: parseInt(serviceItem.numberOfPeople),
-    //       createdBy: loginId,
-    //       updatedBy: loginId
-    //     }
-    //     const result = await createServiceInfo(formData)
-    //     if (result) itemData++
-    //   }
+    // Prepare form data
+    const formData: ServiceInfo = {
+      serviceId: serviceItem.serviceId,
+      address: serviceItem.place,
+      addressGps: [0],
+      serviceName: serviceItem.serviceId === 4 ? eventName : "",
+      participants: activeObj,
+      startAt: formattedDate(serviceItem.startDate),
+      endAt: formattedDate(serviceItem.endDate),
+      photo: imgList,
+      numberOfVisitor: serviceItem.numberOfPeople,
+      createdBy: loginId,
+      updatedBy: loginId,
+      nature: serviceItem.serviceId === 4 ? nature : "",
+      speaker: serviceItem.serviceId === 4 ? speaker : "",
+      additionalFlg: serviceItem.serviceId === 4 && serviceFlg === 0,
+    };
 
-    //   if (itemData === 4) {
-    //     setTrySubmited(false)
-    //     // console.log('itemData', itemData)
-    //     const toastMsg = 'created additional service success'
-    //     toast.info(toastMsg, {
-    //       position: 'top-center',
-    //       autoClose: 3000,
-    //       hideProgressBar: true,
-    //       closeOnClick: true,
-    //       pauseOnHover: true,
-    //       draggable: true,
-    //       progress: undefined,
-    //       theme: 'light'
-    //     })
-    //   }
-    // } else {
-    //   setTrySubmited(true)
-    // }
+    try {
+      setDisableState(true);
+      const result = await createServiceInfo(formData);
+      if (result) {
+        const toastMsg =
+          t("report.additionalServicePicturesTitle") +
+          " " +
+          t("common.saveSuccessfully");
+        toast.info(toastMsg, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        resetServiceData();
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error);
+      if (state.code === STATUS_CODE[503]) {
+        navigate("/maintenance");
+      }
+    } finally {
+      setDisableState(false);
+    }
   };
 
   const serviceTypeList = [
@@ -515,9 +540,10 @@ const AdditionalServicePict = () => {
               <InputLabel>{t("report.selectService")}</InputLabel>
               <Select
                 value={selectedService}
-                onChange={(e) =>
-                  setSelectedService(e.target.value as ServiceName)
-                }
+                onChange={(e) => {
+                  setSelectedService(e.target.value as ServiceName);
+                  setTrySubmited(false);
+                }}
                 label={t("report.selectService")}
               >
                 {AdditionalService.map((service) => (
@@ -599,6 +625,7 @@ const AdditionalServicePict = () => {
                           serviceData[item.serviceName as keyof ServiceData]
                             .startDate
                         }
+                        timeSteps={{ minutes: 1 }}
                         onChange={(value) =>
                           updateDateTime(
                             item.serviceName as ServiceName,
@@ -607,6 +634,25 @@ const AdditionalServicePict = () => {
                           )
                         }
                         sx={{ ...localstyles.timePicker }}
+                        slotProps={{
+                          layout: {
+                            sx: {
+                              width: "216px",
+                              "& .MuiMultiSectionDigitalClockSection-root": {
+                                flexGrow: 1,
+                                scrollbarGutter: "stable",
+                              },
+                            },
+                          },
+                          digitalClockSectionItem: {
+                            sx: {
+                              width: "auto",
+                            },
+                          },
+                          textField: {
+                            inputProps: { readOnly: true },
+                          },
+                        }}
                       />
                     </Box>
                   </Box>
@@ -657,7 +703,27 @@ const AdditionalServicePict = () => {
                             value!!
                           )
                         }
+                        timeSteps={{ minutes: 1 }}
                         sx={{ ...localstyles.timePicker }}
+                        slotProps={{
+                          layout: {
+                            sx: {
+                              width: "216px",
+                              "& .MuiMultiSectionDigitalClockSection-root": {
+                                flexGrow: 1,
+                                scrollbarGutter: "stable",
+                              },
+                            },
+                          },
+                          digitalClockSectionItem: {
+                            sx: {
+                              width: "auto",
+                            },
+                          },
+                          textField: {
+                            inputProps: { readOnly: true },
+                          },
+                        }}
                       />
                     </Box>
                   </Box>
@@ -959,17 +1025,24 @@ const AdditionalServicePict = () => {
           <Grid item sx={{ width: "100%" }}>
             {trySubmited &&
               validation.map((val, index) => {
-                if (val.field.includes(selectedService))
+                const serviceLabel =
+                  AdditionalService.find(
+                    (value) => value.serviceName === selectedService
+                  )?.label ?? selectedService; // Use label for matching
+
+                if (val.field.includes(serviceLabel)) {
                   return (
                     <FormErrorMsg
                       key={index}
-                      field={t(val.field)}
+                      field={val.field} // No need to re-translate, it's already translated
                       errorMsg={returnErrorMsg(val.problem)}
                       type={val.type}
                     />
                   );
+                }
               })}
           </Grid>
+
           <Grid item className="lg:flex sm:block text-center">
             <Button
               sx={[

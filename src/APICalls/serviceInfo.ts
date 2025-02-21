@@ -13,7 +13,7 @@ export const createServiceInfo = async (data: any) => {
       ...CREATE_SERVICE_INFO(tenantId),
       data: data
     })
-    console.log('creates service user Success:', JSON.stringify(response.data))
+    console.log('creates service user Success:')
     return response.data
   
   } catch (e:any) {
