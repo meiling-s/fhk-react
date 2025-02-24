@@ -609,8 +609,6 @@ const AdditionalServicePict = () => {
     },
   ];
 
-  console.log(serviceData, "entry");
-
   return (
     <Box className="container-wrapper w-full">
       <ToastContainer></ToastContainer>
