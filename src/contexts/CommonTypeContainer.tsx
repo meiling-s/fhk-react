@@ -42,7 +42,10 @@ import {
   getTenantById,
 } from "../APICalls/tenantManage";
 import { localStorgeKeyName } from "../constants/constant";
-import { getAllPackagingUnit } from "../APICalls/Collector/packagingUnit";
+import {
+  getAllPackagingUnit,
+  getFullPackagingUnit,
+} from "../APICalls/Collector/packagingUnit";
 import { getProductTypeList } from "../APICalls/ASTD/settings/productType";
 import { Products } from "../interfaces/productType";
 import { Tenant } from "src/interfaces/account";
@@ -396,7 +399,8 @@ const CommonType = () => {
 
   const getPackagingUnitList = async () => {
     try {
-      const result = await getAllPackagingUnit(1 - 1, 1000);
+      const token = returnApiToken();
+      const result = await getFullPackagingUnit(1 - 1, 1000, token.tenantId);
       if (result.data) {
         setPackagingList(result.data.content);
       }
