@@ -44,6 +44,7 @@ import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import {
   extractError,
   getPrimaryColor,
+  isEmptyOrWhitespace,
   onChangeWeight,
 } from "../../../utils/utils";
 import { useNavigate } from "react-router-dom";
@@ -182,6 +183,7 @@ const AdditionalServicePict = () => {
     },
   ];
   const [disableState, setDisableState] = useState<boolean>(false);
+  const [selectedFieldService, setSelectedFieldService] = useState<string>('')
 
   const navigate = useNavigate();
 
@@ -280,7 +282,7 @@ const AdditionalServicePict = () => {
         }
       }
 
-      if (!entry.place) {
+      if (!entry.place || isEmptyOrWhitespace(entry.place)) {
         tempV.push({
           field: `${serviceLabel} ${t("report.address")}`,
           problem: formErr.empty,
@@ -296,22 +298,24 @@ const AdditionalServicePict = () => {
         });
       }
 
+      // if (activeObj)
+
       if (selectedService === "SRV00004") {
-        if (nature === "") {
+        if (nature === "" || isEmptyOrWhitespace(nature)) {
           tempV.push({
             field: `${serviceLabel} ${t("report.nature")}`,
             problem: formErr.empty,
             type: "error",
           });
         }
-        if (speaker === "") {
+        if (speaker === "" || isEmptyOrWhitespace(speaker)) {
           tempV.push({
             field: `${serviceLabel} ${t("report.speaker")}`,
             problem: formErr.empty,
             type: "error",
           });
         }
-        if (activeObj === "") {
+        if (activeObj === "" || isEmptyOrWhitespace(activeObj)) {
           tempV.push({
             field: `${serviceLabel} ${t("report.targetParticipants")}`,
             problem: formErr.empty,
@@ -421,7 +425,7 @@ const AdditionalServicePict = () => {
       //before first submit, don't check the validation
       return false;
     }
-    return s == "";
+    return s == "" || isEmptyOrWhitespace(s)
   };
 
   const checkNumber = (n: number) => {
@@ -544,6 +548,8 @@ const AdditionalServicePict = () => {
     },
   ];
 
+  console.log(validation, 'validation')
+
   return (
     <Box className="container-wrapper w-full">
       <ToastContainer></ToastContainer>
@@ -555,8 +561,14 @@ const AdditionalServicePict = () => {
               <Select
                 value={selectedService}
                 onChange={(e) => {
+                  const serviceLabel =
+          AdditionalService.find(
+            (value) => value.serviceName === e.target.value
+          )?.label ?? e.target.value; 
+                  setSelectedFieldService(serviceLabel)
                   setSelectedService(e.target.value as ServiceName);
                   setTrySubmited(false);
+                  resetServiceData()
                 }}
                 label={t("report.selectService")}
               >
@@ -633,7 +645,10 @@ const AdditionalServicePict = () => {
                         sx={{ ...localstyles.datePicker }}
                       />
                     </Box>
-                    <Box sx={{ ...localstyles.timePeriodItem }}>
+                    <Box sx={{ ...localstyles.timePeriodItem, 
+                      borderColor: trySubmited && validation.find(value => value.field === `${selectedFieldService} ${t('report.dateAndTime')}`) ? "rgb(211, 47, 47)" : "rgb(226, 226, 226)",
+                      borderWidth: trySubmited && validation.find(value => value.field === `${selectedFieldService} ${t('report.dateAndTime')}`) ? "1px" : "2px"
+                      }}>
                       <TimePicker
                         value={
                           serviceData[item.serviceName as keyof ServiceData]
@@ -704,7 +719,8 @@ const AdditionalServicePict = () => {
                         sx={{ ...localstyles.datePicker }}
                       />
                     </Box>
-                    <Box sx={{ ...localstyles.timePeriodItem }}>
+                    <Box sx={{ ...localstyles.timePeriodItem, borderColor: trySubmited && validation.find(value => value.field === `${selectedFieldService} ${t('report.dateAndTime')}`) ? "rgb(211, 47, 47)" : "rgb(226, 226, 226)",
+                      borderWidth: trySubmited && validation.find(value => value.field === `${selectedFieldService} ${t('report.dateAndTime')}`) ? "1px" : "2px" }}>
                       <TimePicker
                         value={
                           serviceData[item.serviceName as keyof ServiceData]

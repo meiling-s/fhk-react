@@ -8,6 +8,10 @@ import {
   ButtonBase,
   ImageList,
   ImageListItem,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material'
 import ImageUploading, {ImageListType} from 'react-images-uploading'
 import { LocalizationProvider } from '@mui/x-date-pickers'
@@ -48,6 +52,8 @@ const OtherPict = () => {
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const {imgSettings, dateFormat} = useContainer(CommonTypeContainer)
+  const [selectedService, setSelectedService] =
+      useState<ServiceName>("SRV00005");
 
   const serviceOthersField = [
     {
@@ -160,6 +166,7 @@ const OtherPict = () => {
   }
 
   const submitServiceInfo = async () => {
+    setTrySubmited(false)
     let itemData = 0
     // if (validation.length == 0) {
       for (const key of Object.keys(serviceData) as ServiceName[]) {
@@ -259,7 +266,29 @@ const OtherPict = () => {
       <ToastContainer></ToastContainer>
       <div className="settings-page bg-bg-primary">
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
-          {serviceOthersField.map((item, index) => (
+        <Grid item sx={{ ml: 2, mt: 2 }}>
+            <FormControl sx={{ width: "50%" }}>
+              <InputLabel>{t("report.selectService")}</InputLabel>
+              <Select
+                value={selectedService}
+                onChange={(e) => {
+                  setSelectedService(e.target.value as ServiceName);
+                  setTrySubmited(false);
+                }}
+                label={t("report.selectService")}
+              >
+                {serviceOthersField.map((service) => (
+                  <MenuItem
+                    key={service.serviceName}
+                    value={service.serviceName}
+                  >
+                    {service.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          {serviceOthersField.filter((item) => item.serviceName === selectedService).map((item, index) => (
             <Grid
               key={index}
               container
