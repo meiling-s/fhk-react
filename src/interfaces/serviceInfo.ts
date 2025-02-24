@@ -10,7 +10,7 @@ export type ServiceInfo = {
     startAt: string
     endAt: string
     photo: string[]
-    numberOfVisitor: number,
+    numberOfVisitor: number | string,
     createdBy: string
     updatedBy: string
     nature?: string,

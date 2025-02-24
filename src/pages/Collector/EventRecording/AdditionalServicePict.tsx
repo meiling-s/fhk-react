@@ -48,7 +48,6 @@ import {
   onChangeWeight,
 } from "../../../utils/utils";
 import { useNavigate } from "react-router-dom";
-import i18n from "src/setups/i18n";
 
 type ServiceName = "SRV00001" | "SRV00002" | "SRV00003" | "SRV00004";
 const loginId = localStorage.getItem(localStorgeKeyName.username) || "";
@@ -60,7 +59,7 @@ type ServiceData = Record<
     startDate: dayjs.Dayjs;
     endDate: dayjs.Dayjs;
     place: string;
-    numberOfPeople: number;
+    numberOfPeople: string;
     photoImage: ImageListType;
   }
 >;
@@ -77,7 +76,7 @@ type ErrorsServiceData = Record<
 >;
 
 const AdditionalServicePict = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [selectedService, setSelectedService] =
     useState<ServiceName>("SRV00001");
 
@@ -89,7 +88,7 @@ const AdditionalServicePict = () => {
       startDate: dayjs(),
       endDate: dayjs(),
       place: "",
-      numberOfPeople: 0,
+      numberOfPeople: "0",
       photoImage: [],
     },
     SRV00002: {
@@ -97,7 +96,7 @@ const AdditionalServicePict = () => {
       startDate: dayjs(),
       endDate: dayjs(),
       place: "",
-      numberOfPeople: 0,
+      numberOfPeople: "0",
       photoImage: [],
     },
     SRV00003: {
@@ -105,7 +104,7 @@ const AdditionalServicePict = () => {
       startDate: dayjs(),
       endDate: dayjs(),
       place: "",
-      numberOfPeople: 0,
+      numberOfPeople: "0",
       photoImage: [],
     },
     SRV00004: {
@@ -113,7 +112,7 @@ const AdditionalServicePict = () => {
       startDate: dayjs(),
       endDate: dayjs(),
       place: "",
-      numberOfPeople: 0,
+      numberOfPeople: "0",
       photoImage: [],
     },
   };
@@ -183,7 +182,8 @@ const AdditionalServicePict = () => {
     },
   ];
   const [disableState, setDisableState] = useState<boolean>(false);
-  const [selectedFieldService, setSelectedFieldService] = useState<string>('')
+  const [selectedFieldService, setSelectedFieldService] =
+    useState<string>("Recycling Spots");
 
   const navigate = useNavigate();
 
@@ -224,7 +224,7 @@ const AdditionalServicePict = () => {
           }
         }
 
-        if (!entry.place) {
+        if (!entry.place || isEmptyOrWhitespace(entry.place)) {
           tempV.push({
             field: `${serviceLabel} ${t("report.address")}`,
             problem: formErr.empty,
@@ -238,6 +238,48 @@ const AdditionalServicePict = () => {
             problem: formErr.empty,
             type: "error",
           });
+        }
+
+        if (
+          !entry.numberOfPeople ||
+          isEmptyOrWhitespace(entry.numberOfPeople)
+        ) {
+          tempV.push({
+            field: `${serviceLabel} ${t("report.numberOfPeople")}`,
+            problem: formErr.empty,
+            type: "error",
+          });
+        }
+
+        if (selectedService === "SRV00004") {
+          if (eventName === "" || isEmptyOrWhitespace(eventName)) {
+            tempV.push({
+              field: `${serviceLabel} ${t("report.eventName")}`,
+              problem: formErr.empty,
+              type: "error",
+            });
+          }
+          if (nature === "" || isEmptyOrWhitespace(nature)) {
+            tempV.push({
+              field: `${serviceLabel} ${t("report.nature")}`,
+              problem: formErr.empty,
+              type: "error",
+            });
+          }
+          if (speaker === "" || isEmptyOrWhitespace(speaker)) {
+            tempV.push({
+              field: `${serviceLabel} ${t("report.speaker")}`,
+              problem: formErr.empty,
+              type: "error",
+            });
+          }
+          if (activeObj === "" || isEmptyOrWhitespace(activeObj)) {
+            tempV.push({
+              field: `${serviceLabel} ${t("report.targetParticipants")}`,
+              problem: formErr.empty,
+              type: "error",
+            });
+          }
         }
       }
 
@@ -298,9 +340,22 @@ const AdditionalServicePict = () => {
         });
       }
 
-      // if (activeObj)
+      if (!entry.numberOfPeople || isEmptyOrWhitespace(entry.numberOfPeople)) {
+        tempV.push({
+          field: `${serviceLabel} ${t("report.numberOfPeople")}`,
+          problem: formErr.empty,
+          type: "error",
+        });
+      }
 
       if (selectedService === "SRV00004") {
+        if (eventName === "" || isEmptyOrWhitespace(eventName)) {
+          tempV.push({
+            field: `${serviceLabel} ${t("report.eventName")}`,
+            problem: formErr.empty,
+            type: "error",
+          });
+        }
         if (nature === "" || isEmptyOrWhitespace(nature)) {
           tempV.push({
             field: `${serviceLabel} ${t("report.nature")}`,
@@ -425,7 +480,7 @@ const AdditionalServicePict = () => {
       //before first submit, don't check the validation
       return false;
     }
-    return s == "" || isEmptyOrWhitespace(s)
+    return s == "" || isEmptyOrWhitespace(s);
   };
 
   const checkNumber = (n: number) => {
@@ -548,8 +603,6 @@ const AdditionalServicePict = () => {
     },
   ];
 
-  console.log(validation, 'validation')
-
   return (
     <Box className="container-wrapper w-full">
       <ToastContainer></ToastContainer>
@@ -562,13 +615,13 @@ const AdditionalServicePict = () => {
                 value={selectedService}
                 onChange={(e) => {
                   const serviceLabel =
-          AdditionalService.find(
-            (value) => value.serviceName === e.target.value
-          )?.label ?? e.target.value; 
-                  setSelectedFieldService(serviceLabel)
+                    AdditionalService.find(
+                      (value) => value.serviceName === e.target.value
+                    )?.label ?? e.target.value;
+                  setSelectedFieldService(serviceLabel);
                   setSelectedService(e.target.value as ServiceName);
                   setTrySubmited(false);
-                  resetServiceData()
+                  resetServiceData();
                 }}
                 label={t("report.selectService")}
               >
@@ -645,10 +698,33 @@ const AdditionalServicePict = () => {
                         sx={{ ...localstyles.datePicker }}
                       />
                     </Box>
-                    <Box sx={{ ...localstyles.timePeriodItem, 
-                      borderColor: trySubmited && validation.find(value => value.field === `${selectedFieldService} ${t('report.dateAndTime')}`) ? "rgb(211, 47, 47)" : "rgb(226, 226, 226)",
-                      borderWidth: trySubmited && validation.find(value => value.field === `${selectedFieldService} ${t('report.dateAndTime')}`) ? "1px" : "2px"
-                      }}>
+                    <Box
+                      sx={{
+                        ...localstyles.timePeriodItem,
+                        borderColor:
+                          trySubmited &&
+                          validation.find(
+                            (value) =>
+                              value.field ===
+                              `${selectedFieldService} ${t(
+                                "report.dateAndTime"
+                              )}`
+                          )
+                            ? "rgb(211, 47, 47)"
+                            : "rgb(226, 226, 226)",
+                        borderWidth:
+                          trySubmited &&
+                          validation.find(
+                            (value) =>
+                              value.field ===
+                              `${selectedFieldService} ${t(
+                                "report.dateAndTime"
+                              )}`
+                          )
+                            ? "1px"
+                            : "2px",
+                      }}
+                    >
                       <TimePicker
                         value={
                           serviceData[item.serviceName as keyof ServiceData]
@@ -719,8 +795,33 @@ const AdditionalServicePict = () => {
                         sx={{ ...localstyles.datePicker }}
                       />
                     </Box>
-                    <Box sx={{ ...localstyles.timePeriodItem, borderColor: trySubmited && validation.find(value => value.field === `${selectedFieldService} ${t('report.dateAndTime')}`) ? "rgb(211, 47, 47)" : "rgb(226, 226, 226)",
-                      borderWidth: trySubmited && validation.find(value => value.field === `${selectedFieldService} ${t('report.dateAndTime')}`) ? "1px" : "2px" }}>
+                    <Box
+                      sx={{
+                        ...localstyles.timePeriodItem,
+                        borderColor:
+                          trySubmited &&
+                          validation.find(
+                            (value) =>
+                              value.field ===
+                              `${selectedFieldService} ${t(
+                                "report.dateAndTime"
+                              )}`
+                          )
+                            ? "rgb(211, 47, 47)"
+                            : "rgb(226, 226, 226)",
+                        borderWidth:
+                          trySubmited &&
+                          validation.find(
+                            (value) =>
+                              value.field ===
+                              `${selectedFieldService} ${t(
+                                "report.dateAndTime"
+                              )}`
+                          )
+                            ? "1px"
+                            : "2px",
+                      }}
+                    >
                       <TimePicker
                         value={
                           serviceData[item.serviceName as keyof ServiceData]
@@ -950,10 +1051,10 @@ const AdditionalServicePict = () => {
                           }
                         );
                       }}
-                      // error={checkNumber(
-                      //   serviceData[item.serviceName as keyof ServiceData]
-                      //     .numberOfPeople
-                      // )}
+                      error={checkString(
+                        serviceData[item.serviceName as keyof ServiceData]
+                          .numberOfPeople
+                      )}
                     />
                   </CustomField>
                   {/* <Typography style={{ color: 'red', fontWeight: '500' }}>
@@ -971,6 +1072,7 @@ const AdditionalServicePict = () => {
                       items={serviceTypeList}
                       setServiceFlg={setServiceFlg}
                       value={serviceFlg}
+                      editable={true}
                     ></CustomItemListBoolean>
                   </CustomField>
                 )}
