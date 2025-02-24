@@ -293,6 +293,7 @@ const PickupOrderCreateForm = ({
 
   useEffect(() => {
     get3rdPartyLogisticList();
+    getLogisticlist();
     getContractList();
     getRecycType();
   }, []);
