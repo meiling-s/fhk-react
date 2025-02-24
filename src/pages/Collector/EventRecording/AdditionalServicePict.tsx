@@ -207,6 +207,12 @@ const AdditionalServicePict = () => {
             problem: formErr.empty,
             type: "error",
           });
+        } else if (startDate.year() < 1900) {
+          tempV.push({
+            field: `${serviceLabel} ${t("report.dateAndTime")}`,
+            problem: formErr.invalidDate, // Add translation for this
+            type: "error",
+          });
         }
 
         if (!endDate || !endDate.isValid()) {
@@ -215,10 +221,16 @@ const AdditionalServicePict = () => {
             problem: formErr.empty,
             type: "error",
           });
+        } else if (endDate.year() > 2099) {
+          tempV.push({
+            field: `${serviceLabel} ${t("report.to")}`,
+            problem: formErr.invalidDate, // Add translation for this
+            type: "error",
+          });
         }
 
-        if (entry.startDate && entry.endDate) {
-          if (entry.startDate.isAfter(entry.endDate)) {
+        if (startDate && endDate) {
+          if (startDate.isAfter(endDate)) {
             tempV.push({
               field: `${serviceLabel} ${t("report.dateAndTime")}`,
               problem: formErr.startDateBehindEndDate,
@@ -310,6 +322,12 @@ const AdditionalServicePict = () => {
           problem: formErr.empty,
           type: "error",
         });
+      } else if (startDate.year() < 1900) {
+        tempV.push({
+          field: `${serviceLabel} ${t("report.dateAndTime")}`,
+          problem: formErr.invalidDate, // Add translation for this
+          type: "error",
+        });
       }
 
       if (!endDate || !endDate.isValid()) {
@@ -318,10 +336,16 @@ const AdditionalServicePict = () => {
           problem: formErr.empty,
           type: "error",
         });
+      } else if (endDate.year() > 2099) {
+        tempV.push({
+          field: `${serviceLabel} ${t("report.to")}`,
+          problem: formErr.invalidDate, // Add translation for this
+          type: "error",
+        });
       }
 
-      if (entry.startDate && entry.endDate) {
-        if (entry.startDate.isAfter(entry.endDate)) {
+      if (startDate && endDate) {
+        if (startDate.isAfter(endDate)) {
           tempV.push({
             field: `${serviceLabel} ${t("report.dateAndTime")}`,
             problem: formErr.startDateBehindEndDate,
@@ -513,6 +537,9 @@ const AdditionalServicePict = () => {
         break;
       case formErr.startDateBehindEndDate:
         msg = t("form.error.startDateBehindEndDate");
+        break;
+      case formErr.invalidDate:
+        msg = t("pick_up_order.error.invalid_date");
         break;
     }
     return msg;

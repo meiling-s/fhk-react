@@ -164,6 +164,12 @@ const OtherPict = () => {
           problem: formErr.empty,
           type: "error",
         });
+      } else if (startDate.year() < 1900) {
+        tempV.push({
+          field: `${serviceLabel} ${t("report.dateAndTime")}`,
+          problem: formErr.invalidDate, // Add translation for this
+          type: "error",
+        });
       }
 
       if (!Array.isArray(entry.photoImage) || entry.photoImage.length === 0) {
@@ -257,7 +263,6 @@ const OtherPict = () => {
 
   const returnErrorMsg = (error: string) => {
     var msg = "";
-    console.log(error);
     switch (error) {
       case formErr.empty:
         msg = t("form.error.shouldNotBeEmpty");
@@ -270,6 +275,9 @@ const OtherPict = () => {
         break;
       case formErr.wrongFormat:
         msg = t("form.error.isInWrongFormat");
+        break;
+      case formErr.invalidDate:
+        msg = t("pick_up_order.error.invalid_date");
         break;
     }
     return msg;
