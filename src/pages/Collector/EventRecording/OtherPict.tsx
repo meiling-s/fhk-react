@@ -128,6 +128,12 @@ const OtherPict = () => {
             problem: formErr.empty,
             type: "error",
           });
+        } else if (startDate.year() < 1900) {
+          tempV.push({
+            field: `${serviceLabel} ${t("report.dateAndTime")}`,
+            problem: formErr.invalidDate, // Add translation for this
+            type: "error",
+          });
         }
 
         // Validate photoImage
