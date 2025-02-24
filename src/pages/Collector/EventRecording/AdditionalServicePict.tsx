@@ -198,7 +198,10 @@ const AdditionalServicePict = () => {
             (value) => value.serviceName === selectedService
           )?.label ?? selectedService; // Fallback to key if no match
 
-        if (!entry.startDate) {
+        const startDate = entry.startDate ? dayjs(entry.startDate) : null;
+        const endDate = entry.endDate ? dayjs(entry.endDate) : null;
+
+        if (!startDate || !startDate.isValid()) {
           tempV.push({
             field: `${serviceLabel} ${t("report.dateAndTime")}`,
             problem: formErr.empty,
@@ -206,7 +209,7 @@ const AdditionalServicePict = () => {
           });
         }
 
-        if (!entry.endDate) {
+        if (!endDate || !endDate.isValid()) {
           tempV.push({
             field: `${serviceLabel} ${t("report.to")}`,
             problem: formErr.empty,
@@ -298,7 +301,10 @@ const AdditionalServicePict = () => {
         AdditionalService.find((value) => value.serviceName === selectedService)
           ?.label ?? selectedService; // Fallback to key if no match
 
-      if (!entry.startDate) {
+      const startDate = entry.startDate ? dayjs(entry.startDate) : null;
+      const endDate = entry.endDate ? dayjs(entry.endDate) : null;
+
+      if (!startDate || !startDate.isValid()) {
         tempV.push({
           field: `${serviceLabel} ${t("report.dateAndTime")}`,
           problem: formErr.empty,
@@ -306,7 +312,7 @@ const AdditionalServicePict = () => {
         });
       }
 
-      if (!entry.endDate) {
+      if (!endDate || !endDate.isValid()) {
         tempV.push({
           field: `${serviceLabel} ${t("report.to")}`,
           problem: formErr.empty,
@@ -602,6 +608,8 @@ const AdditionalServicePict = () => {
       name: t("report.other_services"),
     },
   ];
+
+  console.log(serviceData, "entry");
 
   return (
     <Box className="container-wrapper w-full">

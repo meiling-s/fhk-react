@@ -119,8 +119,10 @@ const OtherPict = () => {
           serviceOthersField.find(
             (value) => value.serviceName === selectedService
           )?.label ?? selectedService;
-        // Validate startDate
-        if (entry.startDate?.toString() == "") {
+
+        const startDate = entry.startDate ? dayjs(entry.startDate) : null;
+
+        if (!startDate || !startDate.isValid()) {
           tempV.push({
             field: `${serviceLabel} ${t("report.dateAndTime")}`,
             problem: formErr.empty,
@@ -154,7 +156,9 @@ const OtherPict = () => {
           (value) => value.serviceName === selectedService
         )?.label ?? selectedService;
 
-      if (entry.startDate?.toString() == "") {
+      const startDate = entry.startDate ? dayjs(entry.startDate) : null;
+
+      if (!startDate || !startDate.isValid()) {
         tempV.push({
           field: `${serviceLabel} ${t("report.dateAndTime")}`,
           problem: formErr.empty,
