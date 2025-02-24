@@ -1039,13 +1039,6 @@ const PickupOrderCreateForm = ({
                   error={formik.errors.contactNo && formik.touched.contactNo}
                   dataTestId="astd-create-edit-pickup-order-contact-no-input-field-6429"
                 />
-                {errorsField.contactNo.status ? (
-                  <div style={{ marginTop: 8, width: "750px" }}>
-                    <ErrorMessage message={errorsField.contactNo.message} />
-                  </div>
-                ) : (
-                  ""
-                )}
               </CustomField>
             </Grid>
             {formik.values.picoType == "ROUTINE" && (
@@ -1314,6 +1307,9 @@ const PickupOrderCreateForm = ({
               )}
             {errorsField.createPicoDetail.status && (
               <ErrorMessage message={errorsField.createPicoDetail.message} />
+            )}
+            {errorsField.contactNo.status && (
+              <ErrorMessage message={errorsField.contactNo.message} />
             )}
             {errorsField.contractNo.status && (
               <WarningMessage
