@@ -22,10 +22,6 @@ export const createInvitation = async (
   item: CreateTenant,
   tenantType: string
 ) => {
-  console.log(
-    `Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`
-  )
-
   try {
     const response = await axiosInstance({
       baseURL: window.baseURL.account,
