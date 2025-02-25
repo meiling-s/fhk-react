@@ -1374,6 +1374,11 @@ export const GET_PACKAGING_LIST = (
   url: `api/v1/${realmApiRoute}/packaginglist/${tenantId}`
 })
 
+export const GET_FULL_PACKAGING_LIST = (realmApiRoute: string, tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/packagingListIgnoreStatus/${tenantId}`
+})
+
 export const CREATE_PACKAGING = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
