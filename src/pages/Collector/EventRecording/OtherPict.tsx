@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 
 import ImageUploading, { ImageListType } from "react-images-uploading";
+import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useTranslation } from "react-i18next";
@@ -145,6 +146,12 @@ const OtherPict = () => {
             problem: formErr.invalidDate, // Add translation for this
             type: "error",
           });
+        } else if (startDate.year() > 2099) {
+          tempV.push({
+            field: `${serviceLabel} ${t("report.dateAndTime")}`,
+            problem: formErr.invalidDate, // Add translation for this
+            type: "error",
+          });
         }
         if (!Array.isArray(entry.photoImage) || entry.photoImage.length === 0) {
           tempV.push({
@@ -180,6 +187,12 @@ const OtherPict = () => {
           type: "error",
         });
       } else if (startDate.year() < 1900) {
+        tempV.push({
+          field: `${serviceLabel} ${t("report.dateAndTime")}`,
+          problem: formErr.invalidDate, // Add translation for this
+          type: "error",
+        });
+      } else if (startDate.year() > 2099) {
         tempV.push({
           field: `${serviceLabel} ${t("report.dateAndTime")}`,
           problem: formErr.invalidDate, // Add translation for this
@@ -395,6 +408,22 @@ const OtherPict = () => {
     }
   };
 
+  const removeImage = (index: number, serviceName: ServiceName) => {
+    setServiceData((prevData) => {
+      const updatedImages = serviceData[serviceName].photoImage.filter(
+        (_, i) => i !== index
+      );
+
+      return {
+        ...prevData,
+        [serviceName]: {
+          ...prevData[serviceName],
+          photoImage: updatedImages,
+        },
+      };
+    });
+  };
+
   return (
     <Box className="container-wrapper w-full">
       <ToastContainer></ToastContainer>
@@ -577,7 +606,7 @@ const OtherPict = () => {
                         dataURLKey="data_url"
                         acceptType={["jpg", "jpeg", "png"]}
                       >
-                        {({ imageList, onImageUpload }) => (
+                        {({ imageList, onImageUpload, onImageRemove }) => (
                           <Box className="box">
                             <Card
                               sx={{
@@ -610,7 +639,7 @@ const OtherPict = () => {
                               sx={localstyles.imagesContainer}
                               cols={3}
                             >
-                              {imageList.map((image) => (
+                              {imageList.map((image, index) => (
                                 <ImageListItem key={image["file"]?.name}>
                                   <img
                                     style={localstyles.image}
@@ -618,6 +647,26 @@ const OtherPict = () => {
                                     alt={image["file"]?.name}
                                     loading="lazy"
                                   />
+                                  <ButtonBase
+                                    onClick={(event) => {
+                                      onImageRemove(index); // Ensure the imageList updates first
+
+                                      setTimeout(() => {
+                                        removeImage(
+                                          index,
+                                          item.serviceName as ServiceName
+                                        );
+                                      }, 0); // Delay updating serviceData slightly
+                                    }}
+                                    style={{
+                                      position: "absolute",
+                                      top: "2px",
+                                      right: "2px",
+                                      padding: "4px",
+                                    }}
+                                  >
+                                    <CancelRoundedIcon className="text-white" />
+                                  </ButtonBase>
                                 </ImageListItem>
                               ))}
                             </ImageList>
@@ -696,7 +745,6 @@ const localstyles = {
   },
   image: {
     aspectRatio: "1/1",
-    width: "80px",
     borderRadius: 2,
   },
   cardImg: {
