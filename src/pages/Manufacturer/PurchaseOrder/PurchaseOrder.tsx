@@ -646,7 +646,7 @@ const PurchaseOrder = () => {
   }
   const searchfield = [
     {
-      label: t("purchase_order.table.pico_id"),
+      label: t("purchase_order.table.order_number"),
       placeholder: t("placeHolder.po_number"),
       width: "14%",
       field: "poId",

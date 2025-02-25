@@ -1591,7 +1591,7 @@
     "subclassification": "子分類",
     "inventory_location": "地點",
     "place": "地點",
-    "po_number": "輸入採購訂單編號",
+    "po_number": "輸入採訂單編號",
     "jo_number": "輸入工作編號"
   },
   "dashboardOverview": {
