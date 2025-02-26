@@ -21,7 +21,7 @@
     "englishName": "英文名称",
     "traditionalChinese": "繁体中文",
     "simplifiedChinese": "简体中文",
-    "english": "英文",
+    "english": "英语",
     "yes": "是",
     "no": "否",
     "createdDatetime": "建立时间",
@@ -404,7 +404,8 @@
       "operation": "操作",
       "approve": "接受",
       "reject": "拒绝",
-      "create_job_order": "建立工作运单"
+      "create_job_order": "建立工作运单",
+      "shipping_date": "运送日期"
     },
     "filter": {
       "search": "搜索",
@@ -710,7 +711,8 @@
     "other_services": "其他服务",
     "tenantIdPlaceHolder": "输入租户 ID",
     "tenantId": "租户 ID",
-    "invalidTenantId": "租户 ID 无效"
+    "invalidTenantId": "租户 ID 无效",
+    "selectService": "选择服务"
   },
   "vehicle": {
     "vehicle": "车队",

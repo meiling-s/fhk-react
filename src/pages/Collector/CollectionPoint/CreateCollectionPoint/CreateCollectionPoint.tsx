@@ -690,7 +690,8 @@ function CreateCollectionPoint() {
     return (
       premiseType === "PT00009" ||
       premiseType === "PT00027" ||
-      premiseType === "PT00028"
+      premiseType === "PT00028" ||
+      premiseType === "PT00013"
     );
   };
 

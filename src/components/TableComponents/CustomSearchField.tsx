@@ -34,7 +34,8 @@ const CustomSearchField = ({
   numberOnly = false,
   dataTestId,
   disableIcon,
-  isUseCurrDate = false
+  isUseCurrDate = false,
+  resetValue = false
 }: {
   label: string
   width?: string
@@ -48,6 +49,7 @@ const CustomSearchField = ({
   dataTestId?: string
   disableIcon?: boolean
   isUseCurrDate?: boolean
+  resetValue?: boolean
 }) => {
   const hasOptions = options && options.length > 0
   //const [selectedValue, setSelectedValue] = useState<string>("")
@@ -85,7 +87,7 @@ const CustomSearchField = ({
   }
 
   useEffect(() => {
-    if (!(options && options.length > 0)) {
+    if (resetValue && !hasOptions) {
       setSelectedValue('')
     }
   }, [options])

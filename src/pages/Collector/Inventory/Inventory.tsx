@@ -68,7 +68,10 @@ import {
 import { getAllWarehouse } from "../../../APICalls/warehouseManage";
 import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 import { InventoryQuery } from "../../../interfaces/inventory";
-import { getAllPackagingUnit } from "../../../APICalls/Collector/packagingUnit";
+import {
+  getAllPackagingUnit,
+  getFullPackagingUnit,
+} from "../../../APICalls/Collector/packagingUnit";
 import { PackagingUnit } from "../../../interfaces/packagingUnit";
 import {
   getAllFactories,
@@ -323,13 +326,15 @@ const Inventory: FunctionComponent = () => {
 
   const initpackagingUnit = async () => {
     try {
-      const result = await getAllPackagingUnit(0, 1000);
+      const token = returnApiToken();
+      const result = await getFullPackagingUnit(0, 1000, token.tenantId);
+
       const data = result?.data;
       if (data) {
         const filteredData = data.content.filter(
           (value: { status: string }) => value.status === "ACTIVE"
-        );
-        setPackagingMapping(filteredData ?? []);
+        ); // remove filter
+        setPackagingMapping(data.content ?? []);
       }
     } catch (error: any) {
       const { state, realm } = extractError(error);
@@ -1209,6 +1214,7 @@ const Inventory: FunctionComponent = () => {
       setTotalData(0);
       setPicoList([]);
       setSelectedPico([]);
+      initpackagingUnit();
       initInventory();
     }
   }, [debouncedSearchValue, query, i18n.language]);

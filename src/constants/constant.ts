@@ -70,7 +70,8 @@ export const formErr = {
   effectiveDateLess: 'effectiveDateLess',
   cannotBeSame: 'cannotBeSame',
   cantBeSame: 'cantBeSame',
-  specificDateOutOfRange: 'specificDateOutOfRange'
+  specificDateOutOfRange: 'specificDateOutOfRange',
+  invalidDate: 'invalidDate'
 }
 
 export const Notiftemplate = {

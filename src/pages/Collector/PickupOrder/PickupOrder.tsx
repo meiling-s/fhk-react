@@ -326,7 +326,7 @@ const PickupOrders = () => {
     },
     {
       field: "deliveryDate",
-      headerName: t("pick_up_order.table.delivery_date"),
+      headerName: t("pick_up_order.table.shipping_date"),
       type: "string",
       width: 200,
       editable: true,

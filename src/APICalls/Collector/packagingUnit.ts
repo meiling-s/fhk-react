@@ -1,5 +1,5 @@
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
-import {CREATE_PACKAGING, EDIT_PACKAGING, GET_PACKAGING_LIST} from "../../constants/requests";
+import {CREATE_PACKAGING, EDIT_PACKAGING, GET_FULL_PACKAGING_LIST, GET_PACKAGING_LIST} from "../../constants/requests";
 import { returnApiToken } from "../../utils/utils";
 import axiosInstance from '../../constants/axiosInstance'
 import { CreatePackagingUnit } from "../../interfaces/packagingUnit";
@@ -54,5 +54,25 @@ export const editPackaging = async (data: CreatePackagingUnit, packagingTypeId: 
     return response
   } catch (e) {
     throw(e)
+  }
+}
+
+export const getFullPackagingUnit = async (page: number, size: number, tenantId: string) => {
+  try {
+    const token = returnApiToken()
+      const response = await axiosInstance({
+        baseURL: window.baseURL.logistic,
+        ...GET_FULL_PACKAGING_LIST(token.realmApiRoute, tenantId),
+        params: {
+          page: page,
+          size: size,
+        },
+        headers: {
+          AuthToken: token.authToken
+        }
+      })
+      return response
+  } catch (error) {
+    throw(error)
   }
 }
