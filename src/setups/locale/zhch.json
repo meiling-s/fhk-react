@@ -1628,8 +1628,8 @@
       "inStock": "库存",
       "weight": "重量"
     },
-    "selectedItems": "Items selected for compression",
-    "processCompress": "Processed compressed material",
+    "selectedItems": "选择压缩的项目",
+    "processCompress": "加工压缩材料",
     "ask": "请求",
     "new": "新增",
     "clickToAddItem": "按新增为压缩品输入资料"
