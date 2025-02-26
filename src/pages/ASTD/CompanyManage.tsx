@@ -66,6 +66,7 @@ import {
   debounce,
   returnApiToken,
   getFormatId,
+  isEmptyOrWhitespace,
 } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
 import utc from "dayjs/plugin/utc";
@@ -462,6 +463,8 @@ type inviteForm = {
   isTenantErr: boolean;
   duplicateErrorMessage: string;
   setTenantIdErr: (value: boolean) => void;
+  setTrySubmitted: (value: boolean) => void;
+  trySubmitted: boolean;
 };
 
 function InviteForm({
@@ -473,6 +476,8 @@ function InviteForm({
   isTenantErr,
   duplicateErrorMessage,
   setTenantIdErr,
+  setTrySubmitted,
+  trySubmitted,
 }: inviteForm) {
   const { t } = useTranslation();
   //const [submitable, setSubmitable] = useState<boolean>(false)
@@ -584,6 +589,7 @@ function InviteForm({
   useEffect(() => {
     if (open) {
       formik.resetForm();
+      setTrySubmitted(false);
     }
   }, [open]);
 
@@ -594,8 +600,6 @@ function InviteForm({
   }, [isDuplicated, duplicateErrorMessage]);
 
   const handleDuplicateErrorMessage = (input: string) => {
-    console.log(input, "inputt");
-
     const replacements: { [key: string]: string } = {
       "[tchi]": "companyZhName",
       "[eng]": "companyEnName",
@@ -606,7 +610,6 @@ function InviteForm({
 
     // Adjust regex to correctly match all keys, including "[Company Number]"
     const matches = input.match(/\[(tchi|eng|schi|brNo|Company Number)\]/gi);
-    console.log(matches, "matches");
 
     if (matches) {
       matches.forEach((match) => {
@@ -617,10 +620,6 @@ function InviteForm({
       });
     }
   };
-
-  useEffect(() => {
-    console.log(formik, "formik");
-  }, [formik]);
 
   const TextFields = [
     {
@@ -691,14 +690,66 @@ function InviteForm({
     },
   ];
 
+  const validateData = () => {
+    const errors: Record<string, string> = {};
+    const touchedFields: Record<string, boolean> = {}; // Track touched fields
+
+    if (isEmptyOrWhitespace(formik.values.bussinessNumber)) {
+      errors.bussinessNumber = t("form.error.shouldNotBeEmpty");
+      touchedFields.businessNumber = true;
+    }
+    if (isEmptyOrWhitespace(formik.values.companyCnName)) {
+      errors.companyCnName = t("form.error.shouldNotBeEmpty");
+      touchedFields.companyCnName = true;
+    }
+    if (isEmptyOrWhitespace(formik.values.companyEnName)) {
+      errors.companyEnName = t("form.error.shouldNotBeEmpty");
+      touchedFields.companyEnName = true;
+    }
+    if (isEmptyOrWhitespace(formik.values.companyZhName)) {
+      errors.companyZhName = t("form.error.shouldNotBeEmpty");
+      touchedFields.companyZhName = true;
+    }
+    if (isEmptyOrWhitespace(formik.values.remark)) {
+      errors.remark = t("form.error.shouldNotBeEmpty");
+      touchedFields.remark = true;
+    }
+
+    // formik.setErrors(errors);
+    // formik.setTouched(touchedFields);
+
+    // Force Formik to update and trigger re-render
+    formik.setFormikState((prevState) => ({
+      ...prevState,
+      errors: errors,
+      touched: touchedFields,
+    }));
+
+    if (Object.keys(errors).length > 0) {
+      setTrySubmitted(true);
+    } else {
+      console.log("hitt");
+      formik.handleSubmit();
+    }
+  };
+
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    await formik.handleSubmit();
+    setTrySubmitted(false);
+    validateData();
   };
 
   const handleOncloseForm = () => {
     setOpenConfirmModal(true);
     // onClose()
+  };
+
+  const checkString = (s: string) => {
+    if (!trySubmitted) {
+      //before first submit, don't check the validation
+      return false;
+    }
+    return s == "" || isEmptyOrWhitespace(s);
   };
 
   // const getErrorMessage = () => {
@@ -718,6 +769,7 @@ function InviteForm({
   //   }
   // };
 
+  console.log(formik, "formik");
   return (
     <form onSubmit={formik.handleSubmit}>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
@@ -836,7 +888,7 @@ function InviteForm({
                           onChange={formik.handleChange}
                           value={t.value}
                           sx={{ width: "100%" }}
-                          error={t.error || undefined}
+                          error={checkString(t.value) || t.error || undefined}
                         />
                       )}
                     </CustomField>
@@ -865,6 +917,7 @@ function InviteForm({
                     value={formik.values.remark}
                     sx={{ width: "100%" }}
                     error={
+                      checkString(formik.values.remark) ||
                       (formik.errors?.remark && formik.touched?.remark) ||
                       undefined
                     }
@@ -920,7 +973,9 @@ function InviteForm({
                     <Alert severity="error">{formik.errors.effToDate} </Alert>
                   )}
                   {formik.errors.remark && formik.touched.remark && (
-                    <Alert severity="error">{formik.errors.remark} </Alert>
+                    <Alert severity="error">
+                      {t("tenant.invite_form.remark")} {formik.errors.remark}{" "}
+                    </Alert>
                   )}
                   {/* {isDuplicated && (
                     <Alert severity="error">{getErrorMessage()}</Alert>
@@ -999,6 +1054,7 @@ function CompanyManage() {
   const [tenantIdErr, setTenantIdErr] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [reasons, setReasons] = useState<il_item[]>([]);
+  const [trySubmitted, setTrySubmitted] = useState<boolean>(false);
   const realmOptions = [
     {
       key: "collector",
@@ -1334,6 +1390,7 @@ function CompanyManage() {
     } else {
       try {
         const token = returnApiToken();
+        setTrySubmitted(false);
         setIsLoadingInvite(true);
         const realmType =
           realmOptions.find((item) => item.key == formikValues.companyCategory)
@@ -1377,7 +1434,6 @@ function CompanyManage() {
         );
 
         if (result?.data?.tenantId) {
-          console.log(result);
           setInviteId(result?.data?.tenantId);
           setInvSendModal(true);
           setInvFormModal(false);
@@ -1396,18 +1452,21 @@ function CompanyManage() {
           //showErrorToast(t('common.saveFailed'))
           setDuplicatedData(true);
           setIsLoadingInvite(false);
+          setTrySubmitted(true);
         } else if (state.code === STATUS_CODE[409]) {
           const errorMessage = error.response.data.message;
           if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
             setDuplicateErrorMessage(errorMessage);
             setDuplicatedData(true);
             setIsLoadingInvite(false);
+            setTrySubmitted(true);
           }
         } else {
           showErrorToast(`${t("common.saveFailed")}`);
           setDuplicatedData(true);
           setTenantIdErr(false);
           setIsLoadingInvite(false);
+          setTrySubmitted(true);
         }
       }
     }
@@ -1551,6 +1610,8 @@ function CompanyManage() {
           isTenantErr={tenantIdErr}
           setTenantIdErr={setTenantIdErr}
           duplicateErrorMessage={duplicateErrorMessage}
+          setTrySubmitted={setTrySubmitted}
+          trySubmitted={trySubmitted}
         />
 
         <InviteModal
