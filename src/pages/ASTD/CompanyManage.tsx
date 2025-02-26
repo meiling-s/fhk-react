@@ -696,7 +696,7 @@ function InviteForm({
 
     if (isEmptyOrWhitespace(formik.values.bussinessNumber)) {
       errors.bussinessNumber = t("form.error.shouldNotBeEmpty");
-      touchedFields.businessNumber = true;
+      touchedFields.bussinessNumber = true;
     }
     if (isEmptyOrWhitespace(formik.values.companyCnName)) {
       errors.companyCnName = t("form.error.shouldNotBeEmpty");
@@ -715,20 +715,30 @@ function InviteForm({
       touchedFields.remark = true;
     }
 
-    // formik.setErrors(errors);
-    // formik.setTouched(touchedFields);
+    // Validate effFrmDate < effToDate
+    const effFrmDate = new Date(formik.values.effFrmDate);
+    const effToDate = new Date(formik.values.effToDate);
 
-    // Force Formik to update and trigger re-render
+    if (!isNaN(effFrmDate.getTime()) && !isNaN(effToDate.getTime())) {
+      if (effFrmDate >= effToDate) {
+        errors.effFrmDate = t("tenant.invite_modal.err_date"); // Adjust this key as needed
+        touchedFields.effFrmDate = true;
+      }
+    }
+
+    console.log(formik.values, "values");
+
     formik.setFormikState((prevState) => ({
       ...prevState,
       errors: errors,
       touched: touchedFields,
     }));
 
+    console.log(errors, "errors");
+
     if (Object.keys(errors).length > 0) {
       setTrySubmitted(true);
     } else {
-      console.log("hitt");
       formik.handleSubmit();
     }
   };
@@ -769,7 +779,6 @@ function InviteForm({
   //   }
   // };
 
-  console.log(formik, "formik");
   return (
     <form onSubmit={formik.handleSubmit}>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
