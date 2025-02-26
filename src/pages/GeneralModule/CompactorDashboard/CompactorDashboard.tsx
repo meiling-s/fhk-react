@@ -35,6 +35,7 @@ import { useTranslation } from 'react-i18next'
 import {
   debounce,
   displayCreatedDate,
+  getPrimaryColor,
   getThemeColorRole
 } from 'src/utils/utils'
 import i18n from '../../../setups/i18n'
@@ -113,6 +114,7 @@ const CompactorDashboard: FunctionComponent = () => {
   const size = 10
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
   const colorTheme: string = getThemeColorRole(role) || '#79CA25'
+  const primaryColor = getPrimaryColor()
 
   const columns: GridColDef[] = [
     {
@@ -417,7 +419,10 @@ const CompactorDashboard: FunctionComponent = () => {
         <h2>{t('compactor.compactorTruckHandling')}</h2>
         {/* SECTION 1 */}
         <Box sx={{ marginBottom: 10 }}>
-          <div className="bg-[#7CE495] w-max px-[20px] py-[10px] text-white font-bold rounded-t-xl">
+          <div
+            style={{ backgroundColor: primaryColor }}
+            className="w-max px-[20px] py-[10px] text-white font-bold rounded-t-xl"
+          >
             {t('compactor.unloadRecord')}
           </div>
           <Box
@@ -482,9 +487,14 @@ const CompactorDashboard: FunctionComponent = () => {
                         key={index}
                         className={`relative card-wrapper col-span-1 max-w-[450px] w-full flex items-center space-x-6 py-4 px-4 rounded-lg border-solid cursor-pointer ${
                           selectedCheckInIds.includes(item.chkInId)
-                            ? 'border-[2px] border-[#79CA25]'
+                            ? 'border-[2px]'
                             : 'border-[1px] border-[#C6C6C6]'
                         }`}
+                        style={
+                          selectedCheckInIds.includes(item.chkInId)
+                            ? { borderColor: primaryColor }
+                            : {}
+                        }
                         onClick={() => selectCard(item.chkInId)}
                       >
                         <div className="text-left">
@@ -549,7 +559,10 @@ const CompactorDashboard: FunctionComponent = () => {
                           </div>
                         </div>
                         {selectedCheckInIds.includes(item.chkInId) && (
-                          <CheckCircleIcon className="absolute top-[-8px] right-[-8px] text-[#79CA25] w-6 h-6" />
+                          <CheckCircleIcon
+                            style={{ color: primaryColor }}
+                            className="absolute top-[-8px] right-[-8px] w-6 h-6"
+                          />
                         )}
                       </div>
                     ))}
@@ -565,7 +578,10 @@ const CompactorDashboard: FunctionComponent = () => {
         </Box>
         {/* SECTION 2 */}
         <Box sx={{ marginBottom: 10 }}>
-          <div className="bg-[#7CE495] w-max px-[20px] py-[10px] text-white font-bold rounded-t-xl">
+          <div
+            style={{ backgroundColor: primaryColor }}
+            className=" w-max px-[20px] py-[10px] text-white font-bold rounded-t-xl"
+          >
             {t('compactor.selectedItems')}{' '}
             {`(` + selectedCheckInIds.length + `)`}
           </div>
@@ -613,7 +629,10 @@ const CompactorDashboard: FunctionComponent = () => {
         {/* SECTION 3 */}
         {selectedCheckInIds.length > 0 && (
           <Box>
-            <div className="bg-[#7CE495] px-[20px] py-[10px] w-max text-white font-bold rounded-t-xl">
+            <div
+              style={{ backgroundColor: primaryColor }}
+              className="px-[20px] py-[10px] w-max text-white font-bold rounded-t-xl"
+            >
               {t('compactor.processCompress')}
             </div>
             <Box
