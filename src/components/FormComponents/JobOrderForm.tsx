@@ -163,7 +163,11 @@ const JobOrderForm = ({
         selectedRow?.driverId.toString()
       );
       if (result?.data) {
-        setDriverDetail(result.data || {});
+        const data = {
+          ...result.data,
+          photo: [],
+        };
+        setDriverDetail(data || {});
       }
     }
   };
