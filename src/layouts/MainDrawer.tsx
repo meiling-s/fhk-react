@@ -132,6 +132,8 @@ function MainDrawer() {
     setOpen(false);
   };
 
+  console.log(APIFunctionList, "a");
+
   var role = localStorage.getItem(localStorgeKeyName.role);
   var realm = localStorage.getItem(localStorgeKeyName.realm);
 
@@ -459,9 +461,9 @@ function MainDrawer() {
           currentSubMenu.functionName === "weightOfRecyclables"
             ? "儀錶板"
             : currentSubMenu.functionName === "dashboard"
-            ? "仓库仪表板"
+            ? "倉庫儀表板"
             : currentSubMenu.functionName === "inventory"
-            ? "存货"
+            ? "存貨"
             : selectedFunction?.functionNameTChi
             ? selectedFunction?.functionNameTChi
             : currentSubMenu.name === "warehouse"
