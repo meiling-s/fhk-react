@@ -715,13 +715,31 @@ function InviteForm({
       touchedFields.remark = true;
     }
 
-    // Validate effFrmDate < effToDate
-    const effFrmDate = new Date(formik.values.effFrmDate);
-    const effToDate = new Date(formik.values.effToDate);
+    // Function to parse different date formats correctly
+    const parseDate = (dateString: string) => {
+      if (!dateString || isEmptyOrWhitespace(dateString)) return null;
+      const parsedDate = new Date(dateString);
+      return isNaN(parsedDate.getTime()) ? null : parsedDate;
+    };
 
-    if (!isNaN(effFrmDate.getTime()) && !isNaN(effToDate.getTime())) {
-      if (effFrmDate >= effToDate) {
-        errors.effFrmDate = t("tenant.invite_modal.err_date"); // Adjust this key as needed
+    const effFrmDate = parseDate(formik.values.effFrmDate);
+    const effToDate = parseDate(formik.values.effToDate);
+
+    if (effFrmDate && effToDate) {
+      // Extract year, month, and day for accurate comparison
+      const startDate = new Date(
+        effFrmDate.getFullYear(),
+        effFrmDate.getMonth(),
+        effFrmDate.getDate()
+      );
+      const endDate = new Date(
+        effToDate.getFullYear(),
+        effToDate.getMonth(),
+        effToDate.getDate()
+      );
+
+      if (startDate > endDate) {
+        errors.effFrmDate = t("tenant.invite_modal.err_date"); // Adjust the error message key
         touchedFields.effFrmDate = true;
       }
     }
