@@ -66,6 +66,7 @@ import {
   debounce,
   returnApiToken,
   getFormatId,
+  isEmptyOrWhitespace,
 } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
 import utc from "dayjs/plugin/utc";
@@ -459,8 +460,11 @@ type inviteForm = {
   onClose: () => void;
   onSubmitForm: (formikValues: InviteTenant) => void;
   isDuplicated: boolean;
-  duplicatedErr: string;
   isTenantErr: boolean;
+  duplicateErrorMessage: string;
+  setTenantIdErr: (value: boolean) => void;
+  setTrySubmitted: (value: boolean) => void;
+  trySubmitted: boolean;
 };
 
 function InviteForm({
@@ -469,8 +473,11 @@ function InviteForm({
   onClose,
   onSubmitForm,
   isDuplicated,
-  duplicatedErr,
   isTenantErr,
+  duplicateErrorMessage,
+  setTenantIdErr,
+  setTrySubmitted,
+  trySubmitted,
 }: inviteForm) {
   const { t } = useTranslation();
   //const [submitable, setSubmitable] = useState<boolean>(false)
@@ -582,8 +589,37 @@ function InviteForm({
   useEffect(() => {
     if (open) {
       formik.resetForm();
+      setTrySubmitted(false);
     }
   }, [open]);
+
+  useEffect(() => {
+    if (duplicateErrorMessage !== "") {
+      handleDuplicateErrorMessage(duplicateErrorMessage);
+    }
+  }, [isDuplicated, duplicateErrorMessage]);
+
+  const handleDuplicateErrorMessage = (input: string) => {
+    const replacements: { [key: string]: string } = {
+      "[tchi]": "companyZhName",
+      "[eng]": "companyEnName",
+      "[schi]": "companyCnName",
+      "[brNo]": "bussinessNumber",
+      "[Company Number]": "companyNumber",
+    };
+
+    // Adjust regex to correctly match all keys, including "[Company Number]"
+    const matches = input.match(/\[(tchi|eng|schi|brNo|Company Number)\]/gi);
+
+    if (matches) {
+      matches.forEach((match) => {
+        formik.setFieldError(
+          replacements[match],
+          t("settings_page.recycling.already_exists")
+        );
+      });
+    }
+  };
 
   const TextFields = [
     {
@@ -654,9 +690,81 @@ function InviteForm({
     },
   ];
 
+  const validateData = () => {
+    const errors: Record<string, string> = {};
+    const touchedFields: Record<string, boolean> = {}; // Track touched fields
+
+    if (isEmptyOrWhitespace(formik.values.bussinessNumber)) {
+      errors.bussinessNumber = t("form.error.shouldNotBeEmpty");
+      touchedFields.bussinessNumber = true;
+    }
+    if (isEmptyOrWhitespace(formik.values.companyCnName)) {
+      errors.companyCnName = t("form.error.shouldNotBeEmpty");
+      touchedFields.companyCnName = true;
+    }
+    if (isEmptyOrWhitespace(formik.values.companyEnName)) {
+      errors.companyEnName = t("form.error.shouldNotBeEmpty");
+      touchedFields.companyEnName = true;
+    }
+    if (isEmptyOrWhitespace(formik.values.companyZhName)) {
+      errors.companyZhName = t("form.error.shouldNotBeEmpty");
+      touchedFields.companyZhName = true;
+    }
+    if (isEmptyOrWhitespace(formik.values.remark)) {
+      errors.remark = t("form.error.shouldNotBeEmpty");
+      touchedFields.remark = true;
+    }
+
+    // Function to parse different date formats correctly
+    const parseDate = (dateString: string) => {
+      if (!dateString || isEmptyOrWhitespace(dateString)) return null;
+      const parsedDate = new Date(dateString);
+      return isNaN(parsedDate.getTime()) ? null : parsedDate;
+    };
+
+    const effFrmDate = parseDate(formik.values.effFrmDate);
+    const effToDate = parseDate(formik.values.effToDate);
+
+    if (effFrmDate && effToDate) {
+      // Extract year, month, and day for accurate comparison
+      const startDate = new Date(
+        effFrmDate.getFullYear(),
+        effFrmDate.getMonth(),
+        effFrmDate.getDate()
+      );
+      const endDate = new Date(
+        effToDate.getFullYear(),
+        effToDate.getMonth(),
+        effToDate.getDate()
+      );
+
+      if (startDate > endDate) {
+        errors.effFrmDate = t("tenant.invite_modal.err_date"); // Adjust the error message key
+        touchedFields.effFrmDate = true;
+      }
+    }
+
+    console.log(formik.values, "values");
+
+    formik.setFormikState((prevState) => ({
+      ...prevState,
+      errors: errors,
+      touched: touchedFields,
+    }));
+
+    console.log(errors, "errors");
+
+    if (Object.keys(errors).length > 0) {
+      setTrySubmitted(true);
+    } else {
+      formik.handleSubmit();
+    }
+  };
+
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    await formik.handleSubmit();
+    setTrySubmitted(false);
+    validateData();
   };
 
   const handleOncloseForm = () => {
@@ -664,22 +772,30 @@ function InviteForm({
     // onClose()
   };
 
-  const getErrorMessage = () => {
-    switch (duplicatedErr) {
-      case "brNo":
-        return t("tenant.invite_modal.err_duplicated_br_no");
-      case "companyName":
-        return t("tenant.invite_modal.err_duplicated_company_name");
-      case "companyNumber":
-        return t("tenant.invite_modal.err_duplicated_company_number");
-      case "tenantId":
-        return t("tenant.invite_modal.err_duplicated_company_number");
-      case "illegalTenantId":
-        return t("tenant.invite_modal.err_illegal_tenant_id");
-      default:
-        return t("tenant.invite_modal.err_duplicated_company_number");
+  const checkString = (s: string) => {
+    if (!trySubmitted) {
+      //before first submit, don't check the validation
+      return false;
     }
+    return s == "" || isEmptyOrWhitespace(s);
   };
+
+  // const getErrorMessage = () => {
+  //   switch (duplicatedErr) {
+  //     case "brNo":
+  //       return t("tenant.invite_modal.err_duplicated_br_no");
+  //     case "companyName":
+  //       return t("tenant.invite_modal.err_duplicated_company_name");
+  //     case "companyNumber":
+  //       return t("tenant.invite_modal.err_duplicated_company_number");
+  //     case "tenantId":
+  //       return t("tenant.invite_modal.err_duplicated_company_number");
+  //     case "illegalTenantId":
+  //       return t("tenant.invite_modal.err_illegal_tenant_id");
+  //     default:
+  //       return t("tenant.invite_modal.err_duplicated_company_number");
+  //   }
+  // };
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -779,6 +895,7 @@ function InviteForm({
                                 "companyNumber",
                                 numericValue
                               );
+                              setTenantIdErr(false);
                             }}
                             sx={localstyles.inputState}
                             value={t.value}
@@ -798,7 +915,7 @@ function InviteForm({
                           onChange={formik.handleChange}
                           value={t.value}
                           sx={{ width: "100%" }}
-                          error={t.error || undefined}
+                          error={checkString(t.value) || t.error || undefined}
                         />
                       )}
                     </CustomField>
@@ -827,6 +944,7 @@ function InviteForm({
                     value={formik.values.remark}
                     sx={{ width: "100%" }}
                     error={
+                      checkString(formik.values.remark) ||
                       (formik.errors?.remark && formik.touched?.remark) ||
                       undefined
                     }
@@ -836,7 +954,8 @@ function InviteForm({
                   {formik.errors.companyNumber &&
                     formik.touched.companyNumber && (
                       <Alert severity="error">
-                        {formik.errors.companyNumber}{" "}
+                        {t("tenant.invite_form.company_number")}{" "}
+                        {formik.errors.companyNumber}
                       </Alert>
                     )}
                   {formik.errors.companyCategory &&
@@ -849,25 +968,29 @@ function InviteForm({
                   {formik.errors.companyZhName &&
                     formik.touched.companyZhName && (
                       <Alert severity="error">
-                        {formik.errors.companyZhName}{" "}
+                        {t("tenant.invite_form.company_zh_name")}{" "}
+                        {formik.errors.companyZhName}
                       </Alert>
                     )}
                   {formik.errors.companyCnName &&
                     formik.touched.companyCnName && (
                       <Alert severity="error">
+                        {t("tenant.invite_form.company_cn_name")}{" "}
                         {formik.errors.companyCnName}{" "}
                       </Alert>
                     )}
                   {formik.errors.companyEnName &&
                     formik.touched.companyEnName && (
                       <Alert severity="error">
+                        {t("tenant.invite_form.company_en_name")}{" "}
                         {formik.errors.companyEnName}{" "}
                       </Alert>
                     )}
                   {formik.errors.bussinessNumber &&
                     formik.touched.bussinessNumber && (
                       <Alert severity="error">
-                        {formik.errors.bussinessNumber}{" "}
+                        {t("tenant.invite_form.bussiness_number")}{" "}
+                        {formik.errors.bussinessNumber}
                       </Alert>
                     )}
                   {formik.errors.effFrmDate && formik.touched.effFrmDate && (
@@ -877,11 +1000,13 @@ function InviteForm({
                     <Alert severity="error">{formik.errors.effToDate} </Alert>
                   )}
                   {formik.errors.remark && formik.touched.remark && (
-                    <Alert severity="error">{formik.errors.remark} </Alert>
+                    <Alert severity="error">
+                      {t("tenant.invite_form.remark")} {formik.errors.remark}{" "}
+                    </Alert>
                   )}
-                  {isDuplicated && (
+                  {/* {isDuplicated && (
                     <Alert severity="error">{getErrorMessage()}</Alert>
-                  )}
+                  )} */}
                   {isTenantErr && (
                     <Alert severity="error">
                       {t("tenant.invite_modal.err_companyIdLength")}{" "}
@@ -951,10 +1076,12 @@ function CompanyManage() {
   const [totalData, setTotalData] = useState<number>(0);
   const { dateFormat } = useContainer(CommonTypeContainer);
   const [duplicatedData, setDuplicatedData] = useState<boolean>(false);
-  const [duplicatedType, setDuplicatedType] = useState<string>("");
+  const [duplicateErrorMessage, setDuplicateErrorMessage] =
+    useState<string>("");
   const [tenantIdErr, setTenantIdErr] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [reasons, setReasons] = useState<il_item[]>([]);
+  const [trySubmitted, setTrySubmitted] = useState<boolean>(false);
   const realmOptions = [
     {
       key: "collector",
@@ -1266,24 +1393,7 @@ function CompanyManage() {
   const handleCloseInvite = () => {
     setInvSendModal(false);
     setDuplicatedData(false);
-    setDuplicatedType("");
     initCompaniesData();
-  };
-
-  const getDuplicatedErrType = (state: errorState) => {
-    const match = state.message.match(/\[(.*?)\]/);
-    const errField = match ? match[1] : "";
-
-    switch (state.code) {
-      case 409:
-        setDuplicatedType(errField);
-        break;
-      case 403:
-        setDuplicatedType(errField);
-        break;
-      case 500:
-        setDuplicatedType("companyNumber");
-    }
   };
 
   const handleSendInvitation = (isSend: boolean) => {
@@ -1306,6 +1416,8 @@ function CompanyManage() {
       return;
     } else {
       try {
+        const token = returnApiToken();
+        setTrySubmitted(false);
         setIsLoadingInvite(true);
         const realmType =
           realmOptions.find((item) => item.key == formikValues.companyCategory)
@@ -1329,43 +1441,59 @@ function CompanyManage() {
             inventoryMethod: "",
             allowImgSize: 3,
             allowImgNum: 3,
-            effFrmDate: formikValues.effFrmDate,
-            effToDate: formikValues.effToDate,
-            createdBy: "admin",
-            updatedBy: "admin",
+            effFrmDate: dayjs(formikValues.effFrmDate)
+              .hour(0)
+              .minute(0)
+              .second(0)
+              .millisecond(0)
+              .utc()
+              .toISOString(),
+            effToDate: dayjs(formikValues.effToDate)
+              .hour(23)
+              .minute(59)
+              .second(59)
+              .millisecond(0)
+              .toISOString(),
+            createdBy: token.loginId,
+            updatedBy: token.loginId,
           },
           realmType
         );
 
         if (result?.data?.tenantId) {
-          console.log(result);
           setInviteId(result?.data?.tenantId);
           setInvSendModal(true);
           setInvFormModal(false);
           setIsLoadingInvite(false);
           setDuplicatedData(false);
-          setDuplicatedType("");
           setTenantIdErr(false);
         } else {
           showErrorToast(t("common.saveFailed"));
           setIsLoadingInvite(false);
         }
-      } catch (error) {
+      } catch (error: any) {
         const { state } = extractError(error);
-        console.log("state.code", state.code);
         if (state.code === STATUS_CODE[503]) {
           navigate("/maintenance");
         } else if (state.code === STATUS_CODE[403]) {
           //showErrorToast(t('common.saveFailed'))
-          getDuplicatedErrType(state);
           setDuplicatedData(true);
           setIsLoadingInvite(false);
+          setTrySubmitted(true);
+        } else if (state.code === STATUS_CODE[409]) {
+          const errorMessage = error.response.data.message;
+          if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
+            setDuplicateErrorMessage(errorMessage);
+            setDuplicatedData(true);
+            setIsLoadingInvite(false);
+            setTrySubmitted(true);
+          }
         } else {
           showErrorToast(`${t("common.saveFailed")}`);
-          getDuplicatedErrType(state);
           setDuplicatedData(true);
           setTenantIdErr(false);
           setIsLoadingInvite(false);
+          setTrySubmitted(true);
         }
       }
     }
@@ -1399,7 +1527,6 @@ function CompanyManage() {
           onClick={() => {
             setInvFormModal(true);
             setDuplicatedData(false);
-            setDuplicatedType("");
           }}
         >
           <ADD_PERSON_ICON sx={{ marginX: 1 }} /> {t("tenant.invite")}
@@ -1507,8 +1634,11 @@ function CompanyManage() {
           }}
           onSubmitForm={onInviteFormSubmit}
           isDuplicated={duplicatedData}
-          duplicatedErr={duplicatedType}
           isTenantErr={tenantIdErr}
+          setTenantIdErr={setTenantIdErr}
+          duplicateErrorMessage={duplicateErrorMessage}
+          setTrySubmitted={setTrySubmitted}
+          trySubmitted={trySubmitted}
         />
 
         <InviteModal
