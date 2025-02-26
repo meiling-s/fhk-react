@@ -326,6 +326,7 @@ const VehicleDashboard = () => {
 
   const handleSearchDriver = async (value: string) => {
     setSearchTerm(value);
+    setDriverInfo(null);
   };
 
   const debouncedSearch = useCallback(
