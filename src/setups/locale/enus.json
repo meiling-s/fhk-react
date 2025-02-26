@@ -1598,7 +1598,7 @@
     "subclassification": "Recyclable Sub-type",
     "inventory_location": "Inventory location",
     "place": "Place",
-    "po_number": "Enter PO number",
+    "po_number": "Enter Order number",
     "jo_number": "Enter JO number"
   },
   "dashboardOverview": {

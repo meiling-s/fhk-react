@@ -1598,7 +1598,7 @@
     "classification": "分类",
     "subclassification": "子分类",
     "place": "地方",
-    "po_number": "输入采购订单号",
+    "po_number": "输入采订单编号",
     "jo_number": "输入工作编号"
   },
   "dashboardOverview": {
