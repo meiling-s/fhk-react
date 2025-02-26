@@ -711,7 +711,8 @@
     "other_services": "其他服务",
     "tenantIdPlaceHolder": "输入租户 ID",
     "tenantId": "租户 ID",
-    "invalidTenantId": "租户 ID 无效"
+    "invalidTenantId": "租户 ID 无效",
+    "selectService": "选择服务"
   },
   "vehicle": {
     "vehicle": "车队",

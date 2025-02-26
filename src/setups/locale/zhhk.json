@@ -709,7 +709,8 @@
     "other_services": "其他服務",
     "tenantIdPlaceHolder": "輸入租戶 ID",
     "tenantId": "租戶 ID",
-    "invalidTenantId": "租戶 ID 無效"
+    "invalidTenantId": "租戶 ID 無效",
+    "selectService": "選擇服務"
   },
   "vehicle": {
     "vehicle": "車隊",
