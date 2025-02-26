@@ -4,7 +4,8 @@ import {
   GET_DRIVER_PICKUP_POINT,
   GET_DRIVER_DROPOFF_POINT,
   GET_DRIVER_PICKUP_WEIGHT,
-  GET_DRIVER_DROPOFF_WEIGHT
+  GET_DRIVER_DROPOFF_WEIGHT,
+  GET_DRIVER_DETAIL_LABEL
 } from '../../constants/requestsLogistic'
 import { returnApiToken } from '../../utils/utils'
 import axiosInstance from '../../constants/axiosInstance'
@@ -115,3 +116,17 @@ export const getDriverDropoffWeight = async (data: any) => {
     return null;
   }
 };
+
+export const getDriverDetailBylabel = async (table: string, labelId: string) => {
+  try {
+    
+    const response = await axiosInstance({
+      baseURL: window.baseURL.collector,
+      ...GET_DRIVER_DETAIL_LABEL(table, labelId)
+    })
+    return response
+  } catch (e) {
+    console.error('Get driver detail failed:', e)
+    return null
+  }
+}

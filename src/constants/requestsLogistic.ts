@@ -46,3 +46,8 @@ export const GET_DRIVER_DROPOFF_WEIGHT = (
   method: "post",
   url: `api/v1/${realmApiRoute}/dashboard/dropoffWeight/${tenantId}`
 });
+
+export const GET_DRIVER_DETAIL_LABEL = (table: string, labelId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/driver/${table}/labelId/${labelId}`
+})
