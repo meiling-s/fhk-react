@@ -33,6 +33,7 @@ import {
   ImageToBase64,
   extractError,
   showErrorToast,
+  isEmptyOrWhitespace,
 } from "../../../utils/utils";
 import { il_item } from "../../../components/FormComponents/CustomItemList";
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
@@ -208,7 +209,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       //before first submit, don't check the validation
       return false;
     }
-    return s == "";
+    return s == "" || isEmptyOrWhitespace(s);
   };
 
   useEffect(() => {
@@ -228,12 +229,13 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.empty,
           type: "error",
         });
-      licensePlate?.toString() == "" &&
-        tempV.push({
-          field: t("vehicle.licensePlate"),
-          problem: formErr.empty,
-          type: "error",
-        });
+      licensePlate?.toString() == "" ||
+        (isEmptyOrWhitespace(licensePlate) &&
+          tempV.push({
+            field: t("vehicle.licensePlate"),
+            problem: formErr.empty,
+            type: "error",
+          }));
       // console.log('listedPlate', listedPlate)
       listedPlate?.includes(licensePlate) &&
         tempV.push({
@@ -451,6 +453,12 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
             <Grid item>
               <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
                 {t("vehicle.vehicleType")}
+                <Typography
+                  component="span"
+                  sx={{ color: "red", marginLeft: 0.5 }}
+                >
+                  *
+                </Typography>
               </Typography>
               <FormControl
                 sx={{
@@ -490,7 +498,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 </Select>
               </FormControl>
             </Grid>
-            <CustomField label={t("vehicle.licensePlate")}>
+            <CustomField label={t("vehicle.licensePlate")} mandatory>
               <CustomTextField
                 id="licensePlate"
                 value={licensePlate}
@@ -508,6 +516,12 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
               <Box key={t("report.picture")}>
                 <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
                   {t("report.picture")}
+                  <Typography
+                    component="span"
+                    sx={{ color: "red", marginLeft: 0.5 }}
+                  >
+                    *
+                  </Typography>
                 </Typography>
                 <ImageUploading
                   multiple
