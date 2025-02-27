@@ -276,13 +276,12 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
         problem: formErr.empty,
         type: "error",
       });
-    licensePlate?.toString() == "" ||
-      (isEmptyOrWhitespace(licensePlate) &&
-        tempV.push({
-          field: t("vehicle.licensePlate"),
-          problem: formErr.empty,
-          type: "error",
-        }));
+    isEmptyOrWhitespace(licensePlate) &&
+      tempV.push({
+        field: t("vehicle.licensePlate"),
+        problem: formErr.empty,
+        type: "error",
+      });
     listedPlate?.includes(licensePlate) &&
       tempV.push({
         field: t("vehicle.licensePlate"),
@@ -301,6 +300,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
         problem: formErr.minMoreOneImgUploded,
         type: "error",
       });
+    console.log(licensePlate, "license plate");
     setValidation(tempV);
     return tempV; // Return validation errors
   };
@@ -379,7 +379,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
 
   const handleEditVehicle = async (formData: CreateVehicleForm) => {
     const validationErrors = validateData(); // Get validation errors
-
+    console.log(validationErrors, "errors");
     if (validationErrors.length > 0) {
       setValidation(validationErrors); // Update state
       setTrySubmited(true);
