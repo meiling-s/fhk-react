@@ -55,7 +55,14 @@ const RecyclingPointForm: FC<RecyclingPointFormProps> = ({
               "packaging_unit.traditional_chinese_name_placeholder"
             )}
             onChange={(event) => setTChineseName(event.target.value)}
-            error={trySubmited && checkString(tChineseName)}
+            error={
+              checkString(tChineseName) ||
+              (trySubmited &&
+                validation.some(
+                  (value) =>
+                    value.field === t("packaging_unit.traditional_chinese_name")
+                ))
+            }
           />
         </CustomField>
       </Box>
@@ -73,7 +80,14 @@ const RecyclingPointForm: FC<RecyclingPointFormProps> = ({
               "packaging_unit.simplified_chinese_name_placeholder"
             )}
             onChange={(event) => setSChineseName(event.target.value)}
-            error={trySubmited && checkString(sChineseName)}
+            error={
+              checkString(sChineseName) ||
+              (trySubmited &&
+                validation.some(
+                  (value) =>
+                    value.field === t("packaging_unit.simplified_chinese_name")
+                ))
+            }
           />
         </CustomField>
       </Box>
@@ -86,7 +100,13 @@ const RecyclingPointForm: FC<RecyclingPointFormProps> = ({
             disabled={action === "delete"}
             placeholder={t("packaging_unit.english_name_placeholder")}
             onChange={(event) => setEnglishName(event.target.value)}
-            error={trySubmited && checkString(englishName)}
+            error={
+              checkString(englishName) ||
+              (trySubmited &&
+                validation.some(
+                  (value) => value.field === t("packaging_unit.english_name")
+                ))
+            }
           />
         </CustomField>
       </Box>

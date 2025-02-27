@@ -80,6 +80,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
     setRemark("");
     setDescription("");
     setVersion(0);
+    setDuplicated(false);
   };
 
   const checkString = (s: string) => {
@@ -129,6 +130,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
       isEmptyOrWhitespace(remark)
     ) {
       setShowError(true);
+      setDuplicated(false);
     } else {
       const currencyProps = {
         monetary: monetary,
@@ -169,6 +171,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
         const errorMessage = error.response.data.message;
         if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
           setDuplicated(true);
+          setShowError(true);
         } else {
           showErrorToast(error.response.data.message);
         }
@@ -233,7 +236,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
                   setMonetary(event.target.value);
                   setDuplicated(false);
                 }}
-                error={showError && checkString(monetary)}
+                error={(showError && checkString(monetary)) || duplicated}
               />
             </CustomField>
           </Box>
