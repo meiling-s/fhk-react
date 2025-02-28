@@ -663,7 +663,6 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
                                   ...params.InputProps,
                                   sx: styles.inputProps,
                                 }}
-                                disabled={action !== "add"}
                                 error={checkString(info.vehicleTypeId)}
                               />
                             )}
