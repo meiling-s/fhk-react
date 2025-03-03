@@ -746,6 +746,7 @@ const CreateRecycleForm = ({
                   <TimePicker
                     sx={{ width: "100%" }}
                     value={formatTimePickAt(formik.values.pickupAt)}
+                    timeSteps={{ minutes: 1 }}
                     onChange={(value) => {
                       formik.setFieldValue(
                         "pickupAt",

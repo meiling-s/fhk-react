@@ -303,6 +303,7 @@ const BasicServicePicture = () => {
                 <Box sx={{ ...localstyles.timePeriodItem }}>
                   <TimePicker
                     value={startDate}
+                    timeSteps={{ minutes: 1 }}
                     onChange={(value) => setStartDate(value!!)}
                     sx={{ ...localstyles.timePicker }}
                   />
@@ -324,6 +325,7 @@ const BasicServicePicture = () => {
                 <Box sx={{ ...localstyles.timePeriodItem }}>
                   <TimePicker
                     value={endDate}
+                    timeSteps={{ minutes: 1 }}
                     onChange={(value) => setEndDate(value!!)}
                     sx={{ ...localstyles.timePicker }}
                   />
