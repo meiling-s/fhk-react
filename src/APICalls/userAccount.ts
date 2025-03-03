@@ -45,20 +45,14 @@ export const getUserAccountPaging = async (page: number, size: number) => {
 
 export const postUserAccount = async (data: any) => {
     try {
-        const response = await axiosInstance({
-            baseURL: window.baseURL.collector,
-            ...CREATE_USER_ACCOUNT,
-            data: data
-        });
-        return response;
+      const response = await axiosInstance({
+        baseURL: window.baseURL.collector,
+        ...CREATE_USER_ACCOUNT,
+        data: data
+      });
+      return response;
     } catch (e: any) {
-        if (e.response) {
-            const response = e.response.data.status
-            return response
-          } else {
-            console.error(" create User Account failed:", e);
-            return null;
-          }
+      throw (e)
     }
 };
 
