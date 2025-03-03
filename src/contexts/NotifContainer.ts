@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { createContainer } from 'unstated-next'
 import { Broadcast, Notif } from '../interfaces/notif'
 import {
@@ -9,6 +9,7 @@ import {
 import { getSelectedLanguange, returnApiToken } from '../utils/utils'
 import { Languages } from '../constants/constant'
 import dayjs from 'dayjs'
+import { useTranslation } from 'react-i18next'
 
 const Notification = () => {
   const { loginId } = returnApiToken();
@@ -18,22 +19,7 @@ const Notification = () => {
   const [broadcast, setBroadcast] = useState<Broadcast | null>(null)
   const [showBroadcast, setShowBroadcast] = useState<boolean>(true);
   const [marginTop, setMarginTop] = useState<string>('0px');
-
-  // useEffect(() => {
-  //  if(loginId){
-  //   const interval = setInterval((a) => {
-  //     setNotifList([])
-  //     setNumOfNotif(0)
-  //     getNumNotif(loginId)
-  //     getNotifList(loginId)
-  //   }, 10000);
-
-  //   return() => {
-  //     clearInterval(interval)
-  //   }
-
-  //  } 
-  // }, [loginId])
+  const {i18n} = useTranslation()
   
   useEffect(() => {
     const interval = setInterval(() => {
@@ -43,7 +29,7 @@ const Notification = () => {
     return() => {
       clearInterval(interval)
     }
-  }, [])
+  }, [i18n.language])
   useEffect(() => {
     const interval = setInterval(() => {
       setNotifList([])
@@ -124,7 +110,7 @@ const Notification = () => {
 
   useEffect(() => {
     initBroadcastMessage()
-  }, [])
+  }, [i18n.language])
 
   // useEffect(() => {
   //   if(showBroadcast){
