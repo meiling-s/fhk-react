@@ -154,6 +154,8 @@ const UserAccount: FunctionComponent = () => {
 
   const handleOnSubmitData = () => {
     setSelectedAccount(null);
+    setDrawerOpen(false);
+    fetchDataUserAccount();
   };
 
   async function fetchDataUserAccount() {

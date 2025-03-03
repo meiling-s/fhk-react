@@ -9,6 +9,7 @@ import {
 import { getSelectedLanguange, returnApiToken } from '../utils/utils'
 import { Languages } from '../constants/constant'
 import dayjs from 'dayjs'
+import { useTranslation } from 'react-i18next'
 
 const Notification = () => {
   const { loginId } = returnApiToken();
@@ -18,6 +19,7 @@ const Notification = () => {
   const [broadcast, setBroadcast] = useState<Broadcast | null>(null)
   const [showBroadcast, setShowBroadcast] = useState<boolean>(true);
   const [marginTop, setMarginTop] = useState<string>('0px');
+  const {i18n} = useTranslation()
 
   // useEffect(() => {
   //  if(loginId){
@@ -43,7 +45,7 @@ const Notification = () => {
     return() => {
       clearInterval(interval)
     }
-  }, [])
+  }, [i18n.language])
   useEffect(() => {
     const interval = setInterval(() => {
       setNotifList([])
@@ -124,7 +126,7 @@ const Notification = () => {
 
   useEffect(() => {
     initBroadcastMessage()
-  }, [])
+  }, [i18n.language])
 
   // useEffect(() => {
   //   if(showBroadcast){

@@ -222,7 +222,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     const validate = async () => {
       //do validation here
       const tempV: formValidate[] = [];
-      loginId?.toString() == "" &&
+      loginId?.toLowerCase().toString() == "" &&
         tempV.push({
           field: t("userAccount.loginName"),
           problem: formErr.empty,
@@ -401,6 +401,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         if (response) {
           onSubmitData();
           showSuccessToast(t("userAccount.successCreatedUser"));
+          resetData();
         }
       } catch (error: any) {
         const { state } = extractError(error);
