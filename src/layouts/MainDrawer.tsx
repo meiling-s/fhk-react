@@ -132,8 +132,6 @@ function MainDrawer() {
     setOpen(false);
   };
 
-  console.log(APIFunctionList, "a");
-
   var role = localStorage.getItem(localStorgeKeyName.role);
   var realm = localStorage.getItem(localStorgeKeyName.realm);
 

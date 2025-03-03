@@ -175,6 +175,7 @@ const DenialReason: FunctionComponent = () => {
 
   const initDenialReasonList = async () => {
     try {
+      setDenialReasonList([]);
       const result = await getAllDenialReason(page - 1, pageSize);
       const data = result?.data;
       if (data) {
@@ -268,6 +269,7 @@ const DenialReason: FunctionComponent = () => {
   };
 
   const initAllDenialReason = async () => {
+    setAllDenialReason([]);
     const result = await getAllDenialReason(0, 1000);
 
     const data = result?.data;
@@ -449,8 +451,9 @@ const DenialReason: FunctionComponent = () => {
   };
 
   const onSubmitData = (type: string, msg: string) => {
-    initDenialReasonList();
     if (type == "success") {
+      initDenialReasonList();
+      initAllDenialReason();
       showSuccessToast(msg);
     } else {
       showErrorToast(msg);

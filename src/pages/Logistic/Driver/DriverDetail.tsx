@@ -42,6 +42,7 @@ import { CAMERA_OUTLINE_ICON } from "../../../themes/icons";
 import {
   ImageToBase64,
   extractError,
+  isEmptyOrWhitespace,
   returnErrorMsg,
   showErrorToast,
 } from "../../../utils/utils";
@@ -168,18 +169,15 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
 
   const validate = useCallback(() => {
     const tempV: formValidate[] = [];
+
     Object.keys(formData).forEach((key) => {
-      if (key !== "photo" && formData[key] === "") {
-        const item = driverField.find((d) => d.field === key);
-        if (item) {
-          tempV.push({
-            field: item.label,
-            problem: formErr.empty,
-            type: "error",
-          });
-        }
-      }
-      if (key == "photo" && pictures.length == 0) {
+      const value = formData[key];
+
+      if (
+        key !== "photo" &&
+        typeof value === "string" &&
+        isEmptyOrWhitespace(value)
+      ) {
         const item = driverField.find((d) => d.field === key);
         if (item) {
           tempV.push({
@@ -190,9 +188,18 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
         }
       }
     });
+    if (pictures.length === 0) {
+      tempV.push({
+        field: t("driver.DriverMenu.popUp.field.uploadLinsence"),
+        problem: formErr.empty,
+        type: "error",
+      });
+    }
+
     driverDetailList.forEach((item: DriverInfo, index: number) => {
       Object.keys(item).forEach((key) => {
-        if (!item[key]) {
+        const value = item[key];
+        if (typeof value === "string" && isEmptyOrWhitespace(value)) {
           let field = "";
           switch (key) {
             case "vehicleTypeId":
@@ -207,14 +214,17 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
             default:
               break;
           }
-          tempV.push({
-            field: field,
-            problem: formErr.empty,
-            type: "error",
-          });
+          if (field) {
+            tempV.push({
+              field: field,
+              problem: formErr.empty,
+              type: "error",
+            });
+          }
         }
       });
     });
+
     setValidation(tempV);
   }, [formData, setValidation, pictures, driverField, driverDetailList]);
 
@@ -244,7 +254,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
     if (!trySubmited) {
       return false;
     }
-    return s === "";
+    return s === "" || isEmptyOrWhitespace(s);
   };
 
   const { vehicleType, imgSettings } = useContainer(CommonTypeContainer);
@@ -358,6 +368,32 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
     setDriverDetailList(initDriverDetail);
   }, [initDriverDetail, initialFormValues]);
 
+  const handleDuplicateErrorMessage = (input: string) => {
+    const replacements: { [key: string]: string } = {
+      "[tchi]": t("driver.DriverMenu.popUp.field.TchiName"),
+      "[eng]": t("driver.DriverMenu.popUp.field.engName"),
+      "[schi]": t("driver.DriverMenu.popUp.field.SchiName"),
+      "[Login ID]": t("driver.DriverMenu.popUp.field.loginName"),
+    };
+
+    // Adjust regex to correctly match all keys, including "[Company Number]"
+    const matches = input.match(/\[(tchi|eng|schi|brNo|Login ID)\]/gi);
+
+    if (matches) {
+      const tempV: formValidate[] = [];
+      matches.forEach((match) => {
+        tempV.push({
+          field: replacements[match],
+          problem: formErr.alreadyExist,
+          type: "error",
+        });
+      });
+
+      setValidation(tempV);
+    }
+    return [];
+  };
+
   const handleSubmit = async () => {
     const formValues = {
       ...formData,
@@ -370,43 +406,40 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
     const user = localStorage.getItem("username");
     if (action === "add" || action === "edit") {
       try {
-        setTrySubmited(true);
-        if (validation.length === 0) {
-          if (action === "add") {
-            const res = await createDriver({
-              ...formValues,
-              createdBy: user,
-              updatedBy: user,
-            });
-            if (res) {
-              onSubmitData(
-                "success",
-                t("driver.DriverMenu.popUp.field.createSuccessMsg")
-              );
-              resetData();
-              onClose();
-              setTrySubmited(false);
-            } else {
-              onSubmitData(
-                "error",
-                t("driver.DriverMenu.popUp.field.createFailMsg")
-              );
-              setTrySubmited(false);
-            }
-          }
-          if (action === "edit") {
-            const res = await editDriver(
-              { ...formValues, updatedBy: user },
-              driver?.driverId.toString()!
+        setTrySubmited(false);
+        // validateData();
+        if (validation.length > 0) {
+          setTrySubmited(true);
+          return;
+        }
+        if (action === "add") {
+          const res = await createDriver({
+            ...formValues,
+            createdBy: user,
+            updatedBy: user,
+          });
+          if (res) {
+            onSubmitData(
+              "success",
+              t("driver.DriverMenu.popUp.field.createSuccessMsg")
             );
-            if (res) {
-              onSubmitData(
-                "success",
-                t("driver.DriverMenu.popUp.field.editSuccessMsg")
-              );
-              onClose();
-              setTrySubmited(false);
-            }
+            resetData();
+            onClose();
+            setTrySubmited(false);
+          }
+        }
+        if (action === "edit") {
+          const res = await editDriver(
+            { ...formValues, updatedBy: user },
+            driver?.driverId.toString()!
+          );
+          if (res) {
+            onSubmitData(
+              "success",
+              t("driver.DriverMenu.popUp.field.editSuccessMsg")
+            );
+            onClose();
+            setTrySubmited(false);
           }
         }
       } catch (error: any) {
@@ -414,7 +447,15 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
         if (state.code === STATUS_CODE[503]) {
           navigate("/maintenance");
         } else if (state.code === STATUS_CODE[409]) {
-          showErrorToast(error.response.data.message);
+          console.log(error.response.data.message, "aaaa");
+          const errorMessage = error.response.data.message;
+
+          if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
+            setTrySubmited(true);
+            handleDuplicateErrorMessage(errorMessage);
+          } else {
+            showErrorToast(error.response.data.message);
+          }
         }
       }
     }
@@ -526,6 +567,12 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
                           <Card
                             sx={{
                               ...localstyles.cardImg,
+                              borderColor:
+                                trySubmited && pictures.length === 0
+                                  ? "rgb(211, 47, 47)"
+                                  : "rgb(226, 226, 226)",
+                              borderWidth: pictures.length === 0 ? 1 : 2,
+                              borderStyle: "solid",
                             }}
                           >
                             <ButtonBase
@@ -616,7 +663,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
                                   ...params.InputProps,
                                   sx: styles.inputProps,
                                 }}
-                                disabled={action !== "add"}
+                                error={checkString(info.vehicleTypeId)}
                               />
                             )}
                             onChange={(_, value) => {
@@ -648,6 +695,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
                             }}
                             value={info.licenseExp}
                             disabled={action === "delete"}
+                            error={checkString(info.licenseExp)}
                           />
                         </CustomField>
                       </Grid>
@@ -671,6 +719,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
                             }}
                             value={info.workingExp}
                             disabled={action === "delete"}
+                            error={checkString(info.workingExp)}
                           />
                         </CustomField>
                       </Grid>

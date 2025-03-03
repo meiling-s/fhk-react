@@ -82,6 +82,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     { field: string; error: string; dataTestId: string }[]
   >([]);
   const navigate = useNavigate();
+  const [duplicated, setDuplicated] = useState<boolean>(false);
 
   useEffect(() => {
     i18n.changeLanguage(currentLanguage);
@@ -113,6 +114,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     setDescription("");
     setRemark("");
     setVersion(0);
+    setDuplicated(false);
   };
 
   const checkString = (s: string) => {
@@ -240,6 +242,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         const errorMessage = error.response.data.message;
         if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
           handleDuplicateErrorMessage(errorMessage);
+          setDuplicated(true);
         } else {
           showErrorToast(error.response.data.message);
         }
@@ -263,6 +266,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         const errorMessage = error.response.data.message;
         if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
           handleDuplicateErrorMessage(errorMessage);
+          setDuplicated(true);
         } else {
           showErrorToast(error.response.data.message);
         }
@@ -328,8 +332,11 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 value={codeName}
                 disabled={action === "delete"}
                 placeholder={t("recycling_unit.enter_code")}
-                onChange={(event) => setCodeName(event.target.value)}
-                error={checkString(codeName)}
+                onChange={(event) => {
+                  setDuplicated(false);
+                  setCodeName(event.target.value);
+                }}
+                error={checkString(codeName) || duplicated}
                 dataTestId="astd-code-form-name-input-field-1649"
               />
             </CustomField>
