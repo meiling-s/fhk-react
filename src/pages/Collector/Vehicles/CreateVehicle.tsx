@@ -33,6 +33,7 @@ import {
   ImageToBase64,
   extractError,
   showErrorToast,
+  isEmptyOrWhitespace,
 } from "../../../utils/utils";
 import { il_item } from "../../../components/FormComponents/CustomItemList";
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
@@ -208,7 +209,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       //before first submit, don't check the validation
       return false;
     }
-    return s == "";
+    return s == "" || isEmptyOrWhitespace(s);
   };
 
   useEffect(() => {
@@ -228,12 +229,13 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.empty,
           type: "error",
         });
-      licensePlate?.toString() == "" &&
-        tempV.push({
-          field: t("vehicle.licensePlate"),
-          problem: formErr.empty,
-          type: "error",
-        });
+      licensePlate?.toString() == "" ||
+        (isEmptyOrWhitespace(licensePlate) &&
+          tempV.push({
+            field: t("vehicle.licensePlate"),
+            problem: formErr.empty,
+            type: "error",
+          }));
       // console.log('listedPlate', listedPlate)
       listedPlate?.includes(licensePlate) &&
         tempV.push({
@@ -258,6 +260,50 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
 
     validate();
   }, [selectedService, selectedVehicle, listedPlate, licensePlate, pictures]);
+
+  const validateData = (): formValidate[] => {
+    const tempV: formValidate[] = [];
+
+    selectedService?.toString() == "" &&
+      tempV.push({
+        field: t("vehicle.serviceType"),
+        problem: formErr.empty,
+        type: "error",
+      });
+    selectedVehicle?.id.toString() == "" &&
+      tempV.push({
+        field: t("vehicle.vehicleType"),
+        problem: formErr.empty,
+        type: "error",
+      });
+    isEmptyOrWhitespace(licensePlate) &&
+      tempV.push({
+        field: t("vehicle.licensePlate"),
+        problem: formErr.empty,
+        type: "error",
+      });
+    listedPlate?.includes(licensePlate) &&
+      tempV.push({
+        field: t("vehicle.licensePlate"),
+        problem: formErr.alreadyExist,
+        type: "error",
+      });
+    pictures.length == 0 &&
+      tempV.push({
+        field: t("vehicle.picture"),
+        problem: formErr.empty,
+        type: "error",
+      });
+    pictures.length < 2 &&
+      tempV.push({
+        field: t("vehicle.picture"),
+        problem: formErr.minMoreOneImgUploded,
+        type: "error",
+      });
+    console.log(licensePlate, "license plate");
+    setValidation(tempV);
+    return tempV; // Return validation errors
+  };
 
   const checkErrorMessage = (message: string) => {
     const tempV: formValidate[] = [];
@@ -295,6 +341,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
 
   const handleCreateVehicle = async (formData: CreateVehicleForm) => {
     try {
+      await validateData();
+
       if (validation.length === 0) {
         const result = await addVehicle(formData);
         if (result) {
@@ -330,25 +378,29 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   };
 
   const handleEditVehicle = async (formData: CreateVehicleForm) => {
-    try {
-      if (validation.length === 0) {
-        if (selectedItem != null) {
-          const result = await editVehicle(formData, selectedItem.vehicleId!);
-          if (result) {
-            onSubmitData("success", t("common.editSuccessfully"));
-            resetData();
-            handleDrawerClose();
-          }
+    const validationErrors = validateData(); // Get validation errors
+    console.log(validationErrors, "errors");
+    if (validationErrors.length > 0) {
+      setValidation(validationErrors); // Update state
+      setTrySubmited(true);
+      return;
+    }
+
+    if (selectedItem != null) {
+      try {
+        const result = await editVehicle(formData, selectedItem.vehicleId!);
+        if (result) {
+          onSubmitData("success", t("common.editSuccessfully"));
+          resetData();
+          handleDrawerClose();
         }
-      } else {
-        setTrySubmited(true);
-      }
-    } catch (error: any) {
-      const { state } = extractError(error);
-      if (state.code === STATUS_CODE[503]) {
-        navigate("/maintenance");
-      } else if (state.code === STATUS_CODE[409]) {
-        checkErrorMessage(error.response.data.message);
+      } catch (error: any) {
+        const { state } = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate("/maintenance");
+        } else if (state.code === STATUS_CODE[409]) {
+          checkErrorMessage(error.response.data.message);
+        }
       }
     }
   };
@@ -451,6 +503,12 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
             <Grid item>
               <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
                 {t("vehicle.vehicleType")}
+                <Typography
+                  component="span"
+                  sx={{ color: "red", marginLeft: 0.5 }}
+                >
+                  *
+                </Typography>
               </Typography>
               <FormControl
                 sx={{
@@ -490,7 +548,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 </Select>
               </FormControl>
             </Grid>
-            <CustomField label={t("vehicle.licensePlate")}>
+            <CustomField label={t("vehicle.licensePlate")} mandatory>
               <CustomTextField
                 id="licensePlate"
                 value={licensePlate}
@@ -508,6 +566,12 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
               <Box key={t("report.picture")}>
                 <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
                   {t("report.picture")}
+                  <Typography
+                    component="span"
+                    sx={{ color: "red", marginLeft: 0.5 }}
+                  >
+                    *
+                  </Typography>
                 </Typography>
                 <ImageUploading
                   multiple

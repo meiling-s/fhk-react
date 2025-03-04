@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ReactNode, useRef } from "react";
 import Drawer from "@mui/material/Drawer";
 import StatusCard from "./StatusCard";
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { styles } from "../constants/styles";
 import { useContainer } from "unstated-next";
 import NotifContainer from "../contexts/NotifContainer";
@@ -65,11 +65,10 @@ const HeaderSection: React.FC<HeaderProps> = ({
   };
 
   const onDeleteClick = async () => {
+    if (action === "add" || disabledSync.current || disabledDelete) return;
 
-    if(action === "add" || disabledSync.current || disabledDelete) return
-
-    disabledSync.current = true
-    setDisabledDelete(true)
+    disabledSync.current = true;
+    setDisabledDelete(true);
 
     try {
       if (onDelete) await onDelete();
@@ -81,19 +80,18 @@ const HeaderSection: React.FC<HeaderProps> = ({
   };
 
   const onSubmitClick = async () => {
+    if (action === "delete" || disabledSync.current || disabledSubmit) return;
 
-    if(action === "delete" || disabledSync.current || disabledSubmit) return
-
-    disabledSync.current = true
-    setDisabledSubmit(true)
+    disabledSync.current = true;
+    setDisabledSubmit(true);
 
     try {
-      if(onSubmit) await onSubmit();
+      if (onSubmit) await onSubmit();
     } finally {
       disabledSync.current = false;
       setDisabledSubmit(false);
     }
-  }
+  };
 
   return (
     <div className="header-section">
@@ -199,38 +197,36 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
     <Drawer
       open={isOpen}
       onClose={(_, reason) => {
-        action != "delete" && useConfirmModal
+        action !== "delete" && useConfirmModal
           ? reason === "backdropClick" && setOpenConfirmModal(true)
           : handleClose();
       }}
       anchor={anchor}
-      variant={"temporary"}
+      variant="temporary"
       sx={{
         "& .MuiDrawer-paper": {
           marginTop: `${marginTop}`,
-          width: width,
+          width: width || "700px", // Ensure width is set properly
+          maxHeight: `calc(100vh - ${marginTop})`, // Prevent it from going off-screen
+          overflowY: "auto", // Allow scrolling
         },
       }}
     >
-      <div
-        className={`border-b-[1px] border-grey-line h-full ${
-          isOpen
-            ? `${width ? `md:w-full` : `w-[700px]`} w-[100vw] mt-[${marginTop}]`
-            : "hidden"
-        }`}
-      >
-        {showHeader ? (
+      <div className="border-b-[1px] border-grey-line h-full">
+        {showHeader && (
           <div className="header">
             <HeaderSection {...headerProps} action={action} />
           </div>
-        ) : null}
+        )}
 
-        <div className="">{children}</div>
+        {/* Ensure the content scrolls when needed */}
+        <Box sx={{ overflowY: "auto", maxHeight: "calc(100vh - 150px)" }}>
+          {children}
+        </Box>
+
         <ConfirmModal
           isOpen={openConfirmModal && useConfirmModal}
-          onConfirm={() => {
-            handleClose();
-          }}
+          onConfirm={handleClose}
           onCancel={() => setOpenConfirmModal(false)}
         />
       </div>

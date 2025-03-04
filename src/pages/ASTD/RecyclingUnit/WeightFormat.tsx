@@ -392,7 +392,14 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                   "packaging_unit.traditional_chinese_name_placeholder"
                 )}
                 onChange={(event) => setTChineseName(event.target.value)}
-                error={checkString(tChineseName)}
+                error={
+                  checkString(tChineseName) ||
+                  (trySubmited &&
+                    validation.some(
+                      (value) =>
+                        value.field === t(`common.traditionalChineseName`)
+                    ))
+                }
                 dataTestId="astd-weight-form-tc-input-field-2894"
               />
             </CustomField>
@@ -410,7 +417,14 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                   "packaging_unit.simplified_chinese_name_placeholder"
                 )}
                 onChange={(event) => setSChineseName(event.target.value)}
-                error={checkString(sChineseName)}
+                error={
+                  checkString(sChineseName) ||
+                  (trySubmited &&
+                    validation.some(
+                      (value) =>
+                        value.field === t(`common.simplifiedChineseName`)
+                    ))
+                }
                 dataTestId="astd-weight-form-sc-input-field-7938"
               />
             </CustomField>
@@ -423,7 +437,13 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                 disabled={action === "delete"}
                 placeholder={t("packaging_unit.english_name_placeholder")}
                 onChange={(event) => setEnglishName(event.target.value)}
-                error={checkString(englishName)}
+                error={
+                  checkString(englishName) ||
+                  (trySubmited &&
+                    validation.some(
+                      (value) => value.field === t(`common.englishName`)
+                    ))
+                }
                 dataTestId="astd-weight-form-en-input-field-9676"
               />
             </CustomField>
