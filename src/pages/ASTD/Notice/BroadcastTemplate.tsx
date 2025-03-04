@@ -67,6 +67,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({
     content: { status: false, message: "" },
     lang: { status: false, message: "" },
     title: { status: false, message: "" },
+    date: { status: false, message: "" },
   });
   const userRole: string = localStorage.getItem("userRole") || "";
   const themeColor: string = getThemeColorRole(userRole);
@@ -191,6 +192,13 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({
   }, []);
 
   useEffect(() => {
+    const startDate = notifTemplate.effFromDate
+      ? dayjs(notifTemplate.effFromDate)
+      : null;
+    const endDate = notifTemplate.effToDate
+      ? dayjs(notifTemplate.effToDate)
+      : null;
+
     if (notifTemplate.content === "") {
       setErrors((prev) => {
         return {
@@ -206,7 +214,78 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({
         };
       });
     }
-  }, [notifTemplate.content, notifTemplate.lang]);
+    if (!startDate || !startDate.isValid()) {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          date: { status: true, message: t("form.error.isInWrongFormat") },
+        };
+      });
+    } else if (startDate.year() < 1900) {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          date: { status: true, message: t("form.error.isInWrongFormat") },
+        };
+      });
+    } else {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          date: { status: false, message: "" },
+        };
+      });
+    }
+
+    if (!endDate || !endDate.isValid()) {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          date: { status: true, message: t("form.error.isInWrongFormat") },
+        };
+      });
+    } else if (endDate.year() > 2099) {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          date: { status: true, message: t("form.error.isInWrongFormat") },
+        };
+      });
+    } else {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          date: { status: false, message: "" },
+        };
+      });
+    }
+
+    if (startDate && endDate) {
+      if (startDate.isAfter(endDate)) {
+        setErrors((prev) => {
+          return {
+            ...prev,
+            date: {
+              status: true,
+              message: t("form.error.startDateBehindEndDate"),
+            },
+          };
+        });
+      }
+    } else {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          date: { status: false, message: "" },
+        };
+      });
+    }
+  }, [
+    notifTemplate.content,
+    notifTemplate.lang,
+    notifTemplate.effFromDate,
+    notifTemplate.effToDate,
+  ]);
 
   const onSubmitUpdateTemplate = async () => {
     if (errors.lang.status || errors.content.status || errors.title.status) {
@@ -455,41 +534,50 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({
           </Grid>
 
           {realm === Realm.astd && (
-            <Grid display={"flex"} direction={"row"} rowGap={1}>
-              <Grid
-                display={"flex"}
-                direction={"column"}
-                rowGap={1}
-                style={{ width: "180px" }}
-              >
-                <Typography style={{ fontSize: "13px", color: "#ACACAC" }}>
-                  {t("notification.modify_template.broadcast.start_valid_date")}
-                </Typography>
-                <DatePicker
-                  value={dayjs(notifTemplate.effFromDate)}
-                  sx={localstyles.datePicker(false)}
-                  maxDate={dayjs(notifTemplate.effToDate)}
-                  onChange={(event) => onChangeDate(event, "effFromDate")}
-                />
-              </Grid>
+            <>
+              <Grid display={"flex"} direction={"row"} rowGap={1}>
+                <Grid
+                  display={"flex"}
+                  direction={"column"}
+                  rowGap={1}
+                  style={{ width: "180px" }}
+                >
+                  <Typography style={{ fontSize: "13px", color: "#ACACAC" }}>
+                    {t(
+                      "notification.modify_template.broadcast.start_valid_date"
+                    )}
+                  </Typography>
+                  <DatePicker
+                    value={dayjs(notifTemplate.effFromDate)}
+                    sx={localstyles.datePicker(false)}
+                    maxDate={dayjs(notifTemplate.effToDate)}
+                    onChange={(event) => onChangeDate(event, "effFromDate")}
+                  />
+                </Grid>
 
-              <Grid
-                display={"flex"}
-                direction={"column"}
-                rowGap={1}
-                style={{ width: "180px" }}
-              >
-                <Typography style={{ fontSize: "13px", color: "#ACACAC" }}>
-                  {t("notification.modify_template.broadcast.end_valid_date")}
-                </Typography>
-                <DatePicker
-                  value={dayjs(notifTemplate.effToDate)}
-                  sx={localstyles.datePicker(false)}
-                  minDate={dayjs(notifTemplate.effFromDate)}
-                  onChange={(event) => onChangeDate(event, "effToDate")}
-                />
+                <Grid
+                  display={"flex"}
+                  direction={"column"}
+                  rowGap={1}
+                  style={{ width: "180px" }}
+                >
+                  <Typography style={{ fontSize: "13px", color: "#ACACAC" }}>
+                    {t("notification.modify_template.broadcast.end_valid_date")}
+                  </Typography>
+                  <DatePicker
+                    value={dayjs(notifTemplate.effToDate)}
+                    sx={localstyles.datePicker(false)}
+                    minDate={dayjs(notifTemplate.effFromDate)}
+                    onChange={(event) => onChangeDate(event, "effToDate")}
+                  />
+                </Grid>
               </Grid>
-            </Grid>
+              <Typography
+                style={{ fontSize: "13px", color: "red", fontWeight: "500" }}
+              >
+                {errors.date ? errors.date.message : ""}
+              </Typography>
+            </>
           )}
 
           {/* <Grid display={'flex'} justifyContent={'left'} direction={'column'} rowGap={1}>
@@ -594,7 +682,8 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({
               disabled={
                 errors.content.status ||
                 errors.lang.status ||
-                errors.title.status
+                errors.title.status ||
+                errors.date.status
               }
               onClick={onSubmitUpdateTemplate}
               sx={{

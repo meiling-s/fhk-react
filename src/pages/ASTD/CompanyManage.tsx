@@ -744,15 +744,11 @@ function InviteForm({
       }
     }
 
-    console.log(formik.values, "values");
-
     formik.setFormikState((prevState) => ({
       ...prevState,
       errors: errors,
       touched: touchedFields,
     }));
-
-    console.log(errors, "errors");
 
     if (Object.keys(errors).length > 0) {
       setTrySubmitted(true);
