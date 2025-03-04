@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { createContainer } from 'unstated-next'
 import { Broadcast, Notif } from '../interfaces/notif'
 import {
@@ -20,22 +20,6 @@ const Notification = () => {
   const [showBroadcast, setShowBroadcast] = useState<boolean>(true);
   const [marginTop, setMarginTop] = useState<string>('0px');
   const {i18n} = useTranslation()
-
-  // useEffect(() => {
-  //  if(loginId){
-  //   const interval = setInterval((a) => {
-  //     setNotifList([])
-  //     setNumOfNotif(0)
-  //     getNumNotif(loginId)
-  //     getNotifList(loginId)
-  //   }, 10000);
-
-  //   return() => {
-  //     clearInterval(interval)
-  //   }
-
-  //  } 
-  // }, [loginId])
   
   useEffect(() => {
     const interval = setInterval(() => {
@@ -81,48 +65,49 @@ const Notification = () => {
   }
 
   const initBroadcastMessage = async () => {
-    const result = await getBroadcastMessage()
-      if (result?.length >= 1) {
-        let broadcast: Broadcast = {}
-        for(let message of result){
-          const isBefore = dayjs().isBefore(message.effToDate, 'day');
-          const isSame = dayjs().isSame(message.effToDate, 'day');
-          if(isSame || isBefore){
-            broadcast.effFromDate = message.effFromDate;
-            broadcast.effToDate = message.effToDate;
+    const result = await getBroadcastMessage();
+    if (result?.length) {
+        let broadcast: Partial<Broadcast> = {};
+        let availableLanguages: Set<string> = new Set();
 
-            switch (message.lang) {
-              case getSelectedLanguange(Languages.ZHCH):
-                broadcast.title_schi = message.title;
-                broadcast.content_schi = message.content;
-                break;
-              case getSelectedLanguange(Languages.ZHHK):
-                broadcast.title_tchi = message.title;
-                broadcast.content_tchi = message.content;
-                break;
-              default:
-                broadcast.title_enus = message.title;
-                broadcast.content_enus = message.content;
-                break;
+        for (let message of result) {
+            const isValid = dayjs().isSameOrBefore(message.effToDate, 'day');
+            if (isValid) {
+                availableLanguages.add(message.lang);
+                broadcast.effFromDate = message.effFromDate;
+                broadcast.effToDate = message.effToDate;
+
+                switch (message.lang) {
+                    case getSelectedLanguange(Languages.ZHCH):
+                        broadcast.title_schi = message.title;
+                        broadcast.content_schi = message.content;
+                        break;
+                    case getSelectedLanguange(Languages.ZHHK):
+                        broadcast.title_tchi = message.title;
+                        broadcast.content_tchi = message.content;
+                        break;
+                    default:
+                        broadcast.title_enus = message.title;
+                        broadcast.content_enus = message.content;
+                        break;
+                }
             }
-          }
         }
-        
-        setBroadcast(prev => {
-          if(prev?.title_enus == broadcast?.title_enus && prev?.content_enus == broadcast?.content_enus){
-            return prev
-          } else {
-            setShowBroadcast(true)
-            setMarginTop('30px')
-            return broadcast
-          }
-        })
-      }  else {
-        setShowBroadcast(false)
-        setMarginTop('0px')
-        setBroadcast(null)
-      }
-  }
+
+        const selectedLanguage = getSelectedLanguange(i18n.language);
+        const shouldShowBroadcast = availableLanguages.has(selectedLanguage);
+
+        setBroadcast(shouldShowBroadcast ? (broadcast as Broadcast) : null);
+        setShowBroadcast(shouldShowBroadcast);
+        setMarginTop(shouldShowBroadcast ? '30px' : '0px');
+    } else {
+        setBroadcast(null);
+        setShowBroadcast(false);
+        setMarginTop('0px');
+    }
+};
+
+
 
   useEffect(() => {
     initBroadcastMessage()
