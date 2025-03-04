@@ -29,10 +29,13 @@ spec:
       env:
         - name: "NPM_MIRROR"
           value: "http://nexus-cicd.apps.ocp4.devops.fhk.hk/repository/npm-group/"
+        - name: "NPM_CONFIG_CACHE"  # Added by Ching 2025-03-03
+          value: "/tmp/npm-cache"   # Added by Ching 2025-03-03
       from:
         kind: ImageStreamTag
         name: my-local-base-nodejs:16-latest
         namespace: openshift
+      incremental: true # Added by Ching 2025-03-03
     type: Source
   successfulBuildsHistoryLimit: 5
   triggers:
