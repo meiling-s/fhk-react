@@ -251,6 +251,15 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
       .format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]");
   };
 
+  const formatUtc = (value: dayjs.Dayjs) => {
+    return dayjs(value)
+      .hour(0)
+      .minute(0)
+      .second(0)
+      .millisecond(0)
+      .format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]");
+  };
+
   const generateDateRangeLink = (reportId: string) => {
     return (
       getBaseUrl() +
@@ -285,7 +294,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   const generateDatetimeLink = (reportId: string) => {
     return (
       getBaseUrl() +
-      `api/v1/${realmApiRoute}/${reportId}/${tenantId}?frmDate=${formatUtcStartDate(
+      `api/v1/${realmApiRoute}/${reportId}/${tenantId}?frmDate=${formatUtc(
         startDate
       )}&staffId=${staffId}&language=${getSelectedLanguange(i18n.language)}`
     );
