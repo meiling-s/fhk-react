@@ -1,5 +1,17 @@
 import { useEffect, useState, FunctionComponent, useCallback } from 'react'
-import { Box, Button, Divider, Stack } from '@mui/material'
+import {
+  Box,
+  Button,
+  Divider,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Stack,
+  TextField
+} from '@mui/material'
 
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import {
@@ -103,7 +115,7 @@ const CompactorDashboard: FunctionComponent = () => {
   const [selectedDate, setSelectedDate] = useState<string>(
     dayjs().format('YYYY-MM-DD')
   )
-  const [selectedPlate, setSelectedPlate] = useState<string>('')
+  const [selectedPlate, setSelectedPlate] = useState<string>(' ')
   const [compactorProcessIn, setCompactorProcessIn] = useState<
     CompactorProcessIn[]
   >([])
@@ -336,6 +348,13 @@ const CompactorDashboard: FunctionComponent = () => {
       label: option
     }))
 
+    if (licensePlate.length === 0) {
+      options.push({
+        value: '',
+        label: t('common.noOptions')
+      })
+    }
+
     return options
   }
 
@@ -346,13 +365,13 @@ const CompactorDashboard: FunctionComponent = () => {
       field: 'currDate',
       inputType: 'date',
       width: '300px'
-    },
-    {
-      label: t('compactor.plateNumber'),
-      placeholder: t('check_in.search'),
-      field: 'plateNumber',
-      options: getOptions()
     }
+    // {
+    //   label: t('compactor.plateNumber'),
+    //   placeholder: t('check_in.search'),
+    //   field: 'plateNumber',
+    //   options: getOptions()
+    // }
   ]
 
   const handleSearch = (keyName: string, value: string) => {
@@ -362,11 +381,14 @@ const CompactorDashboard: FunctionComponent = () => {
       setCompactorProcessInItem([])
       setSelectedItem([])
       setLicensePlate([])
-    } else {
-      setCompactorProcessInItem([])
-      setSelectedItem([])
-      setSelectedPlate(value)
     }
+  }
+
+  const onChangePlate = (event: React.ChangeEvent<{ value: any }>) => {
+    let newValue = event.target.value as string
+    setCompactorProcessInItem([])
+    setSelectedItem([])
+    setSelectedPlate(newValue)
   }
 
   const selectCard = (id: number) => {
@@ -451,12 +473,61 @@ const CompactorDashboard: FunctionComponent = () => {
                     field={s.field}
                     isUseCurrDate={true}
                     inputType={s.inputType}
-                    options={s.options ?? []}
                     resetValue={true}
                     width="500px"
                     onChange={handleSearch}
                   />
                 ))}
+                <Grid item>
+                  <TextField
+                    sx={{
+                      mt: 3,
+                      m: 1,
+                      width: '450px',
+                      bgcolor: 'white',
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: '#grey'
+                        },
+                        '&:hover fieldset': {
+                          borderColor: getPrimaryColor()
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: getPrimaryColor()
+                        },
+                        '& label.Mui-focused': {
+                          color: getPrimaryColor()
+                        }
+                      }
+                    }}
+                    label={t('compactor.plateNumber')}
+                    InputLabelProps={{
+                      style: {
+                        color:
+                          licensePlate.length === 0
+                            ? '#C4C4C4'
+                            : getPrimaryColor()
+                      },
+                      focused: true
+                    }}
+                    value={selectedPlate}
+                    placeholder={t('compactor.plateNumber')}
+                    select={true}
+                    onChange={onChangePlate}
+                  >
+                    {getOptions().length > 0 ? (
+                      getOptions().map((plate) => (
+                        <MenuItem key={plate.label} value={plate.value}>
+                          {plate.label}
+                        </MenuItem>
+                      ))
+                    ) : (
+                      <MenuItem value="">
+                        <em>{t('common.noOptions')}</em>
+                      </MenuItem>
+                    )}
+                  </TextField>
+                </Grid>
               </Stack>
               <Button
                 sx={[
