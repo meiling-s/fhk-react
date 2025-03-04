@@ -574,7 +574,9 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({
               <Typography
                 style={{ fontSize: "13px", color: "red", fontWeight: "500" }}
               >
-                {errors.date ? t("form.error.startDateBehindEndDate") : ""}
+                {errors.date.status
+                  ? t("form.error.startDateBehindEndDate")
+                  : ""}
               </Typography>
             </>
           )}
