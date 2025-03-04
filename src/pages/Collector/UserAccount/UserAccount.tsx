@@ -57,6 +57,7 @@ const UserAccount: FunctionComponent = () => {
     []
   );
   const [userList, setUserList] = useState<string[]>([]);
+  const [staffIdList, setStaffIdList] = useState<string[]>([]);
   const [selectedAccount, setSelectedAccount] =
     useState<UserAccountItem | null>(null);
   const navigate = useNavigate();
@@ -153,6 +154,8 @@ const UserAccount: FunctionComponent = () => {
 
   const handleOnSubmitData = () => {
     setSelectedAccount(null);
+    setDrawerOpen(false);
+    fetchDataUserAccount();
   };
 
   async function fetchDataUserAccount() {
@@ -160,10 +163,15 @@ const UserAccount: FunctionComponent = () => {
     try {
       const result = await getUserAccountPaging(page - 1, pageSize);
       const accountlist: string[] = [];
+      const staffIdList: string[] = [];
       if (result?.data) {
         setUserAccountItems(result.data.content);
-        result.data.content.map((item: any) => accountlist.push(item.loginId));
+        result.data.content.map((item: any) => {
+          accountlist.push(item.loginId);
+          staffIdList.push(item.staffId);
+        });
         setUserList(accountlist);
+        setStaffIdList(staffIdList);
         setTotalData(result.data.totalPages);
       }
     } catch (error: any) {
@@ -421,6 +429,7 @@ const UserAccount: FunctionComponent = () => {
             onSubmitData={handleOnSubmitData}
             rowId={rowId}
             userList={userList}
+            staffIdList={staffIdList}
           />
           <ApproveRejectForgetPass
             drawerOpen={approveRejectDrawer}

@@ -452,7 +452,15 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                   "packaging_unit.traditional_chinese_name_placeholder"
                 )}
                 onChange={(event) => setTChineseName(event.target.value)}
-                error={checkString(tChineseName)}
+                error={
+                  checkString(tChineseName) ||
+                  (trySubmited &&
+                    validation.some(
+                      (value) =>
+                        value.field ===
+                        `${t("packaging_unit.traditional_chinese_name")}`
+                    ))
+                }
                 dataTestId="astd-recyclable-form-tc-input-field-5560"
               />
             </CustomField>
@@ -470,7 +478,15 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                   "packaging_unit.simplified_chinese_name_placeholder"
                 )}
                 onChange={(event) => setSChineseName(event.target.value)}
-                error={checkString(sChineseName)}
+                error={
+                  checkString(sChineseName) ||
+                  (trySubmited &&
+                    validation.some(
+                      (value) =>
+                        value.field ===
+                        `${t("packaging_unit.simplified_chinese_name")}`
+                    ))
+                }
                 dataTestId="astd-recyclable-form-sc-input-field-2575"
               />
             </CustomField>
@@ -483,7 +499,14 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 disabled={action === "delete"}
                 placeholder={t("packaging_unit.english_name_placeholder")}
                 onChange={(event) => setEnglishName(event.target.value)}
-                error={checkString(englishName)}
+                error={
+                  checkString(englishName) ||
+                  (trySubmited &&
+                    validation.some(
+                      (value) =>
+                        value.field === t("packaging_unit.english_name")
+                    ))
+                }
                 dataTestId="astd-recyclable-form-en-input-field-4031"
               />
             </CustomField>

@@ -11,6 +11,7 @@ import { formValidate } from "../../../interfaces/common";
 import { STATUS_CODE, formErr } from "../../../constants/constant";
 import {
   extractError,
+  isEmptyOrWhitespace,
   returnApiToken,
   returnErrorMsg,
 } from "../../../utils/utils";
@@ -137,33 +138,35 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       //before first submit, don't check the validation
       return false;
     }
-    return s == "";
+    return s == "" || isEmptyOrWhitespace(s);
   };
 
   useEffect(() => {
     const validate = async () => {
       //do validation here
       const tempV: formValidate[] = [];
-      roleName?.toString() == "" &&
-        tempV.push({
-          field: t("userGroup.groupName"),
-          problem: formErr.empty,
-          dataTestId: "astd-user-group-form-group-name-err-warning-3882",
-          type: "error",
-        });
+      roleName?.toString() == "" ||
+        (isEmptyOrWhitespace(roleName) &&
+          tempV.push({
+            field: t("userGroup.groupName"),
+            problem: formErr.empty,
+            dataTestId: "astd-user-group-form-group-name-err-warning-3882",
+            type: "error",
+          }));
       groupList.some((item) => item.toLowerCase() == roleName.toLowerCase()) &&
         tempV.push({
           field: t("userGroup.groupName"),
           problem: formErr.alreadyExist,
           type: "error",
         });
-      description?.toString() == "" &&
-        tempV.push({
-          field: t("userGroup.description"),
-          problem: formErr.empty,
-          dataTestId: "astd-user-group-form-desc-err-warning-1635",
-          type: "error",
-        });
+      description?.toString() == "" ||
+        (isEmptyOrWhitespace(description) &&
+          tempV.push({
+            field: t("userGroup.description"),
+            problem: formErr.empty,
+            dataTestId: "astd-user-group-form-desc-err-warning-1635",
+            type: "error",
+          }));
       functions.length == 0 &&
         tempV.push({
           field: t("userGroup.availableFeatures"),
