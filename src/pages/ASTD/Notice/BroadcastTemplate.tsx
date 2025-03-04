@@ -152,7 +152,6 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({
   const getDetailTemplate = async () => {
     try {
       const notif = await getDetailNotifTemplate(templateId, realmApiRoute);
-      console.log("notif", notif);
       if (notif) {
         setNotifTemplate((prev) => {
           return {
@@ -575,7 +574,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({
               <Typography
                 style={{ fontSize: "13px", color: "red", fontWeight: "500" }}
               >
-                {errors.date ? errors.date.message : ""}
+                {errors.date ? t("form.error.startDateBehindEndDate") : ""}
               </Typography>
             </>
           )}
