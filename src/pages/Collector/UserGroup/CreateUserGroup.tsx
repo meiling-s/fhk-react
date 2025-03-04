@@ -299,6 +299,13 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
         navigate("/maintenance");
+      } else if (state.code === STATUS_CODE[500]) {
+        const errorMessage = error.response.data.message;
+
+        if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
+          setTrySubmited(true);
+          handleDuplicateErrorMessage(errorMessage);
+        }
       }
     }
   };
