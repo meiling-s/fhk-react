@@ -389,7 +389,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({
             <Typography
               style={{ fontSize: "16px", color: "black", fontWeight: "700" }}
             >
-              Boardcast
+              Broadcast
             </Typography>
           </Grid>
 
