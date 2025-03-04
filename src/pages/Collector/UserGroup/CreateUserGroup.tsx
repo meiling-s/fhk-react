@@ -228,6 +228,29 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     }
   };
 
+  const handleDuplicateErrorMessage = (input: string) => {
+    const replacements: { [key: string]: string } = {
+      "[User Group Name]": t("userGroup.groupName"),
+    };
+
+    const matches = input.match(/\[(User Group Name)\]/g);
+
+    if (matches) {
+      const tempV: formValidate[] = [];
+      matches.map((match) => {
+        tempV.push({
+          field: replacements[match],
+          problem: formErr.alreadyExist,
+          type: "error",
+        });
+      });
+      setValidation(tempV);
+      return tempV.length === 0;
+    }
+
+    return [];
+  };
+
   const handleCreateUserGroup = async (formData: CreateUserGroupProps) => {
     try {
       if (validation.length === 0) {
@@ -236,8 +259,6 @@ const CreateUserGroup: FunctionComponent<Props> = ({
           onSubmitData("success", t("notify.successCreated"));
           resetData();
           handleDrawerClose();
-        } else {
-          onSubmitData("error", t("notify.errorCreated"));
         }
       } else {
         setTrySubmited(true);
@@ -246,6 +267,13 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
         navigate("/maintenance");
+      } else if (state.code === STATUS_CODE[500]) {
+        const errorMessage = error.response.data.message;
+
+        if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
+          setTrySubmited(true);
+          handleDuplicateErrorMessage(errorMessage);
+        }
       }
     }
   };
@@ -358,7 +386,14 @@ const CreateUserGroup: FunctionComponent<Props> = ({
                 disabled={action === "delete"}
                 placeholder={t("userGroup.pleaseEnterName")}
                 onChange={(event) => setRoleName(event.target.value)}
-                error={checkString(roleName) || isUserExisting()}
+                error={
+                  checkString(roleName) ||
+                  isUserExisting() ||
+                  (trySubmited &&
+                    validation.some(
+                      (value) => value.field === t("userGroup.groupName")
+                    ))
+                }
               />
             </CustomField>
             <CustomField label={t("userGroup.description")} mandatory>
