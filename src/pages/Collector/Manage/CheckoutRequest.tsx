@@ -744,12 +744,12 @@ const CheckoutRequest: FunctionComponent = () => {
               item.senderAddr = choosenPicoDetail.senderAddr;
             }
           }
-          if (item?.logisticId) {
+          if (!isNaN(item?.logisticId)) {
             const companyName = getCompanyNameById(Number(item?.logisticId));
             item.logisticName =
               companyName !== "" ? companyName : item.logisticName;
           }
-          if (item.receiverId) {
+          if (!isNaN(item.receiverId)) {
             const companyName = await getReceiverCompany(item.receiverId);
             item.receiverName =
               item.receiverId !== "" ? companyName : item.receiverName;
