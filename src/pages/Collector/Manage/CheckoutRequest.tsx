@@ -58,7 +58,6 @@ import {
   showErrorToast,
 } from "../../../utils/utils";
 import CustomButton from "../../../components/FormComponents/CustomButton";
-import i18n from "../../../setups/i18n";
 import { useContainer } from "unstated-next";
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import CircularLoading from "../../../components/CircularLoading";
@@ -387,7 +386,7 @@ type CompanyNameLanguages = {
 };
 
 const CheckoutRequest: FunctionComponent = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
   const titlePage = t("check_out.request_check_out");
@@ -438,11 +437,8 @@ const CheckoutRequest: FunctionComponent = () => {
           case "zhch":
             reasonName = "reasonNameSchi";
             break;
-
-            reasonName = "reasonNameTchi";
-            break;
           default:
-            reasonName = "reasonNameEng";
+            reasonName = "reasonNameTchi";
             break;
         }
         result?.data?.content.map(
@@ -451,6 +447,7 @@ const CheckoutRequest: FunctionComponent = () => {
             item.name = item[reasonName];
           }
         );
+        console.log(reasonList, "reasonlist");
         setReasonList(result?.data?.content);
       }
     } catch (error: any) {
