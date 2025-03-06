@@ -304,8 +304,8 @@ const WarehouseDashboard: FunctionComponent = () => {
   };
 
   const mappingName = (typeId: string) => {
-    if (typeId.startsWith("RS") || typeId.startsWith("RSC")) {
-      const isRecycType = typeId.startsWith("RS") && !typeId.startsWith("RSC");
+    if (typeId.startsWith("RC") || typeId.startsWith("RSC")) {
+      const isRecycType = typeId.startsWith("RC") && !typeId.startsWith("RSC");
       const isRecycSubType = typeId.startsWith("RSC");
 
       if (isRecycType) {

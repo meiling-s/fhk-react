@@ -74,8 +74,10 @@ const HeaderSection: React.FC<HeaderProps> = ({
       if (onDelete) await onDelete();
       onDeleteModal();
     } finally {
-      disabledSync.current = false;
-      setDisabledSubmit(false);
+      setTimeout(() => {
+        disabledSync.current = false;
+        setDisabledDelete(false);
+      }, 500);
     }
   };
 
@@ -88,8 +90,10 @@ const HeaderSection: React.FC<HeaderProps> = ({
     try {
       if (onSubmit) await onSubmit();
     } finally {
-      disabledSync.current = false;
-      setDisabledSubmit(false);
+      setTimeout(() => {
+        disabledSync.current = false;
+        setDisabledSubmit(false);
+      }, 500);
     }
   };
 
