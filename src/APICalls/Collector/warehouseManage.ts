@@ -27,13 +27,17 @@ export const getAllCheckInRequests = async (
 ) => {
   try {
     const token = returnApiToken()
+    let realmBaseURL = warehouseAPI.baseURL
+    if(token.realmApiRoute.includes("manufacturer")){
+      realmBaseURL = window.baseURL.manufacturer
+    }
     let response
     response = await axiosInstance({
       ...NEW_GET_ALL_HEADER_CHECKIN_REQUESTS(
         token.realmApiRoute,
         token.decodeKeycloack
       ),
-      baseURL: warehouseAPI.baseURL,
+      baseURL: realmBaseURL,
       params: {
         page: page,
         size: size,
@@ -53,14 +57,17 @@ export const getAllCheckInRequests = async (
 export const getDetailCheckInRequests = async (checkinId: number) => {
   try {
     const token = returnApiToken()
-
+    let realmBaseURL = warehouseAPI.baseURL
+    if(token.realmApiRoute.includes("manufacturer")){
+      realmBaseURL = window.baseURL.manufacturer
+    }
     const response = await axiosInstance({
       ...NEW_GET_DETAIL_CHECKIN_REQUESTS(
         token.realmApiRoute,
         token.decodeKeycloack,
         checkinId
       ),
-      baseURL: warehouseAPI.baseURL
+      baseURL: realmBaseURL
     })
     return response
   } catch (e: any) {
@@ -75,7 +82,10 @@ export const updateCheckin = async (
   picoDtlId: number
 ) => {
   const token = returnApiToken()
-
+  let realmBaseURL = warehouseAPI.baseURL
+  if(token.realmApiRoute.includes("manufacturer")){
+    realmBaseURL = window.baseURL.manufacturer
+  }
   try {
     const response = await axiosInstance({
       ...UPDATE_CHECK_IN(
@@ -84,7 +94,7 @@ export const updateCheckin = async (
         token.decodeKeycloack,
         picoDtlId
       ),
-      baseURL: warehouseAPI.baseURL,
+      baseURL: realmBaseURL,
       data: data,
       headers: {
         AuthToken: token.authToken
@@ -102,7 +112,10 @@ export const updateCheckinStatus = async (
   data: updateStatus
 ) => {
   const token = returnApiToken()
-
+  let realmBaseURL = warehouseAPI.baseURL
+  if(token.realmApiRoute.includes("manufacturer")){
+    realmBaseURL = window.baseURL.manufacturer
+  }
   try {
     const response = await axiosInstance({
       ...UPDATE_CHECK_IN_STATUS(
@@ -110,7 +123,7 @@ export const updateCheckinStatus = async (
         chkInId,
         token.decodeKeycloack
       ),
-      baseURL: warehouseAPI.baseURL,
+      baseURL: realmBaseURL,
       data: data,
       headers: {
         AuthToken: token.authToken
@@ -136,13 +149,18 @@ export const getCheckinReasons = async () => {
       account: 4
     }
 
+    let realmBaseURL = warehouseAPI.baseURL
+    if(token.realmApiRoute.includes("manufacturer")){
+      realmBaseURL = window.baseURL.manufacturer
+    }
+
     const response = await axiosInstance({
       ...GET_CHECKIN_REASON(
         token.realmApiRoute,
         token.tenantId,
         functId[keyRole]
       ),
-      baseURL: warehouseAPI.baseURL
+      baseURL: realmBaseURL
     })
     return response
   } catch (e) {
@@ -162,7 +180,7 @@ export const getInternalRequest = async (
       ...GET_INTERNAL_TRANSFER_REQUEST(
         token.tenantId
       ),
-      baseURL: warehouseAPI.baseURL,
+      baseURL: window.baseURL.administrator,
       params: {
         page: page,
         size: size,
@@ -187,7 +205,7 @@ export const updateInternalRequestStatus = async (
       ...UPDATE_INTERNAL_TRANSFER_REQUEST_STATUS(
         token.tenantId
       ),
-      baseURL: warehouseAPI.baseURL,
+      baseURL: window.baseURL.administrator,
       data: item
     })
     return response

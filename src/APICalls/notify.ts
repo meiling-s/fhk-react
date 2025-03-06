@@ -161,7 +161,7 @@ export const getBroadcastMessage = async () => {
     const token = returnApiToken()
     const response = await axiosInstance({
       ...GET_BROADCAST_MESSAGE(),
-      baseURL: administratorAPI.baseURL
+      baseURL: window.baseURL.account
     })
     return response.data
   } catch (e) {

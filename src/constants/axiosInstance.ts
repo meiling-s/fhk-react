@@ -11,7 +11,7 @@ let expiredAccessToken = false
 
 const axiosInstance = axios.create()
 const refreshTokenAxiosInstance = axios.create({
-  baseURL: window.baseURL?.account
+  baseURL: window.baseURL?.administrator
 })
 
 export const cleanAxiosInstance = axios.create()

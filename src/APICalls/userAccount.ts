@@ -29,7 +29,7 @@ export const getUserAccountPaging = async (page: number, size: number) => {
     const token = returnApiToken()
       try {
           const response = await axiosInstance({
-              baseURL: window.baseURL.collector,
+              baseURL: window.baseURL.administrator,
               ...GET_USER_ACCOUNT_LIST_PAGING(token.tenantId),
               params: {
                 page,

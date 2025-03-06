@@ -77,7 +77,7 @@ export const getLoginIdList = async () => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.administrator,
       ...GET_LOGINID_LIST(token.tenantId),
       params: {
         page: 0,

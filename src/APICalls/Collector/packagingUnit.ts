@@ -7,8 +7,20 @@ import { CreatePackagingUnit } from "../../interfaces/packagingUnit";
 export const getAllPackagingUnit = async (page: number, size: number) => {
     try {
       const token = returnApiToken()
+      let realmBaseURL = window.baseURL.account
+      if(token.realmApiRoute.includes("collectors")){
+        realmBaseURL = window.baseURL.collector
+      }
+      else if(token.realmApiRoute.includes("manufacturer")){
+        realmBaseURL = window.baseURL.manufacturer
+      }
+      else if(token.realmApiRoute.includes("logistic")){
+        realmBaseURL = window.baseURL.logistic
+      }
+
+
       const response = await axiosInstance({
-        baseURL: window.baseURL.logistic,
+        baseURL: realmBaseURL,
         ...GET_PACKAGING_LIST(token.realmApiRoute, token.tenantId),
         params: {
           page: page,
@@ -61,7 +73,7 @@ export const getFullPackagingUnit = async (page: number, size: number, tenantId:
   try {
     const token = returnApiToken()
       const response = await axiosInstance({
-        baseURL: window.baseURL.logistic,
+        baseURL: window.baseURL.collector,
         ...GET_FULL_PACKAGING_LIST(token.realmApiRoute, tenantId),
         params: {
           page: page,
