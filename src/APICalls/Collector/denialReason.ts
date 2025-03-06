@@ -14,8 +14,19 @@ export const getAllDenialReason = async (page: number, size: number) => {
   try {
     const token = returnApiToken()
 
+    let realmBaseURL = window.baseURL.account
+    if(token.realmApiRoute.includes("collectors")){
+      realmBaseURL = window.baseURL.collector
+    }
+    else if(token.realmApiRoute.includes("manufacturer")){
+      realmBaseURL = window.baseURL.manufacturer
+    }
+    else if(token.realmApiRoute.includes("logistic")){
+      realmBaseURL = window.baseURL.logistic
+    }
+
     const response = await axiosInstance({
-      baseURL: window.baseURL.collector,
+      baseURL: realmBaseURL,
       ...GET_DENIAL_REASON(token.realmApiRoute, token.tenantId),
       params: {
         page: page,
@@ -42,8 +53,19 @@ export const getAllDenialReasonByFunctionId = async (
   try {
     const token = returnApiToken()
 
+    let realmBaseURL = window.baseURL.account
+    if(token.realmApiRoute.includes("collectors")){
+      realmBaseURL = window.baseURL.collector
+    }
+    else if(token.realmApiRoute.includes("manufacturer")){
+      realmBaseURL = window.baseURL.manufacturer
+    }
+    else if(token.realmApiRoute.includes("logistic")){
+      realmBaseURL = window.baseURL.logistic
+    }
+
     const response = await axiosInstance({
-      baseURL: window.baseURL.collector,
+      baseURL:realmBaseURL,
       ...GET_DENIAL_REASON_BY_FUNCTION_ID(
         token.realmApiRoute,
         token.tenantId,
@@ -74,8 +96,19 @@ export const getReasonTenant = async (
   try {
     const token = returnApiToken()
 
+    let realmBaseURL = window.baseURL.account
+    if(token.realmApiRoute.includes("collectors")){
+      realmBaseURL = window.baseURL.collector
+    }
+    else if(token.realmApiRoute.includes("manufacturer")){
+      realmBaseURL = window.baseURL.manufacturer
+    }
+    else if(token.realmApiRoute.includes("logistic")){
+      realmBaseURL = window.baseURL.logistic
+    }
+
     const response = await axiosInstance({
-      baseURL: window.baseURL.collector,
+      baseURL: realmBaseURL,
       ...GET_DENIAL_REASON_BY_FUNCTION_ID('account', tenantId, functionId),
       params: {
         page: page,
@@ -98,8 +131,19 @@ export const createDenialReason = async (data: CreateDenialReason) => {
   try {
     const token = returnApiToken()
 
+    let realmBaseURL = window.baseURL.account
+    if(token.realmApiRoute.includes("collectors")){
+      realmBaseURL = window.baseURL.collector
+    }
+    else if(token.realmApiRoute.includes("manufacturer")){
+      realmBaseURL = window.baseURL.manufacturer
+    }
+    else if(token.realmApiRoute.includes("logistic")){
+      realmBaseURL = window.baseURL.logistic
+    }
+
     const response = await axiosInstance({
-      baseURL: window.baseURL.collector,
+      baseURL: realmBaseURL,
       ...CREATE_DENIAL_REASON(token.realmApiRoute),
       params: {
         tenantId: data.tenantId,
@@ -132,8 +176,20 @@ export const editDenialReason = async (
 ) => {
   try {
     const token = returnApiToken()
+
+    let realmBaseURL = window.baseURL.account
+    if(token.realmApiRoute.includes("collectors")){
+      realmBaseURL = window.baseURL.collector
+    }
+    else if(token.realmApiRoute.includes("manufacturer")){
+      realmBaseURL = window.baseURL.manufacturer
+    }
+    else if(token.realmApiRoute.includes("logistic")){
+      realmBaseURL = window.baseURL.logistic
+    }
+
     const response = await axiosInstance({
-      baseURL: window.baseURL.collector,
+      baseURL: realmBaseURL,
       ...UPDATE_DENIAL_REASON(token.realmApiRoute, token.tenantId, reasonId),
       data: data
     })

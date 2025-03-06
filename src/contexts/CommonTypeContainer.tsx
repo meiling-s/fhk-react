@@ -251,7 +251,7 @@ const CommonType = () => {
   const getProcessList = async () => {
     try {
       const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.administrator,
         ...GET_PROCESS_LIST,
       });
 
@@ -296,7 +296,7 @@ const CommonType = () => {
     try {
       var response = await axiosInstance({
         ...GET_CONTRACT_LOGISTIC(token.tenantId),
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.logistic,
       });
       const contract = response.data.content;
       setContractLogistic(contract);

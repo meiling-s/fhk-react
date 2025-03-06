@@ -5,6 +5,7 @@ window.baseURL = {
     //logistic: 'http://10.166.22.250/',
     //manufacturer: 'http://10.166.22.250/',
     //customer: 'http://10.166.22.250/',
+    //factory: 'http://10.166.22.250/',
     //socif: ''
     account: 'https://uat.greenhoopapp.com/',
     administrator: 'https://uat.greenhoopapp.com/',
@@ -12,12 +13,15 @@ window.baseURL = {
     logistic: 'https://uat.greenhoopapp.com/',
     manufacturer: 'https://uat.greenhoopapp.com/',
     customer: 'https://uat.greenhoopapp.com/',
+    factory: 'https://uat.greenhoopapp.com/',
     socif: 'https://360-dev.socif.co/'
-    //account: 'https://www.greenhoopapp.com/',
-    //administrator: 'https://www.greenhoopapp.com/',
-    //collector: 'https://www.greenhoopapp.com/',
-    //logistic: 'https://www.greenhoopapp.com/',
-    //manufacturer: 'https://www.greenhoopapp.com/',
-    //customer: 'https://www.greenhoopapp.com/',
-    //socif: 'https://360.socif.co/'
+
+    // account: 'http://localhost:8001/',
+    // administrator: 'http://localhost:8002/',
+    // collector: 'http://localhost:8003/',
+    // logistic: 'http://localhost:8004/',
+    // manufacturer: 'http://localhost:8005/',
+    // customer: 'http://localhost:8006/',
+    // factory: 'http://localhost:8007/',
+    // socif: 'http://360-dev.socif.co/'
 }

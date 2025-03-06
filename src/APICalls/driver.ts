@@ -7,7 +7,7 @@ export const getDriverList = async (page: number, size: number, company?: string
     try {
         const token = returnApiToken()
         return await axiosInstance({
-            baseURL: window.baseURL.collector,
+            baseURL: window.baseURL.logistic,
             ...GET_DRIVER_LIST(company? company : token.decodeKeycloack),
             params: {
                 page,
@@ -24,7 +24,7 @@ export const createDriver = async (data: any) => {
     try {
         const token = returnApiToken()
         return await axiosInstance({
-            baseURL: window.baseURL.collector,
+            baseURL: window.baseURL.logistic,
             ...CREATE_DRIVER(token.decodeKeycloack),
             data
         })
@@ -37,7 +37,7 @@ export const editDriver = async (data: any,driverId: string) => {
     try {
         const token = returnApiToken()
         return await axiosInstance({
-            baseURL: window.baseURL.collector,
+            baseURL: window.baseURL.logistic,
             ...EDIT_DRIVER(token.decodeKeycloack,driverId),
             data
         })
@@ -50,7 +50,7 @@ export const deleteDriver = async (data: any,driverId: string) => {
     try {
         const token = returnApiToken()
         return await axiosInstance({
-            baseURL: window.baseURL.collector,
+            baseURL: window.baseURL.logistic,
             ...DELETE_DRIVER(token.decodeKeycloack,driverId),
             data
         })

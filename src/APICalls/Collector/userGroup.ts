@@ -13,7 +13,7 @@ export const getUserAccount = async () => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.administrator,
       ...GET_USER_ACCOUNT(token.loginId),
       headers: {
         AuthToken: token.authToken
@@ -32,7 +32,7 @@ export const getUserAccountById = async (loginId: string) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.administrator,
       ...GET_USER_ACCOUNT(loginId),
       headers: {
         AuthToken: token.authToken
@@ -53,7 +53,7 @@ export const getAllUserGroup = async (page: number, size: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.administrator,
       ...GET_USER_GROUP(token.tenantId),
       headers: {
         AuthToken: token.authToken
@@ -78,7 +78,7 @@ export const getAllFunction = async () => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.administrator,
       // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
       ...GET_FUNCTION(),
       headers: {
@@ -99,7 +99,7 @@ export const getAllFilteredFunction = async (tenantTypeId: string) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.administrator,
       // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
       ...GET_FUNCTION_FILTERED(tenantTypeId),
       headers: {
@@ -122,7 +122,7 @@ export const createUserGroup = async (data: CreateUserGroupProps) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.administrator,
       // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
       ...CREATE_USER_GROUP(),
       data: data,
@@ -145,7 +145,7 @@ export const editUserGroup = async (data: EditUserGroupProps, groupId: number) =
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.administrator,
       ...EDIT_USER_GROUP(groupId),
       data: data,
       headers: {
@@ -167,7 +167,7 @@ export const deleteUserGroup = async (data: DeleteUserGroupProps, groupId: numbe
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.administrator,
       ...DELETE_USER_GROUP(groupId),
       data: data,
       headers: {

@@ -108,7 +108,7 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
   const fetchPublicKey = async () => {
     try {
       // const response = await fetch(`http://6d7e3a6.r20.cpolar.top/api/v1/collectors/getPublicKey`)
-      const response = await fetch(`${window.baseURL.collector}api/v1/administrator/getPublicKey`);
+      const response = await fetch(`${window.baseURL.administrator}api/v1/administrator/getPublicKey`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
