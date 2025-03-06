@@ -153,7 +153,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
             dataTestId: "astd-user-group-form-group-name-err-warning-3882",
             type: "error",
           }));
-      groupList.some((item) => item.toLowerCase() == roleName.toLowerCase()) &&
+      groupList.some((item) => item.toLowerCase() == roleName.toLowerCase().trim()) &&
         tempV.push({
           field: t("userGroup.groupName"),
           problem: formErr.alreadyExist,
@@ -183,7 +183,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
 
   const isUserExisting = () => {
     return (
-      groupList.some((item) => item.toLowerCase() == roleName.toLowerCase()) &&
+      groupList.some((item) => item.toLowerCase() == roleName.toLowerCase().trim()) &&
       trySubmited
     );
   };
@@ -207,7 +207,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       const formData: CreateUserGroupProps = {
         realm: realm,
         tenantId: token.tenantId,
-        roleName: roleName,
+        roleName: roleName.trim(),
         description: description,
         functions: updatedFunctions,
         createdBy: token.loginId,
@@ -218,7 +218,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     } else {
       const formData: EditUserGroupProps = {
         functions: updatedFunctions,
-        roleName: roleName,
+        roleName: roleName.trim(),
         description: description,
         updatedBy: token.loginId,
         status: "ACTIVE",

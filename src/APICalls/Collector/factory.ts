@@ -19,7 +19,7 @@ export const getAllFactories = async (page?: number, size?: number) => {
     try {
         const token = returnApiToken();
         const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.factory,
         ...GET_FACTORY_LIST_DATA(tenantId),
         params: {
             page: page,
@@ -47,7 +47,7 @@ export const getFactoriesWarehouse = async (factoryId?: string) => {
     try {
         const token = returnApiToken();
         const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.factory,
         ...GET_FACTORY_WAREHOUSE_LIST_DATA(),
         params: params,
         headers: {
@@ -68,7 +68,7 @@ export const getAllFactoriesWarehouse = async (factoryId?: string) => {
     try {
         const token = returnApiToken();
         const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.factory,
         ...GET_ALL_FACTORY_WAREHOUSE_LIST_DATA(tenantId),
         headers: {
             AuthToken: token.authToken,
@@ -85,7 +85,7 @@ export const getAllFactoriesWarehouse = async (factoryId?: string) => {
 export const createFactory = async (data: FactoryData) => {
     try {
         const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.factory,
         ...CREATE_FACTORY_DATA(),
         data: data
         });
@@ -100,7 +100,7 @@ export const createFactory = async (data: FactoryData) => {
 export const editFactory = async ( factoryId: string, data: FactoryData) => {
     try {
         const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.factory,
         ...UPDATE_FACTORY_DATA(factoryId),
         data: data,
         });
@@ -115,7 +115,7 @@ export const editFactory = async ( factoryId: string, data: FactoryData) => {
 export const deleteFactory = async ( factoryId: string) => {
     try {
         const response = await axiosInstance({
-        baseURL: window.baseURL.collector,
+        baseURL: window.baseURL.factory,
         ...DELETE_FACTORY_DATA(factoryId),
         });
 

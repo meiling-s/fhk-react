@@ -75,7 +75,7 @@ const Login = () => {
   const fetchPublicKey = async () => {
     try {
       const response = await fetch(
-        `${window.baseURL.collector}api/v1/administrator/getPublicKey`
+        `${window.baseURL.administrator}api/v1/administrator/getPublicKey`
       );
       if (response.ok) {
         const publicKeyPem = await response.text();
