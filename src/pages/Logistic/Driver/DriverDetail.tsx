@@ -447,7 +447,6 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
         if (state.code === STATUS_CODE[503]) {
           navigate("/maintenance");
         } else if (state.code === STATUS_CODE[409]) {
-          console.log(error.response.data.message, "aaaa");
           const errorMessage = error.response.data.message;
 
           if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
@@ -455,6 +454,14 @@ const DriverDetail: React.FC<DriverDetailProps> = ({
             handleDuplicateErrorMessage(errorMessage);
           } else {
             showErrorToast(error.response.data.message);
+          }
+        } else if (state.code === STATUS_CODE[500]) {
+          const errorMessage = error.response.data.message;
+          console.log(errorMessage, "error emssage");
+
+          if (errorMessage.includes("Duplicate login Id found")) {
+            setTrySubmited(true);
+            handleDuplicateErrorMessage("[Login ID]");
           }
         }
       }
