@@ -160,6 +160,7 @@ const UserGroup: FunctionComponent = () => {
 
   const initAllUserGroupList = async () => {
     setIsLoading(true);
+    setGroupNameList([]);
     try {
       const result = await getAllUserGroup(0, 10002);
       const data = result?.data;
@@ -332,6 +333,7 @@ const UserGroup: FunctionComponent = () => {
 
   const onSubmitData = (type: string, msg: string) => {
     initUserGroupList();
+    initAllUserGroupList();
     if (type == "success") {
       showSuccessToast(msg);
     } else {
