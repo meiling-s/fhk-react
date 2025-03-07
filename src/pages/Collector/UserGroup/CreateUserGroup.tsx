@@ -151,7 +151,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       }
 
       const isDuplicate = groupList.some(
-        (item) => item.trim().toLowerCase() === roleName.trim().toLowerCase()
+        (item) => item.trim() === roleName.trim()
       );
 
       if (isDuplicate) {
