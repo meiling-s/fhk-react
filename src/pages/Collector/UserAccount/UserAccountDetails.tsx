@@ -416,6 +416,12 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           }
         } else if (state.code === STATUS_CODE[503]) {
           navigate("/maintenance");
+        } else if (state.code === STATUS_CODE[500]) {
+          const errorMessage = error.response.data.message;
+          if (errorMessage.includes("User exists with same username")) {
+            setTrySubmited(true);
+            handleDuplicateErrorMessage("[Login ID]");
+          }
         } else {
           setTrySubmited(true);
           showErrorToast(t("userAccount.failedCreatedUser"));
