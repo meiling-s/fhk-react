@@ -27,7 +27,8 @@ export const AXIOS_DEFAULT_CONFIGS = Object.freeze({
     collector: 'http://not.use/',
     logistic: 'http://not.use/',
     manufacturer: 'http://not.use/',
-    customer: 'http://not.use/'    
+    customer: 'http://not.use/',
+    factory: 'http://not.use/'
   },
   timeout: 100000,
   headers: {
