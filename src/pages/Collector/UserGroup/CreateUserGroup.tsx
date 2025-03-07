@@ -96,8 +96,8 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   }, [isAdmin, functionList]);
 
   useEffect(() => {
-    setValidation([]); // Reset validation
-    setTrySubmited(false); // Prevent showing validation immediately
+    setValidation([]);
+    setTrySubmited(false);
 
     if (action !== "add") {
       mappingData();
@@ -105,19 +105,24 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       resetData();
     }
 
-    // Store `groupList` in its original form (no lowercase conversion)
+    if (isAdmin) {
+      const allFunctionIds = functionList.map(
+        (item: Functions) => item.functionId
+      );
+      setFunctions(allFunctionIds);
+    }
+
     if (selectedItem != null) {
       const temp = groupNameList.filter(
         (item) => item.trim() !== selectedItem.roleName.trim()
       );
       setGroupList(temp);
     } else {
-      setGroupList([...groupNameList]); // Store as-is
+      setGroupList([...groupNameList]);
     }
   }, [drawerOpen]);
 
   const resetData = () => {
-    //setRealm('')
     setRoleName("");
     setFunctions([]);
     setDescription("");
@@ -145,7 +150,6 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         });
       }
 
-      // 🔥 Fix duplicate name check 🔥
       const isDuplicate = groupList.some(
         (item) => item.trim().toLowerCase() === roleName.trim().toLowerCase()
       );
