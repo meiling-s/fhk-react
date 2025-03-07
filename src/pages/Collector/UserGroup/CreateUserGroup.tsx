@@ -97,36 +97,32 @@ const CreateUserGroup: FunctionComponent<Props> = ({
 
   useEffect(() => {
     setValidation([]);
+    setTrySubmited(false);
 
     if (action !== "add") {
       mappingData();
     } else {
-      setTrySubmited(false);
       resetData();
-
-      if (isAdmin) {
-        const allFunctionIds = functionList.map(
-          (item: Functions) => item.functionId
-        );
-        setFunctions(allFunctionIds);
-      }
     }
 
-    //set groupRoleNameList
+    if (isAdmin) {
+      const allFunctionIds = functionList.map(
+        (item: Functions) => item.functionId
+      );
+      setFunctions(allFunctionIds);
+    }
+
     if (selectedItem != null) {
       const temp = groupNameList.filter(
-        (item) => item != selectedItem.roleName
+        (item) => item.trim() !== selectedItem.roleName.trim()
       );
       setGroupList(temp);
     } else {
-      setGroupList(groupNameList);
+      setGroupList([...groupNameList]);
     }
-
-    //set all funtion selected when drawer open
   }, [drawerOpen]);
 
   const resetData = () => {
-    //setRealm('')
     setRoleName("");
     setFunctions([]);
     setDescription("");
@@ -143,38 +139,45 @@ const CreateUserGroup: FunctionComponent<Props> = ({
 
   useEffect(() => {
     const validate = async () => {
-      //do validation here
       const tempV: formValidate[] = [];
-      roleName?.toString() == "" ||
-        (isEmptyOrWhitespace(roleName) &&
-          tempV.push({
-            field: t("userGroup.groupName"),
-            problem: formErr.empty,
-            dataTestId: "astd-user-group-form-group-name-err-warning-3882",
-            type: "error",
-          }));
-      groupList.some((item) => item.toLowerCase() == roleName.toLowerCase().trim()) &&
+
+      // Check for empty values
+      if (checkString(roleName)) {
+        tempV.push({
+          field: t("userGroup.groupName"),
+          problem: formErr.empty,
+          type: "error",
+        });
+      }
+
+      const isDuplicate = groupList.some(
+        (item) => item.trim() === roleName.trim()
+      );
+
+      if (isDuplicate) {
         tempV.push({
           field: t("userGroup.groupName"),
           problem: formErr.alreadyExist,
           type: "error",
         });
-      description?.toString() == "" ||
-        (isEmptyOrWhitespace(description) &&
-          tempV.push({
-            field: t("userGroup.description"),
-            problem: formErr.empty,
-            dataTestId: "astd-user-group-form-desc-err-warning-1635",
-            type: "error",
-          }));
-      functions.length == 0 &&
+      }
+
+      if (checkString(description)) {
+        tempV.push({
+          field: t("userGroup.description"),
+          problem: formErr.empty,
+          type: "error",
+        });
+      }
+
+      if (functions.length === 0) {
         tempV.push({
           field: t("userGroup.availableFeatures"),
           problem: formErr.empty,
-          dataTestId: "astd-user-group-form-available-feature-err-warning-6315",
           type: "error",
         });
-      // console.log("tempV", tempV)
+      }
+
       setValidation(tempV);
     };
 
@@ -183,8 +186,9 @@ const CreateUserGroup: FunctionComponent<Props> = ({
 
   const isUserExisting = () => {
     return (
-      groupList.some((item) => item.toLowerCase() == roleName.toLowerCase().trim()) &&
-      trySubmited
+      groupList.some(
+        (item) => item.toLowerCase() == roleName.toLowerCase().trim()
+      ) && trySubmited
     );
   };
 
@@ -230,10 +234,11 @@ const CreateUserGroup: FunctionComponent<Props> = ({
 
   const handleDuplicateErrorMessage = (input: string) => {
     const replacements: { [key: string]: string } = {
+      "[User Group]": t("userGroup.groupName"),
       "[User Group Name]": t("userGroup.groupName"),
     };
 
-    const matches = input.match(/\[(User Group Name)\]/g);
+    const matches = input.match(/\[(User Group|User Group Name)\]/g);
 
     if (matches) {
       const tempV: formValidate[] = [];
@@ -267,7 +272,10 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
         navigate("/maintenance");
-      } else if (state.code === STATUS_CODE[500]) {
+      } else if (
+        state.code === STATUS_CODE[409] ||
+        state.code === STATUS_CODE[500]
+      ) {
         const errorMessage = error.response.data.message;
 
         if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
