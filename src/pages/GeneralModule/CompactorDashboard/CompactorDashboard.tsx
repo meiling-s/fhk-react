@@ -490,7 +490,10 @@ const CompactorDashboard: FunctionComponent = () => {
                           borderColor: '#grey'
                         },
                         '&:hover fieldset': {
-                          borderColor: getPrimaryColor()
+                          borderColor:
+                            licensePlate.length === 0
+                              ? '#C4C4C4'
+                              : getPrimaryColor()
                         },
                         '&.Mui-focused fieldset': {
                           borderColor: getPrimaryColor()
@@ -510,6 +513,7 @@ const CompactorDashboard: FunctionComponent = () => {
                       },
                       focused: true
                     }}
+                    disabled={licensePlate.length === 0}
                     value={selectedPlate}
                     placeholder={t('compactor.plateNumber')}
                     select={true}
