@@ -234,10 +234,10 @@ const CreateUserGroup: FunctionComponent<Props> = ({
 
   const handleDuplicateErrorMessage = (input: string) => {
     const replacements: { [key: string]: string } = {
-      "[User Group Name]": t("userGroup.groupName"),
+      "[User Group]": t("userGroup.groupName"),
     };
 
-    const matches = input.match(/\[(User Group Name)\]/g);
+    const matches = input.match(/\[(User Group)\]/g);
 
     if (matches) {
       const tempV: formValidate[] = [];
@@ -271,7 +271,10 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
         navigate("/maintenance");
-      } else if (state.code === STATUS_CODE[500]) {
+      } else if (
+        state.code === STATUS_CODE[409] ||
+        state.code === STATUS_CODE[500]
+      ) {
         const errorMessage = error.response.data.message;
 
         if (errorMessage.includes("[RESOURCE_DUPLICATE_ERROR]")) {
