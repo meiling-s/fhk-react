@@ -88,6 +88,7 @@ const UserGroup: FunctionComponent = () => {
   useEffect(() => {
     initFunctionList();
     initUserGroupList();
+    initAllUserGroupList();
   }, [page]);
 
   const initFunctionList = async () => {
@@ -146,8 +147,46 @@ const UserGroup: FunctionComponent = () => {
           tempGroupList.push(item?.roleName);
         });
         setUserGroupList(userGroupMapping);
-        setGroupNameList(tempGroupList);
         setTotalData(result.data.totalPages);
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error);
+      if (state.code === STATUS_CODE[503]) {
+        navigate("/maintenance");
+      }
+    }
+    setIsLoading(false);
+  };
+
+  const initAllUserGroupList = async () => {
+    setIsLoading(true);
+    try {
+      const result = await getAllUserGroup(0, 10002);
+      const data = result?.data;
+      let tempGroupList: string[] = [];
+      if (data) {
+        let userGroupMapping: UserGroupItem[] = [];
+        data.content.map((item: any) => {
+          userGroupMapping.push(
+            createUserGroup(
+              item?.groupId,
+              item?.tenantId,
+              item?.roleName,
+              item?.description,
+              item?.status,
+              item?.createdBy,
+              item?.createdAt,
+              item?.updatedBy,
+              item?.updatedAt,
+              item?.userAccount,
+              item?.functions,
+              item?.isAdmin
+            )
+          );
+
+          tempGroupList.push(item?.roleName);
+        });
+        setGroupNameList(tempGroupList);
       }
     } catch (error: any) {
       const { state, realm } = extractError(error);
