@@ -356,7 +356,7 @@ const Inventory: FunctionComponent = () => {
       if (recycItem.length > 0 && productItem.length > 0) {
         initInventory();
         initWarehouse();
-        initAllFactoryList();
+        // initAllFactoryList();
         initWarehouseList();
         initCollectionPoint();
       }
