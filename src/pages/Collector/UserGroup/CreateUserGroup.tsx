@@ -238,7 +238,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       "[User Group Name]": t("userGroup.groupName"),
     };
 
-    const matches = input.match(/\[(User Group)\]/g);
+    const matches = input.match(/\[(User Group|User Group Name)\]/g);
 
     if (matches) {
       const tempV: formValidate[] = [];
