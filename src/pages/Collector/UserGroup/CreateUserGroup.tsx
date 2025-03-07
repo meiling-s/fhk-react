@@ -96,33 +96,24 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   }, [isAdmin, functionList]);
 
   useEffect(() => {
-    setValidation([]);
+    setValidation([]); // Reset validation
+    setTrySubmited(false); // Prevent showing validation immediately
 
     if (action !== "add") {
       mappingData();
     } else {
-      setTrySubmited(false);
       resetData();
-
-      if (isAdmin) {
-        const allFunctionIds = functionList.map(
-          (item: Functions) => item.functionId
-        );
-        setFunctions(allFunctionIds);
-      }
     }
 
-    //set groupRoleNameList
+    // Store `groupList` in its original form (no lowercase conversion)
     if (selectedItem != null) {
       const temp = groupNameList.filter(
-        (item) => item != selectedItem.roleName
+        (item) => item.trim() !== selectedItem.roleName.trim()
       );
       setGroupList(temp);
     } else {
-      setGroupList(groupNameList);
+      setGroupList([...groupNameList]); // Store as-is
     }
-
-    //set all funtion selected when drawer open
   }, [drawerOpen]);
 
   const resetData = () => {
@@ -143,40 +134,46 @@ const CreateUserGroup: FunctionComponent<Props> = ({
 
   useEffect(() => {
     const validate = async () => {
-      //do validation here
       const tempV: formValidate[] = [];
-      roleName?.toString() == "" ||
-        (isEmptyOrWhitespace(roleName) &&
-          tempV.push({
-            field: t("userGroup.groupName"),
-            problem: formErr.empty,
-            dataTestId: "astd-user-group-form-group-name-err-warning-3882",
-            type: "error",
-          }));
-      groupList.some(
-        (item) => item.toLowerCase().trim() == roleName.toLowerCase().trim()
-      ) &&
+
+      // Check for empty values
+      if (checkString(roleName)) {
+        tempV.push({
+          field: t("userGroup.groupName"),
+          problem: formErr.empty,
+          type: "error",
+        });
+      }
+
+      // 🔥 Fix duplicate name check 🔥
+      const isDuplicate = groupList.some(
+        (item) => item.trim().toLowerCase() === roleName.trim().toLowerCase()
+      );
+
+      if (isDuplicate) {
         tempV.push({
           field: t("userGroup.groupName"),
           problem: formErr.alreadyExist,
           type: "error",
         });
-      description?.toString() == "" ||
-        (isEmptyOrWhitespace(description) &&
-          tempV.push({
-            field: t("userGroup.description"),
-            problem: formErr.empty,
-            dataTestId: "astd-user-group-form-desc-err-warning-1635",
-            type: "error",
-          }));
-      functions.length == 0 &&
+      }
+
+      if (checkString(description)) {
+        tempV.push({
+          field: t("userGroup.description"),
+          problem: formErr.empty,
+          type: "error",
+        });
+      }
+
+      if (functions.length === 0) {
         tempV.push({
           field: t("userGroup.availableFeatures"),
           problem: formErr.empty,
-          dataTestId: "astd-user-group-form-available-feature-err-warning-6315",
           type: "error",
         });
-      // console.log("tempV", tempV)
+      }
+
       setValidation(tempV);
     };
 
