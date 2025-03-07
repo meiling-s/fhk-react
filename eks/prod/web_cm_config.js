@@ -1,5 +1,3 @@
-const { factory } = require("typescript");
-
 window.baseURL = {
     //account: 'http://10.166.22.250/',
     //administrator: 'http://10.166.22.250/',
