@@ -235,6 +235,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   const handleDuplicateErrorMessage = (input: string) => {
     const replacements: { [key: string]: string } = {
       "[User Group]": t("userGroup.groupName"),
+      "[User Group Name]": t("userGroup.groupName"),
     };
 
     const matches = input.match(/\[(User Group)\]/g);
