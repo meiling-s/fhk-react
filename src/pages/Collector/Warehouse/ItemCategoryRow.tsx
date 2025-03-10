@@ -92,7 +92,7 @@ const ItemCategoryRow: React.FC<Props> = ({
     recycTypeCapacity?: boolean;
     productTypeCapacity?: boolean;
   }>({});
-  
+
   const recycTypeError = validation.find(
     (v) => v.field === `itemCategory[${index}].recycTypeId`
   );
@@ -210,36 +210,36 @@ const ItemCategoryRow: React.FC<Props> = ({
   const handleRecycTypeChange = (e: SelectChangeEvent<string>) => {
     const recycTypeId = e.target.value;
     handleFieldChange({
-      "recycTypeId": recycTypeId,
-      "recycSubTypeId": "",
+      recycTypeId: recycTypeId,
+      recycSubTypeId: "",
     });
   };
 
   const handleRecycSubTypeChange = (e: SelectChangeEvent<string>) => {
     const recycSubTypeId = e.target.value;
-    handleFieldChange({"recycSubTypeId": recycSubTypeId});
+    handleFieldChange({ recycSubTypeId: recycSubTypeId });
   };
 
   const handleProductTypeChange = (e: SelectChangeEvent<string>) => {
     const productTypeId = e.target.value;
     handleFieldChange({
-      "productTypeId": productTypeId,
-      "productSubTypeId": "",
-      "productAddonTypeId": ""
+      productTypeId: productTypeId,
+      productSubTypeId: "",
+      productAddonTypeId: "",
     });
   };
 
   const handleProductSubTypeChange = (e: SelectChangeEvent<string>) => {
     const productSubTypeId = e.target.value;
     handleFieldChange({
-      "productSubTypeId": productSubTypeId,
-      "productAddonTypeId": ""
+      productSubTypeId: productSubTypeId,
+      productAddonTypeId: "",
     });
   };
 
   const handleProductAddonChange = (e: SelectChangeEvent<string>) => {
     handleFieldChange({
-      "productAddonTypeId": e.target.value
+      productAddonTypeId: e.target.value,
     });
   };
 
@@ -367,7 +367,10 @@ const ItemCategoryRow: React.FC<Props> = ({
                   ))}
               </Select>
               {!!errors.recycSubTypeId && (
-                <FormHelperText>Duplicate Recyclable Sub-Type</FormHelperText>
+                <FormHelperText>
+                  {t("pick_up_order.card_detail.subcategory")}{" "}
+                  {t("add_warehouse_page.shouldNotDuplicate")}
+                </FormHelperText>
               )}
             </FormControl>
           </Grid>
@@ -382,7 +385,7 @@ const ItemCategoryRow: React.FC<Props> = ({
 
                   // Prevent setting negative values
                   if (newValue >= 0 || e.target.value === "") {
-                    handleFieldChange({"recycTypeCapacity": newValue});
+                    handleFieldChange({ recycTypeCapacity: newValue });
                   }
                 }}
                 onKeyDown={(e) => {
@@ -477,7 +480,7 @@ const ItemCategoryRow: React.FC<Props> = ({
           </Grid>
 
           <Grid item xs={2}>
-            <FormControl fullWidth>
+            <FormControl fullWidth error={!!errors.productAddonTypeId}>
               <Select
                 value={item.productAddonTypeId || ""}
                 onChange={handleProductAddonChange}
@@ -512,6 +515,12 @@ const ItemCategoryRow: React.FC<Props> = ({
                   </MenuItem>
                 ))}
               </Select>
+              {!!errors.productAddonTypeId && (
+                <FormHelperText>
+                  {t("pick_up_order.card_detail.addon_product_type_label")}{" "}
+                  {t("add_warehouse_page.shouldNotDuplicate")}
+                </FormHelperText>
+              )}
             </FormControl>
           </Grid>
 
@@ -525,7 +534,7 @@ const ItemCategoryRow: React.FC<Props> = ({
 
                   // Prevent setting negative values
                   if (newValue >= 0 || e.target.value === "") {
-                    handleFieldChange({"productTypeCapacity": newValue});
+                    handleFieldChange({ productTypeCapacity: newValue });
                   }
                 }}
                 InputProps={{
