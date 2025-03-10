@@ -87,7 +87,10 @@ const ItemCategoryRow: React.FC<Props> = ({
 }) => {
   const { t, i18n } = useTranslation();
   const [errors, setErrors] = useState<{
+    productTypeId?: boolean;
+    productSubTypeId?: boolean;
     productAddonTypeId?: boolean;
+    recycTypeId?: boolean;
     recycSubTypeId?: boolean;
     recycTypeCapacity?: boolean;
     productTypeCapacity?: boolean;
@@ -118,26 +121,81 @@ const ItemCategoryRow: React.FC<Props> = ({
   );
 
   const validateDuplicates = () => {
-    const duplicateProductAddon = itemCategories.some(
-      (cat, i) =>
-        i !== index &&
-        cat.productAddonTypeId &&
-        cat.productAddonTypeId === item.productAddonTypeId
-    );
+    let duplicateProductAddon = false;
+    let duplicateProductSubType = false;
+    let duplicateProductType = false;
+    let duplicateRecycSubType = false;
+    let duplicateRecycType = false;
 
-    const duplicateRecycSubType = itemCategories.some(
-      (cat, i) =>
-        i !== index &&
-        cat.recycSubTypeId &&
-        cat.recycSubTypeId === item.recycSubTypeId
-    );
+    if (item.type === "product") {
+      const productType = productTypes.find(
+        (p) => p.productTypeId === item.productTypeId
+      );
+      const hasProductSubTypes =
+        productType?.productSubType && productType?.productSubType?.length > 0;
+
+      const productSubType = productType?.productSubType?.find(
+        (s) => s.productSubTypeId === item.productSubTypeId
+      );
+      const hasProductAddons =
+        productSubType?.productAddonType &&
+        productSubType?.productAddonType?.length > 0;
+
+      if (!item.productTypeId) return; // 🚀 Skip if parent is empty
+
+      if (hasProductAddons && item.productAddonTypeId) {
+        duplicateProductAddon = itemCategories.some(
+          (cat, i) =>
+            i !== index && cat.productAddonTypeId === item.productAddonTypeId
+        );
+      } else if (hasProductSubTypes && item.productSubTypeId) {
+        duplicateProductSubType = itemCategories.some(
+          (cat, i) =>
+            i !== index && cat.productSubTypeId === item.productSubTypeId
+        );
+      } else if (!hasProductSubTypes) {
+        duplicateProductType = itemCategories.some(
+          (cat, i) => i !== index && cat.productTypeId === item.productTypeId
+        );
+      }
+    } else if (item.type === "recyclable") {
+      const recycType = recycTypes.find(
+        (r) => r.recycTypeId === item.recycTypeId
+      );
+      const hasRecycSubTypes =
+        recycType?.recycSubType && recycType?.recycSubType?.length > 0;
+
+      if (!item.recycTypeId) return; // 🚀 Skip if parent is empty
+
+      if (hasRecycSubTypes && item.recycSubTypeId) {
+        duplicateRecycSubType = itemCategories.some(
+          (cat, i) => i !== index && cat.recycSubTypeId === item.recycSubTypeId
+        );
+      } else if (!hasRecycSubTypes) {
+        duplicateRecycType = itemCategories.some(
+          (cat, i) => i !== index && cat.recycTypeId === item.recycTypeId
+        );
+      }
+    }
 
     setErrors({
       productAddonTypeId: duplicateProductAddon,
+      productSubTypeId: !duplicateProductAddon && duplicateProductSubType,
+      productTypeId:
+        !duplicateProductAddon &&
+        !duplicateProductSubType &&
+        duplicateProductType,
       recycSubTypeId: duplicateRecycSubType,
+      recycTypeId: !duplicateRecycSubType && duplicateRecycType,
     });
 
-    setHasErrors(duplicateProductAddon || duplicateRecycSubType);
+    setHasErrors(
+      duplicateProductAddon ||
+        duplicateProductSubType ||
+        duplicateProductType ||
+        duplicateRecycSubType ||
+        duplicateRecycType
+    );
   };
 
   const handleAddRow = () => {
@@ -319,7 +377,7 @@ const ItemCategoryRow: React.FC<Props> = ({
       {item.type === "recyclable" && (
         <>
           <Grid item xs={2}>
-            <FormControl fullWidth>
+            <FormControl fullWidth error={!!errors.recycTypeId}>
               <Select
                 value={item.recycTypeId || ""}
                 onChange={handleRecycTypeChange}
@@ -338,6 +396,12 @@ const ItemCategoryRow: React.FC<Props> = ({
                   </MenuItem>
                 ))}
               </Select>
+              {!!errors.recycTypeId && (
+                <FormHelperText>
+                  {t("pick_up_order.card_detail.main_category")}{" "}
+                  {t("add_warehouse_page.shouldNotDuplicate")}
+                </FormHelperText>
+              )}
             </FormControl>
           </Grid>
 
@@ -428,7 +492,7 @@ const ItemCategoryRow: React.FC<Props> = ({
       {item.type === "product" && (
         <>
           <Grid item xs={2}>
-            <FormControl fullWidth>
+            <FormControl fullWidth error={!!errors.productTypeId}>
               <Select
                 value={item.productTypeId || ""}
                 onChange={handleProductTypeChange}
@@ -447,11 +511,17 @@ const ItemCategoryRow: React.FC<Props> = ({
                   </MenuItem>
                 ))}
               </Select>
+              {!!errors.productTypeId && (
+                <FormHelperText>
+                  {t("pick_up_order.card_detail.product_type_label")}{" "}
+                  {t("add_warehouse_page.shouldNotDuplicate")}
+                </FormHelperText>
+              )}
             </FormControl>
           </Grid>
 
           <Grid item xs={2}>
-            <FormControl fullWidth>
+            <FormControl fullWidth error={!!errors.productSubTypeId}>
               <Select
                 value={item.productSubTypeId || ""}
                 onChange={handleProductSubTypeChange}
@@ -476,6 +546,12 @@ const ItemCategoryRow: React.FC<Props> = ({
                       </MenuItem>
                     ))}
               </Select>
+              {!!errors.productSubTypeId && (
+                <FormHelperText>
+                  {t("pick_up_order.card_detail.sub_product_type_label")}{" "}
+                  {t("add_warehouse_page.shouldNotDuplicate")}
+                </FormHelperText>
+              )}
             </FormControl>
           </Grid>
 
