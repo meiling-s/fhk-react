@@ -49,7 +49,7 @@ export const getProcessOrder = async (
 export const getProcessOrderById = async (processOrderId: number) => {
   try {
     const response = await axiosInstance({
-      baseURL: window.baseURL.collector,
+      baseURL: window.baseURL.factory,
       ...GET_PROCESS_ORDER_BY_ID(processOrderId)
     })
 
@@ -66,7 +66,7 @@ export const createProcessOrder = async (data: any) => {
     const tenantId = getFormatId(token.tenantId)
 
     const response = await axiosInstance({
-      baseURL: window.baseURL.collector,
+      baseURL: window.baseURL.factory,
       ...CREATE_PROCESSE_ORDER(tenantId),
       data: data
     })
@@ -87,7 +87,7 @@ export const deleteProcessOrder = async (
     const tenantId = getFormatId(token.tenantId)
 
     const response = await axiosInstance({
-      baseURL: window.baseURL.collector,
+      baseURL: window.baseURL.factory,
       ...DELETE_PROCESS_ORDER(tenantId, processOrderId),
       data: data
     })
@@ -112,7 +112,7 @@ export const getEstimateEndTime = async (
 
   try {
     const response = await axiosInstance({
-      baseURL: window.baseURL.collector,
+      baseURL: window.baseURL.factory,
       ...GET_PROCESS_ORDER_ESTENDDATETIME(),
       params: params
     })
@@ -130,7 +130,7 @@ export const getFactories = async (page: number, size: number) => {
 
   try {
     const response = await axiosInstance({
-      baseURL: window.baseURL.collector,
+      baseURL: window.baseURL.factory,
       ...GET_FACTORIES_LIST(tenantId),
       params: {
         page: page,

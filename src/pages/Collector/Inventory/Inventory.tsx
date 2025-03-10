@@ -1369,7 +1369,9 @@ const Inventory: FunctionComponent = () => {
             colList={colList}
             factoryDataList={allFactoryDataList}
             warehouseDataList={warehouseDataList}
-            packagingUnit={packagingMapping}
+            packagingUnit={packagingMapping.filter(
+              (value: { status: string }) => value.status === "ACTIVE"
+            )}
             handleDrawerClose={() => setCreateDrawerOpen(false)}
             onSuccess={handleSubmit}
           />

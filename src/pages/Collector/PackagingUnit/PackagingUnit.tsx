@@ -43,6 +43,8 @@ import { STATUS_CODE } from '../../../constants/constant'
 import { useNavigate } from 'react-router-dom'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import { set } from 'date-fns'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from 'src/contexts/CommonTypeContainer'
 
 function createPackagingUnit(
   id: number,
@@ -98,6 +100,7 @@ const PackagingUnit: FunctionComponent = () => {
   const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { getPackagingUnitList } = useContainer(CommonTypeContainer);
 
   useEffect(() => {
     initPackagingUnitList()
@@ -271,6 +274,7 @@ const PackagingUnit: FunctionComponent = () => {
   }
 
   const onSubmitData = (type: string, msg: string) => {
+    getPackagingUnitList()
     initPackagingUnitList()
     getTenantData()
     if (type == 'success') {
