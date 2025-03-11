@@ -351,7 +351,7 @@ const ItemCategoryRow: React.FC<Props> = ({
   };
 
   return (
-    <Grid container spacing={2} alignItems="center">
+    <Grid container spacing={2} alignItems="flex-start">
       {/* Type Selection */}
       <Grid item xs={2}>
         <FormControl fullWidth disabled={disabled}>
