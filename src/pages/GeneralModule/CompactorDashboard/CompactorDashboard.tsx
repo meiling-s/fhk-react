@@ -115,7 +115,7 @@ const CompactorDashboard: FunctionComponent = () => {
   const [selectedDate, setSelectedDate] = useState<string>(
     dayjs().format('YYYY-MM-DD')
   )
-  const [selectedPlate, setSelectedPlate] = useState<string>(' ')
+  const [selectedPlate, setSelectedPlate] = useState<string>('')
   const [compactorProcessIn, setCompactorProcessIn] = useState<
     CompactorProcessIn[]
   >([])
@@ -175,7 +175,7 @@ const CompactorDashboard: FunctionComponent = () => {
       type: 'string',
       renderCell: (params) => {
         let name = '-'
-        if (params.row.itemCategory != 'product') {
+        if (params.row.recycTypeId != '') {
           name = mappingSubRecy(
             params.row.recycTypeId,
             params.row.recycSubTypeId,
@@ -188,6 +188,7 @@ const CompactorDashboard: FunctionComponent = () => {
             productType
           )
         }
+        console.log(params.row.productTypeId, params.row.productSubTypeId, name)
         return name
       }
     },
@@ -275,49 +276,52 @@ const CompactorDashboard: FunctionComponent = () => {
 
   const getProcessInData = async () => {
     setIsLoading(true)
-    const result = await getCompactorProcessIn(selectedDate, selectedPlate)
+    console.log('getProcessInData', selectedDate, selectedPlate)
+    if (selectedPlate != '') {
+      const result = await getCompactorProcessIn(selectedDate, selectedPlate)
 
-    if (result.data.length > 0) {
-      const data = result.data
-      data.map((item: CompactorProcessIn) => {
-        if (item.logisticId && item.logisticId != thirdPartyLogisticId) {
-          if (item.receiverId) {
-            const receiverName = companies.find(
-              (company) => company.id == item.receiverId
-            )
+      if (result.data.length > 0) {
+        const data = result.data
+        data.map((item: CompactorProcessIn) => {
+          if (item.logisticId && item.logisticId != thirdPartyLogisticId) {
+            if (item.receiverId) {
+              const receiverName = companies.find(
+                (company) => company.id == item.receiverId
+              )
 
-            if (receiverName) {
-              if (i18n.language === Languages.ENUS)
-                item.receiverName = receiverName.nameEng ?? null
-              if (i18n.language === Languages.ZHCH)
-                item.receiverName = receiverName.nameSchi ?? null
-              if (i18n.language === Languages.ZHHK)
-                item.receiverName = receiverName.nameTchi ?? null
+              if (receiverName) {
+                if (i18n.language === Languages.ENUS)
+                  item.receiverName = receiverName.nameEng ?? null
+                if (i18n.language === Languages.ZHCH)
+                  item.receiverName = receiverName.nameSchi ?? null
+                if (i18n.language === Languages.ZHHK)
+                  item.receiverName = receiverName.nameTchi ?? null
+              }
+            }
+
+            if (item.senderId) {
+              const senderName = companies.find(
+                (company) => company.id == item.senderId
+              )
+              if (senderName) {
+                if (i18n.language === Languages.ENUS)
+                  item.senderName = senderName.nameEng ?? null
+                if (i18n.language === Languages.ZHCH)
+                  item.senderName = senderName.nameSchi ?? null
+                if (i18n.language === Languages.ZHHK)
+                  item.senderName = senderName.nameTchi ?? null
+              }
             }
           }
 
-          if (item.senderId) {
-            const senderName = companies.find(
-              (company) => company.id == item.senderId
-            )
-            if (senderName) {
-              if (i18n.language === Languages.ENUS)
-                item.senderName = senderName.nameEng ?? null
-              if (i18n.language === Languages.ZHCH)
-                item.senderName = senderName.nameSchi ?? null
-              if (i18n.language === Languages.ZHHK)
-                item.senderName = senderName.nameTchi ?? null
-            }
-          }
-        }
+          return item
+        })
+        setCompactorProcessIn(data)
 
-        return item
-      })
-      setCompactorProcessIn(data)
-
-      //setCompactorProcessIn(result.data)
-    } else {
-      setCompactorProcessIn([])
+        //setCompactorProcessIn(result.data)
+      } else {
+        setCompactorProcessIn([])
+      }
     }
     setIsLoading(false)
   }

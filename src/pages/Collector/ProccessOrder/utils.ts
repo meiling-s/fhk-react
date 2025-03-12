@@ -78,6 +78,7 @@ export const mappingSubProductType = (
   const matchingProductType = productType?.find(
     (item: any) => item.productTypeId === productTypeId
   )
+  console.log('mappingSubProductType')
   if (matchingProductType) {
     const matchingProductSubType = matchingProductType.productSubType?.find(
       (subtype: any) => subtype.productSubTypeId === subId
