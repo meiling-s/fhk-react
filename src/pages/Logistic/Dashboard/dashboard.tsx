@@ -523,8 +523,7 @@ const VehicleDashboard = () => {
                 {t("logisticDashboard.driverInfo")}
               </Typography>
               <Typography sx={{ ...style.typo2, marginTop: 1 }}>
-                {t("logisticDashboard.driverNumb")} {" : "}{" "}
-                {driverInfo.contactNo}
+                {t("logisticDashboard.driverNumb")} {" : "} {driverInfo.labelId}
               </Typography>
               <Typography sx={{ ...style.typo2, marginTop: 0.5 }}>
                 {t("logisticDashboard.driverLicense")} {" : "}
