@@ -168,6 +168,7 @@ function RejectForm({ open, onClose, selectedRow, reasonList }: rejectForm) {
       picoId: selectedRow?.picoId,
       status: Status.REJECTED,
       updatedBy: selectedRow.updatedBy,
+      version: selectedRow?.version,
     };
     try {
       const result = await updateStatusPurchaseOrder(
