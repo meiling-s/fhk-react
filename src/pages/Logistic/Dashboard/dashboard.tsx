@@ -87,7 +87,7 @@ const VehicleDashboard = () => {
     if (vehicleCategory != null) {
       getVehicleName(vehicleCategory);
     }
-  }, [vehicleCategory]);
+  }, [vehicleCategory, i18n.language]);
 
   useEffect(() => {
     initPackageList();
