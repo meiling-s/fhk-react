@@ -66,6 +66,7 @@ const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow }) => {
     const updatePoStatus = {
       status: "CONFIRMED",
       updatedBy: selectedRow.updatedBy,
+      version: selectedRow.version,
     };
 
     try {
@@ -167,6 +168,7 @@ function RejectForm({ open, onClose, selectedRow, reasonList }: rejectForm) {
       picoId: selectedRow?.picoId,
       status: Status.REJECTED,
       updatedBy: selectedRow.updatedBy,
+      version: selectedRow?.version,
     };
     try {
       const result = await updateStatusPurchaseOrder(
@@ -624,6 +626,7 @@ const PurchaseOrder = () => {
           .tz("Asia/Hong_Kong")
           .format(`${dateFormat} HH:mm`),
         status: item.status,
+        version: item.version,
         senderName: getManufacturerBasedLang(item?.senderName, manuList),
         recyType: item.purchaseOrderDetail.map((item) => {
           return item.recycTypeId;
