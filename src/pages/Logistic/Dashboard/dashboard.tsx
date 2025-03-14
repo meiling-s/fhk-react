@@ -87,7 +87,7 @@ const VehicleDashboard = () => {
     if (vehicleCategory != null) {
       getVehicleName(vehicleCategory);
     }
-  }, [vehicleCategory]);
+  }, [vehicleCategory, i18n.language]);
 
   useEffect(() => {
     initPackageList();
@@ -106,29 +106,25 @@ const VehicleDashboard = () => {
   const getVehicleName = async (vehicleId: number) => {
     const result = await getVehicleLogistic(vehicleId, selectedTable);
     if (result?.data) {
-      setVehicleName(result.data.vehicleTypeId);
-      // const selectedVehicle = vehicleType?.find(
-      //   (item) => item.vehicleTypeId == result.data.vehicleTypeId
-      // )
-
-      // if (selectedVehicle) {
-      //   var name = '-'
-      //   switch (i18n.language) {
-      //     case 'enus':
-      //       name = selectedVehicle.vehicleTypeNameEng
-      //       break
-      //     case 'zhch':
-      //       name = selectedVehicle.vehicleTypeNameSchi
-      //       break
-      //     case 'zhhk':
-      //       name = selectedVehicle.vehicleTypeNameTchi
-      //       break
-      //     default:
-      //       name = selectedVehicle.vehicleTypeNameTchi
-      //       break
-      //   }
-      //   setVehicleName(name)
-      // }
+      const vehId = result.data.vehicleTypeId;
+      const vehicleDetail = vehicleType?.find(
+        (value) => value.vehicleTypeId === vehId
+      );
+      if (vehicleDetail) {
+        switch (i18n.language) {
+          case "enus":
+            setVehicleName(vehicleDetail.vehicleTypeNameEng);
+            break;
+          case "zhhk":
+            setVehicleName(vehicleDetail.vehicleTypeNameTchi);
+            break;
+          case "zhch":
+            setVehicleName(vehicleDetail.vehicleTypeNameSchi);
+            break;
+          default:
+            setVehicleName(vehicleDetail.vehicleTypeNameEng);
+        }
+      }
     }
   };
 
@@ -523,8 +519,7 @@ const VehicleDashboard = () => {
                 {t("logisticDashboard.driverInfo")}
               </Typography>
               <Typography sx={{ ...style.typo2, marginTop: 1 }}>
-                {t("logisticDashboard.driverNumb")} {" : "}{" "}
-                {driverInfo.contactNo}
+                {t("logisticDashboard.driverNumb")} {" : "} {driverInfo.labelId}
               </Typography>
               <Typography sx={{ ...style.typo2, marginTop: 0.5 }}>
                 {t("logisticDashboard.driverLicense")} {" : "}

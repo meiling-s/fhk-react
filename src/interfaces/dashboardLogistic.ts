@@ -21,6 +21,7 @@ export type DriverInfo = {
   driverDetail: DriverDetail[]
   createdBy: string
   updatedBy: string
+  labelId: string
 }
 
 export type PuDetail = {
