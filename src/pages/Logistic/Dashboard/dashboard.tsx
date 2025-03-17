@@ -390,8 +390,6 @@ const VehicleDashboard = () => {
     }
   };
 
-  console.log(selectedPuPoint, "selectedpupoint");
-  console.log(selectedDrofPoint, "selecteddrofpoint");
   return (
     <Box
       sx={{
