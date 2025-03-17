@@ -55,8 +55,13 @@ interface PuAndDropOffMarker {
 
 const VehicleDashboard = () => {
   const { t } = useTranslation();
-  const { vehicleType, recycType } = useContainer(CommonTypeContainer);
-  const [packagingMapping, setPackagingMapping] = useState<PackagingUnit[]>([]);
+  const {
+    vehicleType,
+    recycType,
+    productType,
+    packagingList,
+    getPackagingUnitList,
+  } = useContainer(CommonTypeContainer);
   const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
   const [driverInfo, setDriverInfo] = useState<DriverInfo | null>(null);
   const [vehicleCategory, setVehicleCategory] = useState<number | null>(null);
@@ -81,7 +86,6 @@ const VehicleDashboard = () => {
   const [selectedTable, setSelectedTable] = useState<string>(logisticTableId);
   const todayDate = dayjs().format("YYYY-MM-DD");
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (vehicleCategory != null) {
@@ -90,7 +94,7 @@ const VehicleDashboard = () => {
   }, [vehicleCategory, i18n.language]);
 
   useEffect(() => {
-    initPackageList();
+    getPackagingUnitList();
   }, [puAndDropOffMarker]);
 
   useEffect(() => {
@@ -128,24 +132,8 @@ const VehicleDashboard = () => {
     }
   };
 
-  const initPackageList = async () => {
-    try {
-      const result = await getAllPackagingUnit(0, 1000);
-      const data = result?.data;
-
-      if (data) {
-        setPackagingMapping(data.content);
-      }
-    } catch (error: any) {
-      const { state, realm } = extractError(error);
-      if (state.code === STATUS_CODE[503]) {
-        navigate("/maintenance");
-      }
-    }
-  };
-
   const getPackageName = (packagingTypeId: string) => {
-    const selectedPackage = packagingMapping.find(
+    const selectedPackage = packagingList.find(
       (item) => item.packagingTypeId == packagingTypeId
     );
 
@@ -166,6 +154,8 @@ const VehicleDashboard = () => {
           break;
       }
       return name;
+    } else {
+      return packagingTypeId;
     }
   };
 
@@ -235,6 +225,30 @@ const VehicleDashboard = () => {
           break;
         default:
           name = matchingRecycType.recyclableNameTchi;
+          break;
+      }
+      return name;
+    }
+  };
+
+  const mappingProductName = (productTypeId: string) => {
+    const matchingProductType = productType?.find(
+      (prod) => prod.productTypeId === productTypeId
+    );
+    if (matchingProductType) {
+      var name = "-";
+      switch (i18n.language) {
+        case "enus":
+          name = matchingProductType.productNameEng;
+          break;
+        case "zhch":
+          name = matchingProductType.productNameSchi;
+          break;
+        case "zhhk":
+          name = matchingProductType.productNameTchi;
+          break;
+        default:
+          name = matchingProductType.productNameTchi;
           break;
       }
       return name;
@@ -376,6 +390,8 @@ const VehicleDashboard = () => {
     }
   };
 
+  console.log(selectedPuPoint, "selectedpupoint");
+  console.log(selectedDrofPoint, "selecteddrofpoint");
   return (
     <Box
       sx={{
@@ -625,7 +641,13 @@ const VehicleDashboard = () => {
                   <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
                     {t("logisticDashboard.recyc")} {" : "}
                     {typePoint == "pu"
-                      ? mappingRecyName(selectedPuPoint?.jo.recycType || "-")
+                      ? selectedPuPoint?.jo.recycType === ""
+                        ? mappingProductName(selectedPuPoint?.jo.productTypeId)
+                        : mappingRecyName(selectedPuPoint?.jo.recycType || "-")
+                      : selectedDrofPoint?.puHeader.jo.recycType === ""
+                      ? mappingProductName(
+                          selectedDrofPoint?.puHeader.jo.productTypeId
+                        )
                       : mappingRecyName(
                           selectedDrofPoint?.puHeader.jo.recycType || "-"
                         )}
@@ -634,9 +656,14 @@ const VehicleDashboard = () => {
                 <Box>
                   <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
                     {t("logisticDashboard.packageName")} {" : "}
-                    {getPackageName(
-                      selectedPuPoint?.puDetail[0].packageTypeId || ""
-                    )}
+                    {typePoint == "pu"
+                      ? getPackageName(
+                          selectedPuPoint?.puDetail[0].packageTypeId || ""
+                        )
+                      : getPackageName(
+                          selectedDrofPoint?.dropoffDetail[0].packageTypeId ||
+                            ""
+                        )}
                   </Typography>
                   <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
                     {t("logisticDashboard.packingWeight")} {" : "}
