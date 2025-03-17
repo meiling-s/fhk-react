@@ -4,6 +4,11 @@ export interface JobListOrder {
     picoId:            string;
     picoDtlId:         number;
     plateNo:           string;
+    productAddonTypeId: string
+    productAddonTypeRemark: string
+    productSubTypeId: string
+    productSubTypeRemark: string
+    productTypeId: string
     senderId:          string,
     senderName:        string,
     senderAddr:        string,
