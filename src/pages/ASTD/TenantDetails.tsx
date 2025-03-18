@@ -760,7 +760,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {tenantDetail?.rejectReason !== null ? (
                     <>
                       {i18n.language === "enus" &&
-                        `The application was rejected ${
+                        `The application was rejected by ${
                           tenantDetail?.rejectedBy
                         } at ${dayjs
                           .utc(tenantDetail?.rejectedAt)
@@ -773,20 +773,23 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                       {i18n.language === "zhhk" &&
                         `由於 ${tenantDetail?.rejectReason?.flatMap(
                           (value) => value.zhhk
-                        )}, ${tenantDetail?.rejectedBy} 於 ${
-                          tenantDetail?.rejectedAt
-                        } 拒絕了申請。`}
+                        )}, ${tenantDetail?.rejectedBy} 於 ${dayjs
+                          .utc(tenantDetail?.rejectedAt)
+                          .tz("Asia/Hong_Kong")
+                          .format(`${dateFormat} HH:mm`)} 拒絕了申請。`}
                       {i18n.language === "zhch" &&
                         `由于 ${tenantDetail?.rejectReason?.flatMap(
                           (value) => value.zhch
-                        )}, ${tenantDetail?.rejectedBy} 于 ${
-                          tenantDetail?.rejectedAt
-                        } 拒绝了申请。`}
+                        )}, ${tenantDetail?.rejectedBy} 于 ${dayjs
+                          .utc(tenantDetail?.rejectedAt)
+                          .tz("Asia/Hong_Kong")
+                          .format(`${dateFormat} HH:mm`)} 拒绝了申请。`}
                     </>
-                  ) : (
+                  ) : null}
+                  {tenantDetail?.deactiveReason !== null ? (
                     <>
                       {i18n.language === "enus" &&
-                        `The application was rejected ${
+                        `The application was deactivate by ${
                           tenantDetail?.updatedBy
                         } at ${dayjs
                           .utc(tenantDetail?.updatedAt)
@@ -799,17 +802,19 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                       {i18n.language === "zhhk" &&
                         `由於 ${tenantDetail?.deactiveReason?.flatMap(
                           (value) => value.zhhk
-                        )}, ${tenantDetail?.updatedBy} 於 ${
-                          tenantDetail?.updatedAt
-                        } 拒絕了申請。`}
+                        )}, ${tenantDetail?.updatedBy} 於 ${dayjs
+                          .utc(tenantDetail?.updatedAt)
+                          .tz("Asia/Hong_Kong")
+                          .format(`${dateFormat} HH:mm`)} 拒絕了申請。`}
                       {i18n.language === "zhch" &&
                         `由于 ${tenantDetail?.deactiveReason?.flatMap(
                           (value) => value.zhch
-                        )}, ${tenantDetail?.updatedBy} 于 ${
-                          tenantDetail?.updatedAt
-                        } 拒绝了申请。`}
+                        )}, ${tenantDetail?.updatedBy} 于 ${dayjs
+                          .utc(tenantDetail?.updatedAt)
+                          .tz("Asia/Hong_Kong")
+                          .format(`${dateFormat} HH:mm`)} 拒绝了申请。`}
                     </>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </Box>
