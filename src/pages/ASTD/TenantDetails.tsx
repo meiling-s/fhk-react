@@ -760,7 +760,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {tenantDetail?.rejectReason !== null ? (
                     <>
                       {i18n.language === "enus" &&
-                        `The application was rejected ${
+                        `The application was rejected by ${
                           tenantDetail?.rejectedBy
                         } at ${dayjs
                           .utc(tenantDetail?.rejectedAt)
@@ -785,10 +785,11 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                           .tz("Asia/Hong_Kong")
                           .format(`${dateFormat} HH:mm`)} 拒绝了申请。`}
                     </>
-                  ) : (
+                  ) : null}
+                  {tenantDetail?.deactiveReason !== null ? (
                     <>
                       {i18n.language === "enus" &&
-                        `The application was rejected ${
+                        `The application was deactivate by ${
                           tenantDetail?.updatedBy
                         } at ${dayjs
                           .utc(tenantDetail?.updatedAt)
@@ -813,7 +814,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                           .tz("Asia/Hong_Kong")
                           .format(`${dateFormat} HH:mm`)} 拒绝了申请。`}
                     </>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </Box>
