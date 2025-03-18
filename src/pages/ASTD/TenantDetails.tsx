@@ -773,15 +773,17 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                       {i18n.language === "zhhk" &&
                         `由於 ${tenantDetail?.rejectReason?.flatMap(
                           (value) => value.zhhk
-                        )}, ${tenantDetail?.rejectedBy} 於 ${
-                          tenantDetail?.rejectedAt
-                        } 拒絕了申請。`}
+                        )}, ${tenantDetail?.rejectedBy} 於 ${dayjs
+                          .utc(tenantDetail?.rejectedAt)
+                          .tz("Asia/Hong_Kong")
+                          .format(`${dateFormat} HH:mm`)} 拒絕了申請。`}
                       {i18n.language === "zhch" &&
                         `由于 ${tenantDetail?.rejectReason?.flatMap(
                           (value) => value.zhch
-                        )}, ${tenantDetail?.rejectedBy} 于 ${
-                          tenantDetail?.rejectedAt
-                        } 拒绝了申请。`}
+                        )}, ${tenantDetail?.rejectedBy} 于 ${dayjs
+                          .utc(tenantDetail?.rejectedAt)
+                          .tz("Asia/Hong_Kong")
+                          .format(`${dateFormat} HH:mm`)} 拒绝了申请。`}
                     </>
                   ) : (
                     <>
@@ -799,15 +801,17 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                       {i18n.language === "zhhk" &&
                         `由於 ${tenantDetail?.deactiveReason?.flatMap(
                           (value) => value.zhhk
-                        )}, ${tenantDetail?.updatedBy} 於 ${
-                          tenantDetail?.updatedAt
-                        } 拒絕了申請。`}
+                        )}, ${tenantDetail?.updatedBy} 於 ${dayjs
+                          .utc(tenantDetail?.updatedAt)
+                          .tz("Asia/Hong_Kong")
+                          .format(`${dateFormat} HH:mm`)} 拒絕了申請。`}
                       {i18n.language === "zhch" &&
                         `由于 ${tenantDetail?.deactiveReason?.flatMap(
                           (value) => value.zhch
-                        )}, ${tenantDetail?.updatedBy} 于 ${
-                          tenantDetail?.updatedAt
-                        } 拒绝了申请。`}
+                        )}, ${tenantDetail?.updatedBy} 于 ${dayjs
+                          .utc(tenantDetail?.updatedAt)
+                          .tz("Asia/Hong_Kong")
+                          .format(`${dateFormat} HH:mm`)} 拒绝了申请。`}
                     </>
                   )}
                 </div>
