@@ -453,7 +453,7 @@
       "sender_name": "寄件公司",
       "exp_opration": "已過期操作",
       "rec_loc_info": "回收地點資料",
-      "logistic_company": "寄件公司名稱",
+      "logistic_company": "物流公司",
       "actions": "行動",
       "download": "下載"
     },
@@ -995,7 +995,7 @@
     "corresponding_waybill": "對應運單",
     "shipping_validity_date_from": "運輸有效日期由",
     "shipping_validity_date_to": "至",
-    "shipping_company_name": "寄件公司名稱",
+    "shipping_company_name": "物流公司",
     "recycling_location_information": "回收地點資料",
     "main_category": "回收物主類別",
     "subcategory": "回收物次類別",
