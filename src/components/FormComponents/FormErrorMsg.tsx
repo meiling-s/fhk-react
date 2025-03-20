@@ -42,7 +42,7 @@ export function FormErrorMsg({
         <Typography
           sx={warning ? localstyles.txtField_warning : localstyles.txtField}
         >
-          {field}
+          [{field}]
         </Typography>
         <Typography
           sx={

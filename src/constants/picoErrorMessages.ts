@@ -172,9 +172,9 @@ export const picoErrorMessages: Record<string, any> = {
     messageSc: '具体日期 不应留白'
   },
   invalidDate: {
-    messageEn: 'Validity Date Effective from date should not later than Effective to date',
-    messageTc: '有效日期由 開始日期不能晚於截止日期',
-    messageSc: '有效日期由 开始日期不能晚于截止日期'
+    messageEn: 'Effective from date should not be later than effective to date',
+    messageTc: '生效日期不能晚於結束日期',
+    messageSc: '生效日期不能晚于结束日期'
   },
   out_of_date_range: {
     messageEn: 'Specified date(s) are out of the shipping validity range',
