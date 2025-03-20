@@ -480,6 +480,7 @@ const CompactorDashboard: FunctionComponent = () => {
                     resetValue={true}
                     width="500px"
                     onChange={handleSearch}
+                    page='compactor'
                   />
                 ))}
                 <Grid item>
