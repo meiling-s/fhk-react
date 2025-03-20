@@ -53,7 +53,8 @@ const Settings: FunctionComponent = () => {
             {t("staffManagement.staff")}
           </Typography>
         </Box>
-        {token.realmApiRoute !== "customer" ? (
+        {token.realmApiRoute !== "customer" &&
+        token.realmApiRoute !== "logistic" ? (
           <Tabs
             tabs={tabSettings}
             navigate={handleTabChange}
