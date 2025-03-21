@@ -358,7 +358,7 @@ function MainDrawer() {
     {
       name: "dashboard",
       value:
-        realm === Realm.astd
+        realm === Realm.astd || realm === Realm.collector
           ? t("dashboard_recyclables.collector")
           : t("dashboard_recyclables.warehouse"),
       path: `/${realm}/dashboard`,
@@ -458,7 +458,11 @@ function MainDrawer() {
           currentSubMenu.functionName === "vehicleDashboard" ||
           currentSubMenu.functionName === "weightOfRecyclables"
             ? "儀錶板"
-            : currentSubMenu.functionName === "dashboard"
+            : currentSubMenu.functionName === "dashboard" &&
+              realm === Realm.collector
+            ? "回收物儀表盤"
+            : currentSubMenu.functionName === "dashboard" &&
+              realm === Realm.manufacturer
             ? "倉庫儀表板"
             : currentSubMenu.functionName === "inventory"
             ? "存貨"
