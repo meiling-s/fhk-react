@@ -6,7 +6,7 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { SEARCH_ICON } from "../../themes/icons";
 import { t } from "i18next";
 import { localStorgeKeyName } from "../../constants/constant";
@@ -56,6 +56,7 @@ const CustomSearchField = ({
   page?: string;
 }) => {
   const { dateFormat } = useContainer(CommonTypeContainer);
+  const [open, setOpen] = useState(false);
   const hasOptions = options && options.length > 0;
   //const [selectedValue, setSelectedValue] = useState<string>("")
   const initialSelectedValue =
@@ -101,8 +102,14 @@ const CustomSearchField = ({
     <Box>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
         {inputType === "date" ? (
-          <Box sx={{ ...localstyles.DateItem, width: width ? width : "250px" }}>
+          <Box
+            sx={{ ...localstyles.DateItem, width: width || "250px" }}
+            onClick={() => setOpen(true)}
+          >
             <DatePicker
+              open={open} // Control open state
+              onOpen={() => setOpen(true)}
+              onClose={() => setOpen(false)}
               defaultValue={isUseCurrDate ? dayjs() : null}
               label={label}
               format={dateFormat}
@@ -116,7 +123,7 @@ const CustomSearchField = ({
               data-testid={dataTestId}
               slotProps={{
                 textField: {
-                  inputProps: { readOnly: page === "compactor" ? true : false },
+                  inputProps: { readOnly: page === "compactor" },
                 },
               }}
             />
@@ -216,6 +223,7 @@ let localstyles = {
       borderRadius: "4px",
     },
     borderRadius: "4px",
+    cursor: "pointer",
   },
   DateItem: {
     display: "flex",
@@ -223,6 +231,7 @@ let localstyles = {
     alignItems: "center",
     marginTop: "8px",
     marginRight: "8px",
+    cursor: "pointer",
     // width: '250px'
   },
 };
