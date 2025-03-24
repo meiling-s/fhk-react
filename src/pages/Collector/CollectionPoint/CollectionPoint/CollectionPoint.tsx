@@ -147,9 +147,9 @@ const CollectionPoint = () => {
             </Box>
           )}
         </Box>
-        <Box sx={styles.mapRightContainer}>
+        {/* <Box sx={styles.mapRightContainer}>
           <MyMap collectionPoints={colList} hoveredCard={hoveredCard} />
-        </Box>
+        </Box> */}
       </Box>
     </>
   )
