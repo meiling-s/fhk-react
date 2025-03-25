@@ -384,21 +384,21 @@ function MainDrawer() {
         path: `/${realm}/globalItemId`,
         functionName: "globalItemId",
       },
-      {
-        name: "vehicleDashboard",
-        value: t("vehicle.vehicle"),
-        path: `/${realm}/vehicleDashboard`,
-        functionName: "vehicleDashboard",
-      },
+      // {
+      //   name: "vehicleDashboard",
+      //   value: t("vehicle.vehicle"),
+      //   path: `/${realm}/vehicleDashboard`,
+      //   functionName: "vehicleDashboard",
+      // },
     ];
   } else if (role === "logistic") {
     subMenuDashboardTmp = [
-      {
-        name: "vehicleDashboard",
-        value: t("vehicle.vehicle"),
-        path: `/${realm}/vehicleDashboard`,
-        functionName: "vehicleDashboard",
-      },
+      // {
+      //   name: "vehicleDashboard",
+      //   value: t("vehicle.vehicle"),
+      //   path: `/${realm}/vehicleDashboard`,
+      //   functionName: "vehicleDashboard",
+      // },
       {
         name: "weightOfRecyclables",
         value: t("dashboard_weight_of_recyclables.record"),
