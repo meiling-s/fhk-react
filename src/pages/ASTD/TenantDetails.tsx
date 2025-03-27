@@ -757,7 +757,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
             <Box>
               <div className="field-tenant-footer">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-5">
-                  {tenantDetail?.rejectReason !== null ? (
+                  {(tenantDetail?.rejectReason !== null && tenantDetail?.status === "REJECTED") ? (
                     <>
                       {i18n.language === "enus" &&
                         `The application was rejected by ${
@@ -786,7 +786,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                           .format(`${dateFormat} HH:mm`)} 拒绝了申请。`}
                     </>
                   ) : null}
-                  {tenantDetail?.deactiveReason !== null ? (
+                  {(tenantDetail?.deactiveReason !== null && tenantDetail?.status === "SUSPEND") ? (
                     <>
                       {i18n.language === "enus" &&
                         `The application was deactivate by ${
@@ -805,14 +805,14 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                         )}, ${tenantDetail?.updatedBy} 於 ${dayjs
                           .utc(tenantDetail?.updatedAt)
                           .tz("Asia/Hong_Kong")
-                          .format(`${dateFormat} HH:mm`)} 拒絕了申請。`}
+                          .format(`${dateFormat} HH:mm`)} 停用了公司。`}
                       {i18n.language === "zhch" &&
                         `由于 ${tenantDetail?.deactiveReason?.flatMap(
                           (value) => value.zhch
                         )}, ${tenantDetail?.updatedBy} 于 ${dayjs
                           .utc(tenantDetail?.updatedAt)
                           .tz("Asia/Hong_Kong")
-                          .format(`${dateFormat} HH:mm`)} 拒绝了申请。`}
+                          .format(`${dateFormat} HH:mm`)} 停用了公司。`}
                     </>
                   ) : null}
                 </div>
