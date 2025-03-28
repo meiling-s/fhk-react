@@ -155,15 +155,15 @@ const SelectReasonModal: React.FC<ReasonForm> = ({
 
   const handleSubmitRequest = async (rejectReasonId: string[]) => {
     const auth = returnApiToken();
-    const rejectReason = rejectReasonId.map((id) => {
-      const reasonItem = reasonList.find(
-        (reason: { id: string }) => reason.id === id
-      );
-      return reasonItem ? reasonItem.name : "";
-    });
+    // const rejectReason = rejectReasonId.map((id) => {
+    //   const reasonItem = reasonList.find(
+    //     (reason: { id: string }) => reason.id === id
+    //   );
+    //   return reasonItem ? reasonItem.name : "";
+    // });
     const updateJOStatus = {
       status: "UNASSIGNED",
-      reason: rejectReason,
+      reason: rejectReasonId,
       updatedBy: auth.loginId,
       pickupDate: selectedDate.split("T")[0],
       remark: isUsingOtherRemark ? otherRemark : "",
@@ -375,16 +375,16 @@ const RejectModal: React.FC<RejectForm> = ({
   }, [open]);
 
   const handleRejectRequest = async (rejectReasonId: string[]) => {
-    const rejectReason = rejectReasonId.map((id) => {
-      const reasonItem = reasonList.find(
-        (reason: { id: string }) => reason.id === id
-      );
-      return reasonItem ? reasonItem.name : "";
-    });
+    // const rejectReason = rejectReasonId.map((id) => {
+    //   const reasonItem = reasonList.find(
+    //     (reason: { id: string }) => reason.id === id
+    //   );
+    //   return reasonItem ? reasonItem.name : "";
+    // });
     const loginId = localStorage.getItem(localStorgeKeyName.username) || "";
     const updateJOStatus = {
       status: "CANCELLED",
-      reason: rejectReason,
+      reason: rejectReasonId,
       updatedBy: loginId,
       remark: isUsingOtherRemark ? otherRemark : "",
     };
