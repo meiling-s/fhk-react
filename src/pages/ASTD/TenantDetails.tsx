@@ -786,7 +786,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                           .format(`${dateFormat} HH:mm`)} 拒绝了申请。`}
                     </>
                   ) : null}
-                  {(tenantDetail?.deactiveReason !== null && tenantDetail?.status === "SUSPEND") ? (
+                  {(tenantDetail?.deactiveReason !== null && tenantDetail?.status === "CLOSED") ? (
                     <>
                       {i18n.language === "enus" &&
                         `The application was deactivate by ${
