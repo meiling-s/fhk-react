@@ -23,6 +23,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import { refactorPickUpOrderDetail } from "./utils";
 import { useContainer } from "unstated-next";
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
+import useOnSubmit from "src/hooks/useOnSubmit";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -35,6 +36,7 @@ const CreatePickupOrder = () => {
   const [picoTypeValue, setPicoType] = useState<string>("ROUTINE");
   const role = localStorage.getItem(localStorgeKeyName.role);
   const { dateFormat } = useContainer(CommonTypeContainer);
+  const [submitDisabled, setSubmitDisabled] = useState<boolean>(false);
 
   function getTenantId() {
     const tenantId = returnApiToken().decodeKeycloack.substring(
@@ -70,6 +72,50 @@ const CreatePickupOrder = () => {
 
   const { loginId } = returnApiToken();
   const currentDate = new Date().toISOString();
+
+  const onSubmitHandler = useOnSubmit(async (values: CreatePO) => {
+    const refactorPicoDetail: any = refactorPickUpOrderDetail(addRow);
+    values.createPicoDetail = refactorPicoDetail;
+
+    if (picoTypeValue === "AD_HOC") {
+        values.routine = [];
+    } else if (picoTypeValue === "ROUTINE") {
+        if (values.routineType === "specificDate") {
+            const currentHour = dayjs().hour();
+            const currentMinute = dayjs().minute();
+
+            values.specificDates = values.routine
+                .map((value) => {
+                    const formattedDate = dayjs(value, dateFormat).format("YYYY-MM-DD");
+                    const parsedDate = dayjs.tz(formattedDate, dayjs.tz.guess());
+
+                    if (!parsedDate.isValid()) {
+                        console.error(`Invalid date format: ${value}`);
+                        return null;
+                    }
+
+                    return parsedDate
+                        .set("hour", currentHour)
+                        .set("minute", currentMinute)
+                        .toISOString();
+                })
+                .filter((date) => date !== null) as string[];
+        } else if (values.routineType === "weekly") {
+            values.specificDates = [];
+        }
+    }
+
+    const result = await submitPickUpOrder(values);
+    const data = result?.data;
+    if (data) {
+        const routeName = role;
+        navigate(`/${routeName}/PickupOrder`, { state: "created" });
+    } else {
+        showErrorToast("fail to create pickup order");
+    }
+  });
+
+
   const createPickupOrder = useFormik({
     initialValues: {
       tenantId: getTenantId(),
@@ -93,8 +139,16 @@ const CreatePickupOrder = () => {
       specificDates: [],
     },
 
+    onSubmit: async (values: CreatePO) => onSubmitHandler(values)});
+
     // validationSchema: validateSchema,
-    onSubmit: async (values: CreatePO) => {
+    /*onSubmit: async (values: CreatePO) => {
+
+      if(submitDisabled){
+        return
+      }
+
+      setSubmitDisabled(true);
       const refactorPicoDetail: any = refactorPickUpOrderDetail(addRow);
       values.createPicoDetail = refactorPicoDetail;
 
@@ -140,8 +194,9 @@ const CreatePickupOrder = () => {
       } else {
         showErrorToast("fail to create pickup order");
       }
+      setSubmitDisabled(false);
     },
-  });
+  });*/
 
   useEffect(() => {
     setPicoType(createPickupOrder.values.picoType);
