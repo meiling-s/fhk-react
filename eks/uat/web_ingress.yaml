@@ -8,7 +8,8 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/load-balancer-name: fhk-managed-uat
     alb.ingress.kubernetes.io/group.name: fhk-managed-uat
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-east-1:307426213411:certificate/7a3da183-3480-4e8e-b2d4-fd6efc8587cf
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-east-1:307426213411:certificate/1d5696d6-47e4-4efc-9568-1269df8004bc
+   # alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-east-1:307426213411:certificate/7a3da183-3480-4e8e-b2d4-fd6efc8587cf
    # alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-east-1:307426213411:certificate/f94b4736-fd68-4fc9-bb42-46c816789152
    # alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-east-1:307426213411:certificate/c83e75c1-583b-4d59-a588-b7df08ed7102
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
