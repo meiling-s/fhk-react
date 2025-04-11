@@ -71,6 +71,7 @@
     "address": "地點",
     "enterAddress": "請輸入地點",
     "enterName": "請輸入名稱",
+    "pleaseEnterFlat": "請輸入房號/單位",
     "effFromDate": "開放日期由",
     "effDate": "開放日期",
     "openingDate": "開放日期",
@@ -103,7 +104,7 @@
     "cancel": "取消",
     "collectionPoint_created": "回收點已建立",
     "collectionPoint_updated": "回收點已更新",
-    "addressNotes": "請輸入座位數、街道名稱、屋苑等訊息",
+    "addressNotes": "請輸入房號/單位、街道名稱、屋苑等訊息",
     "addressReminder": "請選擇地址"
   },
   "form": {
