@@ -184,7 +184,6 @@ export const getInternalRequest = async (
       params: {
         page: page,
         size: size,
-        sort: "string",
         recycTypeId: query?.recycTypeId,
         recycSubTypeId: query?.recycSubTypeId
       }
