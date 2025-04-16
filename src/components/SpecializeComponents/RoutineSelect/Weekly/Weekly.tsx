@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import CustomTimePicker from "../../../FormComponents/CustomTimePicker";
 import CustomItemList, { il_item } from "../../../FormComponents/CustomItemList";
 import { useTranslation } from "react-i18next";
@@ -29,6 +29,7 @@ export default function Weekly({
     const [weekDays, setWeekDays] = useState<string[]>([]);
     const [curWeekDay, setCurWeekDay] = useState<string>(" ");
     const [timePeriods, setTimePeriods] = useState<weekDay_timePeriod[]>([]);
+    const itemListRef = useRef<any>(null)
 
     const { t, i18n } = useTranslation();
 
@@ -205,8 +206,9 @@ export default function Weekly({
     }
 
     const removeWeekD = (weekDayToBeRemoved: string) => {
-        setWeekDays(weekDays.filter(wd => wd!==weekDayToBeRemoved))
-        setTimePeriods(timePeriods.filter(tp => tp.id !== weekDayToBeRemoved))
+        if (itemListRef.current) {
+            itemListRef.current.removeSelectedItems(weekDayToBeRemoved)
+        }
     }
 
     const memoizedDefaultWeekDays = useMemo(() => returnDefaultWeekDay() || [], [defaultWeek]);
@@ -215,6 +217,7 @@ export default function Weekly({
         <>
             <CustomField label={t("component.routine.everyWeekDay")} mandatory>
                 <CustomItemList
+                    ref={itemListRef}
                     items={getWeekDays()}
                     multiSelect={setWeekD}
                     dbClickSelect={true}

@@ -1,5 +1,5 @@
 import { Box, Button } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 import { styles } from '../../constants/styles'
 import { getPrimaryColor, getPrimaryLightColor } from '../../utils/utils'
 
@@ -38,7 +38,7 @@ type props = {
   needPrimaryColor?: boolean
   dataTestId?: string
 }
-function CustomItemList({
+const CustomItemList = forwardRef(({
   items,
   withSubItems,
   singleSelect,
@@ -52,7 +52,7 @@ function CustomItemList({
   itemColor,
   needPrimaryColor,
   dataTestId
-}: props) {
+}: props, ref) => {
   const triggerdItem = {
     ...styles.listItemTemp,
     backgroundColor: itemColor?.bgColor
@@ -73,6 +73,12 @@ function CustomItemList({
   const [selectSingle, setSelectSingle] = useState<string>('')
   const [selectMulti, setSelectMulti] = useState<string[]>([])
   const [LS, setLS] = useState<string>(' ') //last select
+
+  useImperativeHandle(ref, () => ({
+    removeSelectedItems: (removeItem: string) => {
+      handleSelect(removeItem)
+    }
+  }))
 
   const setSelectedItem = () => {
     if (defaultSelected && Array.isArray(defaultSelected) && multiSelect) {
@@ -191,7 +197,7 @@ function CustomItemList({
       ))}
     </Box>
   )
-}
+})
 const localstyles = {
   container: {
     mt: 1,
