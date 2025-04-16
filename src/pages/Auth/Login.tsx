@@ -303,9 +303,13 @@ const Login = () => {
           const errCode = returnErrCode(error);
           if (errCode === "004" || errCode === "005") {
             localStorage.setItem(localStorgeKeyName.firstTimeLogin, "true");
+            setWarningMsg(t(`login.err_msg_${errCode}`));
             return navigate("/changePassword");
+          }else if(errCode === "001" || errCode === "008"){
+            setWarningMsg(t(`login.err_msg_001`));
+          }else {
+            setWarningMsg(t(`login.err_msg_${errCode}`));
           }
-          setWarningMsg(t(`login.err_msg_${errCode}`));
         }
       }
     }
