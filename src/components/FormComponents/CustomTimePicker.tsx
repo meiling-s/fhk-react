@@ -15,6 +15,8 @@ type timePicker = {
   //timePeriod: boolean,       enable it if need to support non timePeriod time picker
   setTime: (timePeriod: timePeriod[]) => void
   defaultTime?: timePeriod[]
+  removeParent?: (parent: string) => void
+  selectedParent?: string
 }
 const localeTexts = {
   en: {
@@ -39,7 +41,9 @@ function CustomTimePicker({
   multiple,
   //timePeriod,
   setTime,
-  defaultTime
+  defaultTime,
+  removeParent,
+  selectedParent
 }: timePicker) {
   const tempTP: timePeriod = {
     startFrom: dayjs('09:00', 'HH:mm'),
@@ -136,9 +140,15 @@ function CustomTimePicker({
 
   const removeTimePeriod = (index: number) => {
     if (index > -1 && timePeriod.length > 0) {
+      if(timePeriod.length == 1 && removeParent && selectedParent){
+        //unselect the parent as all time periods removed
+        removeParent(selectedParent)
+      }
+
       setTimePeriod(
         Object.values(timePeriod).filter((i, index2) => index2 !== index)
       )
+      
     }
   }
 

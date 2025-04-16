@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CustomTimePicker from "../../../FormComponents/CustomTimePicker";
 import CustomItemList, { il_item } from "../../../FormComponents/CustomItemList";
 import { useTranslation } from "react-i18next";
@@ -167,7 +167,6 @@ export default function Weekly({
                 setTimePeriods(timeP);
             }
         }
-
     }
 
     const setTimePeriodForWeekDay = (TPs: timePeriod[]) => {
@@ -205,6 +204,13 @@ export default function Weekly({
         return withSubItem;
     }
 
+    const removeWeekD = (weekDayToBeRemoved: string) => {
+        setWeekDays(weekDays.filter(wd => wd!==weekDayToBeRemoved))
+        setTimePeriods(timePeriods.filter(tp => tp.id !== weekDayToBeRemoved))
+    }
+
+    const memoizedDefaultWeekDays = useMemo(() => returnDefaultWeekDay() || [], [defaultWeek]);
+
     return(
         <>
             <CustomField label={t("component.routine.everyWeekDay")} mandatory>
@@ -214,7 +220,7 @@ export default function Weekly({
                     dbClickSelect={true}
                     setLastSelect={setCurWeekDay}
                     withSubItems={getWithSubItemList()}
-                    defaultSelected={returnDefaultWeekDay()}
+                    defaultSelected={memoizedDefaultWeekDays}
                 />
                 <Collapse sx={{mt: 1}} in={curWeekDay != " " && weekDays.length > 0}>
                     <CustomField label={t("time_Period") + ` (${getWeekDayById(curWeekDay)})`} key={curWeekDay} mandatory={required}>
@@ -222,6 +228,8 @@ export default function Weekly({
                             multiple={true}
                             setTime={setTimePeriodForWeekDay}
                             defaultTime={ (curWeekDay != " ")? getTimePeriod(curWeekDay).timePeriod : undefined}
+                            removeParent={removeWeekD}
+                            selectedParent = {curWeekDay}
                         />
                     </CustomField>
                 </Collapse>
