@@ -901,7 +901,8 @@
     "resetPasswaitApproval": "重置密码等待批准",
     "resetPassword": "重设密码",
     "emailIsExisting": "电邮地址已经被使用过, 请问要继续吗?",
-    "passwordPolicy": "新密码与之前 8 个密码之一相同，请提供另一个密码"
+    "passwordPolicy": "新密码与之前 8 个密码之一相同，请提供另一个密码",
+    "passwordIncorrect": "密码错误"
   },
   "checkinandcheckout": {
     "checkinandcheckout": "概覽",
