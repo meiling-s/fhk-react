@@ -339,6 +339,7 @@
     "confirm_password": "再次输入新密码",
     "placeholder_confirm_password": "请输入密码",
     "helper_confirm_password": "您的新密码和确认密码不匹配",
+    "old_new_password_same": "新密码与旧密码不可相同",
     "skip_btn": "跳过（暂时用于开发)",
     "error": "错误，无法重设密码"
   },
@@ -350,7 +351,8 @@
     "err_msg_006": "请再次尝试登入及如果此问题继续存在，请联系管理员。",
     "err_msg_007": "连续登入失败5次。你的帐户已版锁定。",
     "err_msg_008": "帐号不存在。",
-    "err_msg_500": "获取授权数据失败。"
+    "err_msg_500": "获取授权数据失败。",
+    "usernamePasswordCantBeEmpty": "用户名称与密码不可以是空白"
   },
   "mainMenu": {
     "manage": "管理",

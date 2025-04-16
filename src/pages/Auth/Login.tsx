@@ -92,7 +92,7 @@ const Login = () => {
 
   const handleEncrypt = async (userName: string, password: string) => {
     if (!userName || !password) {
-      setWarningMsg("Username and password are required.");
+      setWarningMsg(t("login.usernamePasswordCantBeEmpty"));
       return;
     }
     await encryptData(userName, password);
@@ -303,9 +303,13 @@ const Login = () => {
           const errCode = returnErrCode(error);
           if (errCode === "004" || errCode === "005") {
             localStorage.setItem(localStorgeKeyName.firstTimeLogin, "true");
+            setWarningMsg(t(`login.err_msg_${errCode}`));
             return navigate("/changePassword");
+          }else if(errCode === "001" || errCode === "008"){
+            setWarningMsg(t(`login.err_msg_001`));
+          }else {
+            setWarningMsg(t(`login.err_msg_${errCode}`));
           }
-          setWarningMsg(t(`login.err_msg_${errCode}`));
         }
       }
     }

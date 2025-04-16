@@ -299,6 +299,7 @@
     "confirm_password": "確認密碼",
     "placeholder_confirm_password": "請輸入密碼",
     "helper_confirm_password": "您的新密碼和確認密碼不匹配",
+    "old_new_password_same": "新密碼與舊密碼不可相同",
     "skip_btn": "跳過（暫時用於開發",
     "error": "錯誤，無法重設密碼"
   },
@@ -354,7 +355,8 @@
     "err_msg_006": "請再次嘗試登入及如果此問題繼續存在，請聯繫管理員。",
     "err_msg_007": "連續登入失敗5次。 你的帳戶已版鎖定。",
     "err_msg_008": "帳號不存在。",
-    "err_msg_500": "取得授權資料失敗。"
+    "err_msg_500": "取得授權資料失敗。",
+    "usernamePasswordCantBeEmpty": "用戶名稱與密碼不可以是空白"
   },
   "status": {
     "active": "啟用",
