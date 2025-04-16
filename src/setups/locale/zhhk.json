@@ -299,6 +299,7 @@
     "confirm_password": "確認密碼",
     "placeholder_confirm_password": "請輸入密碼",
     "helper_confirm_password": "您的新密碼和確認密碼不匹配",
+    "old_new_password_same": "新密碼與舊密碼不可相同",
     "skip_btn": "跳過（暫時用於開發",
     "error": "錯誤，無法重設密碼"
   },

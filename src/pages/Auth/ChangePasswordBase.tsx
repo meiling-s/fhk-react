@@ -172,10 +172,7 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
 
     setValidation(tempV)
 
-    const isComplexPassword = checkPassComplexity(formData.newPassword)
-    const isPassDiffrent = formData.newPassword != formData.password
-    console.log(isComplexPassword , " ", isPassDiffrent, " ", isComplexPassword && isPassDiffrent)
-    setIsPassValid(isComplexPassword && isPassDiffrent)
+    setIsPassValid(checkPassComplexity(formData.newPassword))
     setIsPassIdentical(formData.newPassword == formData.confirmPassword)
 
   }, [formData, isPassValid, isPassIdentical])
@@ -217,8 +214,9 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
     const isFirstLogin: boolean =
       localStorage.getItem(localStorgeKeyName.firstTimeLogin) === 'true'
 
-    console.log('ispassvalid & ispassidentical', isPassValid, "\n", isPassIdentical)
-    if (isPassValid && isPassIdentical && validation.length === 0) {
+    if(formData.password === formData.newPassword){
+      returnErrMessage(t('changePass.old_new_password_same'))
+    } else if (isPassValid && isPassIdentical && validation.length === 0) {
       const encryptor = new JSEncrypt();
       encryptor.setPublicKey(publicKey);
       const encryptedPassword = encryptor.encrypt(formData.password);
@@ -267,7 +265,6 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
       } else {
         console.error('Encryption failed.')
       }
-
     } else {
       setTrySubmited(true)
     }
