@@ -20,6 +20,7 @@ import { styles as constantStyle } from '../../constants/styles'
 import { useTranslation } from 'react-i18next'
 import CustomField from '../../components/FormComponents/CustomField'
 import JSEncrypt from 'jsencrypt';
+import { AxiosError } from 'axios'
 
 interface FormData {
   userName: string
@@ -120,27 +121,32 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
   };
 
   const checkPassComplexity = (password: string): boolean => {
-    const [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar] = [
-      /[A-Z]/,
-      /[a-z]/,
-      /[0-9]/,
-      /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/
-    ]
+    // const [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar] = [
+    //   /[A-Z]/,
+    //   /[a-z]/,
+    //   /[0-9]/,
+    //   /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/
+    // ]
 
-    const length = password.length
-    const isEightCharactersOrMore = length >= 8
-    const isTenCharactersOrMore = length >= 10
-    const containsUpperOrLowerCase =
-      hasUpperCase.test(password) && hasLowerCase.test(password)
-    const containsNumberOrSpecialChar =
-      hasNumber.test(password) || hasSpecialChar.test(password)
+    // const length = password.length
+    // const isEightCharactersOrMore = length >= 8
+    // const isTenCharactersOrMore = length >= 10
+    // const containsUpperOrLowerCase =
+    //   hasUpperCase.test(password) && hasLowerCase.test(password)
+    // const containsNumberOrSpecialChar =
+    //   hasNumber.test(password) || hasSpecialChar.test(password)
+      
 
-    return (
-      (isEightCharactersOrMore &&
-        containsUpperOrLowerCase &&
-        containsNumberOrSpecialChar) ||
-      (isTenCharactersOrMore && containsUpperOrLowerCase)
-    )
+    // return (
+    //   (isEightCharactersOrMore &&
+    //     containsUpperOrLowerCase &&
+    //     containsNumberOrSpecialChar) ||
+    //   (isTenCharactersOrMore && containsUpperOrLowerCase)
+    // )
+    const passwordRegex =
+    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/
+    console.log("test new pw: ",passwordRegex.test(password))
+    return passwordRegex.test(password);
   }
 
   // const returnErrMsg = (error: any) => {
@@ -161,19 +167,21 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
   // }
 
   const returnErrMessage = (errorString: string) => {
-    try {
-      const innerError = JSON.parse(errorString);
+    // try {
+    //   const innerError = JSON.parse(errorString);
 
-      if (innerError.errorCode === '002') {
-        setErrorMessage(t('userAccount.passwordPolicy'));
-        setErrorUpdate(true)
-      } else {
-        setErrorMessage(innerError.errorMessage);
-        setErrorUpdate(true)
-      }
-    } catch (e) {
-      console.error('Failed to parse error message:', e);
-    }
+    //   if (innerError.errorCode === '002') {
+    //     setErrorMessage(t('userAccount.passwordPolicy'));
+    //     setErrorUpdate(true)
+    //   } else {
+    //     setErrorMessage(innerError.errorMessage);
+    //     setErrorUpdate(true)
+    //   }
+    // } catch (e) {
+    //   console.error('Failed to parse error message:', e);
+    // }
+    setErrorMessage(errorString);
+    setErrorUpdate(true)
   };
 
   useEffect(() => {
@@ -219,15 +227,50 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
 
     const isComplexPassword = checkPassComplexity(formData.newPassword)
     const isPassDiffrent = formData.newPassword != formData.password
+    console.log(isComplexPassword , " ", isPassDiffrent, " ", isComplexPassword && isPassDiffrent)
     setIsPassValid(isComplexPassword && isPassDiffrent)
     setIsPassIdentical(formData.newPassword == formData.confirmPassword)
 
   }, [formData, isPassValid, isPassIdentical])
 
+  const removeNonJsonChar = (dataString: string) => {
+    return dataString.substring(
+      dataString.indexOf('{'),
+      dataString.lastIndexOf('}') + 1,
+    )
+  }
+
+  const returnErrCode = (error: any) => {
+    const response = error?.response?.data?.message || ''
+    const errMsgString = removeNonJsonChar(response)
+    const errMsgJSON = JSON.parse(errMsgString)
+    let message = null
+    if(errMsgJSON.errorCode && Number.isInteger(Number(errMsgJSON.errorCode))){
+      message = null
+    } else if(errMsgJSON.message){
+      message = errMsgJSON.message
+    } else if (errMsgJSON.errorMessage){
+      message = errMsgJSON.errorMessage
+    }
+    if (message) {
+      const errSecondInnerString = removeNonJsonChar(message)
+      try {
+        const result = JSON.parse(errSecondInnerString)
+        return result.errorCode
+      } catch (e) {
+        const axiosError = e as AxiosError
+        return axiosError.status
+      }
+    } else {
+      return errMsgJSON.errorCode
+    }
+  }
+
   const submitChangePassword = async () => {
     const isFirstLogin: boolean =
       localStorage.getItem(localStorgeKeyName.firstTimeLogin) === 'true'
 
+    console.log('ispassvalid & ispassidentical', isPassValid, "\n", isPassIdentical)
     if (isPassValid && isPassIdentical && validation.length === 0) {
       const encryptor = new JSEncrypt();
       encryptor.setPublicKey(publicKey);
@@ -250,12 +293,36 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
               }
             }
           } catch (error: any) {
-            if (error?.response?.status === STATUS_CODE[503]) {
+            const axiosError = error as AxiosError
+            console.log("axios error: ",axiosError)
+            if (axiosError.status === STATUS_CODE[503]) {
               return navigate('/maintenance')
-            } else if (error?.response) {
-              returnErrMessage(error.response.data.message)
-              // console.log(error.response.data.message, 'message')
+            } else {
+              if (axiosError?.response) {
+                const errCode = returnErrCode(axiosError)
+                if (errCode === '002') {
+                  console.log("return err: 002\n",t('userAccount.passwordPolicy'))
+                  returnErrMessage(t('userAccount.passwordPolicy'))
+                } else if (errCode === '001'){
+                  console.log("return err: 001\n",t('userAccount.passwordIncorrect'))
+                  returnErrMessage(t('userAccount.passwordIncorrect'))
+                } else if (errCode === '007'){
+                  console.log("return err: 007\n",t('login.err_msg_007'))
+                  returnErrMessage(t('login.err_msg_007'))
+                } else {
+                  const response = error?.response?.data?.message || ''
+                  const errMsgString = removeNonJsonChar(response)
+                  const errMsgJSON = JSON.parse(errMsgString)
+                  returnErrMessage(errMsgJSON)
+                }
+              }
             }
+            // if (error?.response?.status === STATUS_CODE[503]) {
+            //   return navigate('/maintenance')
+            // } else if (error?.response) {
+            //   returnErrMessage(error.response.data.message)
+            //   // console.log(error.response.data.message, 'message')
+            // }
           }
         }
         resetPassword(passData)
@@ -369,7 +436,8 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
                     )
                   }
                 } else if (item.field === 'newPassword') {
-                  if (value.field === item.field && !isPassValid && trySubmited) {
+                  //console.log("value ",value.field, " ",item.field, " ", isPassValid, " ", trySubmited)
+                  if (!isPassValid && trySubmited) {
                     return (
                       <div className="bg-[#FDF8F8] flex items-center p-2 text-red rounded-lg mt-2 text-2xs">
                         <WARNING_ICON />
