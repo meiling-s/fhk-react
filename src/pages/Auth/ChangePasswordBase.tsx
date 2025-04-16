@@ -121,65 +121,12 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
   };
 
   const checkPassComplexity = (password: string): boolean => {
-    // const [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar] = [
-    //   /[A-Z]/,
-    //   /[a-z]/,
-    //   /[0-9]/,
-    //   /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/
-    // ]
-
-    // const length = password.length
-    // const isEightCharactersOrMore = length >= 8
-    // const isTenCharactersOrMore = length >= 10
-    // const containsUpperOrLowerCase =
-    //   hasUpperCase.test(password) && hasLowerCase.test(password)
-    // const containsNumberOrSpecialChar =
-    //   hasNumber.test(password) || hasSpecialChar.test(password)
-      
-
-    // return (
-    //   (isEightCharactersOrMore &&
-    //     containsUpperOrLowerCase &&
-    //     containsNumberOrSpecialChar) ||
-    //   (isTenCharactersOrMore && containsUpperOrLowerCase)
-    // )
     const passwordRegex =
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/
-    console.log("test new pw: ",passwordRegex.test(password))
     return passwordRegex.test(password);
   }
 
-  // const returnErrMsg = (error: any) => {
-  //   const response = error.response.data.message
-  //   const errMsgString = removeNonJsonChar(response)
-  //   const errMsgJSON = JSON.parse(errMsgString)
-  //   if (errMsgJSON.message) {
-  //     const errSecondInnerString = removeNonJsonChar(errMsgJSON.message)
-  //     try {
-  //       const result = JSON.parse(errSecondInnerString)
-  //       return result.errorCode
-  //     } catch (e: any) {
-  //       return e.response.data.status
-  //     }
-  //   } else {
-  //     return errMsgJSON.errorCode
-  //   }
-  // }
-
   const returnErrMessage = (errorString: string) => {
-    // try {
-    //   const innerError = JSON.parse(errorString);
-
-    //   if (innerError.errorCode === '002') {
-    //     setErrorMessage(t('userAccount.passwordPolicy'));
-    //     setErrorUpdate(true)
-    //   } else {
-    //     setErrorMessage(innerError.errorMessage);
-    //     setErrorUpdate(true)
-    //   }
-    // } catch (e) {
-    //   console.error('Failed to parse error message:', e);
-    // }
     setErrorMessage(errorString);
     setErrorUpdate(true)
   };
@@ -301,13 +248,10 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
               if (axiosError?.response) {
                 const errCode = returnErrCode(axiosError)
                 if (errCode === '002') {
-                  console.log("return err: 002\n",t('userAccount.passwordPolicy'))
                   returnErrMessage(t('userAccount.passwordPolicy'))
                 } else if (errCode === '001'){
-                  console.log("return err: 001\n",t('userAccount.passwordIncorrect'))
                   returnErrMessage(t('userAccount.passwordIncorrect'))
                 } else if (errCode === '007'){
-                  console.log("return err: 007\n",t('login.err_msg_007'))
                   returnErrMessage(t('login.err_msg_007'))
                 } else {
                   const response = error?.response?.data?.message || ''
@@ -317,12 +261,6 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
                 }
               }
             }
-            // if (error?.response?.status === STATUS_CODE[503]) {
-            //   return navigate('/maintenance')
-            // } else if (error?.response) {
-            //   returnErrMessage(error.response.data.message)
-            //   // console.log(error.response.data.message, 'message')
-            // }
           }
         }
         resetPassword(passData)
