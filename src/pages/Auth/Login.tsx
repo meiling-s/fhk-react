@@ -92,7 +92,7 @@ const Login = () => {
 
   const handleEncrypt = async (userName: string, password: string) => {
     if (!userName || !password) {
-      setWarningMsg("Username and password are required.");
+      setWarningMsg(t("login.usernamePasswordCantBeEmpty"));
       return;
     }
     await encryptData(userName, password);
