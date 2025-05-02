@@ -668,7 +668,7 @@ const CompactorDashboard: FunctionComponent = () => {
             className=" w-max px-[20px] py-[10px] text-white font-bold rounded-t-xl"
           >
             {t("compactor.selectedItems")}{" "}
-            {`(` + selectedCheckInIds.length + `)`}
+            {`(` + compactorProcessInItem.length + `)`}
           </div>
           <Box
             sx={{
