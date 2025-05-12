@@ -351,6 +351,7 @@
     "err_msg_006": "Please try later.",
     "err_msg_007": "Login failed over 5 times. Your account is locked.",
     "err_msg_008": "That username is taken. Try another.",
+    "err_msg_009": "The user is locked. Please contract your Administrator.",
     "err_msg_500": "Failed to obtain authorization data.",
     "usernamePasswordCantBeEmpty": "User name and password cannot be empty"
   },
@@ -814,7 +815,7 @@
     "deleteProcessOutFailed": "Delete process out failed"
   },
   "warehouseDashboard": {
-    "warehouse": "Overview",
+    "warehouse": "Warehouse",
     "currentCapacity": "Current Capacity",
     "thereStillEnoughSpace": "There's still enough space",
     "noMoreRoom": "No more room",
@@ -907,7 +908,7 @@
     "passwordIncorrect": "Incorrect password"
   },
   "checkinandcheckout": {
-    "checkinandcheckout": "Check-in and Check-out",
+    "checkinandcheckout": "Check-in and check-out",
     "title": "Entry and exit records",
     "creation_date": "Creation date",
     "outin": "Out/In",
