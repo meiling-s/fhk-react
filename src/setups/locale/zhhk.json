@@ -346,7 +346,7 @@
   },
   "mainMenu": {
     "manage": "管理",
-    "overview": "概述"
+    "overview": "概覽"
   },
   "login": {
     "err_msg_001": "請輸入正確的使用者名稱或密碼",
@@ -355,6 +355,7 @@
     "err_msg_006": "請再次嘗試登入及如果此問題繼續存在，請聯繫管理員。",
     "err_msg_007": "連續登入失敗5次。 你的帳戶已版鎖定。",
     "err_msg_008": "帳號不存在。",
+    "err_msg_009": "該用戶已被鎖定。請聯絡您的管理員。",
     "err_msg_500": "取得授權資料失敗。",
     "usernamePasswordCantBeEmpty": "用戶名稱與密碼不可以是空白"
   },
@@ -813,7 +814,7 @@
     "deleteProcessOutFailed": "刪除處理流程失敗"
   },
   "warehouseDashboard": {
-    "warehouse": "概覽",
+    "warehouse": "倉庫",
     "currentCapacity": "現時容量",
     "thereStillEnoughSpace": "尚有大量空間",
     "noMoreRoom": "沒有空間了",
@@ -906,7 +907,7 @@
     "passwordIncorrect": "密碼錯誤"
   },
   "checkinandcheckout": {
-    "checkinandcheckout": "概覽",
+    "checkinandcheckout": "出入記錄",
     "title": "出入記錄",
     "creation_date": "建立日期",
     "outin": "出/入",
