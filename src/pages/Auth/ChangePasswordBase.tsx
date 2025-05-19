@@ -360,6 +360,14 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
                 />
 
               </CustomField>
+
+              {item.field == 'newPassword' && 
+                <div className="bg-[#FDF8F8] flex items-center p-2 text-red rounded-lg mt-2 text-2xs">
+                  <WARNING_ICON />
+                  {item.helperText}
+                </div>
+              }
+
               {validation.map((value) => {
                 if (item.field === 'userName' || item.field === 'password') {
                   if (value.field === item.field && value.error !== '' && trySubmited) {
@@ -372,14 +380,13 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
                   }
                 } else if (item.field === 'newPassword') {
                   //console.log("value ",value.field, " ",item.field, " ", isPassValid, " ", trySubmited)
-                  if (!isPassValid && trySubmited) {
-                    return (
-                      <div className="bg-[#FDF8F8] flex items-center p-2 text-red rounded-lg mt-2 text-2xs">
-                        <WARNING_ICON />
-                        {item.helperText}
-                      </div>
-                    )
-                  }
+                  // return (
+                  //   <div className="bg-[#FDF8F8] flex items-center p-2 text-red rounded-lg mt-2 text-2xs">
+                  //     <WARNING_ICON />
+                  //     {item.helperText}
+                  //   </div>
+                  // )
+                  //if (!isPassValid && trySubmited) {}
                 } else if (item.field === 'confirmPassword') {
                   if (value.field === item.field && !isPassIdentical && trySubmited) {
                     return (
