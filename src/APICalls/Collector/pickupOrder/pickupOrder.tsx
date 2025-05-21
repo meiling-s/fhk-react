@@ -41,6 +41,7 @@ export const getAllPickUpOrder = async (
         logisticName: query?.logisticName,
         recycType: query?.recycType,
         senderName: query?.senderName,
+        receiver: query?.receiver,
         status: query?.status,
       },
     });

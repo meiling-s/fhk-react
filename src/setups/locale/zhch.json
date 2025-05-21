@@ -417,7 +417,9 @@
       "logistic_company": "物流公司",
       "location": "地点",
       "recycling_category": "回收物类别",
-      "status": "状态"
+      "status": "状态",
+      "sender_company": "寄件公司",
+      "receiver_company": "收件公司"
     },
     "card_detail": {
       "main_category": "回收物主类别",

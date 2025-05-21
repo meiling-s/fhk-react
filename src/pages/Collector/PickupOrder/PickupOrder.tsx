@@ -6,6 +6,7 @@ import {
   GridColDef,
   GridRowParams,
   GridRowSpacingParams,
+  GridSortItem,
 } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
@@ -295,6 +296,7 @@ const PickupOrders = () => {
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const [totalData, setTotalData] = useState<number>(0);
+  const [sortModel, setSortModel] = useState<GridSortItem[]>([]);
   const [showOperationColumn, setShowOperationColumn] =
     useState<Boolean>(false);
   const role = localStorage.getItem(localStorgeKeyName.role);
@@ -415,6 +417,7 @@ const PickupOrders = () => {
     logisticName: "",
     recycType: "",
     senderName: "",
+    receiver: "",
     status: null,
   });
   const [approveModal, setApproveModal] = useState(false);
@@ -935,15 +938,20 @@ const PickupOrders = () => {
       field: "effToDate",
       inputType: "date",
     },
+    // {
+    //   label: t("pick_up_order.filter.logistic_company"),
+    //   options: getUniqueOptions("logisticCompany"),
+    //   field: "logisticName",
+    // },
     {
-      label: t("pick_up_order.filter.logistic_company"),
-      options: getUniqueOptions("logisticCompany"),
-      field: "logisticName",
-    },
-    {
-      label: t("check_in.location"),
+      label: t("pick_up_order.filter.sender_company"),
       options: getUniqueOptions("senderCompany"),
       field: "senderName",
+    },
+    {
+      label: t("pick_up_order.filter.receiver_company"),
+      options: getUniqueOptions("receiver"),
+      field: "receiver",
     },
     {
       label: t("pick_up_order.filter.recycling_category"),
@@ -1005,6 +1013,7 @@ const PickupOrders = () => {
   };
 
   const updateQuery = (newQuery: Partial<queryPickupOrder>) => {
+    console.log("newQuery", newQuery);
     setQuery({ ...query, ...newQuery });
   };
 
@@ -1017,6 +1026,21 @@ const PickupOrders = () => {
       updateQuery({ [keyName]: value });
     }
   }, 1000);
+
+  const handleSortModelChange = (newSortModel: GridSortItem[]) => {
+    console.log("newSortModel", newSortModel);
+    setSortModel(newSortModel);
+    
+    if (newSortModel.length > 0) {
+      const sortParams = {
+        sortBy: newSortModel[0].field,
+        sortDirection: newSortModel[0].sort
+      };
+      console.log("sortParams", sortParams);
+    } else {
+      // 当清空排序时，重新获取原始数据
+    }
+  };
 
   function getStatusOpion() {
     const options: Option[] = statusList.map((item) => {
@@ -1158,6 +1182,9 @@ const PickupOrders = () => {
               <DataGrid
                 rows={filteredPico}
                 columns={columns}
+                sortingMode="server"
+                sortModel={sortModel}
+                onSortModelChange={handleSortModelChange}
                 disableRowSelectionOnClick
                 onRowClick={handleRowClick}
                 getRowSpacing={getRowSpacing}

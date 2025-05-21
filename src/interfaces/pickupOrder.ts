@@ -231,6 +231,7 @@ export type queryPickupOrder = {
     logisticName: string;
     recycType: string;
     senderName: string;
+    receiver?: string;
     status: number | null
   }
 

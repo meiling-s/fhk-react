@@ -417,7 +417,9 @@
       "logistic_company": "Logistic Company",
       "location": "Location",
       "recycling_category": "Recycling Category",
-      "status": "Status"
+      "status": "Status",
+      "sender_company": "Sender Company",
+      "receiver_company": "Receiver Company"
     },
     "card_detail": {
       "main_category": "Recyclable Type",
