@@ -24,7 +24,8 @@ import axiosInstance from "../../../constants/axiosInstance";
 export const getAllPickUpOrder = async (
   page: number,
   size: number,
-  query?: queryPickupOrder
+  query?: queryPickupOrder,
+  sort?: string[]
 ) => {
   const auth = returnApiToken();
   try {
@@ -34,6 +35,7 @@ export const getAllPickUpOrder = async (
       params: {
         page: page,
         size: size,
+        sort: sort,
         tenantId: auth.tenantId,
         picoId: query?.picoId,
         effFromDate: query?.effFromDate,
@@ -56,7 +58,8 @@ export const getAllPickUpOrder = async (
 export const getAllLogisticsPickUpOrder = async (
   page: number,
   size: number,
-  query?: queryPickupOrder
+  query?: queryPickupOrder,
+  sort?: string[]
 ) => {
   const auth = returnApiToken();
   try {
@@ -66,6 +69,7 @@ export const getAllLogisticsPickUpOrder = async (
       params: {
         page: page,
         size: size,
+        sort: sort,
         tenantId: auth.tenantId,
         picoId: query?.picoId,
         effFromDate: query?.effFromDate,

@@ -294,6 +294,7 @@ interface Company {
 const PickupOrders = () => {
   const { t } = useTranslation();
   const [page, setPage] = useState(1);
+  const [sort, setSort] = useState(["createdAt,desc"]);
   const pageSize = 10;
   const [totalData, setTotalData] = useState<number>(0);
   const [sortModel, setSortModel] = useState<GridSortItem[]>([]);
@@ -533,9 +534,9 @@ const PickupOrders = () => {
       setTotalData(0);
       let result = null;
       if (role === "logistic") {
-        result = await getAllLogisticsPickUpOrder(page - 1, pageSize, query);
+        result = await getAllLogisticsPickUpOrder(page - 1, pageSize, query, sort);
       } else {
-        result = await getAllPickUpOrder(page - 1, pageSize, query);
+        result = await getAllPickUpOrder(page - 1, pageSize, query, sort);
       }
       let data = result?.data.content;
       if (data && data.length > 0) {
@@ -788,7 +789,7 @@ const PickupOrders = () => {
       });
     }
     navigate(location.pathname, { replace: true });
-  }, [page, query]);
+  }, [page, query, sort]);
 
   useEffect(() => {
     const recycItems: il_item[] = [];
@@ -1032,13 +1033,11 @@ const PickupOrders = () => {
     setSortModel(newSortModel);
     
     if (newSortModel.length > 0) {
-      const sortParams = {
-        sortBy: newSortModel[0].field,
-        sortDirection: newSortModel[0].sort
-      };
-      console.log("sortParams", sortParams);
+      const sortParams = `${newSortModel[0].field};${newSortModel[0].sort}`
+      setSort([sortParams]);
     } else {
       // 当清空排序时，重新获取原始数据
+      setSort(["createdAt,desc"]);
     }
   };
 
@@ -1190,6 +1189,7 @@ const PickupOrders = () => {
                 getRowSpacing={getRowSpacing}
                 hideFooter
                 localeText={localeTextDataGrid}
+                // Removed invalid property disableMultipleColumnsSorting
                 getRowClassName={(params) =>
                   selectedRow && params.id === selectedRow.picoId
                     ? "selected-row"
