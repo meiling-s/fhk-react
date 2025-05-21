@@ -9,7 +9,33 @@ const { loginId } = returnApiToken()
 const __isDebug = false
 let expiredAccessToken = false
 
-const axiosInstance = axios.create()
+/**
+ * 自定义参数序列化方法
+ * 处理数组参数（如 sort）为重复的 key=value 形式
+ */
+const customParamsSerializer = (params: Record<string, any>) => {
+  const parts: string[] = [];
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined || value === null) {
+      return; // 跳过 undefined/null
+    }
+
+    // 处理数组（如 sort: [{field: 'picoId', sort: 'desc'}]）
+    if (Array.isArray(value)) {
+      value.forEach((item) => {
+        parts.push(`${key}=${encodeURIComponent(item)}`);
+      });
+    } else {
+      // 处理普通键值对
+      parts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+    }
+  });
+
+  return parts.join('&');
+};
+
+const axiosInstance = axios.create({paramsSerializer: customParamsSerializer,})
 const refreshTokenAxiosInstance = axios.create({
   baseURL: window.baseURL?.administrator
 })
@@ -23,6 +49,7 @@ export const parseJwtToken = (token: string, tokenPart: number) => {
     console.log(e)
   }
 }
+
 
 const isTokenExpired = (authToken: string) => {
   // this case if when the user is not yet logged in

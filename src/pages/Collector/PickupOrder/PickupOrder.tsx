@@ -681,7 +681,7 @@ const PickupOrders = () => {
     } catch (error: any) {
       const { state, realm } = extractError(error);
       if (state.code === STATUS_CODE[503]) {
-        navigate("/maintenance");
+        // navigate("/maintenance");
       }
     }
     setIsLoading(false);

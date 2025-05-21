@@ -47,10 +47,8 @@ export const getAllPickUpOrder = async (
         status: query?.status,
       },
     });
-    // console.log('Get all pick up order:', JSON.stringify(response.data));
     return response;
   } catch (e) {
-    // console.error('Get all collection point failed:', e);
     throw e;
   }
 };
@@ -69,7 +67,7 @@ export const getAllLogisticsPickUpOrder = async (
       params: {
         page: page,
         size: size,
-        sort: sort,
+        // sort: sort,
         tenantId: auth.tenantId,
         picoId: query?.picoId,
         effFromDate: query?.effFromDate,
