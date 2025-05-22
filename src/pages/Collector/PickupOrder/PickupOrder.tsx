@@ -945,12 +945,12 @@ const PickupOrders = () => {
     //   field: "logisticName",
     // },
     {
-      label: t("pick_up_order.filter.sender_company"),
+      label: t("pick_up_order.filter.pickup_location"),
       options: getUniqueOptions("senderCompany"),
       field: "senderName",
     },
     {
-      label: t("pick_up_order.filter.receiver_company"),
+      label: t("pick_up_order.filter.dropoff_location"),
       options: getUniqueOptions("receiver"),
       field: "receiver",
     },
@@ -1029,7 +1029,7 @@ const PickupOrders = () => {
   }, 1000);
 
   const handleSortModelChange = (newSortModel: GridSortItem[]) => {
-    console.log("newSortModel", newSortModel);
+    setPage(1);
     setSortModel(newSortModel);
     
     if (newSortModel.length > 0) {

@@ -17,7 +17,8 @@ import {
 export const getProcessOrder = async (
   page: number,
   size: number,
-  query: PorQuery | null
+  query: PorQuery | null,
+  sort?: string[]
 ) => {
   try {
     const token = returnApiToken()
@@ -26,12 +27,14 @@ export const getProcessOrder = async (
     const params: any = {
       page: page,
       size: size,
-      sort: ''
+      sort: sort
     }
     if (query?.labelId) params.labelId = query.labelId
     if (query?.frmCreatedDate) params.frmCreatedDate = query.frmCreatedDate
     if (query?.toCreatedDate) params.toCreatedDate = query.toCreatedDate
     if (query?.status) params.status = query.status
+    if (query?.processTypeId) params.processTypeId = query.processTypeId
+    if (query?.productTypeId) params.productTypeId = query.productTypeId
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,

@@ -217,15 +217,15 @@ const PickupOrderCreateForm = ({
 
   const unexpiredContracts = contractRole
     ? contractRole.filter((contract) => {
-        const currentDate = new Date();
-        const contractDate = new Date(contract.contractToDate);
+      const currentDate = new Date();
+      const contractDate = new Date(contract.contractToDate);
 
-        // Set time to midnight to compare only the date part
-        currentDate.setHours(0, 0, 0, 0);
-        contractDate.setHours(0, 0, 0, 0);
+      // Set time to midnight to compare only the date part
+      currentDate.setHours(0, 0, 0, 0);
+      contractDate.setHours(0, 0, 0, 0);
 
-        return contractDate >= currentDate && contract.status === "ACTIVE"; // Includes today
-      })
+      return contractDate >= currentDate && contract.status === "ACTIVE"; // Includes today
+    })
     : [];
 
   const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(
@@ -338,20 +338,20 @@ const PickupOrderCreateForm = ({
 
   const createdDate = selectedPo
     ? dayjs
-        .utc(selectedPo.createdAt)
-        .tz("Asia/Hong_Kong")
-        .format(`${dateFormat} HH:mm`)
+      .utc(selectedPo.createdAt)
+      .tz("Asia/Hong_Kong")
+      .format(`${dateFormat} HH:mm`)
     : dayjs.utc(new Date()).tz("Asia/Hong_Kong").format(`${dateFormat} HH:mm`);
 
   const approveAt = selectedPo?.approvedAt
     ? dayjs
-        .utc(selectedPo?.approvedAt)
-        .tz("Asia/Hong_Kong")
-        .format(`${dateFormat} HH:mm`)
+      .utc(selectedPo?.approvedAt)
+      .tz("Asia/Hong_Kong")
+      .format(`${dateFormat} HH:mm`)
     : dayjs
-        .utc(selectedPo?.updatedAt)
-        .tz("Asia/Hong_Kong")
-        .format(`${dateFormat} HH:mm`);
+      .utc(selectedPo?.updatedAt)
+      .tz("Asia/Hong_Kong")
+      .format(`${dateFormat} HH:mm`);
 
   const handleHeaderOnClick = () => {
     //console.log('Header click')
@@ -866,8 +866,8 @@ const PickupOrderCreateForm = ({
                       ? selectedPo?.picoType === "AD_HOC"
                         ? false
                         : selectedPo?.picoType === "ROUTINE"
-                        ? true
-                        : true
+                          ? true
+                          : true
                       : true
                   }
                   setState={(value) => {
@@ -882,7 +882,7 @@ const PickupOrderCreateForm = ({
                 />
               </CustomField>
             </Grid>
-            <Grid item style={{ display: "flex", flexDirection: "column" }}>
+            {formik.values.picoType == "ROUTINE" && (<Grid item style={{ display: "flex", flexDirection: "column" }}>
               <CustomDatePicker2
                 pickupOrderForm={true}
                 setDate={(values) => {
@@ -905,7 +905,17 @@ const PickupOrderCreateForm = ({
               ) : (
                 ''
               )} */}
-            </Grid>
+            </Grid>)}
+            {formik.values.picoType == "AD_HOC" && (
+              <Grid item>
+                <CustomField
+                  label={t("common.validityDate")}
+                >
+                  <Typography variant="body1" style={{ marginBottom: "8px" }}>
+                    {dayjs.utc(new Date()).tz("Asia/Hong_Kong").format(dateFormat)}
+                  </Typography>
+                </CustomField>
+              </Grid>)}
             {formik.values.picoType == "ROUTINE" && (
               <Grid item style={{ display: "flex", flexDirection: "column" }}>
                 <CustomField
@@ -925,8 +935,8 @@ const PickupOrderCreateForm = ({
                         selectedPo?.routineType === "weekly"
                           ? selectedPo?.routine ?? []
                           : selectedPo?.routineType === "specificDate"
-                          ? selectedPo?.specificDates ?? []
-                          : [],
+                            ? selectedPo?.specificDates ?? []
+                            : [],
                     }}
                     itemColor={{
                       bgColor: customListTheme?.bgColor,
@@ -952,23 +962,23 @@ const PickupOrderCreateForm = ({
                   option={
                     formik.values.picoType === "AD_HOC"
                       ? thirdPartyLogisticList?.map((option) => {
-                          if (i18n.language === Languages.ENUS) {
-                            return option.logisticNameEng;
-                          } else if (i18n.language === Languages.ZHCH) {
-                            return option.logisticNameSchi;
-                          } else {
-                            return option.logisticNameTchi;
-                          }
-                        }) ?? []
+                        if (i18n.language === Languages.ENUS) {
+                          return option.logisticNameEng;
+                        } else if (i18n.language === Languages.ZHCH) {
+                          return option.logisticNameSchi;
+                        } else {
+                          return option.logisticNameTchi;
+                        }
+                      }) ?? []
                       : logisticCompany?.map((option) => {
-                          if (i18n.language === Languages.ENUS) {
-                            return option.logisticNameEng;
-                          } else if (i18n.language === Languages.ZHCH) {
-                            return option.logisticNameSchi;
-                          } else {
-                            return option.logisticNameTchi;
-                          }
-                        }) ?? []
+                        if (i18n.language === Languages.ENUS) {
+                          return option.logisticNameEng;
+                        } else if (i18n.language === Languages.ZHCH) {
+                          return option.logisticNameSchi;
+                        } else {
+                          return option.logisticNameTchi;
+                        }
+                      }) ?? []
                   }
                   sx={{ width: "400px" }}
                   onChange={(_: SyntheticEvent, newValue: string | null) => {

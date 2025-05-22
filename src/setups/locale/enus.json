@@ -39,6 +39,7 @@
     "statusCode": "status Code",
     "noOptions": "No options",
     "start_date_at": "Validity Date From",
+    "validityDate": "Validity Date",
     "submit": "Submit",
     "deleteMessage": "Are you sure to delete?",
     "collectorName": "Collector Name",
@@ -419,7 +420,9 @@
       "recycling_category": "Recycling Category",
       "status": "Status",
       "sender_company": "Sender Company",
-      "receiver_company": "Receiver Company"
+      "receiver_company": "Receiver Company",
+      "pickup_location": "Pickup Location",
+      "dropoff_location": "Dropoff Location"
     },
     "card_detail": {
       "main_category": "Recyclable Type",

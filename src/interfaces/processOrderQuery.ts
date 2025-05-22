@@ -5,6 +5,8 @@ export type PorQuery = {
   labelId: string
   frmCreatedDate: string
   toCreatedDate: string
+  processTypeId: string
+  productTypeId: string
   status: 'CREATED' | 'COMPLETED' | 'DELETED' | string
 }
 

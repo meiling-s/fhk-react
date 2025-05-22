@@ -7,7 +7,8 @@ import {
   DataGrid,
   GridColDef,
   GridRowParams,
-  GridRowSpacingParams
+  GridRowSpacingParams,
+  GridSortItem
 } from '@mui/x-data-grid'
 import StatusCard from '../../../components/StatusCard'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
@@ -33,7 +34,7 @@ import {
   PorQuery,
   ProcessOrderItem
 } from '../../../interfaces/processOrderQuery'
-
+import { Products } from "../../../interfaces/productType";
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import dayjs from 'dayjs'
@@ -41,6 +42,7 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { getAllWarehouse } from '../../../APICalls/warehouseManage'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
+import { getProductTypeList } from 'src/APICalls/ASTD/settings/productType'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -55,6 +57,8 @@ const ProcessOrder = () => {
   const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const pageSize = 10
+  const [sort, setSort] = useState(["createdAt,desc"]);
+  const [sortModel, setSortModel] = useState<GridSortItem[]>([]);
   const [totalData, setTotalData] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [detailDrawer, setDetailDrawer] = useState<boolean>(false)
@@ -71,13 +75,17 @@ const ProcessOrder = () => {
     labelId: '',
     frmCreatedDate: '',
     toCreatedDate: '',
-    status: ''
+    processTypeId: '',
+    productTypeId: '',
+    status: '',
+    sort: sort
   } as PorQuery)
 
   const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
   const { dateFormat, getProcessTypeList, processTypeListData } =
     useContainer(CommonTypeContainer)
 
+  const [productType, setProductType] = useState<Products[]>([]);
   let columns: GridColDef[] = [
     {
       field: 'processStartAt',
@@ -176,11 +184,73 @@ const ProcessOrder = () => {
       inputType: 'date'
     },
     {
+      label: t('processOrder.porCategory'),
+      field: 'processTypeId',
+      options: getProcessingCategoryOption(),
+    },
+    {
+      label: t('inventory.productType'),
+      field: 'productTypeId',
+      options: getProductTypeOption(),
+    },
+    {
       label: t('pick_up_order.filter.status'),
       options: getStatusOpion(),
       field: 'status'
     }
   ]
+
+  function getProcessingCategoryOption() {
+    const options: Option[] = processTypeListData?.map((item) => {
+      if (i18n.language === Languages.ENUS) {
+        return {
+          value: item.processTypeId,
+          label: item.processTypeNameEng
+        }
+      } else if (i18n.language === Languages.ZHCH) {
+        return {
+          value: item.processTypeId,
+          label: item.processTypeNameSchi
+        }
+      } else {
+        return {
+          value: item.processTypeId,
+          label: item.processTypeNameTchi
+        }
+      }
+    }) || [];
+    options.push({
+      value: "",
+      label: t("localizedTexts.filterValueAny"),
+    });
+    return options;
+  }
+
+  function getProductTypeOption() {
+    const options: Option[] = productType.map((item) => {
+      if (i18n.language === Languages.ENUS) {
+        return {
+          value: item.productTypeId,
+          label: item.productNameEng
+        }
+      } else if (i18n.language === Languages.ZHCH) {
+        return {
+          value: item.productTypeId,
+          label: item.productNameSchi
+        }
+      } else {
+        return {
+          value: item.productTypeId,
+          label: item.productNameTchi
+        }
+      }
+    }) || [];
+    options.push({
+      value: "",
+      label: t("localizedTexts.filterValueAny"),
+    });
+    return options;
+  }
 
   function getStatusOpion() {
     const options: Option[] = porStatusList.map((item) => {
@@ -247,7 +317,7 @@ const ProcessOrder = () => {
 
   const initProcessOrderList = async () => {
     setIsLoading(true)
-    const result = await getProcessOrder(page - 1, pageSize, searchQuery)
+    const result = await getProcessOrder(page - 1, pageSize, searchQuery, sort)
     const data = result?.data.content
     if (data && data.length > 0) {
       setProcessOrderList(data)
@@ -258,25 +328,49 @@ const ProcessOrder = () => {
     setIsLoading(false)
   }
 
+  const initProductType = async () => {
+      const response = await getProductTypeList();
+      if (response) {
+        setProductType(response.data);
+      }
+    };
+
   useEffect(() => {
     initProcessOrderList()
-  }, [page, searchQuery, processTypeListData])
+  }, [page, searchQuery, processTypeListData, sort])
 
   useEffect(() => {
     initWarehouse()
     initFactory()
+    initProductType()
     getProcessTypeList()
   }, [i18n.language])
 
   const updateQuery = (newQuery: Partial<PorQuery>) => {
+    console.log('newQuery', newQuery, searchQuery)
     setSearchQuery({ ...searchQuery, ...newQuery } as PorQuery)
   }
 
   const handleSearch = debounce((keyName: string, value: string) => {
     if (value === 'Invalid Date') return
     setPage(1)
+    console.log('keyName', keyName, value)
     updateQuery({ [keyName]: value })
   }, 1000)
+
+  const handleSortModelChange = (newSortModel: GridSortItem[]) => {
+      setPage(1);
+      setSortModel(newSortModel);
+      console.log('newSortModel', newSortModel)
+      
+      if (newSortModel.length > 0) {
+        const sortParams = `${newSortModel[0].field},${newSortModel[0].sort}`
+        setSort([sortParams]);
+      } else {
+        // 当清空排序时，重新获取原始数据
+        setSort(["createdAt,desc"]);
+      }
+    };
 
   const handleRowClick = (params: GridRowParams) => {
     const row = params.row as ProcessOrderItem
@@ -341,6 +435,9 @@ const ProcessOrder = () => {
               <DataGrid
                 rows={processOrderList}
                 columns={columns}
+                sortingMode="server"
+                sortModel={sortModel}
+                onSortModelChange={handleSortModelChange}
                 getRowId={(row) => row.processOrderId}
                 disableRowSelectionOnClick
                 onRowClick={handleRowClick}

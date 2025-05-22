@@ -39,6 +39,7 @@
     "statusCode": "狀態碼",
     "noOptions": "無選項",
     "start_date_at": "有效日期由",
+    "validityDate": "有效日期",
     "submit": "提交",
     "deleteMessage": "你確定要刪除嗎？",
     "collectorName": "收藏家姓名",
@@ -419,7 +420,9 @@
       "recycling_category": "回收物類別",
       "status": "狀態",
       "sender_company": "寄件公司",
-      "receiver_company": "收件公司"
+      "receiver_company": "收件公司",
+      "pickup_location": "回收地點",
+      "dropoff_location": "到達地點"
     },
     "card_detail": {
       "main_category": "回收物主類別",
